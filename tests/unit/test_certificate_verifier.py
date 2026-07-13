@@ -8,12 +8,14 @@ from typing import Any
 from trustaero.catalog.in_memory import InMemoryCatalog
 from trustaero.ir.enums import LineageLevel, ObligationType, ReasonCode, ValidationStatus
 from trustaero.ir.models import (
+    ApprovedPhysicalPlan,
     ExecutionEvent,
     GovernedExecutionCertificate,
     LineageEvidenceSummary,
     PolicySet,
     ValidatedLogicalPlan,
 )
+from trustaero.planner.physical import plan_physical_execution
 from trustaero.validator.certificate import (
     CertificateVerificationStatus,
     verify_execution_certificate,
@@ -37,11 +39,12 @@ def _event(event_type: str, payload_digest: str = "sha256:event") -> ExecutionEv
 
 
 def _certificate(plan: ValidatedLogicalPlan) -> GovernedExecutionCertificate:
+    physical = plan_physical_execution(plan)
     return GovernedExecutionCertificate(
         certificate_id="cert-1",
         task_digest=plan.validation.canonical_digest,
         logical_plan_id=plan.logical_plan_id,
-        physical_plan_id="phys-1",
+        physical_plan_id=physical.physical_plan_id,
         policy_snapshot=plan.bindings.policy_snapshot,
         data_snapshots=plan.bindings.data_snapshots,
         events=(_event("ResultMaterialized"), _event("LineageRecorded", "sha256:lineage")),
@@ -63,9 +66,10 @@ def test_certificate_verifies_bindings_and_upgrades_lineage_pending_obligation(
     catalog: InMemoryCatalog,
 ) -> None:
     plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = plan_physical_execution(plan)
     certificate = _certificate(plan)
 
-    result = verify_execution_certificate(plan, certificate)
+    result = verify_execution_certificate(plan, physical, certificate)
 
     assert result.status == CertificateVerificationStatus.PARTIAL
     assert ObligationType.LINEAGE_CAPTURE in result.verified_obligations
@@ -82,12 +86,44 @@ def test_certificate_rejects_logical_plan_binding_mismatch(
     catalog: InMemoryCatalog,
 ) -> None:
     plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = plan_physical_execution(plan)
     certificate = _certificate(plan).model_copy(update={"logical_plan_id": "wrong-plan"})
 
-    result = verify_execution_certificate(plan, certificate)
+    result = verify_execution_certificate(plan, physical, certificate)
 
     assert result.status == CertificateVerificationStatus.REJECT
     assert result.diagnostics[0].code == ReasonCode.CERTIFICATE_BINDING_MISMATCH
+
+
+def test_certificate_rejects_physical_plan_binding_mismatch(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = plan_physical_execution(plan)
+    certificate = _certificate(plan).model_copy(update={"physical_plan_id": "wrong-phys"})
+
+    result = verify_execution_certificate(plan, physical, certificate)
+
+    assert result.status == CertificateVerificationStatus.REJECT
+    assert result.diagnostics[0].code == ReasonCode.PHYSICAL_PLAN_BINDING_MISMATCH
+
+
+def test_certificate_rejects_unbound_approved_physical_plan(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = plan_physical_execution(plan).model_copy(update={"logical_plan_id": "other-plan"})
+    assert isinstance(physical, ApprovedPhysicalPlan)
+    certificate = _certificate(plan)
+
+    result = verify_execution_certificate(plan, physical, certificate)
+
+    assert result.status == CertificateVerificationStatus.REJECT
+    assert result.diagnostics[0].code == ReasonCode.PHYSICAL_PLAN_BINDING_MISMATCH
 
 
 def test_certificate_rejects_snapshot_mismatch(
@@ -96,11 +132,12 @@ def test_certificate_rejects_snapshot_mismatch(
     catalog: InMemoryCatalog,
 ) -> None:
     plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = plan_physical_execution(plan)
     certificate = _certificate(plan).model_copy(
         update={"data_snapshots": {"critical_facilities": "v1900"}}
     )
 
-    result = verify_execution_certificate(plan, certificate)
+    result = verify_execution_certificate(plan, physical, certificate)
 
     assert result.status == CertificateVerificationStatus.REJECT
     assert result.diagnostics[0].code == ReasonCode.CERTIFICATE_SNAPSHOT_MISMATCH
@@ -112,9 +149,10 @@ def test_certificate_rejects_missing_lineage_evidence(
     catalog: InMemoryCatalog,
 ) -> None:
     plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = plan_physical_execution(plan)
     certificate = _certificate(plan).model_copy(update={"lineage_evidence": None})
 
-    result = verify_execution_certificate(plan, certificate)
+    result = verify_execution_certificate(plan, physical, certificate)
 
     assert result.status == CertificateVerificationStatus.REJECT
     assert result.diagnostics[0].code == ReasonCode.LINEAGE_EVIDENCE_MISSING
@@ -126,6 +164,7 @@ def test_certificate_rejects_weak_lineage_evidence(
     catalog: InMemoryCatalog,
 ) -> None:
     plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = plan_physical_execution(plan)
     weak_evidence = _certificate(plan).lineage_evidence
     assert weak_evidence is not None
     certificate = _certificate(plan).model_copy(
@@ -136,7 +175,7 @@ def test_certificate_rejects_weak_lineage_evidence(
         }
     )
 
-    result = verify_execution_certificate(plan, certificate)
+    result = verify_execution_certificate(plan, physical, certificate)
 
     assert result.status == CertificateVerificationStatus.REJECT
     assert result.diagnostics[0].code == ReasonCode.LINEAGE_LEVEL_INSUFFICIENT
@@ -148,9 +187,10 @@ def test_certificate_rejects_missing_result_digest_or_event(
     catalog: InMemoryCatalog,
 ) -> None:
     plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = plan_physical_execution(plan)
     certificate = _certificate(plan).model_copy(update={"result_digest": "", "events": ()})
 
-    result = verify_execution_certificate(plan, certificate)
+    result = verify_execution_certificate(plan, physical, certificate)
 
     assert result.status == CertificateVerificationStatus.REJECT
     assert {diagnostic.code for diagnostic in result.diagnostics} >= {

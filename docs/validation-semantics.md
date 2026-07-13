@@ -194,13 +194,15 @@ evidence, lineage stays pending rather than satisfied.
 
 ## Execution certificate verification
 
-`verify_execution_certificate(validated_plan, certificate)` checks the minimum
-execution-certificate closure available before a real database executor is
-integrated. It verifies that the certificate binds to the validated logical
-plan by both `logical_plan_id` and canonical task digest, that policy and data
-snapshots match the plan bindings, that required certificate digests and events
-are present, and that lineage evidence upgrades pending lineage obligations
-only after the independent evidence checker accepts it.
+`verify_execution_certificate(validated_plan, approved_physical_plan,
+certificate)` checks the minimum execution-certificate closure available
+before a real database executor is integrated. It verifies that the approved
+physical plan binds to the validated logical plan by both plan ID and canonical
+digest, that the certificate binds to the approved physical plan by
+`physical_plan_id`, that policy and data snapshots match the plan bindings,
+that required certificate digests and events are present, and that lineage
+evidence upgrades pending lineage obligations only after the independent
+evidence checker accepts it.
 
 This checker does not recompute database result bytes, physical operator
 execution, or backend lineage graph contents. Those components are reported as

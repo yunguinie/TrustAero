@@ -1,4 +1,4 @@
-"""Verify governed execution certificates against validated logical plans.
+"""Verify governed execution certificates against approved TrustAero plans.
 
 This checker validates certificate structure and bindings that can be checked
 without a real database executor. It deliberately marks result contents as
@@ -11,7 +11,12 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 from trustaero.ir.enums import ObligationType, ReasonCode
-from trustaero.ir.models import Diagnostic, GovernedExecutionCertificate, ValidatedLogicalPlan
+from trustaero.ir.models import (
+    ApprovedPhysicalPlan,
+    Diagnostic,
+    GovernedExecutionCertificate,
+    ValidatedLogicalPlan,
+)
 from trustaero.validator.lineage import verify_lineage_evidence
 
 
@@ -47,9 +52,10 @@ def _has_event(certificate: GovernedExecutionCertificate, event_type: str) -> bo
 
 def verify_execution_certificate(
     plan: ValidatedLogicalPlan,
+    physical_plan: ApprovedPhysicalPlan,
     certificate: GovernedExecutionCertificate,
 ) -> CertificateVerification:
-    """Check certificate bindings, snapshots, required evidence, and digests.
+    """Check logical/physical bindings, snapshots, evidence, and digests.
 
     Current V1 does not recompute database result bytes or physical-plan
     execution. Those parts are listed in ``unverified_components`` instead of
@@ -58,6 +64,50 @@ def verify_execution_certificate(
 
     diagnostics: list[Diagnostic] = []
     verified = list(plan.satisfied_obligations)
+
+    if physical_plan.logical_plan_id != plan.logical_plan_id:
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.PHYSICAL_PLAN_BINDING_MISMATCH,
+                "Approved physical plan does not bind to the validated logical plan.",
+                expected=plan.logical_plan_id,
+                actual=physical_plan.logical_plan_id,
+            )
+        )
+    if physical_plan.logical_plan_digest != plan.validation.canonical_digest:
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.PHYSICAL_PLAN_BINDING_MISMATCH,
+                "Approved physical plan digest does not match the validated plan digest.",
+                expected=plan.validation.canonical_digest,
+                actual=physical_plan.logical_plan_digest,
+            )
+        )
+    if physical_plan.bindings != plan.bindings:
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.PHYSICAL_PLAN_BINDING_MISMATCH,
+                "Approved physical plan snapshot bindings do not match the validated plan.",
+                expected=plan.bindings.model_dump(mode="json"),
+                actual=physical_plan.bindings.model_dump(mode="json"),
+            )
+        )
+    if physical_plan.lineage_instrumentation != plan.lineage_instrumentation:
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.PHYSICAL_PLAN_BINDING_MISMATCH,
+                "Approved physical plan lineage instrumentation diverges from validation.",
+            )
+        )
+    if physical_plan.pending_obligations != plan.pending_obligations:
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.PHYSICAL_PLAN_BINDING_MISMATCH,
+                "Approved physical plan pending obligations diverge from validation.",
+                expected=[obligation.value for obligation in plan.pending_obligations],
+                actual=[obligation.value for obligation in physical_plan.pending_obligations],
+            )
+        )
 
     if certificate.logical_plan_id != plan.logical_plan_id:
         diagnostics.append(
@@ -75,6 +125,15 @@ def verify_execution_certificate(
                 "Certificate task_digest does not bind to the validated plan digest.",
                 expected=plan.validation.canonical_digest,
                 actual=certificate.task_digest,
+            )
+        )
+    if certificate.physical_plan_id != physical_plan.physical_plan_id:
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.PHYSICAL_PLAN_BINDING_MISMATCH,
+                "Certificate physical_plan_id does not match the approved physical plan.",
+                expected=physical_plan.physical_plan_id,
+                actual=certificate.physical_plan_id,
             )
         )
     if certificate.policy_snapshot != plan.bindings.policy_snapshot:
