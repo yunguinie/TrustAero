@@ -38,7 +38,7 @@ fails closed rather than guessing a replacement from field names.
 | `GeneralizeLocation` | complete spatial pair | fields with coarser precision metadata | limits disclosed precision |
 | `Mask` | every target field exists | masked fields remain projectable but lose raw semantic capability | limits disclosed values |
 | `MinGroupSize` | existing aggregate output path | unchanged logical schema | guards grouped output |
-| `LineageCapture` | one valid relation | unchanged | requests lineage capture |
+| `LineageCapture` | one valid relation | unchanged | plans logical lineage instrumentation |
 
 ## Structured expression fragment
 
@@ -125,7 +125,7 @@ for every governance operator.
 | `GENERALIZE_LOCATION` | target fields form a complete Catalog-declared spatial pair | coarsens disclosed spatial precision while preserving prior selection | `GENERALIZATION_TARGET_NOT_SPATIAL` or postcondition failure |
 | `MASK` | target fields exist and method is defined | hides target values and removes raw semantic capability from those fields | `FIELD_NOT_AVAILABLE`, `MASK_METHOD_CONFLICT`, or postcondition failure |
 | `MIN_GROUP_SIZE` | the candidate output already depends on an `Aggregate` | guards grouped output; it does not invent a group-by for detail queries | `OBLIGATION_CONFLICT` or postcondition failure |
-| `LINEAGE_CAPTURE` | one valid output relation exists | requests evidence capture without changing relation schema | postcondition failure |
+| `LINEAGE_CAPTURE` | one valid output relation exists | records a logical lineage requirement and instrumentation spec | `LINEAGE_INSTRUMENTATION_MISSING` or evidence failure |
 
 ## Mask value states and downstream capability
 
@@ -164,13 +164,33 @@ satisfy an obligation; an unused operator on another branch does not count.
 | `MASK` | a suffix `Mask` covers all required fields with the required method |
 | `GENERALIZE_LOCATION` | a suffix generalizer covers the fields, preserves selection, uses the required method, and has at least the required fixed-grid cell size |
 | `MIN_GROUP_SIZE` | a suffix guard has `minimum_count` greater than or equal to the requirement |
-| `LINEAGE_CAPTURE` | suffix lineage strength is at least `source < record` |
+| `LINEAGE_CAPTURE` | suffix lineage instrumentation strength is at least `source < record` |
 
 Malformed parameters, a broken output chain, a weaker enforcer, or an absent
 enforcer returns `OBLIGATION_NOT_ENFORCED`. Only obligations proven by this
-postcondition pass are copied into `satisfied_obligations`. This is an
-executable safety check for the bounded IR fragment, not yet a general formal
-proof or evidence that a physical DBMS executed the operator correctly.
+postcondition pass are copied into `satisfied_obligations`. Lineage is the
+exception: a validated logical plan may contain `lineage_requirements` and
+`lineage_instrumentation`, but `LINEAGE_CAPTURE` remains in
+`pending_obligations` until execution evidence is checked. This prevents a
+logical `LineageCapture` node from being mistaken for proof that a physical
+DBMS actually emitted lineage records.
+
+## Lineage requirements, instrumentation, and evidence
+
+TrustAero separates lineage into three layers:
+
+- `LineageRequirement` belongs to the validated logical plan and records what
+  the policy requires, such as record-level lineage for the candidate output.
+- `LineageInstrumentationSpec` records the validated logical instrumentation
+  that a later physical plan must realize.
+- `LineageEvidenceSummary` belongs to a future execution certificate and
+  records what was actually observed after execution.
+
+The evidence checker validates that the observed evidence covers each required
+target and is at least as strong as the policy requirement. A source-level
+requirement may be satisfied by record-level evidence, but a record-level
+requirement is not satisfied by source-level evidence. Without execution
+evidence, lineage stays pending rather than satisfied.
 
 ## Query scope versus disclosed precision
 

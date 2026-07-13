@@ -429,6 +429,36 @@
       "title": "LineageCapture",
       "type": "object"
     },
+    "LineageInstrumentationSpec": {
+      "additionalProperties": false,
+      "description": "Validated logical-plan instrumentation that a physical plan must realize.",
+      "properties": {
+        "capture_mode": {
+          "const": "logical_suffix",
+          "default": "logical_suffix",
+          "title": "Capture Mode",
+          "type": "string"
+        },
+        "capture_operator": {
+          "title": "Capture Operator",
+          "type": "string"
+        },
+        "level": {
+          "$ref": "#/$defs/LineageLevel"
+        },
+        "target_operator": {
+          "title": "Target Operator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "target_operator",
+        "capture_operator"
+      ],
+      "title": "LineageInstrumentationSpec",
+      "type": "object"
+    },
     "LineageLevel": {
       "enum": [
         "none",
@@ -437,6 +467,25 @@
       ],
       "title": "LineageLevel",
       "type": "string"
+    },
+    "LineageRequirement": {
+      "additionalProperties": false,
+      "description": "Logical policy requirement; it says what is needed, not how to capture it.",
+      "properties": {
+        "level": {
+          "$ref": "#/$defs/LineageLevel"
+        },
+        "target_operator": {
+          "title": "Target Operator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "target_operator"
+      ],
+      "title": "LineageRequirement",
+      "type": "object"
     },
     "LiteralExpression": {
       "additionalProperties": false,
@@ -694,6 +743,12 @@
         "EXPRESSION_TYPE_MISMATCH",
         "AGGREGATE_TYPE_NOT_SUPPORTED",
         "MASKED_FIELD_USED_SEMANTICALLY",
+        "LINEAGE_REQUIREMENT_UNSATISFIED",
+        "LINEAGE_INSTRUMENTATION_MISSING",
+        "LINEAGE_LEVEL_INSUFFICIENT",
+        "LINEAGE_EVIDENCE_MISSING",
+        "LINEAGE_EVIDENCE_INCONSISTENT",
+        "LINEAGE_TARGET_NOT_COVERED",
         "OBLIGATION_NOT_ENFORCED",
         "OBLIGATION_PARAMETER_INVALID",
         "OBLIGATION_NORMALIZATION_FAILED",
@@ -1102,6 +1157,22 @@
       "title": "Candidate Plan Id",
       "type": "string"
     },
+    "lineage_instrumentation": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/LineageInstrumentationSpec"
+      },
+      "title": "Lineage Instrumentation",
+      "type": "array"
+    },
+    "lineage_requirements": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/LineageRequirement"
+      },
+      "title": "Lineage Requirements",
+      "type": "array"
+    },
     "logical_plan_id": {
       "title": "Logical Plan Id",
       "type": "string"
@@ -1176,6 +1247,14 @@
         "$ref": "#/$defs/OutputFieldSchema"
       },
       "title": "Output Schema",
+      "type": "array"
+    },
+    "pending_obligations": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ObligationType"
+      },
+      "title": "Pending Obligations",
       "type": "array"
     },
     "request_context": {

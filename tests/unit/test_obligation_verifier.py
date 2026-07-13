@@ -20,6 +20,9 @@ from trustaero.ir.models import (
     CandidatePlan,
     GeneralizeLocation,
     LineageCapture,
+    LineageEvidenceSummary,
+    LineageInstrumentationSpec,
+    LineageRequirement,
     Mask,
     MinGroupSize,
     Obligation,
@@ -29,6 +32,7 @@ from trustaero.ir.models import (
     ScanSource,
 )
 from trustaero.validator import service
+from trustaero.validator.lineage import verify_lineage_evidence
 from trustaero.validator.obligations import verify_obligations
 
 
@@ -84,11 +88,20 @@ def test_matching_enforcers_after_boundary_satisfy_obligations() -> None:
     )
 
     # Ten-kilometre cells are at least as privacy-preserving as the required
-    # five kilometres, and record lineage is stronger than source lineage.
+    # five kilometres. Lineage is planned but remains pending until execution
+    # evidence is checked.
     assert result.diagnostics == ()
-    assert result.satisfied == (
-        ObligationType.GENERALIZE_LOCATION,
-        ObligationType.LINEAGE_CAPTURE,
+    assert result.satisfied == (ObligationType.GENERALIZE_LOCATION,)
+    assert result.pending == (ObligationType.LINEAGE_CAPTURE,)
+    assert result.lineage_requirements == (
+        LineageRequirement(level=LineageLevel.SOURCE, target_operator="candidate-output"),
+    )
+    assert result.lineage_instrumentation == (
+        LineageInstrumentationSpec(
+            level=LineageLevel.RECORD,
+            target_operator="candidate-output",
+            capture_operator="lineage",
+        ),
     )
 
 
@@ -189,6 +202,109 @@ def test_version_pin_requires_resolved_binding_for_every_scan() -> None:
     assert resolved.satisfied == (ObligationType.VERSION_PIN,)
 
 
+def test_lineage_requirement_needs_instrumentation_on_output_suffix() -> None:
+    obligation = Obligation(
+        obligation_type=ObligationType.LINEAGE_CAPTURE,
+        parameters={"level": "record"},
+    )
+
+    result = verify_obligations(
+        (obligation,),
+        _base_operators(),
+        boundary_operator="candidate-output",
+        output_operator="candidate-output",
+        data_snapshots={"earthquakes": "v2026-06"},
+    )
+
+    assert result.satisfied == ()
+    assert result.pending == ()
+    assert result.diagnostics[0].code == ReasonCode.LINEAGE_INSTRUMENTATION_MISSING
+
+
+def test_lineage_evidence_record_satisfies_source_requirement() -> None:
+    result = verify_lineage_evidence(
+        (
+            LineageRequirement(
+                level=LineageLevel.SOURCE,
+                target_operator="candidate-output",
+            ),
+        ),
+        (
+            LineageInstrumentationSpec(
+                level=LineageLevel.RECORD,
+                target_operator="candidate-output",
+                capture_operator="lineage",
+            ),
+        ),
+        LineageEvidenceSummary(
+            execution_id="exec-1",
+            result_id="result-1",
+            lineage_level=LineageLevel.RECORD,
+            covered_operators=("candidate-output",),
+            edge_digest="sha256:abc",
+        ),
+    )
+
+    assert result.satisfied is True
+    assert result.diagnostics == ()
+
+
+def test_lineage_evidence_source_cannot_satisfy_record_requirement() -> None:
+    result = verify_lineage_evidence(
+        (
+            LineageRequirement(
+                level=LineageLevel.RECORD,
+                target_operator="candidate-output",
+            ),
+        ),
+        (
+            LineageInstrumentationSpec(
+                level=LineageLevel.RECORD,
+                target_operator="candidate-output",
+                capture_operator="lineage",
+            ),
+        ),
+        LineageEvidenceSummary(
+            execution_id="exec-1",
+            result_id="result-1",
+            lineage_level=LineageLevel.SOURCE,
+            covered_operators=("candidate-output",),
+            edge_digest="sha256:abc",
+        ),
+    )
+
+    assert result.satisfied is False
+    assert result.diagnostics[0].code == ReasonCode.LINEAGE_LEVEL_INSUFFICIENT
+
+
+def test_lineage_evidence_must_cover_required_target() -> None:
+    result = verify_lineage_evidence(
+        (
+            LineageRequirement(
+                level=LineageLevel.SOURCE,
+                target_operator="candidate-output",
+            ),
+        ),
+        (
+            LineageInstrumentationSpec(
+                level=LineageLevel.SOURCE,
+                target_operator="candidate-output",
+                capture_operator="lineage",
+            ),
+        ),
+        LineageEvidenceSummary(
+            execution_id="exec-1",
+            result_id="result-1",
+            lineage_level=LineageLevel.SOURCE,
+            covered_operators=("other-output",),
+            edge_digest="sha256:abc",
+        ),
+    )
+
+    assert result.satisfied is False
+    assert result.diagnostics[0].code == ReasonCode.LINEAGE_TARGET_NOT_COVERED
+
+
 def test_empty_mask_cannot_be_structurally_valid(
     accept_plan: dict[str, Any],
 ) -> None:
@@ -263,6 +379,26 @@ def test_generated_governance_id_avoids_untrusted_candidate_collision(
     ids = [operator.operator_id for operator in result.validated_plan.operators]
     assert len(ids) == len(set(ids))
     assert "gov-001-generalizelocation-1" in ids
+
+
+def test_logical_lineage_rewrite_is_pending_until_evidence(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    result = service.validate(copy.deepcopy(rewrite_plan), policy_set, catalog)
+
+    assert result.status == ValidationStatus.REWRITE
+    assert result.validated_plan is not None
+    assert ObligationType.LINEAGE_CAPTURE not in result.validated_plan.satisfied_obligations
+    assert ObligationType.LINEAGE_CAPTURE in result.validated_plan.pending_obligations
+    assert result.validated_plan.lineage_requirements == (
+        LineageRequirement(
+            level=LineageLevel.RECORD,
+            target_operator="op3",
+        ),
+    )
+    assert result.validated_plan.lineage_instrumentation[0].level == LineageLevel.RECORD
 
 
 def test_min_group_size_does_not_rewrite_detail_output(

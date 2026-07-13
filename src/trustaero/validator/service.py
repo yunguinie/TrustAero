@@ -521,13 +521,17 @@ def validate(
         operators=operators,
         output_operator=output_operator,
         output_schema=_public_output_schema(rewritten_types.outputs[output_operator]),
+        lineage_requirements=verification.lineage_requirements,
+        lineage_instrumentation=verification.lineage_instrumentation,
         bindings=SnapshotBindings(
             policy_snapshot=policy_set.policy_snapshot,
             data_snapshots=data_snapshots,
         ),
         # Report only obligations actually enforced by an inserted operator or
-        # by the snapshot binding logic above.
+        # by the snapshot binding logic above. Lineage stays pending here
+        # because logical instrumentation is not execution evidence.
         satisfied_obligations=verification.satisfied,
+        pending_obligations=verification.pending,
         validation=ValidationSummary(
             rounds=2 if rewrite_reasons else 1,
             reason_codes=rewrite_reasons,

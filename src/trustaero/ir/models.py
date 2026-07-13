@@ -294,6 +294,32 @@ class OutputFieldSchema(StrictModel):
     value_state: Literal["raw", "redacted", "hashed", "nullified"] = "raw"
 
 
+class LineageRequirement(StrictModel):
+    """Logical policy requirement; it says what is needed, not how to capture it."""
+
+    level: LineageLevel
+    target_operator: str
+
+
+class LineageInstrumentationSpec(StrictModel):
+    """Validated logical-plan instrumentation that a physical plan must realize."""
+
+    level: LineageLevel
+    target_operator: str
+    capture_operator: str
+    capture_mode: Literal["logical_suffix"] = "logical_suffix"
+
+
+class LineageEvidenceSummary(StrictModel):
+    """Execution-time lineage evidence summary for a future certificate check."""
+
+    execution_id: str
+    result_id: str
+    lineage_level: LineageLevel
+    covered_operators: tuple[str, ...]
+    edge_digest: str
+
+
 class ValidationSummary(StrictModel):
     rounds: int = Field(ge=1)
     reason_codes: tuple[ReasonCode, ...] = ()
@@ -309,8 +335,11 @@ class ValidatedLogicalPlan(StrictModel):
     operators: tuple[Operator, ...]
     output_operator: str
     output_schema: tuple[OutputFieldSchema, ...]
+    lineage_requirements: tuple[LineageRequirement, ...] = ()
+    lineage_instrumentation: tuple[LineageInstrumentationSpec, ...] = ()
     bindings: SnapshotBindings
     satisfied_obligations: tuple[ObligationType, ...] = ()
+    pending_obligations: tuple[ObligationType, ...] = ()
     validation: ValidationSummary
 
 
@@ -380,4 +409,5 @@ class GovernedExecutionCertificate(StrictModel):
     data_snapshots: dict[str, str]
     events: tuple[ExecutionEvent, ...]
     result_digest: str
+    lineage_evidence: LineageEvidenceSummary | None = None
     lineage_digest: str | None = None

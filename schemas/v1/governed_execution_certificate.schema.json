@@ -45,6 +45,52 @@
       ],
       "title": "ExecutionEvent",
       "type": "object"
+    },
+    "LineageEvidenceSummary": {
+      "additionalProperties": false,
+      "description": "Execution-time lineage evidence summary for a future certificate check.",
+      "properties": {
+        "covered_operators": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Covered Operators",
+          "type": "array"
+        },
+        "edge_digest": {
+          "title": "Edge Digest",
+          "type": "string"
+        },
+        "execution_id": {
+          "title": "Execution Id",
+          "type": "string"
+        },
+        "lineage_level": {
+          "$ref": "#/$defs/LineageLevel"
+        },
+        "result_id": {
+          "title": "Result Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "execution_id",
+        "result_id",
+        "lineage_level",
+        "covered_operators",
+        "edge_digest"
+      ],
+      "title": "LineageEvidenceSummary",
+      "type": "object"
+    },
+    "LineageLevel": {
+      "enum": [
+        "none",
+        "source",
+        "record"
+      ],
+      "title": "LineageLevel",
+      "type": "string"
     }
   },
   "$id": "https://trustaero.org/schemas/v1/governed_execution_certificate.schema.json",
@@ -80,6 +126,17 @@
       ],
       "default": null,
       "title": "Lineage Digest"
+    },
+    "lineage_evidence": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LineageEvidenceSummary"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "logical_plan_id": {
       "title": "Logical Plan Id",

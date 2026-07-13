@@ -16,6 +16,8 @@ from trustaero.ir.models import (
     Diagnostic,
     GeneralizeLocation,
     LineageCapture,
+    LineageInstrumentationSpec,
+    LineageRequirement,
     Mask,
     MinGroupSize,
     Obligation,
@@ -29,6 +31,9 @@ class ObligationVerification:
     """Obligations proven by the validated suffix and any root failures."""
 
     satisfied: tuple[ObligationType, ...]
+    pending: tuple[ObligationType, ...]
+    lineage_requirements: tuple[LineageRequirement, ...]
+    lineage_instrumentation: tuple[LineageInstrumentationSpec, ...]
     diagnostics: tuple[Diagnostic, ...]
 
 
@@ -107,6 +112,50 @@ def _positive_integer(value: Any) -> int | None:
     return int(value)
 
 
+def _lineage_strength(level: LineageLevel) -> int:
+    return {
+        LineageLevel.NONE: 0,
+        LineageLevel.SOURCE: 1,
+        LineageLevel.RECORD: 2,
+    }[level]
+
+
+def _lineage_requirement(
+    obligation: Obligation, boundary_operator: str
+) -> tuple[LineageRequirement | None, Diagnostic | None]:
+    raw_level = obligation.parameters.get("level")
+    if not isinstance(raw_level, str):
+        return None, _failure(
+            "Lineage obligation has an invalid required level.",
+            obligation_type=obligation.obligation_type.value,
+            parameters=obligation.parameters,
+        )
+    try:
+        level = LineageLevel(raw_level)
+    except ValueError:
+        return None, _failure(
+            "Lineage obligation has an unsupported required level.",
+            obligation_type=obligation.obligation_type.value,
+            parameters=obligation.parameters,
+        )
+    return LineageRequirement(level=level, target_operator=boundary_operator), None
+
+
+def _lineage_instrumentation(
+    requirement: LineageRequirement, suffix: tuple[Operator, ...]
+) -> LineageInstrumentationSpec | None:
+    for operator in suffix:
+        if not isinstance(operator, LineageCapture):
+            continue
+        if _lineage_strength(operator.level) >= _lineage_strength(requirement.level):
+            return LineageInstrumentationSpec(
+                level=operator.level,
+                target_operator=requirement.target_operator,
+                capture_operator=operator.operator_id,
+            )
+    return None
+
+
 def _matches_suffix(obligation: Obligation, suffix: tuple[Operator, ...]) -> bool:
     """Return whether a typed suffix operator meets or exceeds a requirement."""
 
@@ -149,23 +198,7 @@ def _matches_suffix(obligation: Obligation, suffix: tuple[Operator, ...]) -> boo
         )
 
     if obligation_type == ObligationType.LINEAGE_CAPTURE:
-        raw_level = params.get("level")
-        if not isinstance(raw_level, str):
-            return False
-        try:
-            required_level = LineageLevel(raw_level)
-        except ValueError:
-            return False
-        strength = {
-            LineageLevel.NONE: 0,
-            LineageLevel.SOURCE: 1,
-            LineageLevel.RECORD: 2,
-        }
-        return any(
-            isinstance(operator, LineageCapture)
-            and strength[operator.level] >= strength[required_level]
-            for operator in suffix
-        )
+        return False
 
     return False
 
@@ -191,10 +224,13 @@ def verify_obligations(
         output_operator,
     )
     if boundary_error is not None:
-        return ObligationVerification((), (boundary_error,))
+        return ObligationVerification((), (), (), (), (boundary_error,))
 
     scan_datasets = {operator.dataset for operator in operators if isinstance(operator, ScanSource)}
     satisfied: list[ObligationType] = []
+    pending: list[ObligationType] = []
+    lineage_requirements: list[LineageRequirement] = []
+    lineage_instrumentation: list[LineageInstrumentationSpec] = []
     diagnostics: list[Diagnostic] = []
 
     for obligation in obligations:
@@ -205,6 +241,34 @@ def verify_obligations(
                 and bool(scan_datasets)
                 and all(data_snapshots.get(dataset) for dataset in scan_datasets)
             )
+        elif obligation_type == ObligationType.LINEAGE_CAPTURE:
+            requirement, error = _lineage_requirement(obligation, boundary_operator)
+            if error is not None:
+                diagnostics.append(error)
+                continue
+            assert requirement is not None
+            instrumentation = _lineage_instrumentation(requirement, suffix)
+            if instrumentation is None:
+                diagnostics.append(
+                    Diagnostic(
+                        code=ReasonCode.LINEAGE_INSTRUMENTATION_MISSING,
+                        message=(
+                            "Validated plan lacks lineage instrumentation for a policy requirement."
+                        ),
+                        details={
+                            "required_level": requirement.level.value,
+                            "target_operator": requirement.target_operator,
+                            "output_operator": output_operator,
+                        },
+                    )
+                )
+                continue
+            lineage_requirements.append(requirement)
+            lineage_instrumentation.append(instrumentation)
+            # Logical validation proves that instrumentation was planned. It is
+            # still pending until an execution certificate carries evidence.
+            pending.append(obligation_type)
+            continue
         else:
             enforced = _matches_suffix(obligation, suffix)
 
@@ -221,4 +285,10 @@ def verify_obligations(
                 )
             )
 
-    return ObligationVerification(tuple(satisfied), tuple(diagnostics))
+    return ObligationVerification(
+        tuple(satisfied),
+        tuple(pending),
+        tuple(lineage_requirements),
+        tuple(lineage_instrumentation),
+        tuple(diagnostics),
+    )
