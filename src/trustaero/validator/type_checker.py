@@ -69,6 +69,25 @@ def _diagnostic(code: ReasonCode, message: str, operator_id: str, **details: Any
     return Diagnostic(code=code, message=message, operator_id=operator_id, details=details)
 
 
+def _raw_value_required(
+    field: FieldDescriptor, operator_id: str, use: str
+) -> tuple[Diagnostic, ...]:
+    """Reject masked presentation fields as inputs to semantic computation."""
+
+    if field.value_state == "raw":
+        return ()
+    return (
+        _diagnostic(
+            ReasonCode.MASKED_FIELD_USED_SEMANTICALLY,
+            "Masked fields cannot be used for semantic computation in IR v1.",
+            operator_id,
+            field=field.name,
+            value_state=field.value_state,
+            use=use,
+        ),
+    )
+
+
 def _topological_order(operators: tuple[Operator, ...]) -> tuple[Operator, ...]:
     """Order a graph whose references and acyclicity were already validated."""
 
@@ -158,7 +177,7 @@ def _check_comparison(
                 comparison=expression.operator.value,
             ),
         )
-    return ()
+    return _raw_value_required(field, operator_id, "filter")
 
 
 def _check_predicate(
@@ -196,6 +215,10 @@ def _aggregate_output(
                 available_fields=input_schema.names,
             ),
         )
+    if source is not None:
+        semantic_errors = _raw_value_required(source, operator_id, "aggregate_input")
+        if semantic_errors:
+            return None, semantic_errors
 
     function = expression.function
     if function == AggregateFunction.COUNT:
@@ -401,6 +424,11 @@ def _infer_operator(
                 ),
             )
         if left_key is not None and right_key is not None:
+            semantic_errors = _raw_value_required(
+                left_key, operator.operator_id, "join"
+            ) + _raw_value_required(right_key, operator.operator_id, "join")
+            if semantic_errors:
+                return None, semantic_errors
             if left_key.data_type != right_key.data_type:
                 return None, (
                     _diagnostic(
@@ -465,6 +493,16 @@ def _infer_operator(
                     available_fields=input_schema.names,
                 ),
             )
+
+        group_semantic_errors: list[Diagnostic] = []
+        for name in operator.group_by:
+            field = input_schema.get(name)
+            if field is not None:
+                group_semantic_errors.extend(
+                    _raw_value_required(field, operator.operator_id, "aggregate_group_by")
+                )
+        if group_semantic_errors:
+            return None, tuple(group_semantic_errors)
 
         group_fields = tuple(input_schema.get(name) for name in operator.group_by)
         output_fields: list[FieldDescriptor] = [
@@ -533,9 +571,39 @@ def _infer_operator(
                     fields=missing,
                 ),
             )
-        # Mask physical types depend on the chosen method. IR v1 validates
-        # field binding but conservatively retains the input logical schema.
-        return input_schema, ()
+        targets = set(operator.fields)
+
+        def mask_field(field: FieldDescriptor) -> FieldDescriptor:
+            if field.name not in targets:
+                return field
+            value_state = {
+                "redact": "redacted",
+                "hash": "hashed",
+                "null": "nullified",
+            }[operator.method]
+            data_type = field.data_type if operator.method == "null" else DataType.STRING
+            nullable = True if operator.method == "null" else False
+            return field.model_copy(
+                update={
+                    "data_type": data_type,
+                    "nullable": nullable,
+                    "roles": frozenset(),
+                    "sensitive": True,
+                    "spatial_precision_km": None,
+                    "value_state": value_state,
+                }
+            )
+
+        updated = tuple(mask_field(field) for field in input_schema.fields)
+        # A spatial descriptor is valid only while both coordinate fields still
+        # carry raw spatial semantics. Masking either coordinate removes the
+        # relation-level spatial capability for downstream operators.
+        remaining_spatial: tuple[SpatialDescriptor, ...] = tuple(
+            descriptor
+            for descriptor in input_schema.spatial
+            if descriptor.fields.isdisjoint(targets)
+        )
+        return RelationSchema(updated, remaining_spatial), ()
 
     if isinstance(operator, (MinGroupSize, LineageCapture)):
         return input_schema, ()

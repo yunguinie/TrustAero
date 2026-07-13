@@ -36,7 +36,7 @@ fails closed rather than guessing a replacement from field names.
 | `SpatialJoin` | both inputs spatial with a shared CRS | concatenated inputs | none |
 | `Aggregate` | existing group/input fields and supported function types | group fields followed by named aggregate results | aggregation is not automatic declassification |
 | `GeneralizeLocation` | complete spatial pair | fields with coarser precision metadata | limits disclosed precision |
-| `Mask` | every target field exists | unchanged logical schema in IR v1 | limits disclosed values |
+| `Mask` | every target field exists | masked fields remain projectable but lose raw semantic capability | limits disclosed values |
 | `MinGroupSize` | existing aggregate output path | unchanged logical schema | guards grouped output |
 | `LineageCapture` | one valid relation | unchanged | requests lineage capture |
 
@@ -123,9 +123,31 @@ for every governance operator.
 |---|---|---|---|
 | `VERSION_PIN` | each scanned dataset can resolve a snapshot | binds data versions without changing relation schema | `VERSION_UNRESOLVED` or postcondition failure |
 | `GENERALIZE_LOCATION` | target fields form a complete Catalog-declared spatial pair | coarsens disclosed spatial precision while preserving prior selection | `GENERALIZATION_TARGET_NOT_SPATIAL` or postcondition failure |
-| `MASK` | target fields exist and method is defined | hides target values while retaining the current logical schema in IR v1 | `FIELD_NOT_AVAILABLE`, `MASK_METHOD_CONFLICT`, or postcondition failure |
+| `MASK` | target fields exist and method is defined | hides target values and removes raw semantic capability from those fields | `FIELD_NOT_AVAILABLE`, `MASK_METHOD_CONFLICT`, or postcondition failure |
 | `MIN_GROUP_SIZE` | the candidate output already depends on an `Aggregate` | guards grouped output; it does not invent a group-by for detail queries | `OBLIGATION_CONFLICT` or postcondition failure |
 | `LINEAGE_CAPTURE` | one valid output relation exists | requests evidence capture without changing relation schema | postcondition failure |
+
+## Mask value states and downstream capability
+
+Masking changes more than a Python or SQL scalar type. It also changes whether
+later operators may rely on the field's original meaning. IR v1 therefore gives
+each field a value state. Catalog fields start as `raw`; a `Mask` rewrites only
+the named fields to one of `redacted`, `hashed`, or `nullified`.
+
+| Method | Output type in IR v1 | Field remains projectable? | Raw semantic capability after mask |
+|---|---|---|---|
+| `redact` | `string` | yes | none |
+| `hash` | `string` | yes | none |
+| `null` | original logical type, nullable | yes | none |
+
+The current fragment intentionally does not rank these methods by strength.
+It also does not claim that hashed values are valid join keys: salt choice,
+domain separation, collision handling, and cross-dataset determinism are not
+defined in IR v1. Consequently, a masked field may be projected or requested
+as output, but it may not later be used by `Filter`, `Join`, `Aggregate`,
+`SpatialFilter`, `SpatialJoin`, `TemporalFilter`, or
+`GeneralizeLocation`. Unsupported downstream use fails closed instead of
+guessing whether the masked value still has the original field semantics.
 
 ## Obligation rewrite postconditions
 

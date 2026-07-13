@@ -245,3 +245,137 @@ def test_rewrite_is_rechecked_against_relation_schema(
     assert result.status == ValidationStatus.REJECT
     assert result.validated_plan is None
     assert result.diagnostics[0].code == ReasonCode.FIELD_NOT_AVAILABLE
+
+
+def test_mask_strips_identifier_capability_before_join(
+    accept_plan: dict[str, Any], catalog: InMemoryCatalog
+) -> None:
+    raw = copy.deepcopy(accept_plan)
+    raw["operators"] = [
+        raw["operators"][0],
+        {
+            "operator_type": "ScanSource",
+            "operator_id": "op-facilities",
+            "inputs": [],
+            "dataset": "critical_facilities",
+        },
+        {
+            "operator_type": "Mask",
+            "operator_id": "op-mask",
+            "inputs": ["op1"],
+            "fields": ["event_id"],
+            "method": "hash",
+        },
+        {
+            "operator_type": "Project",
+            "operator_id": "op-facility-project",
+            "inputs": ["op-facilities"],
+            "fields": ["facility_id"],
+        },
+        {
+            "operator_type": "Join",
+            "operator_id": "op-join",
+            "inputs": ["op-mask", "op-facility-project"],
+            "left_field": "event_id",
+            "right_field": "facility_id",
+        },
+    ]
+    raw["output_operator"] = "op-join"
+    raw["requested_output"]["fields"] = ["event_id", "facility_id"]
+
+    assert ReasonCode.MASKED_FIELD_USED_SEMANTICALLY in _codes(raw, catalog)
+
+
+def test_mask_strips_spatial_capability_before_spatial_filter(
+    rewrite_plan: dict[str, Any], catalog: InMemoryCatalog
+) -> None:
+    raw = copy.deepcopy(rewrite_plan)
+    raw["operators"] = [
+        raw["operators"][0],
+        {
+            "operator_type": "Mask",
+            "operator_id": "op-mask",
+            "inputs": ["op1"],
+            "fields": ["latitude"],
+            "method": "redact",
+        },
+        {
+            "operator_type": "SpatialFilter",
+            "operator_id": "op-spatial",
+            "inputs": ["op-mask"],
+            "center": [116.3, 39.9],
+            "radius_km": 50,
+            "crs": "EPSG:4326",
+        },
+    ]
+    raw["output_operator"] = "op-spatial"
+    raw["requested_output"]["fields"] = ["facility_id"]
+
+    assert ReasonCode.SPATIAL_FIELD_REQUIRED in _codes(raw, catalog)
+
+
+def test_null_masked_temporal_field_cannot_drive_temporal_filter(
+    accept_plan: dict[str, Any], catalog: InMemoryCatalog
+) -> None:
+    raw = copy.deepcopy(accept_plan)
+    raw["operators"] = [
+        raw["operators"][0],
+        {
+            "operator_type": "Mask",
+            "operator_id": "op-mask",
+            "inputs": ["op1"],
+            "fields": ["event_time"],
+            "method": "null",
+        },
+        {
+            "operator_type": "TemporalFilter",
+            "operator_id": "op-time",
+            "inputs": ["op-mask"],
+            "field": "event_time",
+            "start": "2026-01-01T00:00:00Z",
+            "end": "2026-02-01T00:00:00Z",
+        },
+    ]
+    raw["output_operator"] = "op-time"
+    raw["requested_output"]["fields"] = ["event_id"]
+
+    assert ReasonCode.TEMPORAL_FIELD_TYPE_INVALID in _codes(raw, catalog)
+
+
+def test_masked_fields_remain_projectable_with_explicit_state(
+    accept_plan: dict[str, Any], catalog: InMemoryCatalog
+) -> None:
+    raw = copy.deepcopy(accept_plan)
+    raw["operators"] = [
+        raw["operators"][0],
+        {
+            "operator_type": "Mask",
+            "operator_id": "op-mask",
+            "inputs": ["op1"],
+            "fields": ["event_id", "magnitude", "event_time"],
+            "method": "redact",
+        },
+        {
+            "operator_type": "Project",
+            "operator_id": "op-project",
+            "inputs": ["op-mask"],
+            "fields": ["event_id", "magnitude", "event_time"],
+        },
+    ]
+    raw["output_operator"] = "op-project"
+    raw["requested_output"]["fields"] = ["event_id", "magnitude", "event_time"]
+
+    result = type_check_plan(CandidatePlan.model_validate(raw), catalog)
+
+    assert result.diagnostics == ()
+    output = result.outputs["op-project"]
+    event_id = output.get("event_id")
+    magnitude = output.get("magnitude")
+    event_time = output.get("event_time")
+    assert event_id is not None
+    assert magnitude is not None
+    assert event_time is not None
+    assert event_id.data_type.value == "string"
+    assert magnitude.data_type.value == "string"
+    assert event_time.value_state == "redacted"
+    assert event_time.roles == frozenset()

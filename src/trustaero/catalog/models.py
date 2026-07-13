@@ -8,7 +8,7 @@ such as ``latitude`` or ``geometry``.
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import Protocol
+from typing import Literal, Protocol
 
 from pydantic import Field, model_validator
 
@@ -38,6 +38,11 @@ class FieldDescriptor(StrictModel):
     roles: frozenset[FieldRole] = frozenset()
     sensitive: bool = False
     spatial_precision_km: float | None = Field(default=None, gt=0)
+    # ``raw`` means later operators may still rely on the field's original
+    # value semantics. Masked states are presentation states: they can be
+    # projected, but they no longer carry join/filter/aggregate/spatial/temporal
+    # capability in the trusted IR fragment.
+    value_state: Literal["raw", "redacted", "hashed", "nullified"] = "raw"
 
 
 class SpatialDescriptor(StrictModel):

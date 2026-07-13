@@ -283,3 +283,66 @@ def test_pre_aggregate_field_does_not_survive_without_grouping(
     result = _check(raw, catalog)
 
     assert result.diagnostics[0].code == ReasonCode.FIELD_NOT_AVAILABLE
+
+
+def test_filter_rejects_masked_field_even_when_type_matches(
+    accept_plan: dict[str, Any], catalog: InMemoryCatalog
+) -> None:
+    raw = copy.deepcopy(accept_plan)
+    raw["operators"] = [
+        raw["operators"][0],
+        {
+            "operator_type": "Mask",
+            "operator_id": "op-mask",
+            "inputs": ["op1"],
+            "fields": ["event_id"],
+            "method": "redact",
+        },
+        {
+            "operator_type": "Filter",
+            "operator_id": "op-filter",
+            "inputs": ["op-mask"],
+            "expression": _comparison("event_id", "eq", "string", "evt-1"),
+        },
+    ]
+    raw["output_operator"] = "op-filter"
+    raw["requested_output"]["fields"] = ["event_id"]
+
+    result = _check(raw, catalog)
+
+    assert result.diagnostics[0].code == ReasonCode.MASKED_FIELD_USED_SEMANTICALLY
+
+
+def test_aggregate_rejects_masked_input_and_group_fields(
+    accept_plan: dict[str, Any], catalog: InMemoryCatalog
+) -> None:
+    raw = copy.deepcopy(accept_plan)
+    raw["operators"] = [
+        raw["operators"][0],
+        {
+            "operator_type": "Mask",
+            "operator_id": "op-mask",
+            "inputs": ["op1"],
+            "fields": ["event_id", "magnitude"],
+            "method": "hash",
+        },
+        {
+            "operator_type": "Aggregate",
+            "operator_id": "op-aggregate",
+            "inputs": ["op-mask"],
+            "group_by": ["event_id"],
+            "aggregates": [
+                {
+                    "function": "avg",
+                    "input_field": "magnitude",
+                    "output_field": "masked_average",
+                }
+            ],
+        },
+    ]
+    raw["output_operator"] = "op-aggregate"
+    raw["requested_output"]["fields"] = ["event_id", "masked_average"]
+
+    result = _check(raw, catalog)
+
+    assert result.diagnostics[0].code == ReasonCode.MASKED_FIELD_USED_SEMANTICALLY
