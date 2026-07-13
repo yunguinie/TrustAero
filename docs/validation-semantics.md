@@ -192,6 +192,22 @@ requirement may be satisfied by record-level evidence, but a record-level
 requirement is not satisfied by source-level evidence. Without execution
 evidence, lineage stays pending rather than satisfied.
 
+## Execution certificate verification
+
+`verify_execution_certificate(validated_plan, certificate)` checks the minimum
+execution-certificate closure available before a real database executor is
+integrated. It verifies that the certificate binds to the validated logical
+plan by both `logical_plan_id` and canonical task digest, that policy and data
+snapshots match the plan bindings, that required certificate digests and events
+are present, and that lineage evidence upgrades pending lineage obligations
+only after the independent evidence checker accepts it.
+
+This checker does not recompute database result bytes, physical operator
+execution, or backend lineage graph contents. Those components are reported as
+unverified rather than silently accepted. The current status may therefore be
+`PARTIAL`: the certificate structure and governance evidence are consistent,
+but actual DBMS execution content remains outside the current IR-only phase.
+
 ## Query scope versus disclosed precision
 
 `SpatialFilter.radius_km` and `GeneralizeLocation.precision_km` have different

@@ -20,6 +20,10 @@ The following L2 codes distinguish root plan-semantic failures:
 | `LINEAGE_EVIDENCE_MISSING` | execution-time lineage evidence is required but absent |
 | `LINEAGE_EVIDENCE_INCONSISTENT` | lineage evidence is malformed or internally inconsistent |
 | `LINEAGE_TARGET_NOT_COVERED` | lineage evidence does not cover a required output target |
+| `CERTIFICATE_BINDING_MISMATCH` | an execution certificate does not bind to the validated logical plan ID or digest |
+| `CERTIFICATE_SNAPSHOT_MISMATCH` | certificate policy or data snapshots differ from the validated plan bindings |
+| `CERTIFICATE_DIGEST_MISSING` | a required certificate digest field is absent or empty |
+| `CERTIFICATE_EVENT_MISSING` | a required execution event is absent from the certificate |
 | `OBLIGATION_NOT_ENFORCED` | the final output path or snapshot bindings do not prove a policy obligation's postcondition |
 | `OBLIGATION_PARAMETER_INVALID` | a supported obligation has missing, malformed, unknown, or not-yet-defined parameters |
 | `OBLIGATION_NORMALIZATION_FAILED` | evaluated obligations and their internal policy provenance are inconsistent |
