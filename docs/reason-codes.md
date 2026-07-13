@@ -14,6 +14,9 @@ The following L2 codes distinguish root plan-semantic failures:
 | `EXPRESSION_TYPE_MISMATCH` | a structured comparison uses incompatible logical types or undefined ordering semantics |
 | `AGGREGATE_TYPE_NOT_SUPPORTED` | an aggregate function is undefined for its input field's logical type |
 | `OBLIGATION_NOT_ENFORCED` | the final output path or snapshot bindings do not prove a policy obligation's postcondition |
+| `OBLIGATION_PARAMETER_INVALID` | a supported obligation has missing, malformed, unknown, or not-yet-defined parameters |
+| `OBLIGATION_NORMALIZATION_FAILED` | evaluated obligations and their internal policy provenance are inconsistent |
+| `MASK_METHOD_CONFLICT` | one field is required to use two masking methods without a defined strength order |
 | `JOIN_KEY_TYPE_MISMATCH` | left and right join keys have different logical types |
 | `AMBIGUOUS_OUTPUT_FIELD` | two join inputs expose the same unaliased field name |
 | `SPATIAL_FIELD_REQUIRED` | an operator lacks a complete Catalog-declared coordinate pair |

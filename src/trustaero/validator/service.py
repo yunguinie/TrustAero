@@ -23,6 +23,7 @@ from trustaero.ir.models import (
     LineageCapture,
     Mask,
     MinGroupSize,
+    Obligation,
     Operator,
     PolicySet,
     SnapshotBindings,
@@ -30,7 +31,8 @@ from trustaero.ir.models import (
     ValidationSummary,
     ValidatorResponse,
 )
-from trustaero.policy.evaluator import Evaluation, evaluate_policy
+from trustaero.policy.evaluator import evaluate_policy
+from trustaero.validator.obligation_normalizer import normalize_obligations
 from trustaero.validator.obligations import verify_obligations
 from trustaero.validator.type_checker import type_check_plan
 
@@ -186,7 +188,9 @@ class RewriteOutcome:
     error: Diagnostic | None = None
 
 
-def _rewrite_obligations(plan: CandidatePlan, evaluation: Evaluation) -> RewriteOutcome:
+def _rewrite_obligations(
+    plan: CandidatePlan, obligations: tuple[Obligation, ...]
+) -> RewriteOutcome:
     """Apply deterministic, monotone obligation rewrites without mutating input.
 
     V1 only appends enforcers after the requested output. This intentionally
@@ -198,7 +202,7 @@ def _rewrite_obligations(plan: CandidatePlan, evaluation: Evaluation) -> Rewrite
     reasons: list[ReasonCode] = []
     used_ids = {operator.operator_id for operator in operators}
 
-    for index, obligation in enumerate(evaluation.obligations, start=1):
+    for index, obligation in enumerate(obligations, start=1):
         obligation_type = obligation.obligation_type
         if obligation_type == ObligationType.VERSION_PIN:
             # Snapshot bindings below satisfy a parameter-free pin obligation.
@@ -360,7 +364,20 @@ def validate(
             diagnostics=(_diagnostic(ReasonCode.POLICY_INDETERMINATE, evaluation.reason),),
         )
 
-    rewrite = _rewrite_obligations(plan, evaluation)
+    normalization = normalize_obligations(
+        evaluation.obligations,
+        evaluation.obligation_sources,
+    )
+    if normalization.diagnostics:
+        return ValidatorResponse(
+            status=ValidationStatus.REJECT,
+            candidate_plan_id=plan.plan_id,
+            policy_decision=evaluation.decision,
+            diagnostics=normalization.diagnostics,
+        )
+    normalized_obligations = normalization.normalized_obligations
+
+    rewrite = _rewrite_obligations(plan, normalized_obligations)
     if rewrite.error is not None:
         return ValidatorResponse(
             status=ValidationStatus.REJECT,
@@ -423,7 +440,7 @@ def validate(
         data_snapshots[operator.dataset] = requested or dataset.default_version
 
     verification = verify_obligations(
-        evaluation.obligations,
+        normalized_obligations,
         operators,
         boundary_operator=plan.output_operator,
         output_operator=output_operator,

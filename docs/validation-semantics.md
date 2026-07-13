@@ -70,6 +70,36 @@ its own rewriter created it.
 Obligations without a defined IR v1 enforcement are rejected. This prevents a
 validator response from claiming that an ignored obligation was satisfied.
 
+## Obligation normalization and conflicts
+
+After deny-overrides evaluation, at least one matching `PERMIT` rule is
+required; obligations from `NOT_APPLICABLE` rules never grant permission or
+enter normalization. Applicable permit rules may produce duplicate or
+differently strong requirements. TrustAero normalizes them before rewriting,
+using a separate partial order for each supported obligation rather than
+treating every parameter as one numeric scale.
+
+| Obligation | IR v1 normalization rule |
+|---|---|
+| `VERSION_PIN` | parameter-free duplicates collapse to one requirement |
+| `GENERALIZE_LOCATION` | equal field set and method use the largest fixed-grid cell size |
+| `MASK` | equal methods union target fields; incomparable methods on the same field conflict |
+| `MIN_GROUP_SIZE` | use the largest `minimum_count` |
+| `LINEAGE_CAPTURE` | use `none < source < record` |
+
+Unknown parameters are rejected instead of silently ignored. Fixed version
+values/ranges, `field` lineage, execution jurisdictions, and an ExportControl
+strength lattice are not defined in IR v1; normalization does not invent those
+semantics. Unsupported obligation types remain visible and fail closed in the
+rewriter.
+
+The normalized tuple is deterministic, permutation-invariant, and idempotent.
+Its logical suffix order is `VERSION_PIN`, generalization, masking, minimum
+group size, and lineage capture; disjoint masks use method and field names only
+as a deterministic tie-break, not as a strength ranking. Merge provenance
+records source policy IDs and the applied algebra rule internally. It is not
+yet part of the public execution certificate.
+
 ## Obligation rewrite postconditions
 
 Insertion and satisfaction are separate decisions. After rewriting, an

@@ -7,6 +7,7 @@ user request
   -> L1 strict model/schema validation
   -> L2 graph and catalog validation
   -> L3 policy decision and obligation inference
+  -> obligation normalization and conflict detection
   -> deterministic safe rewrite
   -> validated logical plan
   -> future trusted optimizer/executor
