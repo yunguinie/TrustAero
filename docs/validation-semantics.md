@@ -36,6 +36,8 @@ fails closed rather than guessing a replacement from field names.
 | `SpatialJoin` | both inputs spatial with a shared CRS | concatenated inputs | none |
 | `Aggregate` | existing group/input fields and supported function types | group fields followed by named aggregate results | aggregation is not automatic declassification |
 | `GeneralizeLocation` | complete spatial pair | fields with coarser precision metadata | limits disclosed precision |
+| `Mask` | every target field exists | unchanged logical schema in IR v1 | limits disclosed values |
+| `MinGroupSize` | existing aggregate output path | unchanged logical schema | guards grouped output |
 | `LineageCapture` | one valid relation | unchanged | requests lineage capture |
 
 ## Structured expression fragment
@@ -99,6 +101,31 @@ group size, and lineage capture; disjoint masks use method and field names only
 as a deterministic tie-break, not as a strength ranking. Merge provenance
 records source policy IDs and the applied algebra rule internally. It is not
 yet part of the public execution certificate.
+
+This order is a canonical normalization and deterministic rewrite schedule for
+the current logical suffix fragment. It is not a claim that every future
+physical optimizer must execute governance in that order. A physical plan will
+need operator-specific preconditions, dependency checks, and cost reasoning
+before moving any governance operation earlier or later.
+
+## Rewrite rule contracts
+
+IR v1 treats supported rewrites as governance contractions, not ordinary
+relational equivalences. Some operators preserve the visible relation
+(`VERSION_PIN` through resolved bindings and logical `LineageCapture`), while
+others intentionally change what may be observed (`Mask`,
+`GeneralizeLocation`, and `MinGroupSize`). The validator therefore checks that
+the rewritten plan still represents the user's permitted task while satisfying
+the policy obligation; it does not claim `Result(rewritten) = Result(original)`
+for every governance operator.
+
+| Rewrite | Precondition | Allowed effect | Failure mode |
+|---|---|---|---|
+| `VERSION_PIN` | each scanned dataset can resolve a snapshot | binds data versions without changing relation schema | `VERSION_UNRESOLVED` or postcondition failure |
+| `GENERALIZE_LOCATION` | target fields form a complete Catalog-declared spatial pair | coarsens disclosed spatial precision while preserving prior selection | `GENERALIZATION_TARGET_NOT_SPATIAL` or postcondition failure |
+| `MASK` | target fields exist and method is defined | hides target values while retaining the current logical schema in IR v1 | `FIELD_NOT_AVAILABLE`, `MASK_METHOD_CONFLICT`, or postcondition failure |
+| `MIN_GROUP_SIZE` | the candidate output already depends on an `Aggregate` | guards grouped output; it does not invent a group-by for detail queries | `OBLIGATION_CONFLICT` or postcondition failure |
+| `LINEAGE_CAPTURE` | one valid output relation exists | requests evidence capture without changing relation schema | postcondition failure |
 
 ## Obligation rewrite postconditions
 

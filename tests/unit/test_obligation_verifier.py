@@ -16,6 +16,7 @@ from trustaero.ir.enums import (
     ValidationStatus,
 )
 from trustaero.ir.models import (
+    Aggregate,
     CandidatePlan,
     GeneralizeLocation,
     LineageCapture,
@@ -262,3 +263,76 @@ def test_generated_governance_id_avoids_untrusted_candidate_collision(
     ids = [operator.operator_id for operator in result.validated_plan.operators]
     assert len(ids) == len(set(ids))
     assert "gov-001-generalizelocation-1" in ids
+
+
+def test_min_group_size_does_not_rewrite_detail_output(
+    accept_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    """A k-anonymity guard cannot invent grouping for a row-level query."""
+
+    rule = policy_set.rules[0].model_copy(
+        update={
+            "obligations": (
+                Obligation(
+                    obligation_type=ObligationType.MIN_GROUP_SIZE,
+                    parameters={"minimum_count": 5},
+                ),
+            )
+        }
+    )
+    policy = policy_set.model_copy(update={"rules": (rule, *policy_set.rules[1:])})
+
+    result = service.validate(copy.deepcopy(accept_plan), policy, catalog)
+
+    assert result.status == ValidationStatus.REJECT
+    assert result.validated_plan is None
+    assert result.diagnostics[0].code == ReasonCode.OBLIGATION_CONFLICT
+
+
+def test_min_group_size_can_guard_existing_aggregate_output(
+    accept_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    """When grouping is already explicit, the rewrite may append the guard."""
+
+    raw = copy.deepcopy(accept_plan)
+    raw["request_context"]["action"] = "aggregate"
+    raw["operators"] = [
+        raw["operators"][0],
+        {
+            "operator_type": "Aggregate",
+            "operator_id": "op-aggregate",
+            "inputs": ["op1"],
+            "group_by": ["event_time"],
+            "aggregates": [{"function": "count", "output_field": "event_count"}],
+        },
+    ]
+    raw["output_operator"] = "op-aggregate"
+    raw["requested_output"]["fields"] = ["event_time", "event_count"]
+    rule = policy_set.rules[0].model_copy(
+        update={
+            "obligations": (
+                Obligation(
+                    obligation_type=ObligationType.MIN_GROUP_SIZE,
+                    parameters={"minimum_count": 5},
+                ),
+            )
+        }
+    )
+    policy = policy_set.model_copy(update={"rules": (rule, *policy_set.rules[1:])})
+
+    result = service.validate(raw, policy, catalog)
+
+    assert result.status == ValidationStatus.REWRITE
+    assert result.validated_plan is not None
+    assert any(isinstance(operator, Aggregate) for operator in result.validated_plan.operators)
+    guards = [
+        operator
+        for operator in result.validated_plan.operators
+        if isinstance(operator, MinGroupSize)
+    ]
+    assert len(guards) == 1
+    assert guards[0].minimum_count == 5

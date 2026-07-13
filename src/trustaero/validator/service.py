@@ -17,6 +17,7 @@ from pydantic import ValidationError
 from trustaero.catalog.models import Catalog
 from trustaero.ir.enums import ObligationType, PolicyDecision, ReasonCode, ValidationStatus
 from trustaero.ir.models import (
+    Aggregate,
     CandidatePlan,
     Diagnostic,
     GeneralizeLocation,
@@ -178,6 +179,32 @@ def _canonical_digest(
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
 
 
+def _output_depends_on_aggregate(plan: CandidatePlan) -> bool:
+    """Return whether the declared output path already contains aggregation.
+
+    ``MIN_GROUP_SIZE`` is a group-level privacy obligation. TrustAero IR v1 may
+    guard an existing aggregate result, but it must not silently convert a
+    detailed row-level query into a grouped query because that would change the
+    user's task semantics without an explicit grouping contract.
+    """
+
+    by_id = {operator.operator_id: operator for operator in plan.operators}
+    visited: set[str] = set()
+
+    def visit(operator_id: str) -> bool:
+        if operator_id in visited:
+            return False
+        visited.add(operator_id)
+        operator = by_id.get(operator_id)
+        if operator is None:
+            return False
+        if isinstance(operator, Aggregate):
+            return True
+        return any(visit(parent_id) for parent_id in operator.inputs)
+
+    return visit(plan.output_operator)
+
+
 @dataclass(frozen=True)
 class RewriteOutcome:
     """Result of applying obligations without mutating the candidate plan."""
@@ -219,6 +246,19 @@ def _rewrite_obligations(
                     ),
                 )
             continue
+        if obligation_type == ObligationType.MIN_GROUP_SIZE and not _output_depends_on_aggregate(
+            plan
+        ):
+            return RewriteOutcome(
+                tuple(operators),
+                current_output,
+                tuple(reasons),
+                _diagnostic(
+                    ReasonCode.OBLIGATION_CONFLICT,
+                    "MIN_GROUP_SIZE requires an existing Aggregate on the output path in IR v1.",
+                    obligation_type=obligation_type.value,
+                ),
+            )
         operator_type = {
             ObligationType.MASK: "Mask",
             ObligationType.GENERALIZE_LOCATION: "GeneralizeLocation",
