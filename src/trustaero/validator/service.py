@@ -31,6 +31,7 @@ from trustaero.ir.models import (
     ValidatorResponse,
 )
 from trustaero.policy.evaluator import Evaluation, evaluate_policy
+from trustaero.validator.obligations import verify_obligations
 from trustaero.validator.type_checker import type_check_plan
 
 
@@ -161,9 +162,16 @@ def validate_graph(plan: CandidatePlan) -> tuple[Diagnostic, ...]:
     return tuple(diagnostics)
 
 
-def _canonical_digest(plan: CandidatePlan, operators: tuple[Operator, ...]) -> str:
+def _canonical_digest(
+    plan: CandidatePlan,
+    operators: tuple[Operator, ...],
+    output_operator: str,
+) -> str:
+    """Hash the complete rewritten logical shape, including its final output."""
+
     payload = plan.model_dump(mode="json")
     payload["operators"] = [operator.model_dump(mode="json") for operator in operators]
+    payload["output_operator"] = output_operator
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
 
@@ -173,8 +181,8 @@ class RewriteOutcome:
     """Result of applying obligations without mutating the candidate plan."""
 
     operators: tuple[Operator, ...]
+    output_operator: str
     reasons: tuple[ReasonCode, ...]
-    satisfied: tuple[ObligationType, ...]
     error: Diagnostic | None = None
 
 
@@ -188,7 +196,7 @@ def _rewrite_obligations(plan: CandidatePlan, evaluation: Evaluation) -> Rewrite
     operators: list[Operator] = list(plan.operators)
     current_output = plan.output_operator
     reasons: list[ReasonCode] = []
-    satisfied: list[ObligationType] = []
+    used_ids = {operator.operator_id for operator in operators}
 
     for index, obligation in enumerate(evaluation.obligations, start=1):
         obligation_type = obligation.obligation_type
@@ -198,15 +206,14 @@ def _rewrite_obligations(plan: CandidatePlan, evaluation: Evaluation) -> Rewrite
             if obligation.parameters:
                 return RewriteOutcome(
                     tuple(operators),
+                    current_output,
                     tuple(reasons),
-                    tuple(satisfied),
                     _diagnostic(
                         ReasonCode.OBLIGATION_CONFLICT,
                         "Parameterized VERSION_PIN is not supported in IR v1.",
                         parameters=obligation.parameters,
                     ),
                 )
-            satisfied.append(obligation_type)
             continue
         operator_type = {
             ObligationType.MASK: "Mask",
@@ -219,15 +226,22 @@ def _rewrite_obligations(plan: CandidatePlan, evaluation: Evaluation) -> Rewrite
             # enforcing its conditions, so unsupported semantics fail closed.
             return RewriteOutcome(
                 tuple(operators),
+                current_output,
                 tuple(reasons),
-                tuple(satisfied),
                 _diagnostic(
                     ReasonCode.OBLIGATION_CONFLICT,
                     "Policy obligation has no safe IR v1 implementation.",
                     obligation_type=obligation_type.value,
                 ),
             )
-        operator_id = f"gov-{index:03d}-{operator_type.lower()}"
+        base_id = f"gov-{index:03d}-{operator_type.lower()}"
+        operator_id = base_id
+        collision_index = 1
+        # Candidate IDs are untrusted. Pick a deterministic unused suffix so an
+        # agent cannot collide with a governance operator by reserving its ID.
+        while operator_id in used_ids:
+            operator_id = f"{base_id}-{collision_index}"
+            collision_index += 1
         params = obligation.parameters
         try:
             if obligation_type == ObligationType.MASK:
@@ -268,8 +282,8 @@ def _rewrite_obligations(plan: CandidatePlan, evaluation: Evaluation) -> Rewrite
         except (KeyError, TypeError, ValidationError) as exc:
             return RewriteOutcome(
                 tuple(operators),
+                current_output,
                 tuple(reasons),
-                tuple(satisfied),
                 _diagnostic(
                     ReasonCode.OBLIGATION_CONFLICT,
                     "Policy obligation parameters are invalid or incomplete.",
@@ -278,9 +292,9 @@ def _rewrite_obligations(plan: CandidatePlan, evaluation: Evaluation) -> Rewrite
                 ),
             )
         operators.append(new_operator)
+        used_ids.add(operator_id)
         current_output = operator_id
-        satisfied.append(obligation_type)
-    return RewriteOutcome(tuple(operators), tuple(reasons), tuple(satisfied))
+    return RewriteOutcome(tuple(operators), current_output, tuple(reasons))
 
 
 def validate(
@@ -356,17 +370,23 @@ def validate(
         )
     operators = rewrite.operators
     rewrite_reasons = rewrite.reasons
-    output_operator = operators[-1].operator_id if rewrite_reasons else plan.output_operator
+    output_operator = rewrite.output_operator
 
-    # Rewrites are not trusted merely because TrustAero produced them. Running
-    # the same transfer rules again prevents an invalid obligation parameter or
-    # future rewrite rule from creating a falsely "validated" logical plan.
-    rewritten_types = type_check_plan(
-        plan,
-        catalog,
-        operators=operators,
-        output_operator=output_operator,
+    # Rewrites are not trusted merely because TrustAero produced them. Recheck
+    # both graph invariants and schema transfer rules over the complete result.
+    rewritten_plan = plan.model_copy(
+        update={"operators": operators, "output_operator": output_operator}
     )
+    rewritten_graph_diagnostics = validate_graph(rewritten_plan)
+    if rewritten_graph_diagnostics:
+        return ValidatorResponse(
+            status=ValidationStatus.REJECT,
+            candidate_plan_id=plan.plan_id,
+            policy_decision=evaluation.decision,
+            diagnostics=rewritten_graph_diagnostics,
+        )
+
+    rewritten_types = type_check_plan(rewritten_plan, catalog)
     if rewritten_types.diagnostics:
         return ValidatorResponse(
             status=ValidationStatus.REJECT,
@@ -402,7 +422,22 @@ def validate(
             )
         data_snapshots[operator.dataset] = requested or dataset.default_version
 
-    digest = _canonical_digest(plan, operators)
+    verification = verify_obligations(
+        evaluation.obligations,
+        operators,
+        boundary_operator=plan.output_operator,
+        output_operator=output_operator,
+        data_snapshots=data_snapshots,
+    )
+    if verification.diagnostics:
+        return ValidatorResponse(
+            status=ValidationStatus.REJECT,
+            candidate_plan_id=plan.plan_id,
+            policy_decision=evaluation.decision,
+            diagnostics=verification.diagnostics,
+        )
+
+    digest = _canonical_digest(plan, operators, output_operator)
     logical_plan = ValidatedLogicalPlan(
         logical_plan_id="pl-" + digest.split(":", 1)[1][:16],
         candidate_plan_id=plan.plan_id,
@@ -416,7 +451,7 @@ def validate(
         ),
         # Report only obligations actually enforced by an inserted operator or
         # by the snapshot binding logic above.
-        satisfied_obligations=rewrite.satisfied,
+        satisfied_obligations=verification.satisfied,
         validation=ValidationSummary(
             rounds=2 if rewrite_reasons else 1,
             reason_codes=rewrite_reasons,

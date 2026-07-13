@@ -218,7 +218,8 @@ class Aggregate(OperatorBase):
 
 class Mask(OperatorBase):
     operator_type: Literal["Mask"]
-    fields: tuple[str, ...]
+    # An empty target would be a no-op and must not satisfy a masking policy.
+    fields: tuple[str, ...] = Field(min_length=1)
     method: Literal["redact", "hash", "null"] = "redact"
 
 

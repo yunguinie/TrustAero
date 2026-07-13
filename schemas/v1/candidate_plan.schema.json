@@ -483,6 +483,7 @@
           "items": {
             "type": "string"
           },
+          "minItems": 1,
           "title": "Fields",
           "type": "array"
         },

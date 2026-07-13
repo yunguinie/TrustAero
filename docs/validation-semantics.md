@@ -62,12 +62,34 @@ The repository has not published IR v1 as a stable external release. Replacing
 the earlier local free-form draft is therefore an intentional schema-breaking
 prototype change, recorded before any compatibility promise is made.
 
-Every obligation rewrite is checked again by the same schema-transfer rules.
-TrustAero does not trust a generated operator merely because its own rewriter
-created it.
+Every obligation rewrite is checked again by the same graph invariants and
+schema-transfer rules. Generated operator IDs deterministically avoid all
+untrusted candidate IDs. TrustAero does not trust an operator merely because
+its own rewriter created it.
 
 Obligations without a defined IR v1 enforcement are rejected. This prevents a
 validator response from claiming that an ignored obligation was satisfied.
+
+## Obligation rewrite postconditions
+
+Insertion and satisfaction are separate decisions. After rewriting, an
+independent verifier walks backward from the validated output to the untrusted
+candidate's original output. Only a unary enforcement suffix on that path may
+satisfy an obligation; an unused operator on another branch does not count.
+
+| Obligation | Verified postcondition |
+|---|---|
+| `VERSION_PIN` | every scanned dataset has a non-empty resolved snapshot binding |
+| `MASK` | a suffix `Mask` covers all required fields with the required method |
+| `GENERALIZE_LOCATION` | a suffix generalizer covers the fields, preserves selection, uses the required method, and has at least the required fixed-grid cell size |
+| `MIN_GROUP_SIZE` | a suffix guard has `minimum_count` greater than or equal to the requirement |
+| `LINEAGE_CAPTURE` | suffix lineage strength is at least `source < record` |
+
+Malformed parameters, a broken output chain, a weaker enforcer, or an absent
+enforcer returns `OBLIGATION_NOT_ENFORCED`. Only obligations proven by this
+postcondition pass are copied into `satisfied_obligations`. This is an
+executable safety check for the bounded IR fragment, not yet a general formal
+proof or evidence that a physical DBMS executed the operator correctly.
 
 ## Query scope versus disclosed precision
 
