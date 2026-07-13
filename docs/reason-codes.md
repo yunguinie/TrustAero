@@ -11,6 +11,8 @@ The following L2 codes distinguish root plan-semantic failures:
 | `UNKNOWN_FIELD` | requested field never occurs in a scanned dataset |
 | `FIELD_NOT_AVAILABLE` | a field is absent at the operator where it is used, often after projection |
 | `DUPLICATE_OUTPUT_FIELD` | one operator declares the same output name more than once |
+| `EXPRESSION_TYPE_MISMATCH` | a structured comparison uses incompatible logical types or undefined ordering semantics |
+| `AGGREGATE_TYPE_NOT_SUPPORTED` | an aggregate function is undefined for its input field's logical type |
 | `JOIN_KEY_TYPE_MISMATCH` | left and right join keys have different logical types |
 | `AMBIGUOUS_OUTPUT_FIELD` | two join inputs expose the same unaliased field name |
 | `SPATIAL_FIELD_REQUIRED` | an operator lacks a complete Catalog-declared coordinate pair |

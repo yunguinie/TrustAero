@@ -12,17 +12,8 @@ from typing import Protocol
 
 from pydantic import Field, model_validator
 
+from trustaero.ir.enums import DataType
 from trustaero.ir.models import StrictModel
-
-
-class DataType(StrEnum):
-    """Small logical type fragment supported by the Phase A checker."""
-
-    STRING = "string"
-    INTEGER = "integer"
-    FLOAT = "float"
-    BOOLEAN = "boolean"
-    DATETIME = "datetime"
 
 
 class FieldRole(StrEnum):

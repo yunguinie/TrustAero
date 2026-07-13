@@ -31,15 +31,36 @@ fails closed rather than guessing a replacement from field names.
 | `Project` | every requested field exists | selected fields in request order | may remove sensitive/capability fields |
 | `SpatialFilter` | complete spatial pair with matching CRS | unchanged | none |
 | `TemporalFilter` | temporal `DATETIME` field and `start < end` | unchanged | none |
+| `Filter` | structured, well-typed boolean predicate | unchanged | none |
 | `Join` | two existing, equal-type keys; unambiguous names | concatenated inputs | none |
 | `SpatialJoin` | both inputs spatial with a shared CRS | concatenated inputs | none |
+| `Aggregate` | existing group/input fields and supported function types | group fields followed by named aggregate results | aggregation is not automatic declassification |
 | `GeneralizeLocation` | complete spatial pair | fields with coarser precision metadata | limits disclosed precision |
 | `LineageCapture` | one valid relation | unchanged | requests lineage capture |
 
-`Filter.expression` and `Aggregate.aggregates` are still free-form strings in
-IR v1. TrustAero returns `OPERATOR_SEMANTICS_UNSUPPORTED` for them instead of
-claiming a sound type derivation. Their next IR revision must use structured
-expressions before those operators enter the trusted fragment.
+## Structured expression fragment
+
+`Filter.expression` is no longer an opaque SQL-like string. The accepted IR v1
+fragment compares a bound field with a typed literal and combines at least two
+comparisons using one flat `and` or `or` group. Equality supports identical
+logical types, numeric comparisons allow integer/float compatibility, and
+ordering supports numeric or timezone-qualified datetime values. String
+ordering is rejected because the IR does not yet carry collation semantics.
+
+`Aggregate.aggregates` contains named calls to `count`, `sum`, `avg`, `min`, or
+`max`. `sum` and `avg` require numeric inputs; `min` and `max` accept numeric or
+datetime inputs. `count` may omit its input to represent `COUNT(*)`. Grouping
+fields and aggregate aliases form a new relation schema, so an ungrouped source
+field does not silently survive the aggregate.
+
+This bounded fragment deliberately excludes arithmetic, null semantics,
+field-to-field comparison, arbitrary functions, nested boolean trees, and
+collation-dependent string ordering. Unsupported syntax fails structurally;
+TrustAero does not claim to validate semantics it has not defined.
+
+The repository has not published IR v1 as a stable external release. Replacing
+the earlier local free-form draft is therefore an intentional schema-breaking
+prototype change, recorded before any compatibility promise is made.
 
 Every obligation rewrite is checked again by the same schema-transfer rules.
 TrustAero does not trust a generated operator merely because its own rewriter

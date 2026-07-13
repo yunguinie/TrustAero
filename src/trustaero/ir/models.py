@@ -10,9 +10,18 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, PositiveFloat, field_validator
+from pydantic import BaseModel, ConfigDict, Field, PositiveFloat, field_validator, model_validator
 
-from .enums import LineageLevel, ObligationType, PolicyDecision, ReasonCode, ValidationStatus
+from .enums import (
+    AggregateFunction,
+    ComparisonOperator,
+    DataType,
+    LineageLevel,
+    ObligationType,
+    PolicyDecision,
+    ReasonCode,
+    ValidationStatus,
+)
 
 
 class StrictModel(BaseModel):
@@ -93,9 +102,80 @@ class TemporalFilter(OperatorBase):
     end: datetime
 
 
+class FieldExpression(StrictModel):
+    """Reference a field in the current input relation schema."""
+
+    expression_type: Literal["field"]
+    field: str = Field(min_length=1)
+
+
+class LiteralExpression(StrictModel):
+    """A typed scalar constant; datetime values use ISO-8601 strings."""
+
+    expression_type: Literal["literal"]
+    data_type: DataType
+    value: str | int | float | bool
+
+    @model_validator(mode="after")
+    def value_must_match_declared_type(self) -> LiteralExpression:
+        """Prevent a plan from lying about a literal's logical type."""
+
+        value_type = type(self.value)
+        valid = {
+            DataType.STRING: value_type is str,
+            DataType.INTEGER: value_type is int,
+            DataType.FLOAT: value_type in (int, float),
+            DataType.BOOLEAN: value_type is bool,
+            DataType.DATETIME: value_type is str,
+        }[self.data_type]
+        if not valid:
+            raise ValueError("literal value does not match its declared data_type")
+        if self.data_type == DataType.DATETIME:
+            try:
+                parsed = datetime.fromisoformat(str(self.value).replace("Z", "+00:00"))
+            except ValueError as exc:
+                raise ValueError("datetime literal must be ISO-8601") from exc
+            if parsed.utcoffset() is None:
+                raise ValueError("datetime literal must include a UTC offset")
+        return self
+
+
+class ComparisonExpression(StrictModel):
+    """Compare one bound field with one typed literal.
+
+    Field-to-field comparisons and arithmetic are intentionally absent from
+    the first trusted fragment; they require additional coercion semantics.
+    """
+
+    expression_type: Literal["comparison"]
+    operator: ComparisonOperator
+    left: FieldExpression
+    right: LiteralExpression
+    negated: bool = False
+
+
+class BooleanExpression(StrictModel):
+    """A deliberately flat boolean fragment for deterministic Phase A checks.
+
+    Nested arbitrary expression trees are deferred until the small fragment is
+    validated experimentally. ``negated`` represents NOT over the whole group.
+    """
+
+    expression_type: Literal["boolean"]
+    operator: Literal["and", "or"]
+    operands: tuple[ComparisonExpression, ...] = Field(min_length=2)
+    negated: bool = False
+
+
+PredicateExpression = Annotated[
+    ComparisonExpression | BooleanExpression,
+    Field(discriminator="expression_type"),
+]
+
+
 class Filter(OperatorBase):
     operator_type: Literal["Filter"]
-    expression: str
+    expression: PredicateExpression
 
 
 class Join(OperatorBase):
@@ -116,10 +196,24 @@ class Project(OperatorBase):
     fields: tuple[str, ...]
 
 
+class AggregateExpression(StrictModel):
+    """One named aggregate result in the supported relational fragment."""
+
+    function: AggregateFunction
+    input_field: str | None = None
+    output_field: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def input_field_must_match_function(self) -> AggregateExpression:
+        if self.function != AggregateFunction.COUNT and self.input_field is None:
+            raise ValueError("non-COUNT aggregates require input_field")
+        return self
+
+
 class Aggregate(OperatorBase):
     operator_type: Literal["Aggregate"]
     group_by: tuple[str, ...]
-    aggregates: tuple[str, ...]
+    aggregates: tuple[AggregateExpression, ...] = Field(min_length=1)
 
 
 class Mask(OperatorBase):

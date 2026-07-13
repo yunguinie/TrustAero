@@ -5,8 +5,9 @@
       "properties": {
         "aggregates": {
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/AggregateExpression"
           },
+          "minItems": 1,
           "title": "Aggregates",
           "type": "array"
         },
@@ -43,6 +44,145 @@
       ],
       "title": "Aggregate",
       "type": "object"
+    },
+    "AggregateExpression": {
+      "additionalProperties": false,
+      "description": "One named aggregate result in the supported relational fragment.",
+      "properties": {
+        "function": {
+          "$ref": "#/$defs/AggregateFunction"
+        },
+        "input_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Field"
+        },
+        "output_field": {
+          "minLength": 1,
+          "title": "Output Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "function",
+        "output_field"
+      ],
+      "title": "AggregateExpression",
+      "type": "object"
+    },
+    "AggregateFunction": {
+      "enum": [
+        "count",
+        "sum",
+        "avg",
+        "min",
+        "max"
+      ],
+      "title": "AggregateFunction",
+      "type": "string"
+    },
+    "BooleanExpression": {
+      "additionalProperties": false,
+      "description": "A deliberately flat boolean fragment for deterministic Phase A checks.\n\nNested arbitrary expression trees are deferred until the small fragment is\nvalidated experimentally. ``negated`` represents NOT over the whole group.",
+      "properties": {
+        "expression_type": {
+          "const": "boolean",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "negated": {
+          "default": false,
+          "title": "Negated",
+          "type": "boolean"
+        },
+        "operands": {
+          "items": {
+            "$ref": "#/$defs/ComparisonExpression"
+          },
+          "minItems": 2,
+          "title": "Operands",
+          "type": "array"
+        },
+        "operator": {
+          "enum": [
+            "and",
+            "or"
+          ],
+          "title": "Operator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expression_type",
+        "operator",
+        "operands"
+      ],
+      "title": "BooleanExpression",
+      "type": "object"
+    },
+    "ComparisonExpression": {
+      "additionalProperties": false,
+      "description": "Compare one bound field with one typed literal.\n\nField-to-field comparisons and arithmetic are intentionally absent from\nthe first trusted fragment; they require additional coercion semantics.",
+      "properties": {
+        "expression_type": {
+          "const": "comparison",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "left": {
+          "$ref": "#/$defs/FieldExpression"
+        },
+        "negated": {
+          "default": false,
+          "title": "Negated",
+          "type": "boolean"
+        },
+        "operator": {
+          "$ref": "#/$defs/ComparisonOperator"
+        },
+        "right": {
+          "$ref": "#/$defs/LiteralExpression"
+        }
+      },
+      "required": [
+        "expression_type",
+        "operator",
+        "left",
+        "right"
+      ],
+      "title": "ComparisonExpression",
+      "type": "object"
+    },
+    "ComparisonOperator": {
+      "enum": [
+        "eq",
+        "ne",
+        "gt",
+        "ge",
+        "lt",
+        "le"
+      ],
+      "title": "ComparisonOperator",
+      "type": "string"
+    },
+    "DataType": {
+      "description": "Logical scalar types shared by Catalog metadata and typed expressions.",
+      "enum": [
+        "string",
+        "integer",
+        "float",
+        "boolean",
+        "datetime"
+      ],
+      "title": "DataType",
+      "type": "string"
     },
     "ExportRequest": {
       "additionalProperties": false,
@@ -85,12 +225,48 @@
       "title": "ExportRequest",
       "type": "object"
     },
+    "FieldExpression": {
+      "additionalProperties": false,
+      "description": "Reference a field in the current input relation schema.",
+      "properties": {
+        "expression_type": {
+          "const": "field",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "field": {
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expression_type",
+        "field"
+      ],
+      "title": "FieldExpression",
+      "type": "object"
+    },
     "Filter": {
       "additionalProperties": false,
       "properties": {
         "expression": {
-          "title": "Expression",
-          "type": "string"
+          "discriminator": {
+            "mapping": {
+              "boolean": "#/$defs/BooleanExpression",
+              "comparison": "#/$defs/ComparisonExpression"
+            },
+            "propertyName": "expression_type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ComparisonExpression"
+            },
+            {
+              "$ref": "#/$defs/BooleanExpression"
+            }
+          ],
+          "title": "Expression"
         },
         "inputs": {
           "default": [],
@@ -262,6 +438,44 @@
       "title": "LineageLevel",
       "type": "string"
     },
+    "LiteralExpression": {
+      "additionalProperties": false,
+      "description": "A typed scalar constant; datetime values use ISO-8601 strings.",
+      "properties": {
+        "data_type": {
+          "$ref": "#/$defs/DataType"
+        },
+        "expression_type": {
+          "const": "literal",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "expression_type",
+        "data_type",
+        "value"
+      ],
+      "title": "LiteralExpression",
+      "type": "object"
+    },
     "Mask": {
       "additionalProperties": false,
       "properties": {
@@ -414,6 +628,8 @@
         "AMBIGUOUS_OUTPUT_FIELD",
         "GENERALIZATION_TARGET_NOT_SPATIAL",
         "OPERATOR_SEMANTICS_UNSUPPORTED",
+        "EXPRESSION_TYPE_MISMATCH",
+        "AGGREGATE_TYPE_NOT_SUPPORTED",
         "PURPOSE_MISSING",
         "POLICY_DENIED",
         "POLICY_INDETERMINATE",

@@ -7,6 +7,33 @@
 from enum import StrEnum
 
 
+class DataType(StrEnum):
+    """Logical scalar types shared by Catalog metadata and typed expressions."""
+
+    STRING = "string"
+    INTEGER = "integer"
+    FLOAT = "float"
+    BOOLEAN = "boolean"
+    DATETIME = "datetime"
+
+
+class ComparisonOperator(StrEnum):
+    EQ = "eq"
+    NE = "ne"
+    GT = "gt"
+    GE = "ge"
+    LT = "lt"
+    LE = "le"
+
+
+class AggregateFunction(StrEnum):
+    COUNT = "count"
+    SUM = "sum"
+    AVG = "avg"
+    MIN = "min"
+    MAX = "max"
+
+
 class PolicyDecision(StrEnum):
     """XACML-inspired policy decisions; not TrustAero validation outcomes."""
 
@@ -64,6 +91,8 @@ class ReasonCode(StrEnum):
     AMBIGUOUS_OUTPUT_FIELD = "AMBIGUOUS_OUTPUT_FIELD"
     GENERALIZATION_TARGET_NOT_SPATIAL = "GENERALIZATION_TARGET_NOT_SPATIAL"
     OPERATOR_SEMANTICS_UNSUPPORTED = "OPERATOR_SEMANTICS_UNSUPPORTED"
+    EXPRESSION_TYPE_MISMATCH = "EXPRESSION_TYPE_MISMATCH"
+    AGGREGATE_TYPE_NOT_SUPPORTED = "AGGREGATE_TYPE_NOT_SUPPORTED"
     PURPOSE_MISSING = "PURPOSE_MISSING"
     POLICY_DENIED = "POLICY_DENIED"
     POLICY_INDETERMINATE = "POLICY_INDETERMINATE"

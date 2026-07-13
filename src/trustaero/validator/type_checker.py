@@ -13,15 +13,17 @@ from typing import Any
 
 from trustaero.catalog.models import (
     Catalog,
-    DataType,
     FieldDescriptor,
     FieldRole,
     SpatialDescriptor,
 )
-from trustaero.ir.enums import ReasonCode
+from trustaero.ir.enums import AggregateFunction, ComparisonOperator, DataType, ReasonCode
 from trustaero.ir.models import (
     Aggregate,
+    AggregateExpression,
+    BooleanExpression,
     CandidatePlan,
+    ComparisonExpression,
     Diagnostic,
     Filter,
     GeneralizeLocation,
@@ -113,6 +115,143 @@ def _merge_inputs(
             ),
         )
     return RelationSchema(left.fields + right.fields, left.spatial + right.spatial), ()
+
+
+def _types_are_comparable(left: DataType, right: DataType, operator: ComparisonOperator) -> bool:
+    """Return whether the small IR fragment defines this comparison."""
+
+    numeric = {DataType.INTEGER, DataType.FLOAT}
+    if left in numeric and right in numeric:
+        return True
+    if operator in (ComparisonOperator.EQ, ComparisonOperator.NE):
+        return left == right
+    # Ordering strings would depend on collation, which IR v1 does not model.
+    return left == right == DataType.DATETIME
+
+
+def _check_comparison(
+    expression: ComparisonExpression,
+    schema: RelationSchema,
+    operator_id: str,
+) -> tuple[Diagnostic, ...]:
+    field = schema.get(expression.left.field)
+    if field is None:
+        return (
+            _diagnostic(
+                ReasonCode.FIELD_NOT_AVAILABLE,
+                "Filter expression references a field absent from its input schema.",
+                operator_id,
+                field=expression.left.field,
+                available_fields=schema.names,
+            ),
+        )
+    literal_type = expression.right.data_type
+    if not _types_are_comparable(field.data_type, literal_type, expression.operator):
+        return (
+            _diagnostic(
+                ReasonCode.EXPRESSION_TYPE_MISMATCH,
+                "Filter comparison has incompatible operand types.",
+                operator_id,
+                field=expression.left.field,
+                field_type=field.data_type.value,
+                literal_type=literal_type.value,
+                comparison=expression.operator.value,
+            ),
+        )
+    return ()
+
+
+def _check_predicate(
+    expression: ComparisonExpression | BooleanExpression,
+    schema: RelationSchema,
+    operator_id: str,
+) -> tuple[Diagnostic, ...]:
+    """Validate a structured predicate; every accepted node is boolean."""
+
+    if isinstance(expression, ComparisonExpression):
+        return _check_comparison(expression, schema, operator_id)
+    diagnostics: list[Diagnostic] = []
+    for operand in expression.operands:
+        diagnostics.extend(_check_comparison(operand, schema, operator_id))
+    return tuple(diagnostics)
+
+
+def _aggregate_output(
+    expression: AggregateExpression,
+    input_schema: RelationSchema,
+    operator_id: str,
+) -> tuple[FieldDescriptor | None, tuple[Diagnostic, ...]]:
+    """Infer one aggregate alias using conservative sensitivity propagation."""
+
+    source = (
+        input_schema.get(expression.input_field) if expression.input_field is not None else None
+    )
+    if expression.input_field is not None and source is None:
+        return None, (
+            _diagnostic(
+                ReasonCode.FIELD_NOT_AVAILABLE,
+                "Aggregate input field is absent from its input schema.",
+                operator_id,
+                field=expression.input_field,
+                available_fields=input_schema.names,
+            ),
+        )
+
+    function = expression.function
+    if function == AggregateFunction.COUNT:
+        return (
+            FieldDescriptor(
+                name=expression.output_field,
+                data_type=DataType.INTEGER,
+                nullable=False,
+                sensitive=source.sensitive if source is not None else False,
+            ),
+            (),
+        )
+
+    # The model guarantees non-COUNT calls have an input field.
+    assert source is not None
+    numeric = source.data_type in (DataType.INTEGER, DataType.FLOAT)
+    comparable = source.data_type in (
+        DataType.INTEGER,
+        DataType.FLOAT,
+        DataType.DATETIME,
+    )
+    if function in (AggregateFunction.SUM, AggregateFunction.AVG) and not numeric:
+        return None, (
+            _diagnostic(
+                ReasonCode.AGGREGATE_TYPE_NOT_SUPPORTED,
+                "SUM and AVG require a numeric input field.",
+                operator_id,
+                field=source.name,
+                data_type=source.data_type.value,
+                function=function.value,
+            ),
+        )
+    if function in (AggregateFunction.MIN, AggregateFunction.MAX) and not comparable:
+        return None, (
+            _diagnostic(
+                ReasonCode.AGGREGATE_TYPE_NOT_SUPPORTED,
+                "MIN and MAX support numeric or datetime fields in IR v1.",
+                operator_id,
+                field=source.name,
+                data_type=source.data_type.value,
+                function=function.value,
+            ),
+        )
+
+    output_type = DataType.FLOAT if function == AggregateFunction.AVG else source.data_type
+    return (
+        FieldDescriptor(
+            name=expression.output_field,
+            data_type=output_type,
+            nullable=True,
+            # Aggregation is not automatically anonymization. Conservatively
+            # retain sensitivity until a policy rule explicitly declassifies it.
+            sensitive=source.sensitive,
+        ),
+        (),
+    )
 
 
 def _infer_operator(
@@ -232,6 +371,17 @@ def _infer_operator(
             )
         return input_schema, ()
 
+    if isinstance(operator, Filter):
+        filter_diagnostics = _check_predicate(
+            operator.expression,
+            input_schema,
+            operator.operator_id,
+        )
+        if filter_diagnostics:
+            return None, filter_diagnostics
+        # A predicate changes row membership, not the relation schema.
+        return input_schema, ()
+
     if isinstance(operator, Join):
         left, right = inputs
         left_key = left.get(operator.left_field)
@@ -289,6 +439,54 @@ def _infer_operator(
             )
         return _merge_inputs(operator, left, right)
 
+    if isinstance(operator, Aggregate):
+        declared_names = list(operator.group_by) + [
+            aggregate.output_field for aggregate in operator.aggregates
+        ]
+        duplicates = sorted(name for name in set(declared_names) if declared_names.count(name) > 1)
+        if duplicates:
+            return None, (
+                _diagnostic(
+                    ReasonCode.DUPLICATE_OUTPUT_FIELD,
+                    "Aggregate group fields and output aliases must be unique.",
+                    operator.operator_id,
+                    fields=duplicates,
+                ),
+            )
+
+        missing_groups = [name for name in operator.group_by if input_schema.get(name) is None]
+        if missing_groups:
+            return None, (
+                _diagnostic(
+                    ReasonCode.FIELD_NOT_AVAILABLE,
+                    "Aggregate group field is absent from its input schema.",
+                    operator.operator_id,
+                    fields=missing_groups,
+                    available_fields=input_schema.names,
+                ),
+            )
+
+        group_fields = tuple(input_schema.get(name) for name in operator.group_by)
+        output_fields: list[FieldDescriptor] = [
+            field for field in group_fields if field is not None
+        ]
+        aggregate_diagnostics: list[Diagnostic] = []
+        for aggregate in operator.aggregates:
+            output, errors = _aggregate_output(
+                aggregate,
+                input_schema,
+                operator.operator_id,
+            )
+            aggregate_diagnostics.extend(errors)
+            if output is not None:
+                output_fields.append(output)
+        if aggregate_diagnostics:
+            return None, tuple(aggregate_diagnostics)
+
+        selected = set(operator.group_by)
+        aggregate_spatial = _project_spatial(input_schema.spatial, selected)
+        return RelationSchema(tuple(output_fields), aggregate_spatial), ()
+
     if isinstance(operator, GeneralizeLocation):
         missing = [name for name in operator.fields if input_schema.get(name) is None]
         if missing:
@@ -341,16 +539,6 @@ def _infer_operator(
 
     if isinstance(operator, (MinGroupSize, LineageCapture)):
         return input_schema, ()
-
-    if isinstance(operator, (Filter, Aggregate)):
-        return None, (
-            _diagnostic(
-                ReasonCode.OPERATOR_SEMANTICS_UNSUPPORTED,
-                "Free-form expressions cannot be type-checked soundly in IR v1.",
-                operator.operator_id,
-                operator_type=operator.operator_type,
-            ),
-        )
 
     return None, (
         _diagnostic(
