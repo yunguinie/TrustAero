@@ -1,0 +1,213 @@
+{
+  "$defs": {
+    "LineageInstrumentationSpec": {
+      "additionalProperties": false,
+      "description": "Validated logical-plan instrumentation that a physical plan must realize.",
+      "properties": {
+        "capture_mode": {
+          "const": "logical_suffix",
+          "default": "logical_suffix",
+          "title": "Capture Mode",
+          "type": "string"
+        },
+        "capture_operator": {
+          "title": "Capture Operator",
+          "type": "string"
+        },
+        "level": {
+          "$ref": "#/$defs/LineageLevel"
+        },
+        "target_operator": {
+          "title": "Target Operator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "target_operator",
+        "capture_operator"
+      ],
+      "title": "LineageInstrumentationSpec",
+      "type": "object"
+    },
+    "LineageLevel": {
+      "enum": [
+        "none",
+        "source",
+        "record"
+      ],
+      "title": "LineageLevel",
+      "type": "string"
+    },
+    "ObligationType": {
+      "enum": [
+        "VERSION_PIN",
+        "MASK",
+        "GENERALIZE_LOCATION",
+        "MIN_GROUP_SIZE",
+        "EXPORT_CONTROL",
+        "LINEAGE_CAPTURE"
+      ],
+      "title": "ObligationType",
+      "type": "string"
+    },
+    "PhysicalOperatorSpec": {
+      "additionalProperties": false,
+      "description": "Backend-facing operator placeholder derived from a validated operator.",
+      "properties": {
+        "backend": {
+          "const": "not_bound",
+          "default": "not_bound",
+          "title": "Backend",
+          "type": "string"
+        },
+        "implementation_status": {
+          "default": "logical_only",
+          "enum": [
+            "logical_only",
+            "requires_backend"
+          ],
+          "title": "Implementation Status",
+          "type": "string"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "logical_operator_id": {
+          "title": "Logical Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "title": "Operator Type",
+          "type": "string"
+        },
+        "physical_operator_id": {
+          "title": "Physical Operator Id",
+          "type": "string"
+        },
+        "unimplemented_features": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Unimplemented Features",
+          "type": "array"
+        }
+      },
+      "required": [
+        "physical_operator_id",
+        "logical_operator_id",
+        "operator_type"
+      ],
+      "title": "PhysicalOperatorSpec",
+      "type": "object"
+    },
+    "SnapshotBindings": {
+      "additionalProperties": false,
+      "properties": {
+        "data_snapshots": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Data Snapshots",
+          "type": "object"
+        },
+        "policy_snapshot": {
+          "title": "Policy Snapshot",
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_snapshot",
+        "data_snapshots"
+      ],
+      "title": "SnapshotBindings",
+      "type": "object"
+    }
+  },
+  "$id": "https://trustaero.org/schemas/v1/approved_physical_plan.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Auditable pre-execution physical specification, not executable SQL.",
+  "properties": {
+    "bindings": {
+      "$ref": "#/$defs/SnapshotBindings"
+    },
+    "lineage_instrumentation": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/LineageInstrumentationSpec"
+      },
+      "title": "Lineage Instrumentation",
+      "type": "array"
+    },
+    "logical_plan_digest": {
+      "title": "Logical Plan Digest",
+      "type": "string"
+    },
+    "logical_plan_id": {
+      "title": "Logical Plan Id",
+      "type": "string"
+    },
+    "output_operator": {
+      "title": "Output Operator",
+      "type": "string"
+    },
+    "pending_obligations": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ObligationType"
+      },
+      "title": "Pending Obligations",
+      "type": "array"
+    },
+    "physical_operators": {
+      "items": {
+        "$ref": "#/$defs/PhysicalOperatorSpec"
+      },
+      "title": "Physical Operators",
+      "type": "array"
+    },
+    "physical_plan_id": {
+      "title": "Physical Plan Id",
+      "type": "string"
+    },
+    "planner_notes": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Planner Notes",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "unimplemented_backend_features": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Unimplemented Backend Features",
+      "type": "array"
+    }
+  },
+  "required": [
+    "physical_plan_id",
+    "logical_plan_id",
+    "logical_plan_digest",
+    "output_operator",
+    "physical_operators",
+    "bindings"
+  ],
+  "title": "ApprovedPhysicalPlan",
+  "type": "object"
+}

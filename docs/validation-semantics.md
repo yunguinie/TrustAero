@@ -208,6 +208,23 @@ unverified rather than silently accepted. The current status may therefore be
 `PARTIAL`: the certificate structure and governance evidence are consistent,
 but actual DBMS execution content remains outside the current IR-only phase.
 
+## Approved physical plan specification
+
+`plan_physical_execution(validated_plan)` derives a deterministic
+`ApprovedPhysicalPlan` from a validated logical plan. This is an auditable
+pre-execution specification, not executable SQL and not a DuckDB physical plan.
+It binds to the logical plan ID and canonical digest, preserves policy/data
+snapshot bindings, carries lineage instrumentation forward, and keeps pending
+obligations pending.
+
+Every physical operator is currently marked with backend `not_bound`.
+Governance operators that still need backend support are listed in
+`unimplemented_backend_features`, for example fixed-grid coordinate
+transformation, masking value transformation, minimum-group suppression, and
+lineage backend capture. Future database integration must implement these
+features before the execution certificate can claim full physical execution
+verification.
+
 ## Query scope versus disclosed precision
 
 `SpatialFilter.radius_km` and `GeneralizeLocation.precision_km` have different

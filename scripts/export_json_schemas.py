@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from trustaero.ir.models import (
+    ApprovedPhysicalPlan,
     CandidatePlan,
     GovernedExecutionCertificate,
     PolicySet,
@@ -21,6 +22,7 @@ MODELS = {
     "validator_response.schema.json": ValidatorResponse,
     "policy.schema.json": PolicySet,
     "governed_execution_certificate.schema.json": GovernedExecutionCertificate,
+    "approved_physical_plan.schema.json": ApprovedPhysicalPlan,
 }
 
 

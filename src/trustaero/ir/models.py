@@ -343,6 +343,34 @@ class ValidatedLogicalPlan(StrictModel):
     validation: ValidationSummary
 
 
+class PhysicalOperatorSpec(StrictModel):
+    """Backend-facing operator placeholder derived from a validated operator."""
+
+    physical_operator_id: str
+    logical_operator_id: str
+    operator_type: str
+    inputs: tuple[str, ...] = ()
+    backend: Literal["not_bound"] = "not_bound"
+    implementation_status: Literal["logical_only", "requires_backend"] = "logical_only"
+    unimplemented_features: tuple[str, ...] = ()
+
+
+class ApprovedPhysicalPlan(StrictModel):
+    """Auditable pre-execution physical specification, not executable SQL."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    physical_plan_id: str
+    logical_plan_id: str
+    logical_plan_digest: str
+    output_operator: str
+    physical_operators: tuple[PhysicalOperatorSpec, ...]
+    bindings: SnapshotBindings
+    lineage_instrumentation: tuple[LineageInstrumentationSpec, ...] = ()
+    pending_obligations: tuple[ObligationType, ...] = ()
+    unimplemented_backend_features: tuple[str, ...] = ()
+    planner_notes: tuple[str, ...] = ()
+
+
 class Obligation(StrictModel):
     obligation_type: ObligationType
     parameters: dict[str, Any] = Field(default_factory=dict)
