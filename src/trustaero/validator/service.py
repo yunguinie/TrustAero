@@ -31,6 +31,7 @@ from trustaero.ir.models import (
     ValidatorResponse,
 )
 from trustaero.policy.evaluator import Evaluation, evaluate_policy
+from trustaero.validator.type_checker import type_check_plan
 
 
 def _diagnostic(code: ReasonCode, message: str, **details: Any) -> Diagnostic:
@@ -157,38 +158,6 @@ def validate_graph(plan: CandidatePlan) -> tuple[Diagnostic, ...]:
                     ids=unreachable,
                 )
             )
-    return tuple(diagnostics)
-
-
-def validate_catalog(plan: CandidatePlan, catalog: Catalog) -> tuple[Diagnostic, ...]:
-    """Resolve datasets and requested fields against a replaceable catalog."""
-
-    diagnostics: list[Diagnostic] = []
-    available_fields: set[str] = set()
-    for operator in plan.operators:
-        if operator.operator_type != "ScanSource":
-            continue
-        dataset = catalog.get_dataset(operator.dataset)
-        if dataset is None:
-            diagnostics.append(
-                Diagnostic(
-                    code=ReasonCode.UNKNOWN_DATASET,
-                    message="Dataset is not registered in the catalog.",
-                    operator_id=operator.operator_id,
-                    details={"dataset": operator.dataset},
-                )
-            )
-        else:
-            available_fields.update(field.name for field in dataset.fields)
-    unknown_fields = sorted(set(plan.requested_output.fields) - available_fields)
-    if unknown_fields and not any(d.code == ReasonCode.UNKNOWN_DATASET for d in diagnostics):
-        diagnostics.append(
-            _diagnostic(
-                ReasonCode.UNKNOWN_FIELD,
-                "Requested output contains fields absent from scanned datasets.",
-                fields=unknown_fields,
-            )
-        )
     return tuple(diagnostics)
 
 
@@ -339,12 +308,19 @@ def validate(
         )
 
     graph_diagnostics = validate_graph(plan)
-    catalog_diagnostics = validate_catalog(plan, catalog)
-    if graph_diagnostics or catalog_diagnostics:
+    if graph_diagnostics:
         return ValidatorResponse(
             status=ValidationStatus.REJECT,
             candidate_plan_id=plan.plan_id,
-            diagnostics=graph_diagnostics + catalog_diagnostics,
+            diagnostics=graph_diagnostics,
+        )
+
+    candidate_types = type_check_plan(plan, catalog)
+    if candidate_types.diagnostics:
+        return ValidatorResponse(
+            status=ValidationStatus.REJECT,
+            candidate_plan_id=plan.plan_id,
+            diagnostics=candidate_types.diagnostics,
         )
 
     evaluation = evaluate_policy(plan, policy_set)
@@ -380,6 +356,25 @@ def validate(
         )
     operators = rewrite.operators
     rewrite_reasons = rewrite.reasons
+    output_operator = operators[-1].operator_id if rewrite_reasons else plan.output_operator
+
+    # Rewrites are not trusted merely because TrustAero produced them. Running
+    # the same transfer rules again prevents an invalid obligation parameter or
+    # future rewrite rule from creating a falsely "validated" logical plan.
+    rewritten_types = type_check_plan(
+        plan,
+        catalog,
+        operators=operators,
+        output_operator=output_operator,
+    )
+    if rewritten_types.diagnostics:
+        return ValidatorResponse(
+            status=ValidationStatus.REJECT,
+            candidate_plan_id=plan.plan_id,
+            policy_decision=evaluation.decision,
+            diagnostics=rewritten_types.diagnostics,
+        )
+
     data_snapshots: dict[str, str] = {}
     for operator in operators:
         if operator.operator_type != "ScanSource":
@@ -407,7 +402,6 @@ def validate(
             )
         data_snapshots[operator.dataset] = requested or dataset.default_version
 
-    output_operator = operators[-1].operator_id if rewrite_reasons else plan.output_operator
     digest = _canonical_digest(plan, operators)
     logical_plan = ValidatedLogicalPlan(
         logical_plan_id="pl-" + digest.split(":", 1)[1][:16],

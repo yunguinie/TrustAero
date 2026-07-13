@@ -5,8 +5,8 @@ TrustAero separates checks by the information they require:
 1. **L1 structural parsing** uses strict Pydantic models to reject malformed
    fields, unknown operator tags, extra fields, and invalid scalar values.
 2. **L2 plan semantics** checks operator IDs, input arity, references,
-   reachability, and graph acyclicity. These properties cannot be expressed by
-   JSON Schema alone.
+   reachability, graph acyclicity, and relation-schema transfer rules. These
+   properties cannot be expressed by JSON Schema alone.
 3. **L3 governance** resolves datasets and snapshots, evaluates policy, and
    inserts deterministic obligation-enforcement operators.
 
@@ -16,12 +16,34 @@ permission. `PolicyDecision` records the policy fragment's result, while
 `ValidationStatus` records how TrustAero handles the complete request; the two
 enums are intentionally not aliases.
 
-## Current limitation
+## Relation-schema propagation
 
-IR v1 does not yet prove full field lineage or relational type compatibility
-through every operator. It therefore must not be described as a complete query
-type checker. Those checks will be added with explicit operator semantics and
-adversarial tests, rather than inferred from JSON shape alone.
+The checker evaluates the plan in topological order. `ScanSource` obtains its
+field types and spatial/temporal roles from the Catalog; later operators derive
+their output from already checked input schemas. A `Project` therefore removes
+both fields and any relation capability that depended on those fields. If one
+coordinate of a Catalog-declared pair is removed, a later `SpatialFilter`
+fails closed rather than guessing a replacement from field names.
+
+| Operator | Input requirement | Output schema | Governance effect |
+|---|---|---|---|
+| `ScanSource` | registered dataset and version | Catalog schema | binds source metadata |
+| `Project` | every requested field exists | selected fields in request order | may remove sensitive/capability fields |
+| `SpatialFilter` | complete spatial pair with matching CRS | unchanged | none |
+| `TemporalFilter` | temporal `DATETIME` field and `start < end` | unchanged | none |
+| `Join` | two existing, equal-type keys; unambiguous names | concatenated inputs | none |
+| `SpatialJoin` | both inputs spatial with a shared CRS | concatenated inputs | none |
+| `GeneralizeLocation` | complete spatial pair | fields with coarser precision metadata | limits disclosed precision |
+| `LineageCapture` | one valid relation | unchanged | requests lineage capture |
+
+`Filter.expression` and `Aggregate.aggregates` are still free-form strings in
+IR v1. TrustAero returns `OPERATOR_SEMANTICS_UNSUPPORTED` for them instead of
+claiming a sound type derivation. Their next IR revision must use structured
+expressions before those operators enter the trusted fragment.
+
+Every obligation rewrite is checked again by the same schema-transfer rules.
+TrustAero does not trust a generated operator merely because its own rewriter
+created it.
 
 Obligations without a defined IR v1 enforcement are rejected. This prevents a
 validator response from claiming that an ignored obligation was satisfied.

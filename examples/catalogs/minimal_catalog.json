@@ -6,13 +6,17 @@
       "versions": ["v2026-06"],
       "default_version": "v2026-06",
       "fields": [
-        {"name": "event_id", "data_type": "string", "sensitive": false},
-        {"name": "event_time", "data_type": "timestamp", "sensitive": false},
-        {"name": "latitude", "data_type": "float", "sensitive": false},
-        {"name": "longitude", "data_type": "float", "sensitive": false},
-        {"name": "magnitude", "data_type": "float", "sensitive": false}
+        {"name": "event_id", "data_type": "string", "roles": ["identifier"]},
+        {"name": "event_time", "data_type": "datetime", "roles": ["temporal"]},
+        {"name": "latitude", "data_type": "float", "roles": ["spatial"]},
+        {"name": "longitude", "data_type": "float", "roles": ["spatial"]},
+        {"name": "magnitude", "data_type": "float", "roles": []}
       ],
-      "spatial_field": "geometry",
+      "spatial": {
+        "latitude_field": "latitude",
+        "longitude_field": "longitude",
+        "crs": "EPSG:4326"
+      },
       "temporal_field": "event_time"
     },
     {
@@ -20,14 +24,27 @@
       "versions": ["v2026-06", "v2026-07"],
       "default_version": "v2026-07",
       "fields": [
-        {"name": "facility_id", "data_type": "string", "sensitive": false},
-        {"name": "facility_type", "data_type": "string", "sensitive": false},
-        {"name": "latitude", "data_type": "float", "sensitive": true},
-        {"name": "longitude", "data_type": "float", "sensitive": true}
+        {"name": "facility_id", "data_type": "string", "roles": ["identifier"]},
+        {"name": "facility_type", "data_type": "string", "roles": []},
+        {
+          "name": "latitude",
+          "data_type": "float",
+          "roles": ["spatial"],
+          "sensitive": true
+        },
+        {
+          "name": "longitude",
+          "data_type": "float",
+          "roles": ["spatial"],
+          "sensitive": true
+        }
       ],
-      "spatial_field": "geometry",
+      "spatial": {
+        "latitude_field": "latitude",
+        "longitude_field": "longitude",
+        "crs": "EPSG:4326"
+      },
       "temporal_field": null
     }
   ]
 }
-
