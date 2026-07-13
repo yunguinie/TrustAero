@@ -26,6 +26,7 @@ from trustaero.ir.models import (
     MinGroupSize,
     Obligation,
     Operator,
+    OutputFieldSchema,
     PolicySet,
     SnapshotBindings,
     ValidatedLogicalPlan,
@@ -35,7 +36,7 @@ from trustaero.ir.models import (
 from trustaero.policy.evaluator import evaluate_policy
 from trustaero.validator.obligation_normalizer import normalize_obligations
 from trustaero.validator.obligations import verify_obligations
-from trustaero.validator.type_checker import type_check_plan
+from trustaero.validator.type_checker import RelationSchema, type_check_plan
 
 
 def _diagnostic(code: ReasonCode, message: str, **details: Any) -> Diagnostic:
@@ -203,6 +204,23 @@ def _output_depends_on_aggregate(plan: CandidatePlan) -> bool:
         return any(visit(parent_id) for parent_id in operator.inputs)
 
     return visit(plan.output_operator)
+
+
+def _public_output_schema(schema: RelationSchema) -> tuple[OutputFieldSchema, ...]:
+    """Expose the final field contract without leaking internal catalog models."""
+
+    return tuple(
+        OutputFieldSchema(
+            name=field.name,
+            data_type=field.data_type,
+            nullable=field.nullable,
+            roles=tuple(sorted(role.value for role in field.roles)),
+            sensitive=field.sensitive,
+            spatial_precision_km=field.spatial_precision_km,
+            value_state=field.value_state,
+        )
+        for field in schema.fields
+    )
 
 
 @dataclass(frozen=True)
@@ -502,6 +520,7 @@ def validate(
         requested_output=plan.requested_output,
         operators=operators,
         output_operator=output_operator,
+        output_schema=_public_output_schema(rewritten_types.outputs[output_operator]),
         bindings=SnapshotBindings(
             policy_snapshot=policy_set.policy_snapshot,
             data_snapshots=data_snapshots,

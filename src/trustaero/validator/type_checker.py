@@ -70,7 +70,10 @@ def _diagnostic(code: ReasonCode, message: str, operator_id: str, **details: Any
 
 
 def _raw_value_required(
-    field: FieldDescriptor, operator_id: str, use: str
+    field: FieldDescriptor,
+    operator_id: str,
+    attempted_operation: str,
+    forbidden_capability: str,
 ) -> tuple[Diagnostic, ...]:
     """Reject masked presentation fields as inputs to semantic computation."""
 
@@ -83,7 +86,8 @@ def _raw_value_required(
             operator_id,
             field=field.name,
             value_state=field.value_state,
-            use=use,
+            attempted_operation=attempted_operation,
+            forbidden_capability=forbidden_capability,
         ),
     )
 
@@ -177,7 +181,7 @@ def _check_comparison(
                 comparison=expression.operator.value,
             ),
         )
-    return _raw_value_required(field, operator_id, "filter")
+    return _raw_value_required(field, operator_id, "filter", "predicate_input")
 
 
 def _check_predicate(
@@ -216,7 +220,12 @@ def _aggregate_output(
             ),
         )
     if source is not None:
-        semantic_errors = _raw_value_required(source, operator_id, "aggregate_input")
+        semantic_errors = _raw_value_required(
+            source,
+            operator_id,
+            "aggregate",
+            "aggregate_input",
+        )
         if semantic_errors:
             return None, semantic_errors
 
@@ -425,8 +434,16 @@ def _infer_operator(
             )
         if left_key is not None and right_key is not None:
             semantic_errors = _raw_value_required(
-                left_key, operator.operator_id, "join"
-            ) + _raw_value_required(right_key, operator.operator_id, "join")
+                left_key,
+                operator.operator_id,
+                "join",
+                "join_key",
+            ) + _raw_value_required(
+                right_key,
+                operator.operator_id,
+                "join",
+                "join_key",
+            )
             if semantic_errors:
                 return None, semantic_errors
             if left_key.data_type != right_key.data_type:
@@ -499,7 +516,12 @@ def _infer_operator(
             field = input_schema.get(name)
             if field is not None:
                 group_semantic_errors.extend(
-                    _raw_value_required(field, operator.operator_id, "aggregate_group_by")
+                    _raw_value_required(
+                        field,
+                        operator.operator_id,
+                        "aggregate",
+                        "group_by_key",
+                    )
                 )
         if group_semantic_errors:
             return None, tuple(group_semantic_errors)

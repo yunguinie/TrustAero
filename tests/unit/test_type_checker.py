@@ -283,7 +283,17 @@ def test_mask_strips_identifier_capability_before_join(
     raw["output_operator"] = "op-join"
     raw["requested_output"]["fields"] = ["event_id", "facility_id"]
 
-    assert ReasonCode.MASKED_FIELD_USED_SEMANTICALLY in _codes(raw, catalog)
+    plan = CandidatePlan.model_validate(raw)
+    result = type_check_plan(plan, catalog)
+
+    assert result.diagnostics[0].code == ReasonCode.MASKED_FIELD_USED_SEMANTICALLY
+    assert result.diagnostics[0].operator_id == "op-join"
+    assert result.diagnostics[0].details == {
+        "field": "event_id",
+        "value_state": "hashed",
+        "attempted_operation": "join",
+        "forbidden_capability": "join_key",
+    }
 
 
 def test_mask_strips_spatial_capability_before_spatial_filter(
@@ -379,3 +389,29 @@ def test_masked_fields_remain_projectable_with_explicit_state(
     assert magnitude.data_type.value == "string"
     assert event_time.value_state == "redacted"
     assert event_time.roles == frozenset()
+
+
+def test_validated_plan_output_schema_preserves_mask_state(
+    accept_plan: dict[str, Any], policy_set: PolicySet, catalog: InMemoryCatalog
+) -> None:
+    rule = policy_set.rules[0].model_copy(
+        update={
+            "obligations": (
+                Obligation(
+                    obligation_type=ObligationType.MASK,
+                    parameters={"fields": ["event_id"], "method": "hash"},
+                ),
+            )
+        }
+    )
+    policy = policy_set.model_copy(update={"rules": (rule, *policy_set.rules[1:])})
+
+    result = validate(copy.deepcopy(accept_plan), policy, catalog)
+
+    assert result.status == ValidationStatus.REWRITE
+    assert result.validated_plan is not None
+    fields = {field.name: field for field in result.validated_plan.output_schema}
+    assert fields["event_id"].data_type.value == "string"
+    assert fields["event_id"].value_state == "hashed"
+    assert fields["event_id"].roles == ()
+    assert fields["magnitude"].value_state == "raw"

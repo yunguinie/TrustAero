@@ -281,6 +281,19 @@ class SnapshotBindings(StrictModel):
     data_snapshots: dict[str, str]
 
 
+class OutputFieldSchema(StrictModel):
+    """Public final-output field contract after validation and rewrites."""
+
+    name: str = Field(min_length=1)
+    data_type: DataType
+    nullable: bool = False
+    roles: tuple[str, ...] = ()
+    sensitive: bool = False
+    spatial_precision_km: float | None = Field(default=None, gt=0)
+    # Downstream consumers must not treat a masked string as an original value.
+    value_state: Literal["raw", "redacted", "hashed", "nullified"] = "raw"
+
+
 class ValidationSummary(StrictModel):
     rounds: int = Field(ge=1)
     reason_codes: tuple[ReasonCode, ...] = ()
@@ -295,6 +308,7 @@ class ValidatedLogicalPlan(StrictModel):
     requested_output: RequestedOutput
     operators: tuple[Operator, ...]
     output_operator: str
+    output_schema: tuple[OutputFieldSchema, ...]
     bindings: SnapshotBindings
     satisfied_obligations: tuple[ObligationType, ...] = ()
     validation: ValidationSummary

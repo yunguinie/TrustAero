@@ -13,7 +13,7 @@ The following L2 codes distinguish root plan-semantic failures:
 | `DUPLICATE_OUTPUT_FIELD` | one operator declares the same output name more than once |
 | `EXPRESSION_TYPE_MISMATCH` | a structured comparison uses incompatible logical types or undefined ordering semantics |
 | `AGGREGATE_TYPE_NOT_SUPPORTED` | an aggregate function is undefined for its input field's logical type |
-| `MASKED_FIELD_USED_SEMANTICALLY` | a masked presentation field is used as a filter, join, or aggregate input |
+| `MASKED_FIELD_USED_SEMANTICALLY` | a masked presentation field is used for an operation that requires raw field semantics |
 | `OBLIGATION_NOT_ENFORCED` | the final output path or snapshot bindings do not prove a policy obligation's postcondition |
 | `OBLIGATION_PARAMETER_INVALID` | a supported obligation has missing, malformed, unknown, or not-yet-defined parameters |
 | `OBLIGATION_NORMALIZATION_FAILED` | evaluated obligations and their internal policy provenance are inconsistent |

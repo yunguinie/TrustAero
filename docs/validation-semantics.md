@@ -143,7 +143,9 @@ the named fields to one of `redacted`, `hashed`, or `nullified`.
 The current fragment intentionally does not rank these methods by strength.
 It also does not claim that hashed values are valid join keys: salt choice,
 domain separation, collision handling, and cross-dataset determinism are not
-defined in IR v1. Consequently, a masked field may be projected or requested
+defined in IR v1. In the current IR fragment, masked fields are not
+semantically reusable unless an operation-specific compatibility rule is
+explicitly defined. Consequently, a masked field may be projected or requested
 as output, but it may not later be used by `Filter`, `Join`, `Aggregate`,
 `SpatialFilter`, `SpatialJoin`, `TemporalFilter`, or
 `GeneralizeLocation`. Unsupported downstream use fails closed instead of

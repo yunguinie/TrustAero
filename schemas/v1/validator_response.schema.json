@@ -616,6 +616,68 @@
       "title": "ObligationType",
       "type": "string"
     },
+    "OutputFieldSchema": {
+      "additionalProperties": false,
+      "description": "Public final-output field contract after validation and rewrites.",
+      "properties": {
+        "data_type": {
+          "$ref": "#/$defs/DataType"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "nullable": {
+          "default": false,
+          "title": "Nullable",
+          "type": "boolean"
+        },
+        "roles": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Roles",
+          "type": "array"
+        },
+        "sensitive": {
+          "default": false,
+          "title": "Sensitive",
+          "type": "boolean"
+        },
+        "spatial_precision_km": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Spatial Precision Km"
+        },
+        "value_state": {
+          "default": "raw",
+          "enum": [
+            "raw",
+            "redacted",
+            "hashed",
+            "nullified"
+          ],
+          "title": "Value State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "data_type"
+      ],
+      "title": "OutputFieldSchema",
+      "type": "object"
+    },
     "PolicyDecision": {
       "description": "XACML-inspired policy decisions; not TrustAero validation outcomes.",
       "enum": [
@@ -1137,6 +1199,13 @@
           "title": "Output Operator",
           "type": "string"
         },
+        "output_schema": {
+          "items": {
+            "$ref": "#/$defs/OutputFieldSchema"
+          },
+          "title": "Output Schema",
+          "type": "array"
+        },
         "request_context": {
           "$ref": "#/$defs/RequestContext"
         },
@@ -1168,6 +1237,7 @@
         "requested_output",
         "operators",
         "output_operator",
+        "output_schema",
         "bindings",
         "validation"
       ],
