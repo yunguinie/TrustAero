@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "pc-reject-001",
+  "request_context": {
+    "subject": {"subject_id": "u-public", "role": "public", "attributes": {}},
+    "purpose": "research",
+    "action": "read",
+    "query_time_window": null
+  },
+  "requested_output": {
+    "fields": ["facility_id", "latitude", "longitude"],
+    "export": {"requested": false, "destination": null, "format": null},
+    "lineage_level": "none"
+  },
+  "operators": [
+    {"operator_type": "ScanSource", "operator_id": "op1", "inputs": [], "dataset": "critical_facilities", "snapshot": null}
+  ],
+  "output_operator": "op1"
+}
+

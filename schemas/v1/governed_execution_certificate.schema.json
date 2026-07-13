@@ -1,0 +1,123 @@
+{
+  "$defs": {
+    "ExecutionEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "event_type": {
+          "enum": [
+            "PlanApproved",
+            "OperatorStarted",
+            "OperatorCompleted",
+            "PolicyDecisionRecorded",
+            "ResultMaterialized",
+            "LineageRecorded",
+            "CertificateEmitted"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        },
+        "operator_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Operator Id"
+        },
+        "payload_digest": {
+          "title": "Payload Digest",
+          "type": "string"
+        },
+        "sequence": {
+          "minimum": 0,
+          "title": "Sequence",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sequence",
+        "event_type",
+        "payload_digest"
+      ],
+      "title": "ExecutionEvent",
+      "type": "object"
+    }
+  },
+  "$id": "https://trustaero.org/schemas/v1/governed_execution_certificate.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "certificate_id": {
+      "title": "Certificate Id",
+      "type": "string"
+    },
+    "data_snapshots": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Data Snapshots",
+      "type": "object"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/ExecutionEvent"
+      },
+      "title": "Events",
+      "type": "array"
+    },
+    "lineage_digest": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lineage Digest"
+    },
+    "logical_plan_id": {
+      "title": "Logical Plan Id",
+      "type": "string"
+    },
+    "physical_plan_id": {
+      "title": "Physical Plan Id",
+      "type": "string"
+    },
+    "policy_snapshot": {
+      "title": "Policy Snapshot",
+      "type": "string"
+    },
+    "result_digest": {
+      "title": "Result Digest",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "task_digest": {
+      "title": "Task Digest",
+      "type": "string"
+    }
+  },
+  "required": [
+    "certificate_id",
+    "task_digest",
+    "logical_plan_id",
+    "physical_plan_id",
+    "policy_snapshot",
+    "data_snapshots",
+    "events",
+    "result_digest"
+  ],
+  "title": "GovernedExecutionCertificate",
+  "type": "object"
+}

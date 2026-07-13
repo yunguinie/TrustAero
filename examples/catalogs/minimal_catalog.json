@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "datasets": [
+    {
+      "dataset_id": "earthquakes",
+      "versions": ["v2026-06"],
+      "default_version": "v2026-06",
+      "fields": [
+        {"name": "event_id", "data_type": "string", "sensitive": false},
+        {"name": "event_time", "data_type": "timestamp", "sensitive": false},
+        {"name": "latitude", "data_type": "float", "sensitive": false},
+        {"name": "longitude", "data_type": "float", "sensitive": false},
+        {"name": "magnitude", "data_type": "float", "sensitive": false}
+      ],
+      "spatial_field": "geometry",
+      "temporal_field": "event_time"
+    },
+    {
+      "dataset_id": "critical_facilities",
+      "versions": ["v2026-06", "v2026-07"],
+      "default_version": "v2026-07",
+      "fields": [
+        {"name": "facility_id", "data_type": "string", "sensitive": false},
+        {"name": "facility_type", "data_type": "string", "sensitive": false},
+        {"name": "latitude", "data_type": "float", "sensitive": true},
+        {"name": "longitude", "data_type": "float", "sensitive": true}
+      ],
+      "spatial_field": "geometry",
+      "temporal_field": null
+    }
+  ]
+}
+

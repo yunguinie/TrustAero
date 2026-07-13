@@ -1,0 +1,146 @@
+{
+  "$defs": {
+    "Obligation": {
+      "additionalProperties": false,
+      "properties": {
+        "obligation_type": {
+          "$ref": "#/$defs/ObligationType"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "title": "Parameters",
+          "type": "object"
+        }
+      },
+      "required": [
+        "obligation_type"
+      ],
+      "title": "Obligation",
+      "type": "object"
+    },
+    "ObligationType": {
+      "enum": [
+        "VERSION_PIN",
+        "MASK",
+        "GENERALIZE_LOCATION",
+        "MIN_GROUP_SIZE",
+        "EXPORT_CONTROL",
+        "LINEAGE_CAPTURE"
+      ],
+      "title": "ObligationType",
+      "type": "string"
+    },
+    "PolicyDecision": {
+      "description": "XACML-inspired policy decisions; not TrustAero validation outcomes.",
+      "enum": [
+        "PERMIT",
+        "DENY",
+        "INDETERMINATE",
+        "NOT_APPLICABLE"
+      ],
+      "title": "PolicyDecision",
+      "type": "string"
+    },
+    "PolicyRule": {
+      "additionalProperties": false,
+      "properties": {
+        "actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Actions",
+          "type": "array"
+        },
+        "decision": {
+          "$ref": "#/$defs/PolicyDecision"
+        },
+        "obligations": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Obligation"
+          },
+          "title": "Obligations",
+          "type": "array"
+        },
+        "policy_id": {
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "policy_version": {
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "purposes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Purposes",
+          "type": "array"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "resources": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Resources",
+          "type": "array"
+        },
+        "subject_roles": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Subject Roles",
+          "type": "array"
+        }
+      },
+      "required": [
+        "policy_id",
+        "policy_version",
+        "subject_roles",
+        "purposes",
+        "actions",
+        "resources",
+        "decision",
+        "reason"
+      ],
+      "title": "PolicyRule",
+      "type": "object"
+    }
+  },
+  "$id": "https://trustaero.org/schemas/v1/policy.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "policy_set_id": {
+      "title": "Policy Set Id",
+      "type": "string"
+    },
+    "policy_snapshot": {
+      "title": "Policy Snapshot",
+      "type": "string"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/PolicyRule"
+      },
+      "title": "Rules",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "policy_set_id",
+    "policy_snapshot",
+    "rules"
+  ],
+  "title": "PolicySet",
+  "type": "object"
+}

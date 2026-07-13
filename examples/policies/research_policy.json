@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "policy_set_id": "research-policy-set",
+  "policy_snapshot": "policy-2026-07-01",
+  "rules": [
+    {
+      "policy_id": "P-RESEARCH-EQ",
+      "policy_version": "1",
+      "subject_roles": ["researcher"],
+      "purposes": ["research"],
+      "actions": ["read", "aggregate"],
+      "resources": ["earthquakes"],
+      "decision": "PERMIT",
+      "obligations": [],
+      "reason": "Public earthquake data is permitted for research."
+    },
+    {
+      "policy_id": "P-RESEARCH-FACILITY",
+      "policy_version": "1",
+      "subject_roles": ["researcher"],
+      "purposes": ["research"],
+      "actions": ["read", "aggregate"],
+      "resources": ["critical_facilities"],
+      "decision": "PERMIT",
+      "obligations": [
+        {
+          "obligation_type": "GENERALIZE_LOCATION",
+          "parameters": {
+            "fields": ["latitude", "longitude"],
+            "precision_km": 5.0,
+            "method": "fixed_grid"
+          }
+        },
+        {
+          "obligation_type": "LINEAGE_CAPTURE",
+          "parameters": {"level": "record"}
+        }
+      ],
+      "reason": "Research access requires generalized locations and record lineage."
+    },
+    {
+      "policy_id": "P-PUBLIC-DENY-FACILITY",
+      "policy_version": "1",
+      "subject_roles": ["public"],
+      "purposes": ["research"],
+      "actions": ["read", "export"],
+      "resources": ["critical_facilities"],
+      "decision": "DENY",
+      "obligations": [],
+      "reason": "Public users may not access critical-facility details."
+    }
+  ]
+}

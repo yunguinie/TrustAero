@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "pc-accept-001",
+  "request_context": {
+    "subject": {"subject_id": "u-001", "role": "researcher", "attributes": {}},
+    "purpose": "research",
+    "action": "read",
+    "query_time_window": null
+  },
+  "requested_output": {
+    "fields": ["event_id", "magnitude"],
+    "export": {"requested": false, "destination": null, "format": null},
+    "lineage_level": "none"
+  },
+  "operators": [
+    {"operator_type": "ScanSource", "operator_id": "op1", "inputs": [], "dataset": "earthquakes", "snapshot": null},
+    {"operator_type": "Project", "operator_id": "op2", "inputs": ["op1"], "fields": ["event_id", "magnitude"]}
+  ],
+  "output_operator": "op2"
+}
+

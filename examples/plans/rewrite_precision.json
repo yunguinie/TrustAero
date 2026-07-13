@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "pc-rewrite-001",
+  "request_context": {
+    "subject": {"subject_id": "u-001", "role": "researcher", "attributes": {}},
+    "purpose": "research",
+    "action": "read",
+    "query_time_window": null
+  },
+  "requested_output": {
+    "fields": ["facility_id", "latitude", "longitude"],
+    "export": {"requested": false, "destination": null, "format": null},
+    "lineage_level": "record"
+  },
+  "operators": [
+    {"operator_type": "ScanSource", "operator_id": "op1", "inputs": [], "dataset": "critical_facilities", "snapshot": null},
+    {"operator_type": "SpatialFilter", "operator_id": "op2", "inputs": ["op1"], "center": [116.3, 39.9], "radius_km": 50, "crs": "EPSG:4326"},
+    {"operator_type": "Project", "operator_id": "op3", "inputs": ["op2"], "fields": ["facility_id", "latitude", "longitude"]}
+  ],
+  "output_operator": "op3"
+}
+
