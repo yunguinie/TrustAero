@@ -59,11 +59,17 @@ runtime overhead.
 results/phase0_summary/
   phase0_summary.csv
   phase0_summary.json
+  phase0_category_summary.csv
+  phase0_category_summary.json
+  phase0_reason_code_summary.csv
+  phase0_reason_code_summary.json
 ```
 
 The summary includes status accuracy, reason-code accuracy, detection rate over
 negative/injected cases, false reject rate over legal cases, and latency
-aggregates across each run.
+aggregates across each run. The category summary groups cases by experiment
+dimension, while the reason-code summary counts expected, observed, and matched
+diagnostics without collapsing multi-code cases into a single label.
 
 When a case does not match its expected status or expected reason codes, the
 runner writes `failures/<case_id>.json` with the case metadata, flattened result

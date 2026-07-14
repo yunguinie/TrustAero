@@ -85,3 +85,28 @@ class Phase0RunSummary:
     max_latency_ms: float
     all_correct: bool
     failed_cases: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class Phase0CategorySummary:
+    """Aggregated correctness and latency metrics for one case category."""
+
+    run_id: str
+    case_category: str
+    case_count: int
+    status_correct: int
+    reason_code_correct: int
+    median_latency_ms: float
+    p95_latency_ms: float
+    failed_cases: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class Phase0ReasonCodeSummary:
+    """Coverage count for one expected or observed diagnostic reason code."""
+
+    run_id: str
+    reason_code: str
+    expected_count: int
+    actual_count: int
+    matched_count: int
