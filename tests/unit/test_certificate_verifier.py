@@ -12,6 +12,7 @@ from trustaero.ir.models import (
     ExecutionEvent,
     GovernedExecutionCertificate,
     LineageEvidenceSummary,
+    PhysicalOperatorSpec,
     PolicySet,
     ValidatedLogicalPlan,
 )
@@ -80,8 +81,39 @@ def _events_for_physical_plan(physical: ApprovedPhysicalPlan) -> tuple[Execution
     return tuple(events)
 
 
-def _certificate(plan: ValidatedLogicalPlan) -> GovernedExecutionCertificate:
-    physical = plan_physical_execution(plan)
+def _physical_plan_from_edges(
+    plan: ValidatedLogicalPlan,
+    edges: dict[str, tuple[str, ...]],
+    output_operator: str,
+    physical_plan_id: str = "pp-test",
+) -> ApprovedPhysicalPlan:
+    """Create a small physical DAG for certificate dependency tests."""
+
+    return ApprovedPhysicalPlan(
+        physical_plan_id=physical_plan_id,
+        logical_plan_id=plan.logical_plan_id,
+        logical_plan_digest=plan.validation.canonical_digest,
+        output_operator=output_operator,
+        physical_operators=tuple(
+            PhysicalOperatorSpec(
+                physical_operator_id=operator_id,
+                logical_operator_id=f"logical-{operator_id}",
+                operator_type="Synthetic",
+                inputs=inputs,
+            )
+            for operator_id, inputs in edges.items()
+        ),
+        bindings=plan.bindings,
+        lineage_instrumentation=plan.lineage_instrumentation,
+        pending_obligations=plan.pending_obligations,
+    )
+
+
+def _certificate(
+    plan: ValidatedLogicalPlan,
+    physical: ApprovedPhysicalPlan | None = None,
+) -> GovernedExecutionCertificate:
+    physical = plan_physical_execution(plan) if physical is None else physical
     return GovernedExecutionCertificate(
         certificate_id="cert-1",
         task_digest=plan.validation.canonical_digest,
@@ -100,6 +132,14 @@ def _certificate(plan: ValidatedLogicalPlan) -> GovernedExecutionCertificate:
             edge_digest="sha256:edges",
         ),
     )
+
+
+def _certificate_with_events(
+    plan: ValidatedLogicalPlan,
+    physical: ApprovedPhysicalPlan,
+    events: tuple[ExecutionEvent, ...],
+) -> GovernedExecutionCertificate:
+    return _certificate(plan, physical).model_copy(update={"events": events})
 
 
 def test_certificate_verifies_bindings_and_upgrades_lineage_pending_obligation(
@@ -307,5 +347,210 @@ def test_certificate_rejects_lineage_evidence_without_lineage_event(
     assert any(
         diagnostic.code == ReasonCode.CERTIFICATE_EVENT_MISSING
         and diagnostic.details["event_type"] == "LineageRecorded"
+        for diagnostic in result.diagnostics
+    )
+
+
+def test_certificate_allows_interleaved_independent_branches_before_join(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = _physical_plan_from_edges(
+        plan,
+        {
+            "phys-scan-a": (),
+            "phys-scan-b": (),
+            "phys-join": ("phys-scan-a", "phys-scan-b"),
+        },
+        "phys-join",
+    )
+    events = (
+        _event(0, "PlanApproved", physical.physical_plan_id),
+        _event(1, "OperatorStarted", "sha256:start-a", "phys-scan-a"),
+        _event(2, "OperatorStarted", "sha256:start-b", "phys-scan-b"),
+        _event(3, "OperatorCompleted", "sha256:done-a", "phys-scan-a"),
+        _event(4, "OperatorCompleted", "sha256:done-b", "phys-scan-b"),
+        _event(5, "OperatorStarted", "sha256:start-join", "phys-join"),
+        _event(6, "OperatorCompleted", "sha256:done-join", "phys-join"),
+        _event(7, "ResultMaterialized", "sha256:result"),
+        _event(8, "LineageRecorded", "sha256:lineage"),
+        _event(9, "CertificateEmitted", "sha256:certificate"),
+    )
+    certificate = _certificate_with_events(plan, physical, events)
+
+    result = verify_execution_certificate(plan, physical, certificate)
+
+    assert result.status == CertificateVerificationStatus.PARTIAL
+    assert result.diagnostics == ()
+
+
+def test_certificate_rejects_linear_dependency_violation(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = _physical_plan_from_edges(
+        plan,
+        {
+            "phys-scan": (),
+            "phys-filter": ("phys-scan",),
+            "phys-project": ("phys-filter",),
+        },
+        "phys-project",
+    )
+    events = (
+        _event(0, "PlanApproved", physical.physical_plan_id),
+        _event(1, "OperatorStarted", "sha256:start-filter", "phys-filter"),
+        _event(2, "OperatorStarted", "sha256:start-scan", "phys-scan"),
+        _event(3, "OperatorCompleted", "sha256:done-scan", "phys-scan"),
+        _event(4, "OperatorCompleted", "sha256:done-filter", "phys-filter"),
+        _event(5, "OperatorStarted", "sha256:start-project", "phys-project"),
+        _event(6, "OperatorCompleted", "sha256:done-project", "phys-project"),
+        _event(7, "ResultMaterialized", "sha256:result"),
+        _event(8, "LineageRecorded", "sha256:lineage"),
+        _event(9, "CertificateEmitted", "sha256:certificate"),
+    )
+    certificate = _certificate_with_events(plan, physical, events)
+
+    result = verify_execution_certificate(plan, physical, certificate)
+
+    assert result.status == CertificateVerificationStatus.REJECT
+    assert any(
+        diagnostic.code == ReasonCode.CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION
+        and diagnostic.details["operator_id"] == "phys-filter"
+        for diagnostic in result.diagnostics
+    )
+
+
+def test_certificate_rejects_join_before_all_inputs_complete(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = _physical_plan_from_edges(
+        plan,
+        {
+            "phys-scan-a": (),
+            "phys-scan-b": (),
+            "phys-join": ("phys-scan-a", "phys-scan-b"),
+        },
+        "phys-join",
+    )
+    events = (
+        _event(0, "PlanApproved", physical.physical_plan_id),
+        _event(1, "OperatorStarted", "sha256:start-a", "phys-scan-a"),
+        _event(2, "OperatorCompleted", "sha256:done-a", "phys-scan-a"),
+        _event(3, "OperatorStarted", "sha256:start-b", "phys-scan-b"),
+        _event(4, "OperatorStarted", "sha256:start-join", "phys-join"),
+        _event(5, "OperatorCompleted", "sha256:done-b", "phys-scan-b"),
+        _event(6, "OperatorCompleted", "sha256:done-join", "phys-join"),
+        _event(7, "ResultMaterialized", "sha256:result"),
+        _event(8, "LineageRecorded", "sha256:lineage"),
+        _event(9, "CertificateEmitted", "sha256:certificate"),
+    )
+    certificate = _certificate_with_events(plan, physical, events)
+
+    result = verify_execution_certificate(plan, physical, certificate)
+
+    assert result.status == CertificateVerificationStatus.REJECT
+    assert any(
+        diagnostic.code == ReasonCode.CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION
+        and diagnostic.details["dependency_id"] == "phys-scan-b"
+        for diagnostic in result.diagnostics
+    )
+
+
+def test_certificate_rejects_multilevel_dependency_violation(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = _physical_plan_from_edges(
+        plan,
+        {
+            "phys-scan-a": (),
+            "phys-filter-a": ("phys-scan-a",),
+            "phys-scan-b": (),
+            "phys-filter-b": ("phys-scan-b",),
+            "phys-join": ("phys-filter-a", "phys-filter-b"),
+        },
+        "phys-join",
+    )
+    events = (
+        _event(0, "PlanApproved", physical.physical_plan_id),
+        _event(1, "OperatorStarted", "sha256:start-scan-a", "phys-scan-a"),
+        _event(2, "OperatorCompleted", "sha256:done-scan-a", "phys-scan-a"),
+        _event(3, "OperatorStarted", "sha256:start-filter-a", "phys-filter-a"),
+        _event(4, "OperatorCompleted", "sha256:done-filter-a", "phys-filter-a"),
+        _event(5, "OperatorStarted", "sha256:start-scan-b", "phys-scan-b"),
+        _event(6, "OperatorCompleted", "sha256:done-scan-b", "phys-scan-b"),
+        _event(7, "OperatorStarted", "sha256:start-filter-b", "phys-filter-b"),
+        _event(8, "OperatorStarted", "sha256:start-join", "phys-join"),
+        _event(9, "OperatorCompleted", "sha256:done-filter-b", "phys-filter-b"),
+        _event(10, "OperatorCompleted", "sha256:done-join", "phys-join"),
+        _event(11, "ResultMaterialized", "sha256:result"),
+        _event(12, "LineageRecorded", "sha256:lineage"),
+        _event(13, "CertificateEmitted", "sha256:certificate"),
+    )
+    certificate = _certificate_with_events(plan, physical, events)
+
+    result = verify_execution_certificate(plan, physical, certificate)
+
+    assert result.status == CertificateVerificationStatus.REJECT
+    assert any(
+        diagnostic.code == ReasonCode.CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION
+        and diagnostic.details["dependency_id"] == "phys-filter-b"
+        for diagnostic in result.diagnostics
+    )
+
+
+def test_certificate_rejects_unknown_physical_operator_input(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = _physical_plan_from_edges(
+        plan,
+        {"phys-filter": ("phys-missing",)},
+        "phys-filter",
+    )
+    certificate = _certificate(plan, physical)
+
+    result = verify_execution_certificate(plan, physical, certificate)
+
+    assert result.status == CertificateVerificationStatus.REJECT
+    assert any(
+        diagnostic.code == ReasonCode.CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN
+        for diagnostic in result.diagnostics
+    )
+
+
+def test_certificate_rejects_cyclic_physical_plan(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = _physical_plan_from_edges(
+        plan,
+        {
+            "phys-a": ("phys-b",),
+            "phys-b": ("phys-a",),
+        },
+        "phys-a",
+    )
+    certificate = _certificate(plan, physical)
+
+    result = verify_execution_certificate(plan, physical, certificate)
+
+    assert result.status == CertificateVerificationStatus.REJECT
+    assert any(
+        diagnostic.code == ReasonCode.CERTIFICATE_PHYSICAL_PLAN_CYCLIC
         for diagnostic in result.diagnostics
     )

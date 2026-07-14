@@ -219,6 +219,14 @@ after the result/evidence events. These checks prevent a certificate from
 skipping over the approved physical-plan skeleton, but they still do not prove
 that a backend computed the correct bytes for each operator.
 
+The physical-plan dependency graph is checked independently from the logical
+plan. Physical operator IDs must be unique, all input references and the output
+operator must exist, the graph must be acyclic, and every operator must
+contribute to the approved output. Certificate events must also respect the
+direct dependencies in that graph: a physical operator may start only after all
+of its input operators have completed. Independent branches may still overlap
+or interleave; IR v1 does not require a strictly serial execution trace.
+
 ## Approved physical plan specification
 
 `plan_physical_execution(validated_plan)` derives a deterministic
