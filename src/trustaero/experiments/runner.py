@@ -114,6 +114,53 @@ def _apply_validation_scenario(raw_plan: dict[str, Any], scenario: str) -> dict[
     if scenario == "unknown_dataset":
         plan["operators"][0]["dataset"] = "missing_dataset"
         return plan
+    if scenario == "unknown_field":
+        plan["operators"][-1]["fields"] = ["event_id", "missing_field"]
+        return plan
+    if scenario == "version_unresolved":
+        plan["operators"][0]["snapshot"] = "v-missing"
+        return plan
+    if scenario == "unbound_reference":
+        plan["operators"][-1]["inputs"] = ["missing-op"]
+        return plan
+    if scenario == "cyclic_plan":
+        plan["operators"][0]["inputs"] = [plan["operators"][-1]["operator_id"]]
+        return plan
+    if scenario == "expression_type_mismatch":
+        plan["plan_id"] = "p0-expression-type-mismatch"
+        plan["requested_output"]["fields"] = ["event_id", "magnitude"]
+        plan["operators"] = [
+            {
+                "operator_type": "ScanSource",
+                "operator_id": "scan",
+                "inputs": [],
+                "dataset": "earthquakes",
+                "snapshot": None,
+            },
+            {
+                "operator_type": "Filter",
+                "operator_id": "filter",
+                "inputs": ["scan"],
+                "expression": {
+                    "expression_type": "comparison",
+                    "operator": "eq",
+                    "left": {"expression_type": "field", "field": "magnitude"},
+                    "right": {
+                        "expression_type": "literal",
+                        "data_type": "boolean",
+                        "value": True,
+                    },
+                },
+            },
+            {
+                "operator_type": "Project",
+                "operator_id": "project",
+                "inputs": ["filter"],
+                "fields": ["event_id", "magnitude"],
+            },
+        ]
+        plan["output_operator"] = "project"
+        return plan
     if scenario == "masked_filter":
         plan["plan_id"] = "p0-mask-filter"
         plan["requested_output"]["fields"] = ["event_id"]
@@ -289,6 +336,37 @@ def _certificate_inputs(
                 )
             }
         )
+    if scenario == "snapshot_mismatch":
+        return physical, certificate.model_copy(
+            update={"data_snapshots": {"critical_facilities": "v1900"}}
+        )
+    if scenario == "missing_result_digest":
+        return physical, certificate.model_copy(update={"result_digest": ""})
+    if scenario == "event_order_invalid":
+        events = tuple(
+            event.model_copy(update={"sequence": 1})
+            if event.event_type == "ResultMaterialized"
+            else event
+            for event in certificate.events
+        )
+        return physical, certificate.model_copy(update={"events": events})
+    if scenario == "unknown_physical_input":
+        synthetic = _physical_plan_from_edges(
+            plan,
+            {"phys-filter": ("phys-missing",)},
+            "phys-filter",
+        )
+        return synthetic, _certificate(plan, synthetic)
+    if scenario == "cyclic_physical_plan":
+        synthetic = _physical_plan_from_edges(
+            plan,
+            {
+                "phys-a": ("phys-b",),
+                "phys-b": ("phys-a",),
+            },
+            "phys-a",
+        )
+        return synthetic, _certificate(plan, synthetic)
     if scenario == "dependency_violation":
         synthetic = _physical_plan_from_edges(
             plan,

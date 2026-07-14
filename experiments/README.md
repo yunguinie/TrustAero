@@ -44,7 +44,8 @@ The input matrix uses two important columns:
   approved physical plan, then verifies a deterministic certificate scenario.
 
 `scenario` names a deterministic mutation such as `unknown_dataset`,
-`masked_filter`, `weak_lineage`, `missing_lineage_event`, or
+`masked_filter`, `expression_type_mismatch`, `weak_lineage`,
+`missing_lineage_event`, `snapshot_mismatch`, `event_order_invalid`, or
 `dependency_violation`. These are fixed fault injections, not random fuzzing.
 
 This phase can support paper results about semantic correctness, failure
