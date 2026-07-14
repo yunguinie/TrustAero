@@ -110,3 +110,42 @@ class Phase0ReasonCodeSummary:
     expected_count: int
     actual_count: int
     matched_count: int
+
+
+@dataclass(frozen=True)
+class Phase1Config:
+    """Runner settings for the first DuckDB-backed execution smoke experiment."""
+
+    results_dir: str
+    warmup_runs: int = 3
+    measured_runs: int = 10
+
+
+@dataclass(frozen=True)
+class Phase1ExecutionResult:
+    """One Phase 1 row written to ``cases.csv``.
+
+    Phase 1 measures the minimal validated-plan -> SQL -> DuckDB -> certificate
+    digest path. It is not yet a query optimizer benchmark.
+    """
+
+    run_id: str
+    commit_hash: str
+    case_id: str
+    plan_id: str
+    status: str
+    status_correct: bool
+    row_count: int
+    expected_row_count: int
+    certificate_status: str
+    result_digest: str
+    unverified_components: tuple[str, ...]
+    cold_latency_ms: float
+    median_latency_ms: float
+    p95_latency_ms: float
+    min_latency_ms: float
+    max_latency_ms: float
+    sql_length: int
+    parameter_count: int
+    logical_plan_id: str
+    physical_plan_id: str

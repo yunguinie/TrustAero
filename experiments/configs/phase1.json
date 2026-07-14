@@ -1,0 +1,5 @@
+{
+  "results_dir": "results/phase1",
+  "warmup_runs": 3,
+  "measured_runs": 10
+}
