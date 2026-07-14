@@ -1,0 +1,5 @@
+case_id,case_category,plan_path,policy_path,catalog_path,expected_status,expected_reason_codes
+P0-001,basic_accept,examples/plans/accept_earthquakes.json,examples/policies/research_policy.json,examples/catalogs/minimal_catalog.json,ACCEPT,
+P0-002,deterministic_rewrite,examples/plans/rewrite_precision.json,examples/policies/research_policy.json,examples/catalogs/minimal_catalog.json,REWRITE,LINEAGE_REQUIRED|SPATIAL_PRECISION_EXCEEDED
+P0-003,information_missing,examples/plans/clarify_purpose.json,examples/policies/research_policy.json,examples/catalogs/minimal_catalog.json,CLARIFY,PURPOSE_MISSING
+P0-004,policy_reject,examples/plans/reject_public_facilities.json,examples/policies/research_policy.json,examples/catalogs/minimal_catalog.json,REJECT,POLICY_DENIED
