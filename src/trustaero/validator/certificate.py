@@ -1,8 +1,8 @@
 """Verify governed execution certificates against approved TrustAero plans.
 
-This checker validates certificate structure and bindings that can be checked
-without a real database executor. It deliberately marks result contents as
-unverified until a future backend can recompute physical execution digests.
+This module is the certificate-verification entry point. It delegates structural
+event and physical-DAG checks to smaller modules so each checker has a clear
+semantic boundary.
 """
 
 from __future__ import annotations
@@ -14,11 +14,10 @@ from trustaero.ir.enums import ObligationType, ReasonCode
 from trustaero.ir.models import (
     ApprovedPhysicalPlan,
     Diagnostic,
-    ExecutionEvent,
     GovernedExecutionCertificate,
-    PhysicalOperatorSpec,
     ValidatedLogicalPlan,
 )
+from trustaero.validator.certificate_events import has_event, validate_event_coverage
 from trustaero.validator.lineage import verify_lineage_evidence
 
 
@@ -41,340 +40,15 @@ class CertificateVerification:
 
 
 def _diagnostic(code: ReasonCode, message: str, **details: object) -> Diagnostic:
+    """Build a machine-classified diagnostic with optional structured details."""
+
     return Diagnostic(code=code, message=message, details=details)
 
 
 def _non_empty_digest(value: str) -> bool:
+    """Return whether a digest-shaped binding claim is present."""
+
     return bool(value) and ":" in value
-
-
-def _has_event(certificate: GovernedExecutionCertificate, event_type: str) -> bool:
-    return any(event.event_type == event_type for event in certificate.events)
-
-
-def _first_sequence(
-    events: tuple[ExecutionEvent, ...],
-    event_type: str,
-    operator_id: str | None = None,
-) -> int | None:
-    """Return the first matching event sequence, or ``None`` if absent."""
-
-    sequences = [
-        event.sequence
-        for event in events
-        if event.event_type == event_type
-        and (operator_id is None or event.operator_id == operator_id)
-    ]
-    return min(sequences) if sequences else None
-
-
-def _event_index(
-    events: tuple[ExecutionEvent, ...],
-    event_type: str,
-) -> dict[str, int]:
-    """Index the first sequence number for operator-scoped events."""
-
-    result: dict[str, int] = {}
-    for event in events:
-        if event.event_type == event_type and event.operator_id is not None:
-            result.setdefault(event.operator_id, event.sequence)
-    return result
-
-
-def _physical_operators_by_id(
-    physical_plan: ApprovedPhysicalPlan,
-) -> tuple[dict[str, PhysicalOperatorSpec], tuple[Diagnostic, ...]]:
-    """Build an operator map while rejecting duplicate physical operator IDs."""
-
-    operators: dict[str, PhysicalOperatorSpec] = {}
-    diagnostics: list[Diagnostic] = []
-    for operator in physical_plan.physical_operators:
-        operator_id = operator.physical_operator_id
-        if operator_id in operators:
-            diagnostics.append(
-                _diagnostic(
-                    ReasonCode.CERTIFICATE_PHYSICAL_OPERATOR_DUPLICATE,
-                    "Approved physical plan contains duplicate physical operator IDs.",
-                    operator_id=operator_id,
-                )
-            )
-        operators[operator_id] = operator
-    return operators, tuple(diagnostics)
-
-
-def _validate_physical_plan_dag(
-    physical_plan: ApprovedPhysicalPlan,
-) -> tuple[Diagnostic, ...]:
-    """Validate the approved physical plan as a standalone operator DAG."""
-
-    operators, diagnostics_tuple = _physical_operators_by_id(physical_plan)
-    diagnostics = list(diagnostics_tuple)
-    known_ids = set(operators)
-
-    for operator in physical_plan.physical_operators:
-        for dependency_id in operator.inputs:
-            if dependency_id not in known_ids:
-                diagnostics.append(
-                    _diagnostic(
-                        ReasonCode.CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN,
-                        "Physical operator input references an unknown operator.",
-                        operator_id=operator.physical_operator_id,
-                        dependency_id=dependency_id,
-                    )
-                )
-
-    if physical_plan.output_operator not in known_ids:
-        diagnostics.append(
-            _diagnostic(
-                ReasonCode.CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN,
-                "Approved physical plan output operator is unknown.",
-                output_operator=physical_plan.output_operator,
-            )
-        )
-
-    visiting: set[str] = set()
-    visited: set[str] = set()
-
-    def visit(operator_id: str, path: tuple[str, ...]) -> None:
-        if operator_id in visiting:
-            diagnostics.append(
-                _diagnostic(
-                    ReasonCode.CERTIFICATE_PHYSICAL_PLAN_CYCLIC,
-                    "Approved physical plan contains a dependency cycle.",
-                    cycle=(*path, operator_id),
-                )
-            )
-            return
-        if operator_id in visited or operator_id not in operators:
-            return
-        visiting.add(operator_id)
-        for dependency_id in operators[operator_id].inputs:
-            visit(dependency_id, (*path, operator_id))
-        visiting.remove(operator_id)
-        visited.add(operator_id)
-
-    for operator_id in operators:
-        visit(operator_id, ())
-
-    if physical_plan.output_operator in operators:
-        reachable: set[str] = set()
-
-        def collect_inputs(operator_id: str) -> None:
-            if operator_id in reachable or operator_id not in operators:
-                return
-            reachable.add(operator_id)
-            for dependency_id in operators[operator_id].inputs:
-                collect_inputs(dependency_id)
-
-        collect_inputs(physical_plan.output_operator)
-        unreachable = sorted(known_ids - reachable)
-        if unreachable:
-            diagnostics.append(
-                _diagnostic(
-                    ReasonCode.CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN,
-                    "Physical operators must contribute to the approved output.",
-                    unreachable_operators=unreachable,
-                    output_operator=physical_plan.output_operator,
-                )
-            )
-
-    return tuple(diagnostics)
-
-
-def _validate_operator_dependency_events(
-    physical_plan: ApprovedPhysicalPlan,
-    certificate: GovernedExecutionCertificate,
-) -> tuple[Diagnostic, ...]:
-    """Ensure an operator starts only after all direct inputs complete."""
-
-    diagnostics: list[Diagnostic] = []
-    operators, operator_diagnostics = _physical_operators_by_id(physical_plan)
-    if operator_diagnostics:
-        return operator_diagnostics
-
-    started_at = _event_index(certificate.events, "OperatorStarted")
-    completed_at = _event_index(certificate.events, "OperatorCompleted")
-
-    for operator in operators.values():
-        operator_started = started_at.get(operator.physical_operator_id)
-        if operator_started is None:
-            continue
-        for dependency_id in operator.inputs:
-            dependency_completed = completed_at.get(dependency_id)
-            if dependency_completed is None:
-                continue
-            if dependency_completed >= operator_started:
-                diagnostics.append(
-                    _diagnostic(
-                        ReasonCode.CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION,
-                        "Physical operator started before a direct input completed.",
-                        operator_id=operator.physical_operator_id,
-                        dependency_id=dependency_id,
-                        operator_started=operator_started,
-                        dependency_completed=dependency_completed,
-                    )
-                )
-
-    return tuple(diagnostics)
-
-
-def _validate_event_coverage(
-    physical_plan: ApprovedPhysicalPlan,
-    certificate: GovernedExecutionCertificate,
-) -> tuple[Diagnostic, ...]:
-    """Check that certificate events cover the approved physical plan skeleton.
-
-    The check is intentionally structural. It verifies that the certificate
-    records a plausible execution timeline for every approved physical
-    operator, but it does not recompute operator outputs.
-    """
-
-    diagnostics: list[Diagnostic] = []
-    events = certificate.events
-    sequences = [event.sequence for event in events]
-    if sequences != sorted(sequences) or len(sequences) != len(set(sequences)):
-        diagnostics.append(
-            _diagnostic(
-                ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
-                "Certificate event sequences must be unique and monotonically increasing.",
-                sequences=sequences,
-            )
-        )
-
-    plan_approved = _first_sequence(events, "PlanApproved")
-    result_materialized = _first_sequence(events, "ResultMaterialized")
-    certificate_emitted = _first_sequence(events, "CertificateEmitted")
-
-    if plan_approved is None:
-        diagnostics.append(
-            _diagnostic(
-                ReasonCode.CERTIFICATE_EVENT_MISSING,
-                "Certificate must include a PlanApproved event.",
-                event_type="PlanApproved",
-            )
-        )
-    if certificate_emitted is None:
-        diagnostics.append(
-            _diagnostic(
-                ReasonCode.CERTIFICATE_EVENT_MISSING,
-                "Certificate must include a CertificateEmitted event.",
-                event_type="CertificateEmitted",
-            )
-        )
-
-    completed_sequences: list[int] = []
-    for operator in physical_plan.physical_operators:
-        operator_id = operator.physical_operator_id
-        started = _first_sequence(events, "OperatorStarted", operator_id)
-        completed = _first_sequence(events, "OperatorCompleted", operator_id)
-        if started is None:
-            diagnostics.append(
-                _diagnostic(
-                    ReasonCode.CERTIFICATE_OPERATOR_EVENT_MISSING,
-                    "Certificate is missing OperatorStarted for a physical operator.",
-                    operator_id=operator_id,
-                    event_type="OperatorStarted",
-                )
-            )
-        if completed is None:
-            diagnostics.append(
-                _diagnostic(
-                    ReasonCode.CERTIFICATE_OPERATOR_EVENT_MISSING,
-                    "Certificate is missing OperatorCompleted for a physical operator.",
-                    operator_id=operator_id,
-                    event_type="OperatorCompleted",
-                )
-            )
-        if started is not None and completed is not None:
-            completed_sequences.append(completed)
-            if completed <= started:
-                diagnostics.append(
-                    _diagnostic(
-                        ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
-                        "OperatorCompleted must occur after OperatorStarted.",
-                        operator_id=operator_id,
-                        started=started,
-                        completed=completed,
-                    )
-                )
-            if plan_approved is not None and started <= plan_approved:
-                diagnostics.append(
-                    _diagnostic(
-                        ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
-                        "OperatorStarted must occur after PlanApproved.",
-                        operator_id=operator_id,
-                        plan_approved=plan_approved,
-                        started=started,
-                    )
-                )
-
-    if result_materialized is not None and completed_sequences:
-        latest_completed = max(completed_sequences)
-        if result_materialized <= latest_completed:
-            diagnostics.append(
-                _diagnostic(
-                    ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
-                    "ResultMaterialized must occur after all OperatorCompleted events.",
-                    result_materialized=result_materialized,
-                    latest_operator_completed=latest_completed,
-                )
-            )
-
-    if certificate.lineage_evidence is not None and not _has_event(certificate, "LineageRecorded"):
-        diagnostics.append(
-            _diagnostic(
-                ReasonCode.CERTIFICATE_EVENT_MISSING,
-                "Certificate with lineage evidence must include a LineageRecorded event.",
-                event_type="LineageRecorded",
-            )
-        )
-
-    lineage_recorded = _first_sequence(events, "LineageRecorded")
-    if (
-        lineage_recorded is not None
-        and result_materialized is not None
-        and lineage_recorded <= result_materialized
-    ):
-        diagnostics.append(
-            _diagnostic(
-                ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
-                "LineageRecorded must occur after ResultMaterialized in IR v1 certificates.",
-                lineage_recorded=lineage_recorded,
-                result_materialized=result_materialized,
-            )
-        )
-
-    if (
-        certificate_emitted is not None
-        and result_materialized is not None
-        and certificate_emitted <= result_materialized
-    ):
-        diagnostics.append(
-            _diagnostic(
-                ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
-                "CertificateEmitted must occur after ResultMaterialized.",
-                certificate_emitted=certificate_emitted,
-                result_materialized=result_materialized,
-            )
-        )
-    if (
-        certificate_emitted is not None
-        and lineage_recorded is not None
-        and certificate_emitted <= lineage_recorded
-    ):
-        diagnostics.append(
-            _diagnostic(
-                ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
-                "CertificateEmitted must occur after LineageRecorded.",
-                certificate_emitted=certificate_emitted,
-                lineage_recorded=lineage_recorded,
-            )
-        )
-
-    diagnostics.extend(_validate_physical_plan_dag(physical_plan))
-    diagnostics.extend(_validate_operator_dependency_events(physical_plan, certificate))
-
-    return tuple(diagnostics)
 
 
 def verify_execution_certificate(
@@ -489,7 +163,7 @@ def verify_execution_certificate(
                 field="result_digest",
             )
         )
-    if not _has_event(certificate, "ResultMaterialized"):
+    if not has_event(certificate, "ResultMaterialized"):
         diagnostics.append(
             _diagnostic(
                 ReasonCode.CERTIFICATE_EVENT_MISSING,
@@ -497,7 +171,7 @@ def verify_execution_certificate(
                 event_type="ResultMaterialized",
             )
         )
-    diagnostics.extend(_validate_event_coverage(physical_plan, certificate))
+    diagnostics.extend(validate_event_coverage(physical_plan, certificate))
 
     lineage_check = verify_lineage_evidence(
         plan.lineage_requirements,
