@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import csv
 import json
 import platform
@@ -13,11 +14,32 @@ from dataclasses import asdict
 from datetime import UTC, datetime
 from importlib import metadata
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from trustaero.experiments.loader import load_cases, load_catalog, load_json, load_policy
 from trustaero.experiments.models import CaseResult, ExperimentCase, Phase0Config
+from trustaero.ir.enums import LineageLevel, ValidationStatus
+from trustaero.ir.models import (
+    ApprovedPhysicalPlan,
+    ExecutionEvent,
+    GovernedExecutionCertificate,
+    LineageEvidenceSummary,
+    PhysicalOperatorSpec,
+    ValidatedLogicalPlan,
+)
+from trustaero.planner.physical import plan_physical_execution
+from trustaero.validator.certificate import verify_execution_certificate
 from trustaero.validator.service import validate
+
+EventType = Literal[
+    "PlanApproved",
+    "OperatorStarted",
+    "OperatorCompleted",
+    "PolicyDecisionRecorded",
+    "ResultMaterialized",
+    "LineageRecorded",
+    "CertificateEmitted",
+]
 
 
 def _repo_root() -> Path:
@@ -64,6 +86,12 @@ def _reason_codes(response: Any) -> tuple[str, ...]:
     return tuple(sorted({diagnostic.code.value for diagnostic in response.diagnostics}))
 
 
+def _validation_reason_codes(response: Any) -> tuple[str, ...]:
+    """Extract stable reason-code strings from validator diagnostics."""
+
+    return _reason_codes(response)
+
+
 def _operator_counts(plan: dict[str, Any]) -> tuple[int, int]:
     """Return logical operator and edge counts from a raw candidate plan."""
 
@@ -75,6 +103,216 @@ def _operator_counts(plan: dict[str, Any]) -> tuple[int, int]:
         if isinstance(operator, dict) and isinstance(operator.get("inputs"), list):
             edge_count += len(operator["inputs"])
     return len(operators), edge_count
+
+
+def _apply_validation_scenario(raw_plan: dict[str, Any], scenario: str) -> dict[str, Any]:
+    """Apply a deterministic Phase 0 validation fault injection."""
+
+    plan = copy.deepcopy(raw_plan)
+    if scenario == "baseline":
+        return plan
+    if scenario == "unknown_dataset":
+        plan["operators"][0]["dataset"] = "missing_dataset"
+        return plan
+    if scenario == "masked_filter":
+        plan["plan_id"] = "p0-mask-filter"
+        plan["requested_output"]["fields"] = ["event_id"]
+        plan["operators"] = [
+            {
+                "operator_type": "ScanSource",
+                "operator_id": "scan",
+                "inputs": [],
+                "dataset": "earthquakes",
+                "snapshot": None,
+            },
+            {
+                "operator_type": "Mask",
+                "operator_id": "mask",
+                "inputs": ["scan"],
+                "fields": ["event_id"],
+                "method": "hash",
+            },
+            {
+                "operator_type": "Filter",
+                "operator_id": "filter",
+                "inputs": ["mask"],
+                "expression": {
+                    "expression_type": "comparison",
+                    "operator": "eq",
+                    "left": {"expression_type": "field", "field": "event_id"},
+                    "right": {
+                        "expression_type": "literal",
+                        "data_type": "string",
+                        "value": "evt-1",
+                    },
+                },
+            },
+            {
+                "operator_type": "Project",
+                "operator_id": "project",
+                "inputs": ["filter"],
+                "fields": ["event_id"],
+            },
+        ]
+        plan["output_operator"] = "project"
+        return plan
+    raise ValueError(f"Unknown validation scenario: {scenario}")
+
+
+def _event(
+    sequence: int,
+    event_type: EventType,
+    payload_digest: str = "sha256:event",
+    operator_id: str | None = None,
+) -> ExecutionEvent:
+    """Build an execution event for deterministic certificate scenarios."""
+
+    return ExecutionEvent(
+        sequence=sequence,
+        event_type=event_type,
+        operator_id=operator_id,
+        payload_digest=payload_digest,
+    )
+
+
+def _events_for_physical_plan(physical: ApprovedPhysicalPlan) -> tuple[ExecutionEvent, ...]:
+    """Build a complete structural event trace for an approved physical plan."""
+
+    events: list[ExecutionEvent] = [_event(0, "PlanApproved", physical.physical_plan_id)]
+    sequence = 1
+    for operator in physical.physical_operators:
+        events.append(
+            _event(
+                sequence,
+                "OperatorStarted",
+                f"sha256:start-{operator.physical_operator_id}",
+                operator.physical_operator_id,
+            )
+        )
+        sequence += 1
+        events.append(
+            _event(
+                sequence,
+                "OperatorCompleted",
+                f"sha256:done-{operator.physical_operator_id}",
+                operator.physical_operator_id,
+            )
+        )
+        sequence += 1
+    events.append(_event(sequence, "ResultMaterialized", "sha256:result"))
+    sequence += 1
+    events.append(_event(sequence, "LineageRecorded", "sha256:lineage"))
+    sequence += 1
+    events.append(_event(sequence, "CertificateEmitted", "sha256:certificate"))
+    return tuple(events)
+
+
+def _physical_plan_from_edges(
+    plan: ValidatedLogicalPlan,
+    edges: dict[str, tuple[str, ...]],
+    output_operator: str,
+) -> ApprovedPhysicalPlan:
+    """Create a synthetic approved physical DAG for certificate fault injection."""
+
+    return ApprovedPhysicalPlan(
+        physical_plan_id="pp-phase0-synthetic",
+        logical_plan_id=plan.logical_plan_id,
+        logical_plan_digest=plan.validation.canonical_digest,
+        output_operator=output_operator,
+        physical_operators=tuple(
+            PhysicalOperatorSpec(
+                physical_operator_id=operator_id,
+                logical_operator_id=f"logical-{operator_id}",
+                operator_type="Synthetic",
+                inputs=inputs,
+            )
+            for operator_id, inputs in edges.items()
+        ),
+        bindings=plan.bindings,
+        lineage_instrumentation=plan.lineage_instrumentation,
+        pending_obligations=plan.pending_obligations,
+    )
+
+
+def _certificate(
+    plan: ValidatedLogicalPlan,
+    physical: ApprovedPhysicalPlan,
+) -> GovernedExecutionCertificate:
+    """Build a structurally valid baseline certificate for Phase 0."""
+
+    return GovernedExecutionCertificate(
+        certificate_id="cert-phase0",
+        task_digest=plan.validation.canonical_digest,
+        logical_plan_id=plan.logical_plan_id,
+        physical_plan_id=physical.physical_plan_id,
+        policy_snapshot=plan.bindings.policy_snapshot,
+        data_snapshots=plan.bindings.data_snapshots,
+        events=_events_for_physical_plan(physical),
+        result_digest="sha256:result",
+        lineage_digest="sha256:lineage",
+        lineage_evidence=LineageEvidenceSummary(
+            execution_id="exec-phase0",
+            result_id="result-phase0",
+            lineage_level=LineageLevel.RECORD,
+            covered_operators=(plan.lineage_requirements[0].target_operator,),
+            edge_digest="sha256:edges",
+        ),
+    )
+
+
+def _certificate_inputs(
+    plan: ValidatedLogicalPlan,
+    scenario: str,
+) -> tuple[ApprovedPhysicalPlan, GovernedExecutionCertificate]:
+    """Return physical plan and certificate for a deterministic certificate scenario."""
+
+    physical = plan_physical_execution(plan)
+    certificate = _certificate(plan, physical)
+    if scenario == "baseline":
+        return physical, certificate
+    if scenario == "weak_lineage":
+        evidence = certificate.lineage_evidence
+        if evidence is None:
+            raise ValueError("weak_lineage scenario requires baseline lineage evidence")
+        return physical, certificate.model_copy(
+            update={
+                "lineage_evidence": evidence.model_copy(
+                    update={"lineage_level": LineageLevel.SOURCE}
+                )
+            }
+        )
+    if scenario == "missing_lineage_event":
+        return physical, certificate.model_copy(
+            update={
+                "events": tuple(
+                    event for event in certificate.events if event.event_type != "LineageRecorded"
+                )
+            }
+        )
+    if scenario == "dependency_violation":
+        synthetic = _physical_plan_from_edges(
+            plan,
+            {
+                "phys-scan-a": (),
+                "phys-scan-b": (),
+                "phys-join": ("phys-scan-a", "phys-scan-b"),
+            },
+            "phys-join",
+        )
+        events = (
+            _event(0, "PlanApproved", synthetic.physical_plan_id),
+            _event(1, "OperatorStarted", "sha256:start-a", "phys-scan-a"),
+            _event(2, "OperatorCompleted", "sha256:done-a", "phys-scan-a"),
+            _event(3, "OperatorStarted", "sha256:start-b", "phys-scan-b"),
+            _event(4, "OperatorStarted", "sha256:start-join", "phys-join"),
+            _event(5, "OperatorCompleted", "sha256:done-b", "phys-scan-b"),
+            _event(6, "OperatorCompleted", "sha256:done-join", "phys-join"),
+            _event(7, "ResultMaterialized", "sha256:result"),
+            _event(8, "LineageRecorded", "sha256:lineage"),
+            _event(9, "CertificateEmitted", "sha256:certificate"),
+        )
+        return synthetic, _certificate(plan, synthetic).model_copy(update={"events": events})
+    raise ValueError(f"Unknown certificate scenario: {scenario}")
 
 
 def _case_result(
@@ -98,21 +336,49 @@ def _case_result(
     raw_plan = load_json(plan_path)
     policy = load_policy(policy_path)
     catalog = load_catalog(catalog_path)
+    if case.case_kind == "validation":
+        raw_plan = _apply_validation_scenario(raw_plan, case.scenario)
     cold_response = validate(raw_plan, policy, catalog)
+    certificate_event_count = 0
+    if case.case_kind == "certificate":
+        if cold_response.status != ValidationStatus.REWRITE or cold_response.validated_plan is None:
+            raise ValueError(f"Certificate case {case.case_id} requires a rewrite validated plan")
+        physical, certificate = _certificate_inputs(cold_response.validated_plan, case.scenario)
+        verification = verify_execution_certificate(
+            cold_response.validated_plan,
+            physical,
+            certificate,
+        )
+        certificate_event_count = len(certificate.events)
     cold_latency_ms = (time.perf_counter() - cold_start) * 1000.0
 
     for _ in range(warmup_runs):
-        validate(raw_plan, policy, catalog)
+        response = validate(raw_plan, policy, catalog)
+        if case.case_kind == "certificate":
+            if response.validated_plan is None:
+                raise ValueError(f"Certificate case {case.case_id} did not rewrite in warmup")
+            physical, certificate = _certificate_inputs(response.validated_plan, case.scenario)
+            verify_execution_certificate(response.validated_plan, physical, certificate)
 
     measurements: list[float] = []
     for _ in range(measured_runs):
         started = time.perf_counter()
-        validate(raw_plan, policy, catalog)
+        response = validate(raw_plan, policy, catalog)
+        if case.case_kind == "certificate":
+            if response.validated_plan is None:
+                raise ValueError(f"Certificate case {case.case_id} did not rewrite")
+            physical, certificate = _certificate_inputs(response.validated_plan, case.scenario)
+            verify_execution_certificate(response.validated_plan, physical, certificate)
         measurements.append((time.perf_counter() - started) * 1000.0)
 
-    actual_reason_codes = _reason_codes(cold_response)
+    if case.case_kind == "certificate":
+        actual_status = verification.status.value
+        actual_reason_codes = _reason_codes(verification)
+    else:
+        actual_status = cold_response.status.value
+        actual_reason_codes = _validation_reason_codes(cold_response)
     expected_reason_codes = tuple(sorted(case.expected_reason_codes))
-    status_correct = cold_response.status.value == case.expected_status
+    status_correct = actual_status == case.expected_status
     reason_code_correct = set(expected_reason_codes).issubset(set(actual_reason_codes))
     if not expected_reason_codes:
         reason_code_correct = not actual_reason_codes
@@ -136,8 +402,10 @@ def _case_result(
         commit_hash=commit_hash,
         case_id=case.case_id,
         case_category=case.case_category,
+        case_kind=case.case_kind,
+        scenario=case.scenario,
         expected_status=case.expected_status,
-        actual_status=cold_response.status.value,
+        actual_status=actual_status,
         status_correct=status_correct,
         expected_reason_codes=expected_reason_codes,
         actual_reason_codes=actual_reason_codes,
@@ -156,7 +424,7 @@ def _case_result(
         inserted_operator_count=inserted_operator_count,
         pending_obligation_count=pending_obligation_count,
         verified_obligation_count=verified_obligation_count,
-        certificate_event_count=0,
+        certificate_event_count=certificate_event_count,
         plan_digest=plan_digest,
     )
 

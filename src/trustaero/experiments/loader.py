@@ -53,6 +53,8 @@ def load_cases(path: Path) -> tuple[ExperimentCase, ...]:
                 ExperimentCase(
                     case_id=row["case_id"],
                     case_category=row["case_category"],
+                    case_kind=row.get("case_kind", "validation") or "validation",
+                    scenario=row.get("scenario", "baseline") or "baseline",
                     plan_path=row["plan_path"],
                     policy_path=row["policy_path"],
                     catalog_path=row["catalog_path"],

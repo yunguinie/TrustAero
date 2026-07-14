@@ -16,6 +16,8 @@ class ExperimentCase:
 
     case_id: str
     case_category: str
+    case_kind: str
+    scenario: str
     plan_path: str
     policy_path: str
     catalog_path: str
@@ -31,6 +33,8 @@ class CaseResult:
     commit_hash: str
     case_id: str
     case_category: str
+    case_kind: str
+    scenario: str
     expected_status: str
     actual_status: str
     status_correct: bool
