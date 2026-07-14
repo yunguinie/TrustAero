@@ -210,6 +210,15 @@ unverified rather than silently accepted. The current status may therefore be
 `PARTIAL`: the certificate structure and governance evidence are consistent,
 but actual DBMS execution content remains outside the current IR-only phase.
 
+The certificate also performs a V1 structural event-coverage check against the
+approved physical plan. Event sequences must be unique and increasing; the
+certificate must record plan approval, start and completion events for every
+approved physical operator, result materialization after operator completion,
+lineage recording when lineage evidence is present, and certificate emission
+after the result/evidence events. These checks prevent a certificate from
+skipping over the approved physical-plan skeleton, but they still do not prove
+that a backend computed the correct bytes for each operator.
+
 ## Approved physical plan specification
 
 `plan_physical_execution(validated_plan)` derives a deterministic

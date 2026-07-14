@@ -14,6 +14,7 @@ from trustaero.ir.enums import ObligationType, ReasonCode
 from trustaero.ir.models import (
     ApprovedPhysicalPlan,
     Diagnostic,
+    ExecutionEvent,
     GovernedExecutionCertificate,
     ValidatedLogicalPlan,
 )
@@ -48,6 +49,178 @@ def _non_empty_digest(value: str) -> bool:
 
 def _has_event(certificate: GovernedExecutionCertificate, event_type: str) -> bool:
     return any(event.event_type == event_type for event in certificate.events)
+
+
+def _first_sequence(
+    events: tuple[ExecutionEvent, ...],
+    event_type: str,
+    operator_id: str | None = None,
+) -> int | None:
+    """Return the first matching event sequence, or ``None`` if absent."""
+
+    sequences = [
+        event.sequence
+        for event in events
+        if event.event_type == event_type
+        and (operator_id is None or event.operator_id == operator_id)
+    ]
+    return min(sequences) if sequences else None
+
+
+def _validate_event_coverage(
+    physical_plan: ApprovedPhysicalPlan,
+    certificate: GovernedExecutionCertificate,
+) -> tuple[Diagnostic, ...]:
+    """Check that certificate events cover the approved physical plan skeleton.
+
+    The check is intentionally structural. It verifies that the certificate
+    records a plausible execution timeline for every approved physical
+    operator, but it does not recompute operator outputs.
+    """
+
+    diagnostics: list[Diagnostic] = []
+    events = certificate.events
+    sequences = [event.sequence for event in events]
+    if sequences != sorted(sequences) or len(sequences) != len(set(sequences)):
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
+                "Certificate event sequences must be unique and monotonically increasing.",
+                sequences=sequences,
+            )
+        )
+
+    plan_approved = _first_sequence(events, "PlanApproved")
+    result_materialized = _first_sequence(events, "ResultMaterialized")
+    certificate_emitted = _first_sequence(events, "CertificateEmitted")
+
+    if plan_approved is None:
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_EVENT_MISSING,
+                "Certificate must include a PlanApproved event.",
+                event_type="PlanApproved",
+            )
+        )
+    if certificate_emitted is None:
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_EVENT_MISSING,
+                "Certificate must include a CertificateEmitted event.",
+                event_type="CertificateEmitted",
+            )
+        )
+
+    completed_sequences: list[int] = []
+    for operator in physical_plan.physical_operators:
+        operator_id = operator.physical_operator_id
+        started = _first_sequence(events, "OperatorStarted", operator_id)
+        completed = _first_sequence(events, "OperatorCompleted", operator_id)
+        if started is None:
+            diagnostics.append(
+                _diagnostic(
+                    ReasonCode.CERTIFICATE_OPERATOR_EVENT_MISSING,
+                    "Certificate is missing OperatorStarted for a physical operator.",
+                    operator_id=operator_id,
+                    event_type="OperatorStarted",
+                )
+            )
+        if completed is None:
+            diagnostics.append(
+                _diagnostic(
+                    ReasonCode.CERTIFICATE_OPERATOR_EVENT_MISSING,
+                    "Certificate is missing OperatorCompleted for a physical operator.",
+                    operator_id=operator_id,
+                    event_type="OperatorCompleted",
+                )
+            )
+        if started is not None and completed is not None:
+            completed_sequences.append(completed)
+            if completed <= started:
+                diagnostics.append(
+                    _diagnostic(
+                        ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
+                        "OperatorCompleted must occur after OperatorStarted.",
+                        operator_id=operator_id,
+                        started=started,
+                        completed=completed,
+                    )
+                )
+            if plan_approved is not None and started <= plan_approved:
+                diagnostics.append(
+                    _diagnostic(
+                        ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
+                        "OperatorStarted must occur after PlanApproved.",
+                        operator_id=operator_id,
+                        plan_approved=plan_approved,
+                        started=started,
+                    )
+                )
+
+    if result_materialized is not None and completed_sequences:
+        latest_completed = max(completed_sequences)
+        if result_materialized <= latest_completed:
+            diagnostics.append(
+                _diagnostic(
+                    ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
+                    "ResultMaterialized must occur after all OperatorCompleted events.",
+                    result_materialized=result_materialized,
+                    latest_operator_completed=latest_completed,
+                )
+            )
+
+    if certificate.lineage_evidence is not None and not _has_event(certificate, "LineageRecorded"):
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_EVENT_MISSING,
+                "Certificate with lineage evidence must include a LineageRecorded event.",
+                event_type="LineageRecorded",
+            )
+        )
+
+    lineage_recorded = _first_sequence(events, "LineageRecorded")
+    if (
+        lineage_recorded is not None
+        and result_materialized is not None
+        and lineage_recorded <= result_materialized
+    ):
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
+                "LineageRecorded must occur after ResultMaterialized in IR v1 certificates.",
+                lineage_recorded=lineage_recorded,
+                result_materialized=result_materialized,
+            )
+        )
+
+    if (
+        certificate_emitted is not None
+        and result_materialized is not None
+        and certificate_emitted <= result_materialized
+    ):
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
+                "CertificateEmitted must occur after ResultMaterialized.",
+                certificate_emitted=certificate_emitted,
+                result_materialized=result_materialized,
+            )
+        )
+    if (
+        certificate_emitted is not None
+        and lineage_recorded is not None
+        and certificate_emitted <= lineage_recorded
+    ):
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_EVENT_ORDER_INVALID,
+                "CertificateEmitted must occur after LineageRecorded.",
+                certificate_emitted=certificate_emitted,
+                lineage_recorded=lineage_recorded,
+            )
+        )
+
+    return tuple(diagnostics)
 
 
 def verify_execution_certificate(
@@ -170,6 +343,7 @@ def verify_execution_certificate(
                 event_type="ResultMaterialized",
             )
         )
+    diagnostics.extend(_validate_event_coverage(physical_plan, certificate))
 
     lineage_check = verify_lineage_evidence(
         plan.lineage_requirements,
