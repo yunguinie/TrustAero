@@ -18,6 +18,7 @@ Run from the repository root:
 ```powershell
 python scripts/run_phase0.py
 python scripts/run_phase0.py --config experiments/configs/phase0.json
+python scripts/summarize_phase0.py
 ```
 
 The runner writes:
@@ -50,3 +51,15 @@ This phase can support paper results about semantic correctness, failure
 classification, and validator overhead. It cannot support claims about DuckDB
 execution latency, physical optimization quality, or real lineage-capture
 runtime overhead.
+
+`summarize_phase0.py` reads one or more run folders and writes:
+
+```text
+results/phase0_summary/
+  phase0_summary.csv
+  phase0_summary.json
+```
+
+The summary includes status accuracy, reason-code accuracy, detection rate over
+negative/injected cases, false reject rate over legal cases, and latency
+aggregates across each run.

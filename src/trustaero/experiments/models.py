@@ -67,3 +67,21 @@ class Phase0Config:
     results_dir: str
     warmup_runs: int = 5
     measured_runs: int = 30
+
+
+@dataclass(frozen=True)
+class Phase0RunSummary:
+    """One summarized Phase 0 run, suitable for a paper-facing CSV table."""
+
+    run_id: str
+    commit_hash: str
+    case_count: int
+    status_accuracy: float
+    reason_code_accuracy: float
+    detection_rate: float
+    false_reject_rate: float
+    median_latency_ms: float
+    p95_latency_ms: float
+    max_latency_ms: float
+    all_correct: bool
+    failed_cases: tuple[str, ...]
