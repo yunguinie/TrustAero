@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import json
 
 import pytest
@@ -25,8 +26,12 @@ def test_run_phase1_writes_repeatable_execution_artifacts() -> None:
 
     summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
     assert summary["all_correct"] is True
-    assert summary["row_count"] == 2
+    assert summary["case_count"] == 4
+    assert summary["case_ids"] == ["P1-001", "P1-002", "P1-003", "P1-004"]
+    assert summary["total_row_count"] == 6
     assert summary["unverified_components"] == ["physical_plan_execution"]
-    assert (output_dir / "cases.csv").exists()
+    with (output_dir / "cases.csv").open(newline="", encoding="utf-8") as handle:
+        rows = tuple(csv.DictReader(handle))
+    assert [row["row_count"] for row in rows] == ["2", "1", "1", "2"]
     assert (output_dir / "environment.json").exists()
     assert (output_dir / "config.json").exists()

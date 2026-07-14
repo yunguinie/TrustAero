@@ -78,10 +78,10 @@ failure artifacts, which keeps successful result directories compact.
 
 ## Phase 1: minimal DuckDB execution smoke
 
-Phase 1 is the first real execution layer. It runs one validated single-table
-plan through the trusted SQL compiler, executes it in an in-memory DuckDB
-database, computes a result digest, and verifies that digest against a governed
-execution certificate.
+Phase 1 is the first real execution layer. It runs a small fixed matrix of
+validated single-table plans through the trusted SQL compiler, executes them in
+an in-memory DuckDB database, computes result digests, and verifies those
+digests against governed execution certificates.
 
 Run from the repository root after installing the optional DuckDB extra:
 
@@ -102,7 +102,8 @@ results/phase1/<run_id>/
 ```
 
 This phase can support claims that the minimal validated-plan-to-certificate
-execution path is wired end to end. It still cannot support claims about
+execution path is wired end to end for projection, ordinary filter, temporal
+filter, and spatial-radius filter cases. It still cannot support claims about
 cost-based optimization, large-scale DBMS performance, or malicious database
 protection. In the current certificate result, `physical_plan_execution` remains
 unverified because the physical execution trace is trusted-executor evidence,

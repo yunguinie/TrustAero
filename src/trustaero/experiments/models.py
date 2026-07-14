@@ -132,6 +132,8 @@ class Phase1ExecutionResult:
     run_id: str
     commit_hash: str
     case_id: str
+    case_category: str
+    scenario: str
     plan_id: str
     status: str
     status_correct: bool
