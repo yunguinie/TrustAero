@@ -55,6 +55,8 @@ trustaero validate examples/plans/rewrite_precision.json `
   and event log are trusted.
 
 For the current system pipeline, see [docs/architecture.md](docs/architecture.md).
+For the first repeatable semantic evaluation layer, see
+[docs/phase0-experiments.md](docs/phase0-experiments.md).
 
 ## Repository status
 
