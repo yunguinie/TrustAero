@@ -17,7 +17,11 @@ from trustaero.ir.models import (
     GovernedExecutionCertificate,
     ValidatedLogicalPlan,
 )
-from trustaero.validator.certificate_events import has_event, validate_event_coverage
+from trustaero.validator.certificate_events import (
+    first_sequence,
+    has_event,
+    validate_event_coverage,
+)
 from trustaero.validator.lineage import verify_lineage_evidence
 
 
@@ -51,16 +55,29 @@ def _non_empty_digest(value: str) -> bool:
     return bool(value) and ":" in value
 
 
+def _result_event_digest(certificate: GovernedExecutionCertificate) -> str | None:
+    """Return the first ResultMaterialized event digest, if the event exists."""
+
+    result_sequence = first_sequence(certificate.events, "ResultMaterialized")
+    if result_sequence is None:
+        return None
+    for event in certificate.events:
+        if event.sequence == result_sequence:
+            return event.payload_digest
+    return None
+
+
 def verify_execution_certificate(
     plan: ValidatedLogicalPlan,
     physical_plan: ApprovedPhysicalPlan,
     certificate: GovernedExecutionCertificate,
+    observed_result_digest: str | None = None,
 ) -> CertificateVerification:
     """Check logical/physical bindings, snapshots, evidence, and digests.
 
-    Current V1 does not recompute database result bytes or physical-plan
-    execution. Those parts are listed in ``unverified_components`` instead of
-    being treated as silently proven.
+    ``observed_result_digest`` is an independently computed digest from a
+    trusted executor. Without it, the certificate's ``result_digest`` is only a
+    binding claim and remains listed as unverified instead of self-proving.
     """
 
     diagnostics: list[Diagnostic] = []
@@ -163,6 +180,29 @@ def verify_execution_certificate(
                 field="result_digest",
             )
         )
+    result_event_digest = _result_event_digest(certificate)
+    if result_event_digest is not None and result_event_digest != certificate.result_digest:
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_RESULT_DIGEST_MISMATCH,
+                "ResultMaterialized event digest does not match certificate result_digest.",
+                expected=certificate.result_digest,
+                actual=result_event_digest,
+            )
+        )
+    if (
+        observed_result_digest is not None
+        and _non_empty_digest(certificate.result_digest)
+        and observed_result_digest != certificate.result_digest
+    ):
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_RESULT_DIGEST_MISMATCH,
+                "Observed trusted-executor result digest does not match the certificate.",
+                expected=certificate.result_digest,
+                actual=observed_result_digest,
+            )
+        )
     if not has_event(certificate, "ResultMaterialized"):
         diagnostics.append(
             _diagnostic(
@@ -193,13 +233,18 @@ def verify_execution_certificate(
     if diagnostics:
         status = CertificateVerificationStatus.REJECT
     else:
-        # The executor has not been integrated, so content digests are binding
-        # claims only. They are not independently recomputed in this phase.
+        # Even when the result digest is independently checked, the physical
+        # execution trace is still trusted-executor evidence rather than a
+        # cryptographic proof against a malicious DBMS.
         status = CertificateVerificationStatus.PARTIAL
+
+    unverified_components = ["physical_plan_execution"]
+    if observed_result_digest is None:
+        unverified_components.insert(0, "result_content_digest")
 
     return CertificateVerification(
         status=status,
         verified_obligations=tuple(dict.fromkeys(verified)),
         diagnostics=tuple(diagnostics),
-        unverified_components=("result_content_digest", "physical_plan_execution"),
+        unverified_components=tuple(unverified_components),
     )

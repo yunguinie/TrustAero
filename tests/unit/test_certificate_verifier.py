@@ -162,6 +162,74 @@ def test_certificate_verifies_bindings_and_upgrades_lineage_pending_obligation(
     )
 
 
+def test_certificate_with_observed_result_digest_verifies_result_binding(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = plan_physical_execution(plan)
+    certificate = _certificate(plan)
+
+    result = verify_execution_certificate(
+        plan,
+        physical,
+        certificate,
+        observed_result_digest=certificate.result_digest,
+    )
+
+    assert result.status == CertificateVerificationStatus.PARTIAL
+    assert result.diagnostics == ()
+    assert result.unverified_components == ("physical_plan_execution",)
+
+
+def test_certificate_rejects_observed_result_digest_mismatch(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = plan_physical_execution(plan)
+    certificate = _certificate(plan)
+
+    result = verify_execution_certificate(
+        plan,
+        physical,
+        certificate,
+        observed_result_digest="sha256:other-result",
+    )
+
+    assert result.status == CertificateVerificationStatus.REJECT
+    assert any(
+        diagnostic.code == ReasonCode.CERTIFICATE_RESULT_DIGEST_MISMATCH
+        for diagnostic in result.diagnostics
+    )
+
+
+def test_certificate_rejects_result_event_digest_mismatch(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    physical = plan_physical_execution(plan)
+    events = tuple(
+        event.model_copy(update={"payload_digest": "sha256:other-result"})
+        if event.event_type == "ResultMaterialized"
+        else event
+        for event in _certificate(plan).events
+    )
+    certificate = _certificate(plan).model_copy(update={"events": events})
+
+    result = verify_execution_certificate(plan, physical, certificate)
+
+    assert result.status == CertificateVerificationStatus.REJECT
+    assert any(
+        diagnostic.code == ReasonCode.CERTIFICATE_RESULT_DIGEST_MISMATCH
+        for diagnostic in result.diagnostics
+    )
+
+
 def test_certificate_rejects_logical_plan_binding_mismatch(
     rewrite_plan: dict[str, Any],
     policy_set: PolicySet,

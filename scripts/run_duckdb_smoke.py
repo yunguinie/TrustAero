@@ -17,7 +17,9 @@ from trustaero.catalog.in_memory import InMemoryCatalog
 from trustaero.catalog.models import CatalogDocument
 from trustaero.execution import TableBindings, compile_validated_plan, execute_with_connection
 from trustaero.ir.enums import ValidationStatus
-from trustaero.ir.models import PolicySet
+from trustaero.ir.models import ExecutionEvent, GovernedExecutionCertificate, PolicySet
+from trustaero.planner.physical import plan_physical_execution
+from trustaero.validator.certificate import verify_execution_certificate
 from trustaero.validator.service import validate
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,6 +30,22 @@ def _load_json(relative: str) -> dict[str, Any]:
     if not isinstance(loaded, dict):
         raise ValueError(f"Expected JSON object at {relative}")
     return loaded
+
+
+def _event(
+    sequence: int,
+    event_type: str,
+    payload_digest: str,
+    operator_id: str | None = None,
+) -> ExecutionEvent:
+    """Build a minimal trusted-executor event for the smoke certificate."""
+
+    return ExecutionEvent(
+        sequence=sequence,
+        event_type=event_type,
+        operator_id=operator_id,
+        payload_digest=payload_digest,
+    )
 
 
 def main() -> int:
@@ -80,10 +98,54 @@ def main() -> int:
     finally:
         connection.close()
 
+    physical = plan_physical_execution(response.validated_plan)
+    events: list[ExecutionEvent] = [_event(0, "PlanApproved", physical.physical_plan_id)]
+    sequence = 1
+    for operator in physical.physical_operators:
+        events.append(
+            _event(
+                sequence,
+                "OperatorStarted",
+                f"sha256:start-{operator.physical_operator_id}",
+                operator.physical_operator_id,
+            )
+        )
+        sequence += 1
+        events.append(
+            _event(
+                sequence,
+                "OperatorCompleted",
+                f"sha256:done-{operator.physical_operator_id}",
+                operator.physical_operator_id,
+            )
+        )
+        sequence += 1
+    events.append(_event(sequence, "ResultMaterialized", result.result_digest))
+    sequence += 1
+    events.append(_event(sequence, "CertificateEmitted", "sha256:certificate"))
+    certificate = GovernedExecutionCertificate(
+        certificate_id="cert-duckdb-smoke",
+        task_digest=response.validated_plan.validation.canonical_digest,
+        logical_plan_id=response.validated_plan.logical_plan_id,
+        physical_plan_id=physical.physical_plan_id,
+        policy_snapshot=response.validated_plan.bindings.policy_snapshot,
+        data_snapshots=response.validated_plan.bindings.data_snapshots,
+        events=tuple(events),
+        result_digest=result.result_digest,
+    )
+    certificate_check = verify_execution_certificate(
+        response.validated_plan,
+        physical,
+        certificate,
+        observed_result_digest=result.result_digest,
+    )
+
     print(
         json.dumps(
             {
                 "logical_plan_id": compiled.logical_plan_id,
+                "certificate_status": certificate_check.status,
+                "certificate_unverified_components": certificate_check.unverified_components,
                 "row_count": result.row_count,
                 "columns": result.columns,
                 "result_digest": result.result_digest,
