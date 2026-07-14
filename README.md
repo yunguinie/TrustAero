@@ -11,12 +11,15 @@ but it cannot execute arbitrary SQL or bypass deterministic validation.
 - deterministic L1 structural, L2 plan-graph, and L3 governance validation;
 - stable reason codes and fail-closed outcomes;
 - minimal policy decisions and obligation-driven safe rewrites;
+- approved physical-plan specifications that bind to validated logical plans;
+- governed execution-certificate structure, event, DAG, and lineage-evidence
+  checks under a trusted-executor assumption;
 - a local CLI with no online API dependency.
 
-Not implemented yet: database execution, physical optimization, LLM access,
-or cryptographic proof generation. The Governed Execution Certificate model is
-a structured record under a trusted-executor assumption, not a proof against a
-malicious DBMS.
+Not implemented yet: database execution, cost-based physical optimization, LLM
+access, or cryptographic proof generation. The Governed Execution Certificate
+model is a structured record under a trusted-executor assumption, not a proof
+against a malicious DBMS.
 
 ## Development setup
 
@@ -50,6 +53,8 @@ trustaero validate examples/plans/rewrite_precision.json `
 - Only a validated logical plan may proceed to later optimization.
 - The current prototype assumes the validator, catalog, policy store, executor,
   and event log are trusted.
+
+For the current system pipeline, see [docs/architecture.md](docs/architecture.md).
 
 ## Repository status
 
