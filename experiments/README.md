@@ -63,3 +63,8 @@ results/phase0_summary/
 The summary includes status accuracy, reason-code accuracy, detection rate over
 negative/injected cases, false reject rate over legal cases, and latency
 aggregates across each run.
+
+When a case does not match its expected status or expected reason codes, the
+runner writes `failures/<case_id>.json` with the case metadata, flattened result
+row, input paths, and serialized diagnostics. Passing cases do not create
+failure artifacts, which keeps successful result directories compact.

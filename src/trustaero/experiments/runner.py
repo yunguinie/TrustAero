@@ -315,6 +315,15 @@ def _certificate_inputs(
     raise ValueError(f"Unknown certificate scenario: {scenario}")
 
 
+def _diagnostic_payload(response: Any) -> list[dict[str, Any]]:
+    """Serialize diagnostics for failure artifacts."""
+
+    return [
+        diagnostic.model_dump(mode="json") if hasattr(diagnostic, "model_dump") else {}
+        for diagnostic in response.diagnostics
+    ]
+
+
 def _case_result(
     *,
     root: Path,
@@ -323,7 +332,7 @@ def _case_result(
     case: ExperimentCase,
     warmup_runs: int,
     measured_runs: int,
-) -> CaseResult:
+) -> tuple[CaseResult, dict[str, Any] | None]:
     """Run one case with cold and preloaded core-validation measurements."""
 
     plan_path = root / case.plan_path
@@ -374,9 +383,11 @@ def _case_result(
     if case.case_kind == "certificate":
         actual_status = verification.status.value
         actual_reason_codes = _reason_codes(verification)
+        diagnostics_payload = _diagnostic_payload(verification)
     else:
         actual_status = cold_response.status.value
         actual_reason_codes = _validation_reason_codes(cold_response)
+        diagnostics_payload = _diagnostic_payload(cold_response)
     expected_reason_codes = tuple(sorted(case.expected_reason_codes))
     status_correct = actual_status == case.expected_status
     reason_code_correct = set(expected_reason_codes).issubset(set(actual_reason_codes))
@@ -397,7 +408,7 @@ def _case_result(
         verified_obligation_count = len(validated_plan.satisfied_obligations)
         plan_digest = validated_plan.validation.canonical_digest
 
-    return CaseResult(
+    result = CaseResult(
         run_id=run_id,
         commit_hash=commit_hash,
         case_id=case.case_id,
@@ -427,6 +438,19 @@ def _case_result(
         certificate_event_count=certificate_event_count,
         plan_digest=plan_digest,
     )
+    failure_payload = None
+    if not status_correct or not reason_code_correct:
+        failure_payload = {
+            "case": asdict(case),
+            "result": asdict(result),
+            "diagnostics": diagnostics_payload,
+            "input_paths": {
+                "plan": str(plan_path),
+                "policy": str(policy_path),
+                "catalog": str(catalog_path),
+            },
+        }
+    return result, failure_payload
 
 
 def _write_cases_csv(path: Path, results: tuple[CaseResult, ...]) -> None:
@@ -441,6 +465,18 @@ def _write_cases_csv(path: Path, results: tuple[CaseResult, ...]) -> None:
             row["expected_reason_codes"] = "|".join(result.expected_reason_codes)
             row["actual_reason_codes"] = "|".join(result.actual_reason_codes)
             writer.writerow(row)
+
+
+def _write_failure_artifacts(output_dir: Path, failures: dict[str, dict[str, Any]]) -> None:
+    """Write one JSON artifact per failed case for easy debugging."""
+
+    failure_dir = output_dir / "failures"
+    failure_dir.mkdir(exist_ok=True)
+    for case_id, payload in sorted(failures.items()):
+        (failure_dir / f"{case_id}.json").write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
 
 
 def _environment(root: Path, commit_hash: str) -> dict[str, object]:
@@ -494,7 +530,7 @@ def run_phase0(config: Phase0Config) -> Path:
     output_dir = root / config.results_dir / run_id
     output_dir.mkdir(parents=True, exist_ok=False)
 
-    results = tuple(
+    case_outputs = tuple(
         _case_result(
             root=root,
             run_id=run_id,
@@ -505,8 +541,11 @@ def run_phase0(config: Phase0Config) -> Path:
         )
         for case in cases
     )
+    results = tuple(result for result, _ in case_outputs)
+    failures = {result.case_id: failure for result, failure in case_outputs if failure is not None}
 
     _write_cases_csv(output_dir / "cases.csv", results)
+    _write_failure_artifacts(output_dir, failures)
     (output_dir / "summary.json").write_text(
         json.dumps(_summary(results), indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -519,5 +558,4 @@ def run_phase0(config: Phase0Config) -> Path:
         json.dumps(asdict(config), indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    (output_dir / "failures").mkdir(exist_ok=True)
     return output_dir

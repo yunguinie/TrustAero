@@ -42,7 +42,9 @@ def load_cases(path: Path) -> tuple[ExperimentCase, ...]:
     """
 
     rows: list[ExperimentCase] = []
-    with path.open(newline="", encoding="utf-8") as handle:
+    # ``utf-8-sig`` accepts both normal UTF-8 and PowerShell-created UTF-8
+    # files with a BOM, keeping experiment matrices portable on Windows.
+    with path.open(newline="", encoding="utf-8-sig") as handle:
         for row in csv.DictReader(handle):
             expected_codes = tuple(
                 code.strip()
