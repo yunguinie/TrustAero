@@ -14,12 +14,15 @@ but it cannot execute arbitrary SQL or bypass deterministic validation.
 - approved physical-plan specifications that bind to validated logical plans;
 - governed execution-certificate structure, event, DAG, and lineage-evidence
   checks under a trusted-executor assumption;
+- a minimal optional DuckDB execution boundary for a validated single-relation
+  SQL fragment;
 - a local CLI with no online API dependency.
 
-Not implemented yet: database execution, cost-based physical optimization, LLM
-access, or cryptographic proof generation. The Governed Execution Certificate
-model is a structured record under a trusted-executor assumption, not a proof
-against a malicious DBMS.
+Not implemented yet: general database execution, cost-based physical
+optimization, LLM access, or cryptographic proof generation. The minimal DuckDB
+path only covers a small validated fragment for smoke experiments. The Governed
+Execution Certificate model is a structured record under a trusted-executor
+assumption, not a proof against a malicious DBMS.
 
 ## Development setup
 
@@ -32,6 +35,14 @@ python -m pip install -e ".[dev]"
 python -m pytest
 python scripts/export_json_schemas.py
 python scripts/check_schema_sync.py
+```
+
+To run the optional DuckDB execution smoke path, install the extra dependency
+inside the same environment:
+
+```powershell
+python -m pip install -e ".[dev,duckdb]"
+python scripts/run_duckdb_smoke.py
 ```
 
 The core dependency list intentionally stays small. Optional libraries are
