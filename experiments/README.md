@@ -169,3 +169,32 @@ evidence capture latency, and their combined governed latency are reported
 separately. Record-level lineage remains unsupported and is never estimated.
 This is still a pilot candidate-space experiment, not a trained or cost-based
 optimizer.
+
+## Phase 2C: stability, scale, and resumable measurements
+
+Phase 2C varies scenario, row count, and data seed independently. Candidate
+orders use deterministic rotations, not one fixed order or irreproducible
+random shuffling. Each completed scenario/scale/seed unit is stored atomically;
+`--resume` reruns only an interrupted unit and never admits partial samples.
+
+Calibration run with a visible progress bar:
+
+```powershell
+python -u scripts/run_phase2c.py `
+  --config experiments/configs/phase2c_calibration.json `
+  --progress
+```
+
+Resume the latest interrupted calibration:
+
+```powershell
+python -u scripts/run_phase2c.py `
+  --config experiments/configs/phase2c_calibration.json `
+  --progress --resume
+```
+
+The runner writes raw timings, per-strategy and per-unit summaries, seed-level
+bootstrap intervals, actual DuckDB profiles, checkpoint state, failures, a log,
+and both run-local and stable `latest_progress.json` progress files. The bundled
+configuration is calibration-only and must not be presented as final paper
+data.

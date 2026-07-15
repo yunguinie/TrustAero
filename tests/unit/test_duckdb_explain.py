@@ -34,6 +34,10 @@ def test_repeated_actual_plan_has_stable_fingerprint_and_metrics() -> None:
     assert "SEQ_SCAN" in first.operator_names
     assert max(first.actual_cardinalities) == 50
     assert any(value >= 100 for value in first.rows_scanned)
+    assert first.profile_latency_ms > 0
+    assert first.peak_buffer_memory_bytes >= 0
+    assert first.peak_temp_directory_bytes >= 0
+    assert first.total_memory_allocated_bytes >= 0
 
 
 def test_materialization_changes_observed_physical_plan() -> None:

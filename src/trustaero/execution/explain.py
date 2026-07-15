@@ -26,6 +26,10 @@ class PhysicalPlanObservation:
     rows_scanned: tuple[int, ...]
     operator_timings_ms: tuple[float, ...]
     max_intermediate_cardinality: int
+    profile_latency_ms: float
+    peak_buffer_memory_bytes: int
+    peak_temp_directory_bytes: int
+    total_memory_allocated_bytes: int
     plan_json: str
 
 
@@ -80,6 +84,16 @@ def _structure(value: object) -> object:
     }
 
 
+def _profile_root(value: object) -> dict[str, Any]:
+    """Return DuckDB's metric-bearing root across supported JSON shapes."""
+
+    if isinstance(value, dict):
+        return value
+    if isinstance(value, list) and len(value) == 1 and isinstance(value[0], dict):
+        return value[0]
+    return {}
+
+
 def observe_duckdb_plan(
     connection: ExplainConnection,
     sql: str,
@@ -108,6 +122,7 @@ def observe_duckdb_plan(
     cardinalities = tuple(int(node.get("operator_cardinality", 0)) for node in nodes)
     rows_scanned = tuple(int(node.get("operator_rows_scanned", 0)) for node in nodes)
     timings_ms = tuple(float(node.get("operator_timing", 0.0)) * 1000.0 for node in nodes)
+    root = _profile_root(raw_plan)
     return PhysicalPlanObservation(
         fingerprint=fingerprint,
         operator_names=names,
@@ -115,5 +130,9 @@ def observe_duckdb_plan(
         rows_scanned=rows_scanned,
         operator_timings_ms=timings_ms,
         max_intermediate_cardinality=max(cardinalities, default=0),
+        profile_latency_ms=float(root.get("latency", 0.0)) * 1000.0,
+        peak_buffer_memory_bytes=int(root.get("system_peak_buffer_memory", 0)),
+        peak_temp_directory_bytes=int(root.get("system_peak_temp_dir_size", 0)),
+        total_memory_allocated_bytes=int(root.get("total_memory_allocated", 0)),
         plan_json=json.dumps(raw_plan, indent=2, sort_keys=True),
     )

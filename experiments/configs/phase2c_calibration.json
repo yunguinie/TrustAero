@@ -1,0 +1,28 @@
+{
+  "results_dir": "results/phase2c_calibration",
+  "warmup_runs": 1,
+  "measured_runs": 3,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260715,
+  "tie_threshold_fraction": 0.03,
+  "source_lineage": true,
+  "materialization_targets": [
+    "op-temporal",
+    "op-spatial",
+    "op-policy",
+    "op-event-project"
+  ],
+  "row_counts": [20000, 100000],
+  "seeds": [1, 2],
+  "scenarios": [
+    {
+      "scenario_id": "spatial_selective",
+      "temporal_selectivity": 0.85,
+      "spatial_selectivity": 0.15,
+      "policy_selectivity": 0.80,
+      "join_match_rate": 0.85,
+      "hot_key_fraction": 0.05
+    }
+  ]
+}
