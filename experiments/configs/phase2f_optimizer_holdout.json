@@ -1,0 +1,55 @@
+{
+  "results_dir": "results/phase2f_optimizer_holdout",
+  "warmup_runs": 2,
+  "measured_runs": 10,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260716,
+  "tie_threshold_fraction": 0.03,
+  "source_lineage": true,
+  "require_clean_git": true,
+  "materialization_targets": [],
+  "filter_orders": [],
+  "mask_event_id": true,
+  "operator_placements": [["gov-001-mask", "op-event-project"]],
+  "row_counts": [200000, 500000],
+  "seeds": [11, 12, 13],
+  "scenarios": [
+    {
+      "scenario_id": "medium_width_high_match",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 1.0,
+      "hot_key_fraction": 0.05,
+      "identifier_width": 512
+    },
+    {
+      "scenario_id": "verywide_high_match",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 1.0,
+      "hot_key_fraction": 0.05,
+      "identifier_width": 2048
+    },
+    {
+      "scenario_id": "verywide_medium_match",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 0.5,
+      "hot_key_fraction": 0.03,
+      "identifier_width": 2048
+    },
+    {
+      "scenario_id": "verywide_low_match",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 0.1,
+      "hot_key_fraction": 0.02,
+      "identifier_width": 2048
+    }
+  ]
+}

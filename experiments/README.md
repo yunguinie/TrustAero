@@ -291,3 +291,44 @@ This confirmation protocol uses the same two scales and three scenarios, but
 raises the independent seed count to five, warmups to five, and measured runs
 to 30. It is the first Phase 2E result eligible for the analyzer's stable label.
 If interrupted, add `--resume`; completed atomic units are not repeated.
+
+Evaluate the frozen V1 selector on this run as calibration data:
+
+```powershell
+python scripts/evaluate_optimizer_v1.py `
+  results/phase2e_confirmation/<run_id> `
+  --evaluation-label calibration
+```
+
+The selector first excludes semantically illegal or exposure-infeasible
+candidates. It then compares an explicit byte-work proxy for hashing,
+identifier width, Join matches, and early materialization. The proxy is
+auditable and deterministic; it is not presented as a learned latency model.
+
+## Phase 2F: held-out Optimizer V1 screening
+
+Phase 2F freezes unseen seeds, scales, identifier widths, and Join match rates
+to test whether the Phase 2E-calibrated rule generalizes. Do not change the V1
+constants after viewing these results and still call the same run held out.
+
+Run with visible progress and ETA:
+
+```powershell
+python -u scripts/run_phase2c.py `
+  --config experiments/configs/phase2f_optimizer_holdout.json `
+  --progress
+```
+
+Then compute top-1 selection, 3%-tie accuracy, regret, and speedup versus fixed
+late Mask:
+
+```powershell
+python scripts/evaluate_optimizer_v1.py `
+  results/phase2f_optimizer_holdout/<run_id> `
+  --evaluation-label held_out
+```
+
+This is an optimizer screening experiment, not yet the final paper benchmark.
+A positive result still needs a larger frozen protocol and a real public
+dataset. A negative result should be used to revise the model and then create a
+new, untouched holdout rather than silently retuning against Phase 2F.
