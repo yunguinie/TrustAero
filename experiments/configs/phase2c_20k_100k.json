@@ -1,0 +1,68 @@
+{
+  "results_dir": "results/phase2c_paper_candidate",
+  "warmup_runs": 5,
+  "measured_runs": 30,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260715,
+  "tie_threshold_fraction": 0.03,
+  "source_lineage": true,
+  "materialization_targets": [
+    "op-temporal",
+    "op-spatial",
+    "op-policy",
+    "op-event-project"
+  ],
+  "row_counts": [20000, 100000],
+  "seeds": [1, 2, 3, 4, 5],
+  "scenarios": [
+    {
+      "scenario_id": "very_selective",
+      "temporal_selectivity": 0.15,
+      "spatial_selectivity": 0.15,
+      "policy_selectivity": 0.15,
+      "join_match_rate": 0.70,
+      "hot_key_fraction": 0.02
+    },
+    {
+      "scenario_id": "temporal_selective",
+      "temporal_selectivity": 0.15,
+      "spatial_selectivity": 0.85,
+      "policy_selectivity": 0.80,
+      "join_match_rate": 0.85,
+      "hot_key_fraction": 0.05
+    },
+    {
+      "scenario_id": "spatial_selective",
+      "temporal_selectivity": 0.85,
+      "spatial_selectivity": 0.15,
+      "policy_selectivity": 0.80,
+      "join_match_rate": 0.85,
+      "hot_key_fraction": 0.05
+    },
+    {
+      "scenario_id": "policy_selective",
+      "temporal_selectivity": 0.85,
+      "spatial_selectivity": 0.80,
+      "policy_selectivity": 0.15,
+      "join_match_rate": 0.85,
+      "hot_key_fraction": 0.05
+    },
+    {
+      "scenario_id": "broad_uniform",
+      "temporal_selectivity": 0.90,
+      "spatial_selectivity": 0.90,
+      "policy_selectivity": 0.90,
+      "join_match_rate": 0.90,
+      "hot_key_fraction": 0.01
+    },
+    {
+      "scenario_id": "broad_skewed",
+      "temporal_selectivity": 0.90,
+      "spatial_selectivity": 0.90,
+      "policy_selectivity": 0.90,
+      "join_match_rate": 0.90,
+      "hot_key_fraction": 0.45
+    }
+  ]
+}
