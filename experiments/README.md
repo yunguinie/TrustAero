@@ -198,3 +198,9 @@ bootstrap intervals, actual DuckDB profiles, checkpoint state, failures, a log,
 and both run-local and stable `latest_progress.json` progress files. The bundled
 configuration is calibration-only and must not be presented as final paper
 data.
+
+The paper-candidate configuration additionally requires a clean Git worktree,
+and a resumed run must use the same Git commit recorded at creation. This
+prevents one result directory from silently mixing measurements from two code
+versions. `Ctrl+C` stops safely; the same command with `--resume` reruns only
+the interrupted unit.

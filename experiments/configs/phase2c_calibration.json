@@ -7,6 +7,7 @@
   "order_seed": 20260715,
   "tie_threshold_fraction": 0.03,
   "source_lineage": true,
+  "require_clean_git": false,
   "materialization_targets": [
     "op-temporal",
     "op-spatial",

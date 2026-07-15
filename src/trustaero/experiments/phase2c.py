@@ -77,6 +77,7 @@ class Phase2CConfig:
     order_seed: int = 20260715
     tie_threshold_fraction: float = 0.03
     source_lineage: bool = True
+    require_clean_git: bool = False
     materialization_targets: tuple[str, ...] = (
         "op-temporal",
         "op-spatial",
@@ -166,6 +167,22 @@ def _git_commit(root: Path) -> str:
     return completed.stdout.strip()
 
 
+def _git_dirty(root: Path) -> bool:
+    """Return whether tracked or untracked files could affect a paper run."""
+
+    try:
+        completed = subprocess.run(
+            ["git", "-c", f"safe.directory={root.as_posix()}", "status", "--porcelain"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return True
+    return bool(completed.stdout.strip())
+
+
 def _digest(value: object) -> str:
     encoded = json.dumps(value, default=str, sort_keys=True, separators=(",", ":")).encode()
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
@@ -183,7 +200,11 @@ def _write_json_atomic(path: Path, payload: object) -> None:
     temporary.replace(path)
 
 
-def _environment(commit_hash: str, config: Phase2CConfig) -> dict[str, Any]:
+def _environment(
+    commit_hash: str,
+    git_dirty: bool,
+    config: Phase2CConfig,
+) -> dict[str, Any]:
     packages: dict[str, str] = {}
     for package in ("trustaero", "duckdb", "pydantic"):
         try:
@@ -196,6 +217,7 @@ def _environment(commit_hash: str, config: Phase2CConfig) -> dict[str, Any]:
         "processor": platform.processor(),
         "logical_cpu_count": os.cpu_count(),
         "commit_hash": commit_hash,
+        "git_dirty": git_dirty,
         "packages": packages,
         "duckdb": {
             "threads": config.duckdb_threads,
@@ -737,6 +759,10 @@ def run_phase2c(
     import duckdb
 
     root = _repo_root()
+    commit_hash = _git_commit(root)
+    git_dirty = _git_dirty(root)
+    if config.require_clean_git and git_dirty:
+        raise ValueError("This Phase 2C protocol requires a clean Git worktree")
     results_root = root / config.results_dir
     results_root.mkdir(parents=True, exist_ok=True)
     run_id = resume_run_id or _new_run_id()
@@ -751,6 +777,9 @@ def run_phase2c(
         state = json.loads(state_path.read_text(encoding="utf-8"))
         if state.get("config_digest") != config_digest:
             raise ValueError("Resume config does not match the original Phase 2C run")
+        environment = json.loads((output_dir / "environment.json").read_text(encoding="utf-8"))
+        if environment.get("commit_hash") != commit_hash:
+            raise ValueError("Cannot resume Phase 2C after the Git commit changed")
     else:
         state = {
             "run_id": run_id,
@@ -760,11 +789,13 @@ def run_phase2c(
             "created_at": datetime.now(UTC).isoformat(),
         }
         _write_json_atomic(output_dir / "config.json", config_payload)
-        _write_json_atomic(output_dir / "environment.json", _environment(_git_commit(root), config))
+        _write_json_atomic(
+            output_dir / "environment.json",
+            _environment(commit_hash, git_dirty, config),
+        )
         _write_json_atomic(state_path, state)
         _write_json_atomic(results_root / "latest_run.json", {"run_id": run_id})
 
-    commit_hash = _git_commit(root)
     logical_plan = build_phase2_experiment_plan(source_lineage=config.source_lineage)
     candidates = generate_duckdb_candidates(
         logical_plan,
@@ -856,6 +887,7 @@ def load_phase2c_config(path: str | Path) -> Phase2CConfig:
         order_seed=int(payload.get("order_seed", 20260715)),
         tie_threshold_fraction=float(payload.get("tie_threshold_fraction", 0.03)),
         source_lineage=bool(payload.get("source_lineage", True)),
+        require_clean_git=bool(payload.get("require_clean_git", False)),
         materialization_targets=tuple(
             payload.get(
                 "materialization_targets",

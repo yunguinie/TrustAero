@@ -36,11 +36,15 @@ def main() -> None:
         if not latest_path.exists():
             raise SystemExit(f"No resumable Phase 2C run found at {latest_path}")
         resume_run_id = json.loads(latest_path.read_text(encoding="utf-8"))["run_id"]
-    output_dir = run_phase2c(
-        config,
-        resume_run_id=resume_run_id,
-        show_progress=args.progress,
-    )
+    try:
+        output_dir = run_phase2c(
+            config,
+            resume_run_id=resume_run_id,
+            show_progress=args.progress,
+        )
+    except KeyboardInterrupt:
+        print("\nPhase 2C stopped safely. Re-run the same command with --resume.")
+        raise SystemExit(130) from None
     print(output_dir)
 
 
