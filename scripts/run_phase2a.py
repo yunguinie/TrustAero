@@ -18,6 +18,8 @@ def _load_config(path: str) -> Phase2AConfig:
         workloads=workloads,
         warmup_runs=int(payload.get("warmup_runs", 2)),
         measured_runs=int(payload.get("measured_runs", 10)),
+        duckdb_threads=int(payload.get("duckdb_threads", 4)),
+        duckdb_memory_limit_mb=int(payload.get("duckdb_memory_limit_mb", 4096)),
     )
 
 

@@ -153,9 +153,12 @@ def generate_synthetic_workload(
         ),
     )
 
-    hot_sql = "SELECT 'hot-key' AS join_key, 'hot' AS severity_label" if hot_count else None
+    # The dimension key deliberately has a different field name from the fact
+    # key.  This keeps the trusted IR join output unambiguous: both fields may
+    # coexist without silently shadowing one another.
+    hot_sql = "SELECT 'hot-key' AS dimension_key, 'hot' AS severity_label" if hot_count else None
     unique_sql = (
-        "SELECT printf('key-%012d', i) AS join_key, "
+        "SELECT printf('key-%012d', i) AS dimension_key, "
         "printf('severity-%d', i % 5) AS severity_label "
         "FROM range(?, ?) AS generated(i)"
         if match_count > hot_count
@@ -173,7 +176,7 @@ def generate_synthetic_workload(
         )
     else:
         connection.execute(
-            "CREATE OR REPLACE TABLE severity_dim(join_key VARCHAR, severity_label VARCHAR)"
+            "CREATE OR REPLACE TABLE severity_dim(dimension_key VARCHAR, severity_label VARCHAR)"
         )
 
     row = connection.execute(
@@ -200,7 +203,8 @@ def generate_synthetic_workload(
         """
         SELECT COUNT(*)
         FROM synthetic_events AS events
-        INNER JOIN severity_dim AS dimension USING (join_key)
+        INNER JOIN severity_dim AS dimension
+          ON events.join_key = dimension.dimension_key
         """
     ).fetchone()
     if row is None or dimension_row is None or join_row is None:

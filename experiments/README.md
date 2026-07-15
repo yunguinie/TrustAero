@@ -136,13 +136,16 @@ Run:
 python scripts/run_phase2a.py --config experiments/configs/phase2a.json
 ```
 
-For each workload the runner compares fused and explicitly materialized
-strategy prototypes, verifies identical result rows, and saves DuckDB
-`EXPLAIN (ANALYZE, FORMAT JSON)` output under `plans/`. A stable fingerprint is
-computed from the physical operator tree after volatile timings and estimates
-are removed. SQL text differences alone do not count as plan differences.
+For each workload the runner first validates one governed logical query and
+generates two `ApprovedPhysicalPlan` candidates: fused execution and one
+explicit materialization boundary. It then verifies identical result rows and
+saves DuckDB `EXPLAIN (ANALYZE, FORMAT JSON)` output under `plans/`. Each CSV
+row records both the shared logical-plan ID and its distinct approved physical-
+plan ID. A stable fingerprint is computed from the physical operator tree after
+volatile timings and estimates are removed. SQL text differences alone do not
+count as plan differences.
 
-This phase does not yet claim an optimizer contribution. The materialization
-choice must still become an explicit approved physical-plan decision before it
-can enter the final legal candidate space. Phase 2A establishes the measurement
-boundary needed to do that honestly.
+This phase still does not claim an optimizer contribution. It establishes a
+small legal candidate space and a trustworthy measurement boundary; candidate
+enumeration across more operator choices, a cost model, and measured plan
+selection remain future work.

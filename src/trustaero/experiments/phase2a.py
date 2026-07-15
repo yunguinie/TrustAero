@@ -1,8 +1,9 @@
-"""Phase 2A: controlled data and actual DuckDB physical-plan observations.
+"""Phase 2A: controlled data and approved DuckDB-plan observations.
 
-This is a pre-optimizer experiment. It compares two result-equivalent execution
-strategy prototypes and refuses to call SQL text differences physical-plan
-differences unless their DuckDB fingerprints actually differ.
+This is still a pre-optimizer experiment: it does not claim that TrustAero can
+already choose the fastest candidate.  It does ensure that every measured SQL
+strategy comes from an ``ApprovedPhysicalPlan`` bound to one validated logical
+plan, and it verifies real DuckDB plan differences instead of trusting SQL text.
 """
 
 from __future__ import annotations
@@ -10,6 +11,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import os
 import platform
 import statistics
 import subprocess
@@ -21,12 +23,18 @@ from importlib import metadata
 from pathlib import Path
 from typing import Any
 
+from trustaero.catalog.in_memory import InMemoryCatalog
+from trustaero.catalog.models import CatalogDocument
 from trustaero.execution import observe_duckdb_plan
 from trustaero.experiments.synthetic import (
     SyntheticDataConfig,
     SyntheticWorkloadStats,
     generate_synthetic_workload,
 )
+from trustaero.ir.enums import ValidationStatus
+from trustaero.ir.models import PolicySet, ValidatedLogicalPlan
+from trustaero.planner import generate_duckdb_candidates
+from trustaero.validator.service import validate
 
 
 @dataclass(frozen=True)
@@ -37,12 +45,18 @@ class Phase2AConfig:
     workloads: tuple[SyntheticDataConfig, ...]
     warmup_runs: int = 2
     measured_runs: int = 10
+    duckdb_threads: int = 4
+    duckdb_memory_limit_mb: int = 4096
 
     def __post_init__(self) -> None:
         if not self.workloads:
             raise ValueError("Phase 2A requires at least one workload")
         if self.warmup_runs < 0 or self.measured_runs < 1:
             raise ValueError("warmup_runs must be nonnegative and measured_runs positive")
+        if self.duckdb_threads < 1:
+            raise ValueError("duckdb_threads must be positive")
+        if self.duckdb_memory_limit_mb < 128:
+            raise ValueError("duckdb_memory_limit_mb must be at least 128")
 
 
 @dataclass(frozen=True)
@@ -53,6 +67,9 @@ class Phase2AStrategyResult:
     commit_hash: str
     workload_id: str
     strategy: str
+    logical_plan_id: str
+    approved_physical_plan_id: str
+    strategy_id: str
     row_count: int
     temporal_selectivity: float
     spatial_selectivity: float
@@ -88,7 +105,7 @@ _FUSED_SQL = f"""
 SELECT events.event_id, dimension.severity_label
 FROM synthetic_events AS events
 INNER JOIN severity_dim AS dimension
-  ON events.join_key = dimension.join_key
+  ON events.join_key = dimension.dimension_key
 WHERE {_PREDICATE}
 ORDER BY events.event_id
 """.strip()
@@ -102,13 +119,183 @@ WITH filtered AS MATERIALIZED (
 SELECT filtered.event_id, dimension.severity_label
 FROM filtered
 INNER JOIN severity_dim AS dimension
-  ON filtered.join_key = dimension.join_key
+  ON filtered.join_key = dimension.dimension_key
 ORDER BY filtered.event_id
 """.strip()
 
 
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
+
+
+def _validated_experiment_plan() -> ValidatedLogicalPlan:
+    """Build the small governed query shared by every controlled workload.
+
+    Data values vary between workloads, but schema, policy, query semantics,
+    and snapshot bindings remain fixed.  Therefore candidate latency changes
+    can be attributed to controlled statistics rather than authorization drift.
+    """
+
+    catalog = InMemoryCatalog(
+        CatalogDocument.model_validate(
+            {
+                "schema_version": "1.0",
+                "datasets": [
+                    {
+                        "dataset_id": "synthetic_events",
+                        "versions": ["synthetic-v1"],
+                        "default_version": "synthetic-v1",
+                        "fields": [
+                            {
+                                "name": "event_id",
+                                "data_type": "string",
+                                "roles": ["identifier"],
+                            },
+                            {
+                                "name": "event_time",
+                                "data_type": "datetime",
+                                "roles": ["temporal"],
+                            },
+                            {"name": "latitude", "data_type": "float", "roles": ["spatial"]},
+                            {
+                                "name": "longitude",
+                                "data_type": "float",
+                                "roles": ["spatial"],
+                            },
+                            {"name": "policy_allowed", "data_type": "boolean", "roles": []},
+                            {"name": "join_key", "data_type": "string", "roles": []},
+                            {"name": "magnitude", "data_type": "float", "roles": []},
+                        ],
+                        "spatial": {
+                            "latitude_field": "latitude",
+                            "longitude_field": "longitude",
+                            "crs": "EPSG:4326",
+                        },
+                        "temporal_field": "event_time",
+                    },
+                    {
+                        "dataset_id": "severity_dim",
+                        "versions": ["synthetic-v1"],
+                        "default_version": "synthetic-v1",
+                        "fields": [
+                            {"name": "dimension_key", "data_type": "string", "roles": []},
+                            {"name": "severity_label", "data_type": "string", "roles": []},
+                        ],
+                        "spatial": None,
+                        "temporal_field": None,
+                    },
+                ],
+            }
+        )
+    )
+    policies = PolicySet.model_validate(
+        {
+            "schema_version": "1.0",
+            "policy_set_id": "phase2a-policy-set",
+            "policy_snapshot": "phase2a-policy-v1",
+            "rules": [
+                {
+                    "policy_id": "P-PHASE2A-JOIN",
+                    "policy_version": "1",
+                    "subject_roles": ["researcher"],
+                    "purposes": ["research"],
+                    "actions": ["join"],
+                    "resources": ["synthetic_events", "severity_dim"],
+                    "decision": "PERMIT",
+                    "obligations": [],
+                    "reason": "Controlled synthetic join is permitted for evaluation.",
+                }
+            ],
+        }
+    )
+    raw_plan = {
+        "schema_version": "1.0",
+        "plan_id": "phase2a-controlled-query",
+        "request_context": {
+            "subject": {"subject_id": "phase2a-runner", "role": "researcher", "attributes": {}},
+            "purpose": "research",
+            "action": "join",
+            "query_time_window": None,
+        },
+        "requested_output": {
+            "fields": ["event_id", "severity_label"],
+            "export": {"requested": False, "destination": None, "format": None},
+            "lineage_level": "none",
+        },
+        "operators": [
+            {
+                "operator_type": "ScanSource",
+                "operator_id": "op-events",
+                "inputs": [],
+                "dataset": "synthetic_events",
+                "snapshot": "synthetic-v1",
+            },
+            {
+                "operator_type": "TemporalFilter",
+                "operator_id": "op-temporal",
+                "inputs": ["op-events"],
+                "field": "event_time",
+                "start": "2026-06-01T00:00:00+00:00",
+                "end": "2026-06-02T00:00:00+00:00",
+            },
+            {
+                "operator_type": "SpatialFilter",
+                "operator_id": "op-spatial",
+                "inputs": ["op-temporal"],
+                "center": [40.0, 116.3],
+                "radius_km": 20.0,
+                "crs": "EPSG:4326",
+            },
+            {
+                "operator_type": "Filter",
+                "operator_id": "op-policy",
+                "inputs": ["op-spatial"],
+                "expression": {
+                    "expression_type": "comparison",
+                    "operator": "eq",
+                    "left": {"expression_type": "field", "field": "policy_allowed"},
+                    "right": {
+                        "expression_type": "literal",
+                        "data_type": "boolean",
+                        "value": True,
+                    },
+                },
+            },
+            {
+                "operator_type": "Project",
+                "operator_id": "op-event-project",
+                "inputs": ["op-policy"],
+                "fields": ["event_id", "join_key"],
+            },
+            {
+                "operator_type": "ScanSource",
+                "operator_id": "op-dimension",
+                "inputs": [],
+                "dataset": "severity_dim",
+                "snapshot": "synthetic-v1",
+            },
+            {
+                "operator_type": "Join",
+                "operator_id": "op-join",
+                "inputs": ["op-event-project", "op-dimension"],
+                "left_field": "join_key",
+                "right_field": "dimension_key",
+                "join_type": "inner",
+            },
+            {
+                "operator_type": "Project",
+                "operator_id": "op-output",
+                "inputs": ["op-join"],
+                "fields": ["event_id", "severity_label"],
+            },
+        ],
+        "output_operator": "op-output",
+    }
+    response = validate(raw_plan, policies, catalog)
+    if response.status != ValidationStatus.ACCEPT or response.validated_plan is None:
+        diagnostics = ", ".join(item.code.value for item in response.diagnostics)
+        raise RuntimeError(f"Phase 2A logical plan validation failed: {diagnostics}")
+    return response.validated_plan
 
 
 def _run_id() -> str:
@@ -162,6 +349,9 @@ def _measure_strategy(
     commit_hash: str,
     stats: SyntheticWorkloadStats,
     strategy: str,
+    logical_plan_id: str,
+    approved_physical_plan_id: str,
+    strategy_id: str,
     sql: str,
     warmup_runs: int,
     measured_runs: int,
@@ -186,6 +376,9 @@ def _measure_strategy(
         commit_hash=commit_hash,
         workload_id=stats.workload_id,
         strategy=strategy,
+        logical_plan_id=logical_plan_id,
+        approved_physical_plan_id=approved_physical_plan_id,
+        strategy_id=strategy_id,
         row_count=stats.row_count,
         temporal_selectivity=stats.temporal_selectivity,
         spatial_selectivity=stats.spatial_selectivity,
@@ -220,7 +413,7 @@ def _write_csv(path: Path, rows: tuple[Phase2AStrategyResult, ...]) -> None:
             writer.writerow(row)
 
 
-def _environment(commit_hash: str) -> dict[str, Any]:
+def _environment(commit_hash: str, config: Phase2AConfig) -> dict[str, Any]:
     packages: dict[str, str] = {}
     for package in ("trustaero", "duckdb", "pydantic"):
         try:
@@ -230,8 +423,17 @@ def _environment(commit_hash: str) -> dict[str, Any]:
     return {
         "python": sys.version,
         "platform": platform.platform(),
+        "processor": platform.processor(),
+        "logical_cpu_count": os.cpu_count(),
         "commit_hash": commit_hash,
         "packages": packages,
+        # These are explicitly applied to DuckDB before any table generation
+        # or timing, so later runs do not inherit workstation-global defaults.
+        "duckdb": {
+            "threads": config.duckdb_threads,
+            "memory_limit_mb": config.duckdb_memory_limit_mb,
+            "gpu_acceleration": False,
+        },
     }
 
 
@@ -248,28 +450,48 @@ def run_phase2a(config: Phase2AConfig) -> Path:
     plan_dir.mkdir(parents=True, exist_ok=True)
     rows: list[Phase2AStrategyResult] = []
     workload_summaries: list[dict[str, Any]] = []
+    logical_plan = _validated_experiment_plan()
+    candidates = generate_duckdb_candidates(
+        logical_plan,
+        materialization_targets=("op-event-project",),
+    )
+    candidates_by_mode = {candidate.strategy.execution_mode: candidate for candidate in candidates}
+    if set(candidates_by_mode) != {"fused", "materialized"}:
+        raise RuntimeError("Phase 2A requires one fused and one materialized approved candidate")
+    if any(candidate.unimplemented_backend_features for candidate in candidates):
+        raise RuntimeError("Phase 2A cannot execute candidates with unimplemented backend features")
 
     connection = duckdb.connect(":memory:")
     try:
+        connection.execute(f"SET threads TO {config.duckdb_threads}")
+        connection.execute(f"SET memory_limit = '{config.duckdb_memory_limit_mb}MB'")
         for workload in config.workloads:
             stats = generate_synthetic_workload(connection, workload)
+            fused_candidate = candidates_by_mode["fused"]
             fused, fused_rows = _measure_strategy(
                 connection,
                 run_id=run_id,
                 commit_hash=commit_hash,
                 stats=stats,
                 strategy="fused",
+                logical_plan_id=logical_plan.logical_plan_id,
+                approved_physical_plan_id=fused_candidate.physical_plan_id,
+                strategy_id=fused_candidate.strategy.strategy_id,
                 sql=_FUSED_SQL,
                 warmup_runs=config.warmup_runs,
                 measured_runs=config.measured_runs,
                 plan_dir=plan_dir,
             )
+            materialized_candidate = candidates_by_mode["materialized"]
             materialized, materialized_rows = _measure_strategy(
                 connection,
                 run_id=run_id,
                 commit_hash=commit_hash,
                 stats=stats,
                 strategy="materialized_cte",
+                logical_plan_id=logical_plan.logical_plan_id,
+                approved_physical_plan_id=materialized_candidate.physical_plan_id,
+                strategy_id=materialized_candidate.strategy.strategy_id,
                 sql=_MATERIALIZED_SQL,
                 warmup_runs=config.warmup_runs,
                 measured_runs=config.measured_runs,
@@ -284,15 +506,27 @@ def run_phase2a(config: Phase2AConfig) -> Path:
             workload_summaries.append(
                 {
                     "workload_id": workload.workload_id,
+                    "logical_plan_id": logical_plan.logical_plan_id,
+                    "approved_candidate_ids": [
+                        fused.approved_physical_plan_id,
+                        materialized.approved_physical_plan_id,
+                    ],
                     "result_equivalent": equivalent,
                     "physical_plans_distinct": (
                         fused.physical_plan_fingerprint != materialized.physical_plan_fingerprint
                     ),
-                    "winner": (
+                    # This is a descriptive observation, not a significance
+                    # claim.  Repeated independent runs are needed before a
+                    # small median gap can be called a performance reversal.
+                    "observed_median_winner": (
                         fused.strategy
                         if fused.median_latency_ms <= materialized.median_latency_ms
                         else materialized.strategy
                     ),
+                    "median_gap_fraction": abs(
+                        fused.median_latency_ms - materialized.median_latency_ms
+                    )
+                    / min(fused.median_latency_ms, materialized.median_latency_ms),
                 }
             )
     finally:
@@ -306,6 +540,8 @@ def run_phase2a(config: Phase2AConfig) -> Path:
             item["physical_plans_distinct"] for item in workload_summaries
         ),
         "strategy_count": 2,
+        "all_candidates_approved": len(candidates) == 2,
+        "logical_plan_id": logical_plan.logical_plan_id,
         "workload_count": len(config.workloads),
         "controlled_statistics": [
             "row_count",
@@ -326,7 +562,7 @@ def run_phase2a(config: Phase2AConfig) -> Path:
         encoding="utf-8",
     )
     (output_dir / "environment.json").write_text(
-        json.dumps(_environment(commit_hash), indent=2, sort_keys=True) + "\n",
+        json.dumps(_environment(commit_hash, config), indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     return output_dir

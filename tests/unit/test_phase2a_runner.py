@@ -38,6 +38,7 @@ def test_phase2a_requires_result_equivalence_and_real_plan_difference() -> None:
     summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
     assert summary["all_results_equivalent"] is True
     assert summary["all_physical_plans_distinct"] is True
+    assert summary["all_candidates_approved"] is True
     assert len(summary["controlled_statistics"]) == 6
     with (output_dir / "cases.csv").open(newline="", encoding="utf-8") as handle:
         rows = tuple(csv.DictReader(handle))
@@ -45,4 +46,9 @@ def test_phase2a_requires_result_equivalence_and_real_plan_difference() -> None:
     assert {row["strategy"] for row in rows} == {"fused", "materialized_cte"}
     assert len({row["physical_plan_fingerprint"] for row in rows}) == 2
     assert all(row["result_equivalent"] == "True" for row in rows)
+    # Both measurements must share logical semantics but use independently
+    # auditable physical plan identities.
+    assert len({row["logical_plan_id"] for row in rows}) == 1
+    assert len({row["approved_physical_plan_id"] for row in rows}) == 2
+    assert all(row["strategy_id"] for row in rows)
     assert len(tuple((output_dir / "plans").glob("*.json"))) == 2
