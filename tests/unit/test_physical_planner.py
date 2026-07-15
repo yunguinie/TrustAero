@@ -65,9 +65,7 @@ def test_physical_plan_lists_unimplemented_governance_features(
         "fixed_grid_coordinate_transform",
         "lineage_backend_capture",
     }
-    by_type = {
-        operator.operator_type: operator for operator in physical.physical_operators
-    }
+    by_type = {operator.operator_type: operator for operator in physical.physical_operators}
     assert by_type["GeneralizeLocation"].implementation_status == "requires_backend"
     assert by_type["LineageCapture"].implementation_status == "requires_backend"
 
@@ -103,9 +101,7 @@ def test_duckdb_binding_marks_source_lineage_executable(
 
     physical = plan_physical_execution(response.validated_plan, backend="duckdb")
 
-    by_type = {
-        operator.operator_type: operator for operator in physical.physical_operators
-    }
+    by_type = {operator.operator_type: operator for operator in physical.physical_operators}
     assert by_type["LineageCapture"].implementation_status == "executable"
     assert physical.unimplemented_backend_features == ()
 

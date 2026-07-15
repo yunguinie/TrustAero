@@ -122,3 +122,27 @@ performance, record-level lineage, or malicious database protection. In the
 current certificate result, `physical_plan_execution` remains unverified
 because the physical trace is trusted-executor evidence, not a cryptographic
 proof.
+
+## Phase 2A: controlled statistics and actual physical plans
+
+Phase 2A is a pre-optimizer experiment. It controls fact-table volume, temporal
+selectivity, spatial selectivity, policy selectivity, join match rate, and join
+skew. The generator uses DuckDB `range` rather than Python row construction, so
+larger pilot workloads remain practical.
+
+Run:
+
+```powershell
+python scripts/run_phase2a.py --config experiments/configs/phase2a.json
+```
+
+For each workload the runner compares fused and explicitly materialized
+strategy prototypes, verifies identical result rows, and saves DuckDB
+`EXPLAIN (ANALYZE, FORMAT JSON)` output under `plans/`. A stable fingerprint is
+computed from the physical operator tree after volatile timings and estimates
+are removed. SQL text differences alone do not count as plan differences.
+
+This phase does not yet claim an optimizer contribution. The materialization
+choice must still become an explicit approved physical-plan decision before it
+can enter the final legal candidate space. Phase 2A establishes the measurement
+boundary needed to do that honestly.

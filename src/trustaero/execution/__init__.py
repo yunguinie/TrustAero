@@ -12,6 +12,7 @@ from trustaero.execution.duckdb import (
     execute_with_connection,
     execute_with_duckdb,
 )
+from trustaero.execution.explain import PhysicalPlanObservation, observe_duckdb_plan
 from trustaero.execution.lineage import (
     LineageInstrumentationError,
     SourceLineageCaptureResult,
@@ -23,6 +24,7 @@ __all__ = [
     "DuckDBUnavailable",
     "ExecutionCompileError",
     "LineageInstrumentationError",
+    "PhysicalPlanObservation",
     "QueryExecutionResult",
     "TableBindings",
     "SourceLineageCaptureResult",
@@ -30,4 +32,5 @@ __all__ = [
     "compile_validated_plan",
     "execute_with_connection",
     "execute_with_duckdb",
+    "observe_duckdb_plan",
 ]

@@ -1,0 +1,27 @@
+{
+  "results_dir": "results/phase2a",
+  "warmup_runs": 2,
+  "measured_runs": 10,
+  "workloads": [
+    {
+      "workload_id": "selective",
+      "row_count": 20000,
+      "temporal_selectivity": 0.35,
+      "spatial_selectivity": 0.30,
+      "policy_selectivity": 0.25,
+      "join_match_rate": 0.80,
+      "hot_key_fraction": 0.05,
+      "seed": 7
+    },
+    {
+      "workload_id": "broad_skewed",
+      "row_count": 20000,
+      "temporal_selectivity": 0.90,
+      "spatial_selectivity": 0.85,
+      "policy_selectivity": 0.80,
+      "join_match_rate": 0.90,
+      "hot_key_fraction": 0.40,
+      "seed": 19
+    }
+  ]
+}
