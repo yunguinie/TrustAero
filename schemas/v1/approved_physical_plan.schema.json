@@ -111,6 +111,39 @@
       "title": "PhysicalOperatorSpec",
       "type": "object"
     },
+    "PhysicalStrategySpec": {
+      "additionalProperties": false,
+      "description": "Explicit backend strategy decisions that may change physical execution.\n\nMaterialization is a storage boundary, not a logical rewrite: it preserves\nrows and field semantics while changing pipelining and intermediate cost.\nIR v1 deliberately permits at most one materialization boundary so the\ndecision can be validated and measured independently.",
+      "properties": {
+        "execution_mode": {
+          "default": "fused",
+          "enum": [
+            "fused",
+            "materialized"
+          ],
+          "title": "Execution Mode",
+          "type": "string"
+        },
+        "materialize_after": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Materialize After",
+          "type": "array"
+        },
+        "strategy_id": {
+          "minLength": 1,
+          "title": "Strategy Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_id"
+      ],
+      "title": "PhysicalStrategySpec",
+      "type": "object"
+    },
     "SnapshotBindings": {
       "additionalProperties": false,
       "properties": {
@@ -194,6 +227,9 @@
       "default": "1.0",
       "title": "Schema Version",
       "type": "string"
+    },
+    "strategy": {
+      "$ref": "#/$defs/PhysicalStrategySpec"
     },
     "unimplemented_backend_features": {
       "default": [],

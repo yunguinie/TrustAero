@@ -364,6 +364,28 @@ class PhysicalOperatorSpec(StrictModel):
     unimplemented_features: tuple[str, ...] = ()
 
 
+class PhysicalStrategySpec(StrictModel):
+    """Explicit backend strategy decisions that may change physical execution.
+
+    Materialization is a storage boundary, not a logical rewrite: it preserves
+    rows and field semantics while changing pipelining and intermediate cost.
+    IR v1 deliberately permits at most one materialization boundary so the
+    decision can be validated and measured independently.
+    """
+
+    strategy_id: str = Field(min_length=1)
+    execution_mode: Literal["fused", "materialized"] = "fused"
+    materialize_after: tuple[str, ...] = ()
+
+    @model_validator(mode="after")
+    def decision_shape_must_match_mode(self) -> PhysicalStrategySpec:
+        if self.execution_mode == "fused" and self.materialize_after:
+            raise ValueError("fused execution cannot declare a materialization boundary")
+        if self.execution_mode == "materialized" and len(self.materialize_after) != 1:
+            raise ValueError("IR v1 materialized execution requires exactly one boundary")
+        return self
+
+
 class ApprovedPhysicalPlan(StrictModel):
     """Auditable pre-execution physical specification, not executable SQL."""
 
@@ -373,6 +395,9 @@ class ApprovedPhysicalPlan(StrictModel):
     logical_plan_digest: str
     output_operator: str
     physical_operators: tuple[PhysicalOperatorSpec, ...]
+    strategy: PhysicalStrategySpec = Field(
+        default_factory=lambda: PhysicalStrategySpec(strategy_id="fused")
+    )
     bindings: SnapshotBindings
     lineage_instrumentation: tuple[LineageInstrumentationSpec, ...] = ()
     pending_obligations: tuple[ObligationType, ...] = ()

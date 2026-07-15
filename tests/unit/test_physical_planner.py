@@ -5,9 +5,12 @@ from __future__ import annotations
 import copy
 from typing import Any
 
+import pytest
+
 from trustaero.catalog.in_memory import InMemoryCatalog
 from trustaero.ir.enums import ObligationType, ValidationStatus
 from trustaero.ir.models import PolicySet, ValidatedLogicalPlan
+from trustaero.planner import generate_duckdb_candidates
 from trustaero.planner.physical import plan_physical_execution
 from trustaero.validator.service import validate
 
@@ -19,6 +22,17 @@ def _validated_rewrite_plan(
 ) -> ValidatedLogicalPlan:
     response = validate(copy.deepcopy(rewrite_plan), policy_set, catalog)
     assert response.status == ValidationStatus.REWRITE
+    assert response.validated_plan is not None
+    return response.validated_plan
+
+
+def _validated_accept_plan(
+    accept_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> ValidatedLogicalPlan:
+    response = validate(copy.deepcopy(accept_plan), policy_set, catalog)
+    assert response.status == ValidationStatus.ACCEPT
     assert response.validated_plan is not None
     return response.validated_plan
 
@@ -118,3 +132,49 @@ def test_duckdb_binding_keeps_record_lineage_unimplemented(
     physical = plan_physical_execution(logical, backend="duckdb")
 
     assert "record_lineage_capture" in physical.unimplemented_backend_features
+
+
+def test_candidate_generator_binds_distinct_strategies_to_one_validated_plan(
+    accept_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    """Fused and materialized choices are auditable physical candidates."""
+
+    logical = _validated_accept_plan(accept_plan, policy_set, catalog)
+
+    candidates = generate_duckdb_candidates(
+        logical,
+        materialization_targets=("op1", "op1"),
+    )
+
+    assert len(candidates) == 2
+    assert {candidate.strategy.execution_mode for candidate in candidates} == {
+        "fused",
+        "materialized",
+    }
+    assert len({candidate.physical_plan_id for candidate in candidates}) == 2
+    assert all(candidate.logical_plan_id == logical.logical_plan_id for candidate in candidates)
+    assert all(
+        candidate.logical_plan_digest == logical.validation.canonical_digest
+        for candidate in candidates
+    )
+    assert all(candidate.bindings == logical.bindings for candidate in candidates)
+
+
+def test_materialization_candidate_rejects_unknown_or_final_target(
+    accept_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    """A physical decision cannot refer outside the validated logical graph."""
+
+    logical = _validated_accept_plan(accept_plan, policy_set, catalog)
+
+    with pytest.raises(ValueError, match="not in the logical plan"):
+        generate_duckdb_candidates(logical, materialization_targets=("missing",))
+    with pytest.raises(ValueError, match="final output"):
+        generate_duckdb_candidates(
+            logical,
+            materialization_targets=(logical.output_operator,),
+        )
