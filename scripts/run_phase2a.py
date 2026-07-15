@@ -10,7 +10,9 @@ from trustaero.experiments.phase2a import Phase2AConfig, run_phase2a
 from trustaero.experiments.synthetic import SyntheticDataConfig
 
 
-def _load_config(path: str) -> Phase2AConfig:
+def load_phase2_config(path: str) -> Phase2AConfig:
+    """Load the shared Phase 2A/2B configuration format."""
+
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
     workloads = tuple(SyntheticDataConfig(**item) for item in payload["workloads"])
     return Phase2AConfig(
@@ -20,6 +22,8 @@ def _load_config(path: str) -> Phase2AConfig:
         measured_runs=int(payload.get("measured_runs", 10)),
         duckdb_threads=int(payload.get("duckdb_threads", 4)),
         duckdb_memory_limit_mb=int(payload.get("duckdb_memory_limit_mb", 4096)),
+        materialization_targets=tuple(payload.get("materialization_targets", ["op-event-project"])),
+        source_lineage=bool(payload.get("source_lineage", False)),
     )
 
 
@@ -31,7 +35,7 @@ def main() -> None:
         help="Phase 2A JSON configuration file.",
     )
     args = parser.parse_args()
-    output_dir = run_phase2a(_load_config(args.config))
+    output_dir = run_phase2a(load_phase2_config(args.config))
     print(output_dir)
 
 

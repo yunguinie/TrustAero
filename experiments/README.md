@@ -149,3 +149,23 @@ This phase still does not claim an optimizer contribution. It establishes a
 small legal candidate space and a trustworthy measurement boundary; candidate
 enumeration across more operator choices, a cost model, and measured plan
 selection remain future work.
+
+## Phase 2B: multiple legal boundaries and source-lineage cost
+
+Phase 2B expands the same validated logical query to five approved candidates:
+fused execution plus materialization after temporal, spatial, policy, or final
+fact-side projection. Every boundary has an explicit fail-closed SQL mapping.
+The runner rejects result differences, groups candidates by observed DuckDB
+physical fingerprint, and marks only one representative per duplicate group.
+
+Run:
+
+```powershell
+python scripts/run_phase2b.py --config experiments/configs/phase2b.json
+```
+
+The Phase 2B policy also requires source lineage. Query latency, actual source-
+evidence capture latency, and their combined governed latency are reported
+separately. Record-level lineage remains unsupported and is never estimated.
+This is still a pilot candidate-space experiment, not a trained or cost-based
+optimizer.

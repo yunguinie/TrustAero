@@ -25,7 +25,8 @@ from typing import Any
 
 from trustaero.catalog.in_memory import InMemoryCatalog
 from trustaero.catalog.models import CatalogDocument
-from trustaero.execution import observe_duckdb_plan
+from trustaero.execution import capture_source_lineage, observe_duckdb_plan
+from trustaero.experiments.physical_sql import compile_phase2_strategy
 from trustaero.experiments.synthetic import (
     SyntheticDataConfig,
     SyntheticWorkloadStats,
@@ -47,6 +48,8 @@ class Phase2AConfig:
     measured_runs: int = 10
     duckdb_threads: int = 4
     duckdb_memory_limit_mb: int = 4096
+    materialization_targets: tuple[str, ...] = ("op-event-project",)
+    source_lineage: bool = False
 
     def __post_init__(self) -> None:
         if not self.workloads:
@@ -57,6 +60,8 @@ class Phase2AConfig:
             raise ValueError("duckdb_threads must be positive")
         if self.duckdb_memory_limit_mb < 128:
             raise ValueError("duckdb_memory_limit_mb must be at least 128")
+        if not self.materialization_targets:
+            raise ValueError("Phase 2 requires at least one materialization target")
 
 
 @dataclass(frozen=True)
@@ -81,6 +86,8 @@ class Phase2AStrategyResult:
     result_digest: str
     result_equivalent: bool
     physical_plan_fingerprint: str
+    physical_plan_representative: str
+    is_fingerprint_representative: bool
     physical_operator_names: tuple[str, ...]
     max_actual_cardinality: int
     total_rows_scanned: int
@@ -89,46 +96,17 @@ class Phase2AStrategyResult:
     p95_latency_ms: float
     min_latency_ms: float
     max_latency_ms: float
-
-
-_PREDICATE = """
-events.policy_allowed
-AND events.event_time >= TIMESTAMPTZ '2026-06-01 00:00:00+00:00'
-AND events.event_time < TIMESTAMPTZ '2026-06-02 00:00:00+00:00'
-AND 111.045 * sqrt(
-  power(events.latitude - 40.0, 2)
-  + power((events.longitude - 116.3) * cos(radians(40.0)), 2)
-) <= 20.0
-""".strip()
-
-_FUSED_SQL = f"""
-SELECT events.event_id, dimension.severity_label
-FROM synthetic_events AS events
-INNER JOIN severity_dim AS dimension
-  ON events.join_key = dimension.dimension_key
-WHERE {_PREDICATE}
-ORDER BY events.event_id
-""".strip()
-
-_MATERIALIZED_SQL = f"""
-WITH filtered AS MATERIALIZED (
-  SELECT events.event_id, events.join_key
-  FROM synthetic_events AS events
-  WHERE {_PREDICATE}
-)
-SELECT filtered.event_id, dimension.severity_label
-FROM filtered
-INNER JOIN severity_dim AS dimension
-  ON filtered.join_key = dimension.dimension_key
-ORDER BY filtered.event_id
-""".strip()
+    lineage_level: str
+    lineage_source_count: int
+    median_lineage_latency_ms: float
+    median_governed_latency_ms: float
 
 
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
 
-def _validated_experiment_plan() -> ValidatedLogicalPlan:
+def build_phase2_experiment_plan(*, source_lineage: bool = False) -> ValidatedLogicalPlan:
     """Build the small governed query shared by every controlled workload.
 
     Data values vary between workloads, but schema, policy, query semantics,
@@ -188,6 +166,11 @@ def _validated_experiment_plan() -> ValidatedLogicalPlan:
             }
         )
     )
+    obligations = (
+        [{"obligation_type": "LINEAGE_CAPTURE", "parameters": {"level": "source"}}]
+        if source_lineage
+        else []
+    )
     policies = PolicySet.model_validate(
         {
             "schema_version": "1.0",
@@ -202,7 +185,7 @@ def _validated_experiment_plan() -> ValidatedLogicalPlan:
                     "actions": ["join"],
                     "resources": ["synthetic_events", "severity_dim"],
                     "decision": "PERMIT",
-                    "obligations": [],
+                    "obligations": obligations,
                     "reason": "Controlled synthetic join is permitted for evaluation.",
                 }
             ],
@@ -292,7 +275,8 @@ def _validated_experiment_plan() -> ValidatedLogicalPlan:
         "output_operator": "op-output",
     }
     response = validate(raw_plan, policies, catalog)
-    if response.status != ValidationStatus.ACCEPT or response.validated_plan is None:
+    expected_status = ValidationStatus.REWRITE if source_lineage else ValidationStatus.ACCEPT
+    if response.status != expected_status or response.validated_plan is None:
         diagnostics = ", ".join(item.code.value for item in response.diagnostics)
         raise RuntimeError(f"Phase 2A logical plan validation failed: {diagnostics}")
     return response.validated_plan
@@ -335,7 +319,17 @@ def _execute(connection: Any, sql: str) -> tuple[float, tuple[tuple[Any, ...], .
 
 def _filtered_row_count(connection: Any) -> int:
     row = connection.execute(
-        f"SELECT COUNT(*) FROM synthetic_events AS events WHERE {_PREDICATE}"
+        """
+        SELECT COUNT(*)
+        FROM synthetic_events AS events
+        WHERE events.event_time >= TIMESTAMPTZ '2026-06-01 00:00:00+00:00'
+          AND events.event_time < TIMESTAMPTZ '2026-06-02 00:00:00+00:00'
+          AND 111.045 * sqrt(
+            power(events.latitude - 40.0, 2)
+            + power((events.longitude - 116.3) * cos(radians(40.0)), 2)
+          ) <= 20.0
+          AND events.policy_allowed
+        """
     ).fetchone()
     if row is None:
         raise RuntimeError("DuckDB did not return the filtered intermediate cardinality")
@@ -348,6 +342,7 @@ def _measure_strategy(
     run_id: str,
     commit_hash: str,
     stats: SyntheticWorkloadStats,
+    logical_plan: ValidatedLogicalPlan,
     strategy: str,
     logical_plan_id: str,
     approved_physical_plan_id: str,
@@ -359,14 +354,28 @@ def _measure_strategy(
 ) -> tuple[Phase2AStrategyResult, tuple[tuple[Any, ...], ...]]:
     """Measure one strategy and save its actual analyzed DuckDB plan."""
 
-    cold_latency_ms, cold_rows = _execute(connection, sql)
+    def execute_once() -> tuple[float, float, int, tuple[tuple[Any, ...], ...]]:
+        """Measure query and source-lineage costs without conflating them."""
+
+        query_latency_ms, result_rows = _execute(connection, sql)
+        lineage = capture_source_lineage(
+            logical_plan,
+            execution_id=f"{run_id}:{stats.workload_id}:{strategy_id}",
+            result_id=_result_digest(result_rows),
+        )
+        return query_latency_ms, lineage.latency_ms, lineage.source_count, result_rows
+
+    cold_latency_ms, _, _, cold_rows = execute_once()
     for _ in range(warmup_runs):
-        _execute(connection, sql)
+        execute_once()
     latencies: list[float] = []
+    lineage_latencies: list[float] = []
     last_rows = cold_rows
+    lineage_source_count = 0
     for _ in range(measured_runs):
-        latency_ms, last_rows = _execute(connection, sql)
+        latency_ms, lineage_latency_ms, lineage_source_count, last_rows = execute_once()
         latencies.append(latency_ms)
+        lineage_latencies.append(lineage_latency_ms)
 
     observation = observe_duckdb_plan(connection, sql, analyze=True)
     plan_path = plan_dir / f"{stats.workload_id}-{strategy}.json"
@@ -390,6 +399,8 @@ def _measure_strategy(
         result_digest=_result_digest(last_rows),
         result_equivalent=False,
         physical_plan_fingerprint=observation.fingerprint,
+        physical_plan_representative=approved_physical_plan_id,
+        is_fingerprint_representative=True,
         physical_operator_names=observation.operator_names,
         max_actual_cardinality=observation.max_intermediate_cardinality,
         total_rows_scanned=sum(observation.rows_scanned),
@@ -398,6 +409,15 @@ def _measure_strategy(
         p95_latency_ms=_percentile_95(latencies),
         min_latency_ms=min(latencies),
         max_latency_ms=max(latencies),
+        lineage_level=("source" if logical_plan.lineage_requirements else "none"),
+        lineage_source_count=lineage_source_count,
+        median_lineage_latency_ms=statistics.median(lineage_latencies),
+        median_governed_latency_ms=statistics.median(
+            [
+                query_latency + lineage_latency
+                for query_latency, lineage_latency in zip(latencies, lineage_latencies, strict=True)
+            ]
+        ),
     )
     return result, last_rows
 
@@ -450,14 +470,11 @@ def run_phase2a(config: Phase2AConfig) -> Path:
     plan_dir.mkdir(parents=True, exist_ok=True)
     rows: list[Phase2AStrategyResult] = []
     workload_summaries: list[dict[str, Any]] = []
-    logical_plan = _validated_experiment_plan()
+    logical_plan = build_phase2_experiment_plan(source_lineage=config.source_lineage)
     candidates = generate_duckdb_candidates(
         logical_plan,
-        materialization_targets=("op-event-project",),
+        materialization_targets=config.materialization_targets,
     )
-    candidates_by_mode = {candidate.strategy.execution_mode: candidate for candidate in candidates}
-    if set(candidates_by_mode) != {"fused", "materialized"}:
-        raise RuntimeError("Phase 2A requires one fused and one materialized approved candidate")
     if any(candidate.unimplemented_backend_features for candidate in candidates):
         raise RuntimeError("Phase 2A cannot execute candidates with unimplemented backend features")
 
@@ -467,66 +484,94 @@ def run_phase2a(config: Phase2AConfig) -> Path:
         connection.execute(f"SET memory_limit = '{config.duckdb_memory_limit_mb}MB'")
         for workload in config.workloads:
             stats = generate_synthetic_workload(connection, workload)
-            fused_candidate = candidates_by_mode["fused"]
-            fused, fused_rows = _measure_strategy(
-                connection,
-                run_id=run_id,
-                commit_hash=commit_hash,
-                stats=stats,
-                strategy="fused",
-                logical_plan_id=logical_plan.logical_plan_id,
-                approved_physical_plan_id=fused_candidate.physical_plan_id,
-                strategy_id=fused_candidate.strategy.strategy_id,
-                sql=_FUSED_SQL,
-                warmup_runs=config.warmup_runs,
-                measured_runs=config.measured_runs,
-                plan_dir=plan_dir,
-            )
-            materialized_candidate = candidates_by_mode["materialized"]
-            materialized, materialized_rows = _measure_strategy(
-                connection,
-                run_id=run_id,
-                commit_hash=commit_hash,
-                stats=stats,
-                strategy="materialized_cte",
-                logical_plan_id=logical_plan.logical_plan_id,
-                approved_physical_plan_id=materialized_candidate.physical_plan_id,
-                strategy_id=materialized_candidate.strategy.strategy_id,
-                sql=_MATERIALIZED_SQL,
-                warmup_runs=config.warmup_runs,
-                measured_runs=config.measured_runs,
-                plan_dir=plan_dir,
-            )
-            equivalent = fused_rows == materialized_rows
-            fused = Phase2AStrategyResult(**{**asdict(fused), "result_equivalent": equivalent})
-            materialized = Phase2AStrategyResult(
-                **{**asdict(materialized), "result_equivalent": equivalent}
-            )
-            rows.extend((fused, materialized))
+            measured: list[tuple[Phase2AStrategyResult, tuple[tuple[Any, ...], ...]]] = []
+            for candidate in candidates:
+                label = (
+                    "materialized_cte"
+                    if candidate.strategy.strategy_id == "materialize-after-op-event-project"
+                    else candidate.strategy.strategy_id
+                )
+                measured.append(
+                    _measure_strategy(
+                        connection,
+                        run_id=run_id,
+                        commit_hash=commit_hash,
+                        stats=stats,
+                        logical_plan=logical_plan,
+                        strategy=label,
+                        logical_plan_id=logical_plan.logical_plan_id,
+                        approved_physical_plan_id=candidate.physical_plan_id,
+                        strategy_id=candidate.strategy.strategy_id,
+                        sql=compile_phase2_strategy(candidate),
+                        warmup_runs=config.warmup_runs,
+                        measured_runs=config.measured_runs,
+                        plan_dir=plan_dir,
+                    )
+                )
+
+            equivalent = all(item_rows == measured[0][1] for _, item_rows in measured)
+            fingerprint_groups: dict[str, list[str]] = {}
+            for result, _ in measured:
+                fingerprint_groups.setdefault(result.physical_plan_fingerprint, []).append(
+                    result.strategy_id
+                )
+            representative_by_fingerprint = {
+                fingerprint: strategy_ids[0]
+                for fingerprint, strategy_ids in fingerprint_groups.items()
+            }
+            workload_results: list[Phase2AStrategyResult] = []
+            for result, _ in measured:
+                representative_strategy = representative_by_fingerprint[
+                    result.physical_plan_fingerprint
+                ]
+                representative_plan_id = next(
+                    item.approved_physical_plan_id
+                    for item, _ in measured
+                    if item.strategy_id == representative_strategy
+                )
+                workload_results.append(
+                    Phase2AStrategyResult(
+                        **{
+                            **asdict(result),
+                            "result_equivalent": equivalent,
+                            "physical_plan_representative": representative_plan_id,
+                            "is_fingerprint_representative": (
+                                result.strategy_id == representative_strategy
+                            ),
+                        }
+                    )
+                )
+            rows.extend(workload_results)
+            # DuckDB may erase a nominal strategy difference (for example by
+            # projection pushdown). Selecting between duplicate fingerprints
+            # would reward timing noise, so only representatives enter ranking.
+            representative_results = [
+                item for item in workload_results if item.is_fingerprint_representative
+            ]
+            winner = min(representative_results, key=lambda item: item.median_governed_latency_ms)
+            runner_up = sorted(
+                representative_results, key=lambda item: item.median_governed_latency_ms
+            )[1]
             workload_summaries.append(
                 {
                     "workload_id": workload.workload_id,
                     "logical_plan_id": logical_plan.logical_plan_id,
                     "approved_candidate_ids": [
-                        fused.approved_physical_plan_id,
-                        materialized.approved_physical_plan_id,
+                        item.approved_physical_plan_id for item in workload_results
                     ],
                     "result_equivalent": equivalent,
-                    "physical_plans_distinct": (
-                        fused.physical_plan_fingerprint != materialized.physical_plan_fingerprint
-                    ),
+                    "physical_plans_distinct": len(fingerprint_groups) == len(candidates),
+                    "unique_physical_plan_count": len(fingerprint_groups),
+                    "deduplicated_candidate_count": len(candidates) - len(fingerprint_groups),
+                    "fingerprint_groups": list(fingerprint_groups.values()),
                     # This is a descriptive observation, not a significance
                     # claim.  Repeated independent runs are needed before a
                     # small median gap can be called a performance reversal.
-                    "observed_median_winner": (
-                        fused.strategy
-                        if fused.median_latency_ms <= materialized.median_latency_ms
-                        else materialized.strategy
-                    ),
-                    "median_gap_fraction": abs(
-                        fused.median_latency_ms - materialized.median_latency_ms
+                    "observed_median_winner": winner.strategy_id,
+                    "median_gap_fraction": (
+                        runner_up.median_governed_latency_ms - winner.median_governed_latency_ms
                     )
-                    / min(fused.median_latency_ms, materialized.median_latency_ms),
+                    / winner.median_governed_latency_ms,
                 }
             )
     finally:
@@ -539,8 +584,9 @@ def run_phase2a(config: Phase2AConfig) -> Path:
         "all_physical_plans_distinct": all(
             item["physical_plans_distinct"] for item in workload_summaries
         ),
-        "strategy_count": 2,
-        "all_candidates_approved": len(candidates) == 2,
+        "strategy_count": len(candidates),
+        "all_candidates_approved": bool(candidates),
+        "source_lineage_enabled": config.source_lineage,
         "logical_plan_id": logical_plan.logical_plan_id,
         "workload_count": len(config.workloads),
         "controlled_statistics": [
