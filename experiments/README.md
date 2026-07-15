@@ -204,3 +204,48 @@ and a resumed run must use the same Git commit recorded at creation. This
 prevents one result directory from silently mixing measurements from two code
 versions. `Ctrl+C` stops safely; the same command with `--resume` reruns only
 the interrupted unit.
+
+Analyze a completed run with paired data-seed comparisons:
+
+```powershell
+python scripts/summarize_phase2c.py `
+  results/phase2c_paper_candidate/<run_id>
+```
+
+The analyzer writes only derived files below `<run_id>/analysis/`. It compares
+each candidate with `fused` inside the same generated seed before bootstrapping
+seed summaries, so repeated timings from one database are not incorrectly
+treated as independent samples. A stable reversal must exceed the frozen tie
+threshold, have a positive paired interval, and win at least 80% of seeds.
+The default stable label additionally requires at least five independent data
+seeds; smaller diagnostic runs can reveal candidates but cannot satisfy it.
+
+## Phase 2D: bounded filter-order diagnostic
+
+Phase 2D does not permit arbitrary operator movement. It accepts only a
+complete, unbranched chain made of IR v1 `TemporalFilter`, `SpatialFilter`, and
+pure comparison `Filter` operators. Every ordered stage is materialized, the
+approved physical DAG is rewired to the same order, and all six permutations
+must return identical rows. Masks, generalization, joins, aggregates, partial
+filter chains, and branched graphs remain non-reorderable.
+
+Run the short development calibration with:
+
+```powershell
+python -u scripts/run_phase2c.py `
+  --config experiments/configs/phase2d_calibration.json `
+  --progress
+```
+
+After committing a clean revision, run the diagnostic protocol with:
+
+```powershell
+python -u scripts/run_phase2c.py `
+  --config experiments/configs/phase2d_diagnostic.json `
+  --progress
+```
+
+The diagnostic uses 100K and 500K rows, three independent seeds, and ten
+measured repetitions. It is a reversal-discovery experiment, not final paper
+evidence. A later confirmation run must freeze scenarios before increasing to
+five or more seeds and 30 repetitions.

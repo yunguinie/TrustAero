@@ -1,0 +1,32 @@
+{
+  "results_dir": "results/phase2d_calibration",
+  "warmup_runs": 1,
+  "measured_runs": 3,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260715,
+  "tie_threshold_fraction": 0.03,
+  "source_lineage": true,
+  "require_clean_git": false,
+  "materialization_targets": [],
+  "filter_orders": [
+    ["op-temporal", "op-spatial", "op-policy"],
+    ["op-temporal", "op-policy", "op-spatial"],
+    ["op-spatial", "op-temporal", "op-policy"],
+    ["op-spatial", "op-policy", "op-temporal"],
+    ["op-policy", "op-temporal", "op-spatial"],
+    ["op-policy", "op-spatial", "op-temporal"]
+  ],
+  "row_counts": [20000],
+  "seeds": [1],
+  "scenarios": [
+    {
+      "scenario_id": "policy_selective",
+      "temporal_selectivity": 1.00,
+      "spatial_selectivity": 1.00,
+      "policy_selectivity": 0.05,
+      "join_match_rate": 1.00,
+      "hot_key_fraction": 0.05
+    }
+  ]
+}

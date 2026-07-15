@@ -14,8 +14,9 @@ def generate_duckdb_candidates(
     plan: ValidatedLogicalPlan,
     *,
     materialization_targets: tuple[str, ...] = (),
+    filter_orders: tuple[tuple[str, ...], ...] = (),
 ) -> tuple[ApprovedPhysicalPlan, ...]:
-    """Generate fused plus one-boundary materialized candidates.
+    """Generate fused, one-boundary, and bounded ordered-filter candidates.
 
     The input is already a ``ValidatedLogicalPlan``. A materialization boundary
     does not reorder, remove, or weaken any logical/governance operator; it only
@@ -30,6 +31,15 @@ def generate_duckdb_candidates(
                 strategy_id=f"materialize-after-{target}",
                 execution_mode="materialized",
                 materialize_after=(target,),
+            )
+        )
+    for order in dict.fromkeys(filter_orders):
+        readable_order = "-then-".join(item.removeprefix("op-") for item in order)
+        strategies.append(
+            PhysicalStrategySpec(
+                strategy_id=f"ordered-materialized-{readable_order}",
+                execution_mode="ordered_materialized",
+                filter_order=order,
             )
         )
     candidates = tuple(

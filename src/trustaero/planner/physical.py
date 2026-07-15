@@ -84,6 +84,88 @@ def _physical_plan_id(payload: dict[str, object]) -> str:
     return "pp-" + hashlib.sha256(encoded).hexdigest()[:16]
 
 
+def _ordered_filter_specs(
+    plan: ValidatedLogicalPlan,
+    physical_operators: tuple[PhysicalOperatorSpec, ...],
+    filter_order: tuple[str, ...],
+) -> tuple[PhysicalOperatorSpec, ...]:
+    """Rewire one complete, linear pure-filter chain in an approved order.
+
+    This is intentionally narrower than general operator reordering. Spatial,
+    temporal, and comparison filters in IR v1 are total, side-effect-free row
+    selectors, so conjunction is commutative. Branches, partial chains, masks,
+    joins, aggregates, and unknown operators fail closed.
+    """
+
+    by_id = {operator.operator_id: operator for operator in plan.operators}
+    selected = set(filter_order)
+    if any(operator_id not in by_id for operator_id in filter_order):
+        raise ValueError("Ordered filter strategy refers outside the logical plan")
+    allowed_types = {"Filter", "SpatialFilter", "TemporalFilter"}
+    selected_operators = [by_id[operator_id] for operator_id in filter_order]
+    if any(operator.operator_type not in allowed_types for operator in selected_operators):
+        raise ValueError("Ordered strategy supports only the pure IR v1 filter fragment")
+    if any(len(operator.inputs) != 1 for operator in selected_operators):
+        raise ValueError("Ordered filters must form a unary chain")
+
+    external_inputs = [
+        (operator.operator_id, operator.inputs[0])
+        for operator in selected_operators
+        if operator.inputs[0] not in selected
+    ]
+    internal_edge_count = sum(operator.inputs[0] in selected for operator in selected_operators)
+    external_consumers = [
+        (operator.operator_id, input_id)
+        for operator in plan.operators
+        if operator.operator_id not in selected
+        for input_id in operator.inputs
+        if input_id in selected
+    ]
+    internal_consumer_counts = {
+        operator_id: sum(
+            input_id == operator_id
+            for operator in selected_operators
+            for input_id in operator.inputs
+        )
+        for operator_id in selected
+    }
+    if (
+        len(external_inputs) != 1
+        or internal_edge_count != len(selected) - 1
+        or len(external_consumers) != 1
+        or sorted(internal_consumer_counts.values()) != [0] + [1] * (len(selected) - 1)
+    ):
+        raise ValueError("Ordered filters must cover one complete, unbranched logical chain")
+
+    root_input = external_inputs[0][1]
+    external_consumer_id = external_consumers[0][0]
+    upstream_is_filter = root_input in by_id and by_id[root_input].operator_type in allowed_types
+    downstream_is_filter = by_id[external_consumer_id].operator_type in allowed_types
+    if upstream_is_filter or downstream_is_filter:
+        raise ValueError("Ordered filters must cover the maximal adjacent filter chain")
+
+    original_tail = external_consumers[0][1]
+    new_tail = filter_order[-1]
+    ordered_inputs = {
+        operator_id: root_input if index == 0 else filter_order[index - 1]
+        for index, operator_id in enumerate(filter_order)
+    }
+    original_tail_physical = _physical_operator_id(original_tail)
+    new_tail_physical = _physical_operator_id(new_tail)
+    rewired: list[PhysicalOperatorSpec] = []
+    for operator in physical_operators:
+        inputs: tuple[str, ...]
+        if operator.logical_operator_id in selected:
+            inputs = (_physical_operator_id(ordered_inputs[operator.logical_operator_id]),)
+        else:
+            inputs = tuple(
+                new_tail_physical if item == original_tail_physical else item
+                for item in operator.inputs
+            )
+        rewired.append(operator.model_copy(update={"inputs": inputs}))
+    return tuple(rewired)
+
+
 def plan_physical_execution(
     plan: ValidatedLogicalPlan,
     *,
@@ -107,7 +189,16 @@ def plan_physical_execution(
         if target == plan.output_operator:
             raise ValueError("Materializing after the final output is not a useful IR v1 candidate")
 
+    if selected_strategy.execution_mode == "ordered_materialized" and backend != "duckdb":
+        raise ValueError("Ordered filter execution is implemented for DuckDB only")
+
     physical_operators = tuple(_operator_spec(operator, backend) for operator in plan.operators)
+    if selected_strategy.execution_mode == "ordered_materialized":
+        physical_operators = _ordered_filter_specs(
+            plan,
+            physical_operators,
+            selected_strategy.filter_order,
+        )
     unimplemented = tuple(
         dict.fromkeys(
             feature

@@ -12,6 +12,7 @@ from trustaero.ir.enums import ObligationType, ValidationStatus
 from trustaero.ir.models import PolicySet, ValidatedLogicalPlan
 from trustaero.planner import generate_duckdb_candidates
 from trustaero.planner.physical import plan_physical_execution
+from trustaero.validator.physical_dag import validate_physical_plan_dag
 from trustaero.validator.service import validate
 
 
@@ -178,3 +179,39 @@ def test_materialization_candidate_rejects_unknown_or_final_target(
             logical,
             materialization_targets=(logical.output_operator,),
         )
+
+
+def test_ordered_filter_candidate_rewires_only_complete_pure_chain(
+    accept_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    logical = _validated_accept_plan(accept_plan, policy_set, catalog)
+    # The generic fixture contains only one Filter, so a partial/arbitrary
+    # order must fail closed rather than claiming a safe reorder.
+    with pytest.raises(ValueError, match="at least two filters"):
+        generate_duckdb_candidates(logical, filter_orders=(("op1",),))
+
+
+def test_phase2_ordered_filter_candidate_has_valid_rewired_dag() -> None:
+    from trustaero.experiments.phase2a import build_phase2_experiment_plan
+
+    logical = build_phase2_experiment_plan(source_lineage=True)
+    with pytest.raises(ValueError, match="maximal adjacent filter chain"):
+        generate_duckdb_candidates(
+            logical,
+            filter_orders=(("op-temporal", "op-spatial"),),
+        )
+    candidate = generate_duckdb_candidates(
+        logical,
+        filter_orders=(("op-policy", "op-spatial", "op-temporal"),),
+    )[1]
+    by_logical = {
+        operator.logical_operator_id: operator for operator in candidate.physical_operators
+    }
+
+    assert by_logical["op-policy"].inputs == ("phys-op-events",)
+    assert by_logical["op-spatial"].inputs == ("phys-op-policy",)
+    assert by_logical["op-temporal"].inputs == ("phys-op-spatial",)
+    assert by_logical["op-event-project"].inputs == ("phys-op-temporal",)
+    assert validate_physical_plan_dag(candidate) == ()

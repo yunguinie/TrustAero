@@ -113,16 +113,25 @@
     },
     "PhysicalStrategySpec": {
       "additionalProperties": false,
-      "description": "Explicit backend strategy decisions that may change physical execution.\n\nMaterialization is a storage boundary, not a logical rewrite: it preserves\nrows and field semantics while changing pipelining and intermediate cost.\nIR v1 deliberately permits at most one materialization boundary so the\ndecision can be validated and measured independently.",
+      "description": "Explicit backend strategy decisions that may change physical execution.\n\nMaterialization is a storage boundary, not a logical rewrite: it preserves\nrows and field semantics while changing pipelining and intermediate cost.\nIR v1 permits either one ordinary materialization boundary or one bounded\nordered-filter fragment. The latter materializes each pure filter stage so\na backend cannot silently flatten the requested experimental order.",
       "properties": {
         "execution_mode": {
           "default": "fused",
           "enum": [
             "fused",
-            "materialized"
+            "materialized",
+            "ordered_materialized"
           ],
           "title": "Execution Mode",
           "type": "string"
+        },
+        "filter_order": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Filter Order",
+          "type": "array"
         },
         "materialize_after": {
           "default": [],

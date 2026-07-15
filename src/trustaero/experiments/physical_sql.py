@@ -1,8 +1,10 @@
 """Strict SQL realization of the bounded Phase 2 DuckDB strategy fragment.
 
 The compiler accepts only physical decisions whose semantics have been frozen
-here.  A materialization boundary changes pipelining, but never removes,
-reorders, or weakens a logical predicate.  Unknown boundaries fail closed.
+here. Ordinary boundaries preserve logical order. The ordered fragment is a
+complete permutation of three pure filters and materializes every stage, so
+DuckDB cannot silently flatten the experimental order. Unknown choices fail
+closed.
 """
 
 from __future__ import annotations
@@ -17,6 +19,7 @@ _SUPPORTED_BOUNDARIES = frozenset(
         "op-event-project",
     }
 )
+_ORDERED_FILTERS = frozenset({"op-temporal", "op-spatial", "op-policy"})
 
 
 def _temporal(alias: str) -> str:
@@ -37,6 +40,18 @@ def _spatial(alias: str) -> str:
 
 def _policy(alias: str) -> str:
     return f"{alias}.policy_allowed"
+
+
+def _filter_predicate(operator_id: str, alias: str) -> str:
+    functions = {
+        "op-temporal": _temporal,
+        "op-spatial": _spatial,
+        "op-policy": _policy,
+    }
+    try:
+        return functions[operator_id](alias)
+    except KeyError as exc:
+        raise ValueError(f"Unsupported ordered Phase 2 filter: {operator_id}") from exc
 
 
 def _where(*predicates: str) -> str:
@@ -63,9 +78,9 @@ def _join_sql(
 def compile_phase2_strategy(candidate: ApprovedPhysicalPlan) -> str:
     """Compile one approved Phase 2 strategy to result-equivalent DuckDB SQL.
 
-    This is deliberately not a general SQL optimizer.  It realizes only the
-    four independently reviewable materialization positions in the controlled
-    experiment query.  The caller still has to compare returned rows and
+    This is deliberately not a general SQL optimizer. It realizes only the
+    independently reviewable materialization decisions in the controlled
+    experiment query. The caller still has to compare returned rows and
     inspect DuckDB's actual physical plan.
     """
 
@@ -80,6 +95,26 @@ def compile_phase2_strategy(candidate: ApprovedPhysicalPlan) -> str:
                 _policy("events"),
             ),
         )
+
+    if strategy.execution_mode == "ordered_materialized":
+        order = strategy.filter_order
+        if len(order) != 3 or set(order) != _ORDERED_FILTERS:
+            raise ValueError("Ordered Phase 2 strategy must permute all three filters")
+        ctes: list[str] = []
+        source_relation = "synthetic_events"
+        source_alias = "events"
+        for index, operator_id in enumerate(order, start=1):
+            stage = f"ordered_stage_{index}"
+            ctes.append(
+                f"{stage} AS MATERIALIZED (\n"
+                "  SELECT *\n"
+                f"  FROM {source_relation} AS {source_alias}\n"
+                f"  WHERE {_filter_predicate(operator_id, source_alias)}\n"
+                ")"
+            )
+            source_relation = stage
+            source_alias = f"stage_{index}"
+        return "WITH\n" + ",\n".join(ctes) + "\n" + _join_sql(source_relation, source_alias)
 
     boundary = strategy.materialize_after[0]
     if boundary not in _SUPPORTED_BOUNDARIES:
@@ -121,3 +156,16 @@ def supported_phase2_materialization_targets() -> tuple[str, ...]:
     """Return the deterministic, reviewed boundary order used by Phase 2B."""
 
     return ("op-temporal", "op-spatial", "op-policy", "op-event-project")
+
+
+def supported_phase2_filter_orders() -> tuple[tuple[str, ...], ...]:
+    """Return every reviewed permutation of the complete pure-filter chain."""
+
+    return (
+        ("op-temporal", "op-spatial", "op-policy"),
+        ("op-temporal", "op-policy", "op-spatial"),
+        ("op-spatial", "op-temporal", "op-policy"),
+        ("op-spatial", "op-policy", "op-temporal"),
+        ("op-policy", "op-temporal", "op-spatial"),
+        ("op-policy", "op-spatial", "op-temporal"),
+    )

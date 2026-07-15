@@ -29,7 +29,10 @@ from trustaero.experiments.physical_sql import (
     compile_phase2_strategy,
     supported_phase2_materialization_targets,
 )
-from trustaero.experiments.synthetic import SyntheticDataConfig, generate_synthetic_workload
+from trustaero.experiments.synthetic import (
+    SyntheticDataConfig,
+    generate_synthetic_workload,
+)
 from trustaero.ir.models import ApprovedPhysicalPlan
 from trustaero.planner import generate_duckdb_candidates
 
@@ -84,6 +87,7 @@ class Phase2CConfig:
         "op-policy",
         "op-event-project",
     )
+    filter_orders: tuple[tuple[str, ...], ...] = ()
 
     def __post_init__(self) -> None:
         if not self.scenarios or not self.row_counts or not self.seeds:
@@ -100,8 +104,8 @@ class Phase2CConfig:
             raise ValueError("DuckDB resource limits are invalid")
         if not 0.0 <= self.tie_threshold_fraction < 1.0:
             raise ValueError("tie_threshold_fraction must be in [0, 1)")
-        if not self.materialization_targets:
-            raise ValueError("at least one materialization target is required")
+        if not self.materialization_targets and not self.filter_orders:
+            raise ValueError("at least one non-fused physical candidate is required")
 
 
 @dataclass(frozen=True)
@@ -800,6 +804,7 @@ def run_phase2c(
     candidates = generate_duckdb_candidates(
         logical_plan,
         materialization_targets=config.materialization_targets,
+        filter_orders=config.filter_orders,
     )
     units = tuple(
         (scenario, row_count, data_seed)
@@ -893,5 +898,9 @@ def load_phase2c_config(path: str | Path) -> Phase2CConfig:
                 "materialization_targets",
                 supported_phase2_materialization_targets(),
             )
+        ),
+        filter_orders=tuple(
+            tuple(str(operator_id) for operator_id in order)
+            for order in payload.get("filter_orders", ())
         ),
     )

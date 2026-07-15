@@ -369,20 +369,30 @@ class PhysicalStrategySpec(StrictModel):
 
     Materialization is a storage boundary, not a logical rewrite: it preserves
     rows and field semantics while changing pipelining and intermediate cost.
-    IR v1 deliberately permits at most one materialization boundary so the
-    decision can be validated and measured independently.
+    IR v1 permits either one ordinary materialization boundary or one bounded
+    ordered-filter fragment. The latter materializes each pure filter stage so
+    a backend cannot silently flatten the requested experimental order.
     """
 
     strategy_id: str = Field(min_length=1)
-    execution_mode: Literal["fused", "materialized"] = "fused"
+    execution_mode: Literal["fused", "materialized", "ordered_materialized"] = "fused"
     materialize_after: tuple[str, ...] = ()
+    filter_order: tuple[str, ...] = ()
 
     @model_validator(mode="after")
     def decision_shape_must_match_mode(self) -> PhysicalStrategySpec:
-        if self.execution_mode == "fused" and self.materialize_after:
-            raise ValueError("fused execution cannot declare a materialization boundary")
-        if self.execution_mode == "materialized" and len(self.materialize_after) != 1:
-            raise ValueError("IR v1 materialized execution requires exactly one boundary")
+        if self.execution_mode == "fused":
+            if self.materialize_after or self.filter_order:
+                raise ValueError("fused execution cannot declare physical boundaries")
+        elif self.execution_mode == "materialized":
+            if len(self.materialize_after) != 1 or self.filter_order:
+                raise ValueError("IR v1 materialized execution requires exactly one boundary")
+        elif self.materialize_after or len(self.filter_order) < 2:
+            raise ValueError(
+                "ordered materialization requires at least two filters and no single boundary"
+            )
+        if len(self.filter_order) != len(set(self.filter_order)):
+            raise ValueError("ordered filters must be unique")
         return self
 
 
