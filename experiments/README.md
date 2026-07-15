@@ -274,3 +274,20 @@ python -u scripts/run_phase2c.py `
 
 The later three-seed diagnostic uses `phase2e_diagnostic.json`; it must run only
 after a clean commit and remains screening evidence rather than a paper claim.
+
+The discovery run froze the following confirmation hypotheses before the
+larger run: wide identifiers with a high Join match rate may favor early Mask
+at 300K rows; a low Join match rate should favor late Mask because fewer rows
+need hashing; narrow identifiers are a near-tie control. Confirm them without
+changing the scenarios using:
+
+```powershell
+python -u scripts/run_phase2c.py `
+  --config experiments/configs/phase2e_confirmation.json `
+  --progress
+```
+
+This confirmation protocol uses the same two scales and three scenarios, but
+raises the independent seed count to five, warmups to five, and measured runs
+to 30. It is the first Phase 2E result eligible for the analyzer's stable label.
+If interrupted, add `--resume`; completed atomic units are not repeated.
