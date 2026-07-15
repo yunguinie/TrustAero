@@ -12,13 +12,21 @@ from trustaero.execution.duckdb import (
     execute_with_connection,
     execute_with_duckdb,
 )
+from trustaero.execution.lineage import (
+    LineageInstrumentationError,
+    SourceLineageCaptureResult,
+    capture_source_lineage,
+)
 
 __all__ = [
     "CompiledQuery",
     "DuckDBUnavailable",
     "ExecutionCompileError",
+    "LineageInstrumentationError",
     "QueryExecutionResult",
     "TableBindings",
+    "SourceLineageCaptureResult",
+    "capture_source_lineage",
     "compile_validated_plan",
     "execute_with_connection",
     "execute_with_duckdb",

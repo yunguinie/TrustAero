@@ -56,8 +56,11 @@
       "description": "Backend-facing operator placeholder derived from a validated operator.",
       "properties": {
         "backend": {
-          "const": "not_bound",
           "default": "not_bound",
+          "enum": [
+            "not_bound",
+            "duckdb"
+          ],
           "title": "Backend",
           "type": "string"
         },
@@ -65,6 +68,7 @@
           "default": "logical_only",
           "enum": [
             "logical_only",
+            "executable",
             "requires_backend"
           ],
           "title": "Implementation Status",

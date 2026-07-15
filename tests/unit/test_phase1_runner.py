@@ -26,12 +26,19 @@ def test_run_phase1_writes_repeatable_execution_artifacts() -> None:
 
     summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
     assert summary["all_correct"] is True
-    assert summary["case_count"] == 4
-    assert summary["case_ids"] == ["P1-001", "P1-002", "P1-003", "P1-004"]
-    assert summary["total_row_count"] == 6
+    assert summary["case_count"] == 11
+    assert summary["case_ids"] == [f"P1-{index:03d}" for index in range(1, 12)]
+    assert summary["total_row_count"] == 19
+    assert summary["result_correct"] == 11
+    assert summary["source_lineage_cases"] == 1
     assert summary["unverified_components"] == ["physical_plan_execution"]
     with (output_dir / "cases.csv").open(newline="", encoding="utf-8") as handle:
         rows = tuple(csv.DictReader(handle))
-    assert [row["row_count"] for row in rows] == ["2", "1", "1", "2"]
+    assert [row["status"] for row in rows] == ["PASS"] * 11
+    assert [row["result_correct"] for row in rows] == ["True"] * 11
+    lineage_row = next(row for row in rows if row["case_id"] == "P1-011")
+    assert lineage_row["lineage_level"] == "source"
+    assert lineage_row["lineage_source_count"] == "1"
+    assert lineage_row["verified_obligation_count"] == "1"
     assert (output_dir / "environment.json").exists()
     assert (output_dir / "config.json").exists()

@@ -8,7 +8,7 @@
       "policy_version": "1",
       "subject_roles": ["researcher"],
       "purposes": ["research"],
-      "actions": ["read", "aggregate"],
+      "actions": ["read", "join", "aggregate"],
       "resources": ["earthquakes"],
       "decision": "PERMIT",
       "obligations": [],
@@ -48,6 +48,28 @@
       "decision": "DENY",
       "obligations": [],
       "reason": "Public users may not access critical-facility details."
+    },
+    {
+      "policy_id": "P-RESEARCH-EQ-SCORES",
+      "policy_version": "1",
+      "subject_roles": ["researcher"],
+      "purposes": ["research"],
+      "actions": ["read", "join"],
+      "resources": ["earthquake_scores"],
+      "decision": "PERMIT",
+      "obligations": [],
+      "reason": "Public severity labels are permitted for research joins."
+    },
+    {
+      "policy_id": "P-RESEARCH-EQ-SCORE-JOIN",
+      "policy_version": "1",
+      "subject_roles": ["researcher"],
+      "purposes": ["research"],
+      "actions": ["join"],
+      "resources": ["earthquakes", "earthquake_scores"],
+      "decision": "PERMIT",
+      "obligations": [],
+      "reason": "The public earthquake and severity datasets may be joined for research."
     }
   ]
 }

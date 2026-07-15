@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import copy
 import csv
+import hashlib
 import json
+import math
 import platform
 import statistics
 import subprocess
@@ -23,11 +25,21 @@ from typing import Any, Literal
 
 from trustaero.catalog.in_memory import InMemoryCatalog
 from trustaero.catalog.models import CatalogDocument
-from trustaero.execution import TableBindings, compile_validated_plan, execute_with_connection
+from trustaero.execution import (
+    TableBindings,
+    capture_source_lineage,
+    compile_validated_plan,
+    execute_with_connection,
+)
 from trustaero.experiments.loader import load_json
 from trustaero.experiments.models import Phase1Config, Phase1ExecutionResult
-from trustaero.ir.enums import ValidationStatus
-from trustaero.ir.models import ExecutionEvent, GovernedExecutionCertificate, PolicySet
+from trustaero.ir.enums import LineageLevel, ObligationType, ValidationStatus
+from trustaero.ir.models import (
+    ExecutionEvent,
+    GovernedExecutionCertificate,
+    LineageEvidenceSummary,
+    PolicySet,
+)
 from trustaero.planner.physical import plan_physical_execution
 from trustaero.validator.certificate import verify_execution_certificate
 from trustaero.validator.service import validate
@@ -52,6 +64,8 @@ class Phase1Case:
     scenario: str
     raw_plan: dict[str, Any]
     expected_row_count: int
+    expected_rows: tuple[tuple[Any, ...], ...]
+    source_lineage_required: bool = False
 
 
 def _repo_root() -> Path:
@@ -119,7 +133,7 @@ def _prepare_duckdb_table(connection: Any) -> None:
         """
         CREATE OR REPLACE TABLE earthquake_events(
             event_id VARCHAR,
-            event_time TIMESTAMP,
+            event_time TIMESTAMPTZ,
             latitude DOUBLE,
             longitude DOUBLE,
             magnitude DOUBLE
@@ -128,11 +142,47 @@ def _prepare_duckdb_table(connection: Any) -> None:
     )
     connection.execute(
         """
-        INSERT INTO earthquake_events VALUES
-          ('eq-001', TIMESTAMP '2026-06-01 00:00:00', 39.9, 116.4, 4.8),
-          ('eq-002', TIMESTAMP '2026-06-02 00:00:00', 40.1, 116.2, 5.1)
+        CREATE OR REPLACE TABLE score_lookup(
+            score_key DOUBLE,
+            severity_label VARCHAR
+        )
         """
     )
+    connection.execute("INSERT INTO score_lookup VALUES (4.8, 'moderate'), (5.1, 'strong')")
+    connection.execute(
+        """
+        INSERT INTO earthquake_events VALUES
+          ('eq-001', TIMESTAMPTZ '2026-06-01 00:00:00+00:00', 39.9, 116.4, 4.8),
+          ('eq-002', TIMESTAMPTZ '2026-06-02 00:00:00+00:00', 40.1, 116.2, 5.1)
+        """
+    )
+
+
+def _grid_center(value: float, offset: float, precision_km: float) -> float:
+    """Mirror the frozen fixed-grid formula for expected Phase 1 rows."""
+
+    step = precision_km / 111.045
+    return math.floor((value + offset) / step) * step - offset + step / 2.0
+
+
+def _rows_match(
+    actual: tuple[tuple[Any, ...], ...],
+    expected: tuple[tuple[Any, ...], ...],
+) -> bool:
+    """Compare deterministic rows while tolerating harmless float roundoff."""
+
+    if len(actual) != len(expected):
+        return False
+    for actual_row, expected_row in zip(actual, expected, strict=True):
+        if len(actual_row) != len(expected_row):
+            return False
+        for actual_value, expected_value in zip(actual_row, expected_row, strict=True):
+            if isinstance(actual_value, float) and isinstance(expected_value, float):
+                if not math.isclose(actual_value, expected_value, rel_tol=1e-12, abs_tol=1e-12):
+                    return False
+            elif actual_value != expected_value:
+                return False
+    return True
 
 
 def _phase1_cases(baseline_plan: dict[str, Any]) -> tuple[Phase1Case, ...]:
@@ -157,7 +207,11 @@ def _phase1_cases(baseline_plan: dict[str, Any]) -> tuple[Phase1Case, ...]:
                 "expression_type": "comparison",
                 "operator": "ge",
                 "left": {"expression_type": "field", "field": "magnitude"},
-                "right": {"expression_type": "literal", "data_type": "float", "value": 5.0},
+                "right": {
+                    "expression_type": "literal",
+                    "data_type": "float",
+                    "value": 5.0,
+                },
             },
         },
     )
@@ -193,6 +247,111 @@ def _phase1_cases(baseline_plan: dict[str, Any]) -> tuple[Phase1Case, ...]:
     )
     spatial_filter["operators"][2]["inputs"] = ["op-spatial-radius"]
 
+    join_plan = copy.deepcopy(baseline_plan)
+    join_plan["plan_id"] = "p1-join-severity"
+    join_plan["request_context"]["action"] = "join"
+    join_plan["requested_output"]["fields"] = ["event_id", "severity_label"]
+    join_plan["operators"] = [
+        join_plan["operators"][0],
+        {
+            "operator_type": "Project",
+            "operator_id": "op-left-project",
+            "inputs": ["op1"],
+            "fields": ["event_id", "magnitude"],
+        },
+        {
+            "operator_type": "ScanSource",
+            "operator_id": "op-score-scan",
+            "inputs": [],
+            "dataset": "earthquake_scores",
+            "snapshot": None,
+        },
+        {
+            "operator_type": "Join",
+            "operator_id": "op-score-join",
+            "inputs": ["op-left-project", "op-score-scan"],
+            "left_field": "magnitude",
+            "right_field": "score_key",
+            "join_type": "inner",
+        },
+        {
+            "operator_type": "Project",
+            "operator_id": "op-join-output",
+            "inputs": ["op-score-join"],
+            "fields": ["event_id", "severity_label"],
+        },
+    ]
+    join_plan["output_operator"] = "op-join-output"
+
+    aggregate_plan = copy.deepcopy(baseline_plan)
+    aggregate_plan["plan_id"] = "p1-aggregate-summary"
+    aggregate_plan["request_context"]["action"] = "aggregate"
+    aggregate_plan["requested_output"]["fields"] = ["event_count", "mean_magnitude"]
+    aggregate_plan["operators"] = [
+        aggregate_plan["operators"][0],
+        {
+            "operator_type": "Aggregate",
+            "operator_id": "op-aggregate-output",
+            "inputs": ["op1"],
+            "group_by": [],
+            "aggregates": [
+                {
+                    "function": "count",
+                    "input_field": None,
+                    "output_field": "event_count",
+                },
+                {
+                    "function": "avg",
+                    "input_field": "magnitude",
+                    "output_field": "mean_magnitude",
+                },
+            ],
+        },
+    ]
+    aggregate_plan["output_operator"] = "op-aggregate-output"
+
+    def mask_plan(method: str) -> dict[str, Any]:
+        plan = copy.deepcopy(baseline_plan)
+        plan["plan_id"] = f"p1-mask-{method}"
+        plan["operators"].insert(
+            1,
+            {
+                "operator_type": "Mask",
+                "operator_id": f"op-mask-{method}",
+                "inputs": ["op1"],
+                "fields": ["event_id"],
+                "method": method,
+            },
+        )
+        plan["operators"][2]["inputs"] = [f"op-mask-{method}"]
+        return plan
+
+    generalize_plan = copy.deepcopy(baseline_plan)
+    generalize_plan["plan_id"] = "p1-generalize-grid"
+    generalize_plan["requested_output"]["fields"] = ["latitude", "longitude"]
+    generalize_plan["operators"] = [
+        generalize_plan["operators"][0],
+        {
+            "operator_type": "GeneralizeLocation",
+            "operator_id": "op-generalize-grid",
+            "inputs": ["op1"],
+            "fields": ["latitude", "longitude"],
+            "precision_km": 5.0,
+            "method": "fixed_grid",
+            "preserves_selection": True,
+        },
+        {
+            "operator_type": "Project",
+            "operator_id": "op-grid-output",
+            "inputs": ["op-generalize-grid"],
+            "fields": ["latitude", "longitude"],
+        },
+    ]
+    generalize_plan["output_operator"] = "op-grid-output"
+
+    source_lineage_plan = copy.deepcopy(baseline_plan)
+    source_lineage_plan["plan_id"] = "p1-source-lineage"
+
     return (
         Phase1Case(
             case_id="P1-001",
@@ -200,6 +359,7 @@ def _phase1_cases(baseline_plan: dict[str, Any]) -> tuple[Phase1Case, ...]:
             scenario="baseline_project",
             raw_plan=baseline,
             expected_row_count=2,
+            expected_rows=(("eq-001", 4.8), ("eq-002", 5.1)),
         ),
         Phase1Case(
             case_id="P1-002",
@@ -207,6 +367,7 @@ def _phase1_cases(baseline_plan: dict[str, Any]) -> tuple[Phase1Case, ...]:
             scenario="magnitude_ge_5",
             raw_plan=magnitude_filter,
             expected_row_count=1,
+            expected_rows=(("eq-002", 5.1),),
         ),
         Phase1Case(
             case_id="P1-003",
@@ -214,6 +375,7 @@ def _phase1_cases(baseline_plan: dict[str, Any]) -> tuple[Phase1Case, ...]:
             scenario="first_day_window",
             raw_plan=temporal_filter,
             expected_row_count=1,
+            expected_rows=(("eq-001", 4.8),),
         ),
         Phase1Case(
             case_id="P1-004",
@@ -221,8 +383,85 @@ def _phase1_cases(baseline_plan: dict[str, Any]) -> tuple[Phase1Case, ...]:
             scenario="radius_20km",
             raw_plan=spatial_filter,
             expected_row_count=2,
+            expected_rows=(("eq-001", 4.8), ("eq-002", 5.1)),
+        ),
+        Phase1Case(
+            case_id="P1-005",
+            case_category="join",
+            scenario="magnitude_to_severity",
+            raw_plan=join_plan,
+            expected_row_count=2,
+            expected_rows=(("eq-001", "moderate"), ("eq-002", "strong")),
+        ),
+        Phase1Case(
+            case_id="P1-006",
+            case_category="aggregate",
+            scenario="count_and_average",
+            raw_plan=aggregate_plan,
+            expected_row_count=1,
+            expected_rows=((2, 4.95),),
+        ),
+        Phase1Case(
+            case_id="P1-007",
+            case_category="mask_redact",
+            scenario="redact_identifier",
+            raw_plan=mask_plan("redact"),
+            expected_row_count=2,
+            expected_rows=(("[REDACTED]", 4.8), ("[REDACTED]", 5.1)),
+        ),
+        Phase1Case(
+            case_id="P1-008",
+            case_category="mask_hash",
+            scenario="sha256_identifier",
+            raw_plan=mask_plan("hash"),
+            expected_row_count=2,
+            expected_rows=(
+                (hashlib.sha256(b"eq-001").hexdigest(), 4.8),
+                (hashlib.sha256(b"eq-002").hexdigest(), 5.1),
+            ),
+        ),
+        Phase1Case(
+            case_id="P1-009",
+            case_category="mask_null",
+            scenario="null_identifier",
+            raw_plan=mask_plan("null"),
+            expected_row_count=2,
+            expected_rows=((None, 4.8), (None, 5.1)),
+        ),
+        Phase1Case(
+            case_id="P1-010",
+            case_category="generalize_location",
+            scenario="fixed_grid_5km",
+            raw_plan=generalize_plan,
+            expected_row_count=2,
+            expected_rows=(
+                (_grid_center(39.9, 90.0, 5.0), _grid_center(116.4, 180.0, 5.0)),
+                (_grid_center(40.1, 90.0, 5.0), _grid_center(116.2, 180.0, 5.0)),
+            ),
+        ),
+        Phase1Case(
+            case_id="P1-011",
+            case_category="source_lineage",
+            scenario="source_snapshot_evidence",
+            raw_plan=source_lineage_plan,
+            expected_row_count=2,
+            expected_rows=(("eq-001", 4.8), ("eq-002", 5.1)),
+            source_lineage_required=True,
         ),
     )
+
+
+def _policy_for_case(policy: PolicySet, case: Phase1Case) -> PolicySet:
+    """Add source lineage only to the dedicated instrumentation case."""
+
+    if not case.source_lineage_required:
+        return policy
+    raw = policy.model_dump(mode="json")
+    earthquake_rule = next(rule for rule in raw["rules"] if rule["policy_id"] == "P-RESEARCH-EQ")
+    earthquake_rule["obligations"] = [
+        {"obligation_type": "LINEAGE_CAPTURE", "parameters": {"level": "source"}}
+    ]
+    return PolicySet.model_validate(raw)
 
 
 def _build_certificate(
@@ -233,6 +472,8 @@ def _build_certificate(
     data_snapshots: dict[str, str],
     physical_operators: tuple[Any, ...],
     result_digest: str,
+    lineage_evidence: LineageEvidenceSummary | None = None,
+    lineage_digest: str | None = None,
 ) -> GovernedExecutionCertificate:
     """Create a minimal certificate whose result digest comes from DuckDB output."""
 
@@ -259,6 +500,9 @@ def _build_certificate(
         sequence += 1
     events.append(_event(sequence, "ResultMaterialized", result_digest))
     sequence += 1
+    if lineage_evidence is not None and lineage_digest is not None:
+        events.append(_event(sequence, "LineageRecorded", lineage_digest))
+        sequence += 1
     events.append(_event(sequence, "CertificateEmitted", "sha256:certificate"))
 
     return GovernedExecutionCertificate(
@@ -270,6 +514,8 @@ def _build_certificate(
         data_snapshots=data_snapshots,
         events=tuple(events),
         result_digest=result_digest,
+        lineage_evidence=lineage_evidence,
+        lineage_digest=lineage_digest,
     )
 
 
@@ -321,11 +567,16 @@ def run_phase1(config: Phase1Config) -> Path:
     )
     policy = PolicySet.model_validate(load_json(root / "examples/policies/research_policy.json"))
     baseline_plan = load_json(root / "examples/plans/accept_earthquakes.json")
-    table_bindings = TableBindings(dataset_tables={"earthquakes": "earthquake_events"})
+    table_bindings = TableBindings(
+        dataset_tables={
+            "earthquakes": "earthquake_events",
+            "earthquake_scores": "score_lookup",
+        }
+    )
     rows: list[Phase1ExecutionResult] = []
 
     for case in _phase1_cases(baseline_plan):
-        response = validate(case.raw_plan, policy, catalog)
+        response = validate(case.raw_plan, _policy_for_case(policy, case), catalog)
         if response.status not in {ValidationStatus.ACCEPT, ValidationStatus.REWRITE}:
             raise RuntimeError(f"{case.case_id} did not validate: {response.status}")
         if response.validated_plan is None:
@@ -333,13 +584,19 @@ def run_phase1(config: Phase1Config) -> Path:
         validated_plan = response.validated_plan
 
         compiled = compile_validated_plan(validated_plan, catalog, table_bindings)
-        physical = plan_physical_execution(validated_plan)
+        physical = plan_physical_execution(validated_plan, backend="duckdb")
+        if physical.unimplemented_backend_features:
+            raise RuntimeError(
+                f"{case.case_id} has no complete DuckDB binding: "
+                f"{physical.unimplemented_backend_features}"
+            )
 
         def execute_once(
             compiled_query: Any = compiled,
             case_plan: Any = validated_plan,
             case_physical: Any = physical,
-        ) -> tuple[float, Any, Any]:
+            case_id: str = case.case_id,
+        ) -> tuple[float, Any, Any, Any]:
             """Run one isolated in-memory DuckDB execution and measure wall time."""
 
             connection = duckdb.connect(":memory:")
@@ -348,6 +605,11 @@ def run_phase1(config: Phase1Config) -> Path:
                 started = time.perf_counter()
                 execution_result = execute_with_connection(compiled_query, connection)
                 latency_ms = (time.perf_counter() - started) * 1000.0
+                lineage_capture = capture_source_lineage(
+                    case_plan,
+                    execution_id=f"{run_id}:{case_id}",
+                    result_id=execution_result.result_digest,
+                )
                 certificate = _build_certificate(
                     case_plan.validation.canonical_digest,
                     case_plan.logical_plan_id,
@@ -356,6 +618,8 @@ def run_phase1(config: Phase1Config) -> Path:
                     case_plan.bindings.data_snapshots,
                     case_physical.physical_operators,
                     execution_result.result_digest,
+                    lineage_capture.evidence,
+                    lineage_capture.lineage_digest,
                 )
                 certificate_check = verify_execution_certificate(
                     case_plan,
@@ -363,22 +627,31 @@ def run_phase1(config: Phase1Config) -> Path:
                     certificate,
                     observed_result_digest=execution_result.result_digest,
                 )
-                return latency_ms, execution_result, certificate_check
+                return latency_ms, execution_result, certificate_check, lineage_capture
             finally:
                 connection.close()
 
-        cold_latency_ms, cold_result, cold_certificate_check = execute_once()
+        cold_latency_ms, cold_result, cold_certificate_check, cold_lineage_capture = execute_once()
         for _ in range(config.warmup_runs):
             execute_once()
         latencies: list[float] = []
         last_result = cold_result
         last_certificate_check = cold_certificate_check
+        last_lineage_capture = cold_lineage_capture
         for _ in range(config.measured_runs):
-            latency_ms, last_result, last_certificate_check = execute_once()
+            latency_ms, last_result, last_certificate_check, last_lineage_capture = execute_once()
             latencies.append(latency_ms)
 
+        result_correct = _rows_match(last_result.rows, case.expected_rows)
+        lineage_correct = (
+            ObligationType.LINEAGE_CAPTURE in last_certificate_check.verified_obligations
+            if case.source_lineage_required
+            else last_lineage_capture.evidence is None
+        )
         status_correct = (
             last_result.row_count == case.expected_row_count
+            and result_correct
+            and lineage_correct
             and last_certificate_check.diagnostics == ()
             and last_certificate_check.unverified_components == ("physical_plan_execution",)
         )
@@ -392,11 +665,20 @@ def run_phase1(config: Phase1Config) -> Path:
                 plan_id=str(case.raw_plan["plan_id"]),
                 status="PASS" if status_correct else "FAIL",
                 status_correct=status_correct,
+                result_correct=result_correct,
                 row_count=last_result.row_count,
                 expected_row_count=case.expected_row_count,
                 certificate_status=str(last_certificate_check.status),
                 result_digest=last_result.result_digest,
                 unverified_components=last_certificate_check.unverified_components,
+                lineage_level=(
+                    last_lineage_capture.evidence.lineage_level.value
+                    if last_lineage_capture.evidence is not None
+                    else LineageLevel.NONE.value
+                ),
+                lineage_source_count=last_lineage_capture.source_count,
+                lineage_latency_ms=last_lineage_capture.latency_ms,
+                verified_obligation_count=len(last_certificate_check.verified_obligations),
                 cold_latency_ms=cold_latency_ms,
                 median_latency_ms=statistics.median(latencies) if latencies else 0.0,
                 p95_latency_ms=_percentile_95(latencies),
@@ -422,6 +704,11 @@ def run_phase1(config: Phase1Config) -> Path:
                 ),
                 "max_p95_latency_ms": max(result.p95_latency_ms for result in result_rows),
                 "total_row_count": sum(result.row_count for result in result_rows),
+                "result_correct": sum(result.result_correct for result in result_rows),
+                "source_lineage_cases": sum(
+                    result.lineage_level == LineageLevel.SOURCE.value for result in result_rows
+                ),
+                "max_lineage_latency_ms": max(result.lineage_latency_ms for result in result_rows),
                 "certificate_statuses": sorted(
                     {result.certificate_status for result in result_rows}
                 ),

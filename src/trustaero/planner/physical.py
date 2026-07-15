@@ -1,15 +1,17 @@
-"""Create the minimal approved physical-plan specification.
+"""Create deterministic approved physical-plan specifications.
 
-The current planner does not lower TrustAero IR to SQL or DuckDB operators. It
-freezes a deterministic, auditable execution specification that a future
-backend must implement before execution certificates can claim full verification.
+The default plan remains backend-neutral. Passing ``backend="duckdb"`` binds
+only the explicitly implemented V1 fragment; unsupported features stay visible
+instead of being silently treated as executable.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+from typing import Literal
 
+from trustaero.ir.enums import LineageLevel
 from trustaero.ir.models import (
     ApprovedPhysicalPlan,
     Operator,
@@ -24,23 +26,54 @@ _UNIMPLEMENTED_BY_OPERATOR = {
     "LineageCapture": ("lineage_backend_capture",),
 }
 
+_DUCKDB_EXECUTABLE = {
+    "ScanSource",
+    "Project",
+    "Filter",
+    "TemporalFilter",
+    "SpatialFilter",
+    "Join",
+    "Aggregate",
+    "Mask",
+    "GeneralizeLocation",
+}
+
 
 def _physical_operator_id(logical_operator_id: str) -> str:
     return f"phys-{logical_operator_id}"
 
 
-def _operator_spec(operator: Operator) -> PhysicalOperatorSpec:
+def _operator_spec(
+    operator: Operator,
+    backend: Literal["not_bound", "duckdb"],
+) -> PhysicalOperatorSpec:
     """Convert a validated logical operator into a backend-facing placeholder."""
 
     operator_type = operator.operator_type
     logical_operator_id = operator.operator_id
-    unimplemented = _UNIMPLEMENTED_BY_OPERATOR.get(operator_type, ())
+    status: Literal["logical_only", "executable", "requires_backend"]
+    if backend == "not_bound":
+        unimplemented = _UNIMPLEMENTED_BY_OPERATOR.get(operator_type, ())
+        status = "requires_backend" if unimplemented else "logical_only"
+    elif operator_type == "LineageCapture":
+        # Source lineage has a concrete implementation. Record provenance is
+        # still rejected until row-level identities are carried by execution.
+        level = getattr(operator, "level", None)
+        unimplemented = () if level == LineageLevel.SOURCE else ("record_lineage_capture",)
+        status = "executable" if not unimplemented else "requires_backend"
+    elif operator_type in _DUCKDB_EXECUTABLE:
+        unimplemented = ()
+        status = "executable"
+    else:
+        unimplemented = (f"duckdb_{str(operator_type).lower()}_execution",)
+        status = "requires_backend"
     return PhysicalOperatorSpec(
         physical_operator_id=_physical_operator_id(str(logical_operator_id)),
         logical_operator_id=str(logical_operator_id),
         operator_type=str(operator_type),
         inputs=tuple(_physical_operator_id(input_id) for input_id in operator.inputs),
-        implementation_status="requires_backend" if unimplemented else "logical_only",
+        backend=backend,
+        implementation_status=status,
         unimplemented_features=unimplemented,
     )
 
@@ -50,15 +83,18 @@ def _physical_plan_id(payload: dict[str, object]) -> str:
     return "pp-" + hashlib.sha256(encoded).hexdigest()[:16]
 
 
-def plan_physical_execution(plan: ValidatedLogicalPlan) -> ApprovedPhysicalPlan:
+def plan_physical_execution(
+    plan: ValidatedLogicalPlan,
+    *,
+    backend: Literal["not_bound", "duckdb"] = "not_bound",
+) -> ApprovedPhysicalPlan:
     """Derive a deterministic pre-execution physical specification.
 
-    The output is intentionally conservative: every operator remains
-    ``not_bound`` to a concrete backend, and governance operators list the
-    backend feature that still needs implementation.
+    The DuckDB path is allow-listed. Adding a new IR operator therefore cannot
+    make it executable merely because its name resembles a SQL operator.
     """
 
-    physical_operators = tuple(_operator_spec(operator) for operator in plan.operators)
+    physical_operators = tuple(_operator_spec(operator, backend) for operator in plan.operators)
     unimplemented = tuple(
         dict.fromkeys(
             feature
@@ -69,6 +105,7 @@ def plan_physical_execution(plan: ValidatedLogicalPlan) -> ApprovedPhysicalPlan:
     payload: dict[str, object] = {
         "logical_plan_id": plan.logical_plan_id,
         "logical_plan_digest": plan.validation.canonical_digest,
+        "backend": backend,
         "operators": [operator.model_dump(mode="json") for operator in physical_operators],
         "output_operator": _physical_operator_id(plan.output_operator),
         "policy_snapshot": plan.bindings.policy_snapshot,
@@ -90,7 +127,11 @@ def plan_physical_execution(plan: ValidatedLogicalPlan) -> ApprovedPhysicalPlan:
         pending_obligations=plan.pending_obligations,
         unimplemented_backend_features=unimplemented,
         planner_notes=(
-            "IR v1 physical planning is an auditable specification only; "
-            "no SQL or DuckDB execution plan is emitted.",
+            (
+                "IR v1 physical planning is an auditable specification only; "
+                "no concrete backend is bound."
+                if backend == "not_bound"
+                else "DuckDB is bound only for the allow-listed executable IR v1 fragment."
+            ),
         ),
     )

@@ -17,7 +17,12 @@ from trustaero.catalog.models import (
     FieldRole,
     SpatialDescriptor,
 )
-from trustaero.ir.enums import AggregateFunction, ComparisonOperator, DataType, ReasonCode
+from trustaero.ir.enums import (
+    AggregateFunction,
+    ComparisonOperator,
+    DataType,
+    ReasonCode,
+)
 from trustaero.ir.models import (
     Aggregate,
     AggregateExpression,
@@ -420,7 +425,10 @@ def _infer_operator(
         right_key = right.get(operator.right_field)
         missing = [
             name
-            for name, field in ((operator.left_field, left_key), (operator.right_field, right_key))
+            for name, field in (
+                (operator.left_field, left_key),
+                (operator.right_field, right_key),
+            )
             if field is None
         ]
         if missing:
@@ -560,6 +568,7 @@ def _infer_operator(
                 ),
             )
         targets = set(operator.fields)
+
         complete_pair = any(descriptor.fields <= targets for descriptor in input_schema.spatial)
         spatial_roles = all(
             field is not None and FieldRole.SPATIAL in field.roles
@@ -595,6 +604,27 @@ def _infer_operator(
             )
         targets = set(operator.fields)
 
+        # Hashing is deliberately frozen to raw strings in executable IR v1.
+        # Defining a canonical byte encoding for numbers and datetimes would be
+        # a separate public contract; silently inheriting a DB cast is unsafe.
+        if operator.method == "hash":
+            unsupported = [
+                name
+                for name in operator.fields
+                if (field := input_schema.get(name)) is not None
+                and field.data_type != DataType.STRING
+            ]
+            if unsupported:
+                return None, (
+                    _diagnostic(
+                        ReasonCode.MASK_INPUT_TYPE_UNSUPPORTED,
+                        "Hash masking supports raw STRING fields only in IR v1.",
+                        operator.operator_id,
+                        fields=unsupported,
+                        method=operator.method,
+                    ),
+                )
+
         def mask_field(field: FieldDescriptor) -> FieldDescriptor:
             if field.name not in targets:
                 return field
@@ -604,7 +634,7 @@ def _infer_operator(
                 "null": "nullified",
             }[operator.method]
             data_type = field.data_type if operator.method == "null" else DataType.STRING
-            nullable = True if operator.method == "null" else False
+            nullable = True if operator.method == "null" else field.nullable
             return field.model_copy(
                 update={
                     "data_type": data_type,

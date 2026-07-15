@@ -20,6 +20,17 @@
       "temporal_field": "event_time"
     },
     {
+      "dataset_id": "earthquake_scores",
+      "versions": ["v2026-06"],
+      "default_version": "v2026-06",
+      "fields": [
+        {"name": "score_key", "data_type": "float", "roles": []},
+        {"name": "severity_label", "data_type": "string", "roles": []}
+      ],
+      "spatial": null,
+      "temporal_field": null
+    },
+    {
       "dataset_id": "critical_facilities",
       "versions": ["v2026-06", "v2026-07"],
       "default_version": "v2026-07",

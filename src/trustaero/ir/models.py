@@ -10,7 +10,14 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, PositiveFloat, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    PositiveFloat,
+    field_validator,
+    model_validator,
+)
 
 from .enums import (
     AggregateFunction,
@@ -350,8 +357,10 @@ class PhysicalOperatorSpec(StrictModel):
     logical_operator_id: str
     operator_type: str
     inputs: tuple[str, ...] = ()
-    backend: Literal["not_bound"] = "not_bound"
-    implementation_status: Literal["logical_only", "requires_backend"] = "logical_only"
+    backend: Literal["not_bound", "duckdb"] = "not_bound"
+    implementation_status: Literal["logical_only", "executable", "requires_backend"] = (
+        "logical_only"
+    )
     unimplemented_features: tuple[str, ...] = ()
 
 

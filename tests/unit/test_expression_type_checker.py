@@ -324,7 +324,7 @@ def test_aggregate_rejects_masked_input_and_group_fields(
             "operator_id": "op-mask",
             "inputs": ["op1"],
             "fields": ["event_id", "magnitude"],
-            "method": "hash",
+            "method": "redact",
         },
         {
             "operator_type": "Aggregate",

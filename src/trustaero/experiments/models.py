@@ -137,11 +137,16 @@ class Phase1ExecutionResult:
     plan_id: str
     status: str
     status_correct: bool
+    result_correct: bool
     row_count: int
     expected_row_count: int
     certificate_status: str
     result_digest: str
     unverified_components: tuple[str, ...]
+    lineage_level: str
+    lineage_source_count: int
+    lineage_latency_ms: float
+    verified_obligation_count: int
     cold_latency_ms: float
     median_latency_ms: float
     p95_latency_ms: float
