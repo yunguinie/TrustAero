@@ -151,3 +151,34 @@ class Phase1ExecutionResult:
     parameter_count: int
     logical_plan_id: str
     physical_plan_id: str
+
+
+@dataclass(frozen=True)
+class Phase1RunSummary:
+    """One summarized Phase 1 DuckDB execution run."""
+
+    run_id: str
+    commit_hash: str
+    case_count: int
+    pass_count: int
+    all_correct: bool
+    total_row_count: int
+    median_latency_ms: float
+    max_p95_latency_ms: float
+    certificate_statuses: tuple[str, ...]
+    unverified_components: tuple[str, ...]
+    failed_cases: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class Phase1CategorySummary:
+    """Aggregated Phase 1 metrics grouped by execution case category."""
+
+    run_id: str
+    case_category: str
+    case_count: int
+    pass_count: int
+    total_row_count: int
+    median_latency_ms: float
+    max_p95_latency_ms: float
+    failed_cases: tuple[str, ...]

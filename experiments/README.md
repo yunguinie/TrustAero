@@ -88,6 +88,7 @@ Run from the repository root after installing the optional DuckDB extra:
 ```powershell
 python scripts/run_phase1.py
 python scripts/run_phase1.py --config experiments/configs/phase1.json
+python scripts/summarize_phase1.py
 ```
 
 The runner writes:
@@ -99,6 +100,16 @@ results/phase1/<run_id>/
   environment.json
   config.json
   failures/
+```
+
+`summarize_phase1.py` reads one or more Phase 1 run folders and writes:
+
+```text
+results/phase1_summary/
+  phase1_summary.csv
+  phase1_summary.json
+  phase1_category_summary.csv
+  phase1_category_summary.json
 ```
 
 This phase can support claims that the minimal validated-plan-to-certificate

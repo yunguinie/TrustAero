@@ -14,9 +14,17 @@ from trustaero.experiments.models import (
     Phase0CategorySummary,
     Phase0ReasonCodeSummary,
     Phase0RunSummary,
+    Phase1CategorySummary,
+    Phase1RunSummary,
 )
 
-SummaryRow = Phase0RunSummary | Phase0CategorySummary | Phase0ReasonCodeSummary
+SummaryRow = (
+    Phase0RunSummary
+    | Phase0CategorySummary
+    | Phase0ReasonCodeSummary
+    | Phase1RunSummary
+    | Phase1CategorySummary
+)
 
 
 def _bool(value: str) -> bool:
@@ -225,4 +233,101 @@ def summarize_phase0(results_dir: Path, output_dir: Path) -> tuple[Phase0RunSumm
         output_dir / "phase0_reason_code_summary.json",
         reason_code_summaries,
     )
+    return summaries
+
+
+def summarize_phase1_run(run_dir: Path) -> Phase1RunSummary:
+    """Summarize one ``results/phase1/<run_id>`` directory."""
+
+    rows = _read_cases(run_dir / "cases.csv")
+    run_id = run_dir.name
+    commit_hash = rows[0].get("commit_hash", "unknown") if rows else "unknown"
+    case_count = len(rows)
+    pass_count = sum(_bool(row["status_correct"]) for row in rows)
+    medians = [_float(row["median_latency_ms"]) for row in rows]
+    p95s = [_float(row["p95_latency_ms"]) for row in rows]
+    failed_cases = tuple(row["case_id"] for row in rows if not _bool(row["status_correct"]))
+    certificate_statuses = tuple(sorted({row["certificate_status"] for row in rows}))
+    unverified_components = tuple(
+        sorted({item for row in rows for item in _codes(row["unverified_components"])})
+    )
+
+    return Phase1RunSummary(
+        run_id=run_id,
+        commit_hash=commit_hash,
+        case_count=case_count,
+        pass_count=pass_count,
+        all_correct=not failed_cases,
+        total_row_count=sum(int(row["row_count"]) for row in rows),
+        median_latency_ms=statistics.median(medians) if medians else 0.0,
+        max_p95_latency_ms=max(p95s) if p95s else 0.0,
+        certificate_statuses=certificate_statuses,
+        unverified_components=unverified_components,
+        failed_cases=failed_cases,
+    )
+
+
+def summarize_phase1_categories(run_dir: Path) -> tuple[Phase1CategorySummary, ...]:
+    """Group one Phase 1 run by execution case category."""
+
+    rows = _read_cases(run_dir / "cases.csv")
+    grouped: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for row in rows:
+        grouped[row["case_category"]].append(row)
+
+    summaries: list[Phase1CategorySummary] = []
+    for category in sorted(grouped):
+        category_rows = grouped[category]
+        medians = [_float(row["median_latency_ms"]) for row in category_rows]
+        p95s = [_float(row["p95_latency_ms"]) for row in category_rows]
+        failed_cases = tuple(
+            row["case_id"] for row in category_rows if not _bool(row["status_correct"])
+        )
+        summaries.append(
+            Phase1CategorySummary(
+                run_id=run_dir.name,
+                case_category=category,
+                case_count=len(category_rows),
+                pass_count=sum(_bool(row["status_correct"]) for row in category_rows),
+                total_row_count=sum(int(row["row_count"]) for row in category_rows),
+                median_latency_ms=statistics.median(medians) if medians else 0.0,
+                max_p95_latency_ms=max(p95s) if p95s else 0.0,
+                failed_cases=failed_cases,
+            )
+        )
+    return tuple(summaries)
+
+
+def summarize_phase1(results_dir: Path, output_dir: Path) -> tuple[Phase1RunSummary, ...]:
+    """Summarize every Phase 1 run directory under ``results_dir``."""
+
+    candidate_dirs = sorted(
+        path for path in results_dir.iterdir() if path.is_dir() and (path / "cases.csv").exists()
+    )
+    # Early Phase 1 smoke runs had a narrower CSV schema before the fixed case
+    # matrix was introduced. Skip those legacy artifacts rather than mixing
+    # incompatible rows into paper-facing summaries.
+    run_dirs = tuple(
+        path
+        for path in candidate_dirs
+        if (rows := _read_cases(path / "cases.csv")) and "case_category" in rows[0]
+    )
+    summaries = tuple(summarize_phase1_run(path) for path in run_dirs)
+    category_summaries = tuple(
+        summary for path in run_dirs for summary in summarize_phase1_categories(path)
+    )
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    _write_dataclass_csv(
+        output_dir / "phase1_summary.csv",
+        summaries,
+        list(Phase1RunSummary.__annotations__),
+    )
+    _write_dataclass_json(output_dir / "phase1_summary.json", summaries)
+    _write_dataclass_csv(
+        output_dir / "phase1_category_summary.csv",
+        category_summaries,
+        list(Phase1CategorySummary.__annotations__),
+    )
+    _write_dataclass_json(output_dir / "phase1_category_summary.json", category_summaries)
     return summaries
