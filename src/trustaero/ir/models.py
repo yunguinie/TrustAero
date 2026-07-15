@@ -364,6 +364,19 @@ class PhysicalOperatorSpec(StrictModel):
     unimplemented_features: tuple[str, ...] = ()
 
 
+class PhysicalOperatorPlacementSpec(StrictModel):
+    """Move one reviewed governance operator after an earlier logical node."""
+
+    operator_id: str = Field(min_length=1)
+    after_operator_id: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def placement_must_move_between_distinct_nodes(self) -> PhysicalOperatorPlacementSpec:
+        if self.operator_id == self.after_operator_id:
+            raise ValueError("physical placement source and target must differ")
+        return self
+
+
 class PhysicalStrategySpec(StrictModel):
     """Explicit backend strategy decisions that may change physical execution.
 
@@ -375,21 +388,29 @@ class PhysicalStrategySpec(StrictModel):
     """
 
     strategy_id: str = Field(min_length=1)
-    execution_mode: Literal["fused", "materialized", "ordered_materialized"] = "fused"
+    execution_mode: Literal[
+        "fused", "materialized", "ordered_materialized", "governance_placed"
+    ] = "fused"
     materialize_after: tuple[str, ...] = ()
     filter_order: tuple[str, ...] = ()
+    placements: tuple[PhysicalOperatorPlacementSpec, ...] = ()
 
     @model_validator(mode="after")
     def decision_shape_must_match_mode(self) -> PhysicalStrategySpec:
         if self.execution_mode == "fused":
-            if self.materialize_after or self.filter_order:
+            if self.materialize_after or self.filter_order or self.placements:
                 raise ValueError("fused execution cannot declare physical boundaries")
         elif self.execution_mode == "materialized":
-            if len(self.materialize_after) != 1 or self.filter_order:
+            if len(self.materialize_after) != 1 or self.filter_order or self.placements:
                 raise ValueError("IR v1 materialized execution requires exactly one boundary")
-        elif self.materialize_after or len(self.filter_order) < 2:
+        elif self.execution_mode == "ordered_materialized":
+            if self.materialize_after or len(self.filter_order) < 2 or self.placements:
+                raise ValueError(
+                    "ordered materialization requires at least two filters and no other decision"
+                )
+        elif self.materialize_after or self.filter_order or len(self.placements) != 1:
             raise ValueError(
-                "ordered materialization requires at least two filters and no single boundary"
+                "governance placement requires exactly one placement and no other decision"
             )
         if len(self.filter_order) != len(set(self.filter_order)):
             raise ValueError("ordered filters must be unique")

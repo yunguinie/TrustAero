@@ -124,3 +124,50 @@ def test_all_reviewed_filter_orders_preserve_rows_and_physical_order() -> None:
     assert len(candidates) == 7
     assert len(set(results)) == 1
     assert len(set(plans)) == len(candidates)
+
+
+def test_mask_placement_preserves_hashed_rows_and_changes_physical_plan() -> None:
+    """Early and late hash placement must agree while exposing different trees."""
+
+    duckdb = pytest.importorskip("duckdb")
+    logical = build_phase2_experiment_plan(source_lineage=True, mask_event_id=True)
+    mask_id = next(
+        operator.operator_id for operator in logical.operators if operator.operator_type == "Mask"
+    )
+    candidates = generate_duckdb_candidates(
+        logical,
+        operator_placements=((mask_id, "op-event-project"),),
+    )
+    connection = duckdb.connect(":memory:")
+    try:
+        generate_synthetic_workload(
+            connection,
+            SyntheticDataConfig(
+                workload_id="mask-placement",
+                row_count=1000,
+                temporal_selectivity=1.0,
+                spatial_selectivity=1.0,
+                policy_selectivity=1.0,
+                join_match_rate=0.5,
+                hot_key_fraction=0.1,
+                identifier_width=256,
+                seed=9,
+            ),
+        )
+        results = [
+            tuple(connection.execute(compile_phase2_strategy(candidate, logical)).fetchall())
+            for candidate in candidates
+        ]
+        plans = [
+            connection.execute(
+                f"EXPLAIN (FORMAT JSON) {compile_phase2_strategy(candidate, logical)}"
+            ).fetchone()[1]
+            for candidate in candidates
+        ]
+    finally:
+        connection.close()
+
+    assert len(candidates) == 2
+    assert results[0] == results[1]
+    assert len(results[0]) == 500
+    assert len(set(plans)) == 2

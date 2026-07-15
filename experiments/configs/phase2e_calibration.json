@@ -1,0 +1,28 @@
+{
+  "results_dir": "results/phase2e_calibration",
+  "warmup_runs": 1,
+  "measured_runs": 3,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260715,
+  "tie_threshold_fraction": 0.03,
+  "source_lineage": true,
+  "require_clean_git": false,
+  "materialization_targets": [],
+  "filter_orders": [],
+  "mask_event_id": true,
+  "operator_placements": [["gov-001-mask", "op-event-project"]],
+  "row_counts": [20000],
+  "seeds": [1],
+  "scenarios": [
+    {
+      "scenario_id": "wide_medium_match",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 0.5,
+      "hot_key_fraction": 0.05,
+      "identifier_width": 256
+    }
+  ]
+}

@@ -106,7 +106,11 @@ def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
 
-def build_phase2_experiment_plan(*, source_lineage: bool = False) -> ValidatedLogicalPlan:
+def build_phase2_experiment_plan(
+    *,
+    source_lineage: bool = False,
+    mask_event_id: bool = False,
+) -> ValidatedLogicalPlan:
     """Build the small governed query shared by every controlled workload.
 
     Data values vary between workloads, but schema, policy, query semantics,
@@ -166,11 +170,18 @@ def build_phase2_experiment_plan(*, source_lineage: bool = False) -> ValidatedLo
             }
         )
     )
-    obligations = (
-        [{"obligation_type": "LINEAGE_CAPTURE", "parameters": {"level": "source"}}]
-        if source_lineage
-        else []
-    )
+    obligations: list[dict[str, object]] = []
+    if mask_event_id:
+        obligations.append(
+            {
+                "obligation_type": "MASK",
+                "parameters": {"fields": ["event_id"], "method": "hash"},
+            }
+        )
+    if source_lineage:
+        obligations.append(
+            {"obligation_type": "LINEAGE_CAPTURE", "parameters": {"level": "source"}}
+        )
     policies = PolicySet.model_validate(
         {
             "schema_version": "1.0",
@@ -275,7 +286,9 @@ def build_phase2_experiment_plan(*, source_lineage: bool = False) -> ValidatedLo
         "output_operator": "op-output",
     }
     response = validate(raw_plan, policies, catalog)
-    expected_status = ValidationStatus.REWRITE if source_lineage else ValidationStatus.ACCEPT
+    expected_status = (
+        ValidationStatus.REWRITE if source_lineage or mask_event_id else ValidationStatus.ACCEPT
+    )
     if response.status != expected_status or response.validated_plan is None:
         diagnostics = ", ".join(item.code.value for item in response.diagnostics)
         raise RuntimeError(f"Phase 2A logical plan validation failed: {diagnostics}")

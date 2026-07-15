@@ -47,6 +47,7 @@ class Phase2CScenario:
     policy_selectivity: float
     join_match_rate: float
     hot_key_fraction: float
+    identifier_width: int = 18
 
     def __post_init__(self) -> None:
         if not self.scenario_id:
@@ -63,6 +64,8 @@ class Phase2CScenario:
                 raise ValueError(f"{field_name} must be in [0, 1]")
         if self.hot_key_fraction > self.join_match_rate:
             raise ValueError("hot_key_fraction cannot exceed join_match_rate")
+        if not 18 <= self.identifier_width <= 4096:
+            raise ValueError("identifier_width must be between 18 and 4096 characters")
 
 
 @dataclass(frozen=True)
@@ -88,6 +91,8 @@ class Phase2CConfig:
         "op-event-project",
     )
     filter_orders: tuple[tuple[str, ...], ...] = ()
+    mask_event_id: bool = False
+    operator_placements: tuple[tuple[str, str], ...] = ()
 
     def __post_init__(self) -> None:
         if not self.scenarios or not self.row_counts or not self.seeds:
@@ -104,8 +109,14 @@ class Phase2CConfig:
             raise ValueError("DuckDB resource limits are invalid")
         if not 0.0 <= self.tie_threshold_fraction < 1.0:
             raise ValueError("tie_threshold_fraction must be in [0, 1)")
-        if not self.materialization_targets and not self.filter_orders:
+        if (
+            not self.materialization_targets
+            and not self.filter_orders
+            and not self.operator_placements
+        ):
             raise ValueError("at least one non-fused physical candidate is required")
+        if self.operator_placements and not self.mask_event_id:
+            raise ValueError("operator placements require the controlled Mask obligation")
 
 
 @dataclass(frozen=True)
@@ -417,6 +428,7 @@ def _candidate_representatives(
     connection: Any,
     candidates: tuple[ApprovedPhysicalPlan, ...],
     plan_dir: Path,
+    logical_plan: Any,
 ) -> tuple[
     tuple[ApprovedPhysicalPlan, ...],
     dict[str, str],
@@ -439,7 +451,7 @@ def _candidate_representatives(
         strategy_id = candidate.strategy.strategy_id
         observation = observe_duckdb_plan(
             connection,
-            compile_phase2_strategy(candidate),
+            compile_phase2_strategy(candidate, logical_plan),
             analyze=True,
         )
         fingerprint_by_strategy[strategy_id] = observation.fingerprint
@@ -461,6 +473,10 @@ def _candidate_representatives(
                 )
                 if name in {"CTE", "CTE_SCAN"}
             ),
+            "has_mask": any(
+                operator.operator_type == "Mask" for operator in candidate.physical_operators
+            ),
+            "mask_before_join": candidate.strategy.execution_mode == "governance_placed",
         }
         (plan_dir / f"{strategy_id}-discovery-analyze.json").write_text(
             observation.plan_json + "\n", encoding="utf-8"
@@ -504,6 +520,20 @@ def _strategy_summaries(
                 "total_memory_allocated_bytes": profile["total_memory_allocated_bytes"],
                 "max_intermediate_cardinality": profile["max_intermediate_cardinality"],
                 "materialization_operator_time_ms": profile["materialization_operator_time_ms"],
+                "raw_sensitive_rows_exposed_to_join": (
+                    0
+                    if not profile["has_mask"] or profile["mask_before_join"]
+                    else stage_stats["after_policy_rows"]
+                ),
+                "mask_rows_processed": (
+                    0
+                    if not profile["has_mask"]
+                    else (
+                        stage_stats["after_policy_rows"]
+                        if profile["mask_before_join"]
+                        else stage_stats["after_join_rows"]
+                    )
+                ),
                 **stage_stats,
             }
         )
@@ -535,6 +565,7 @@ def _run_unit(
         policy_selectivity=scenario.policy_selectivity,
         join_match_rate=scenario.join_match_rate,
         hot_key_fraction=scenario.hot_key_fraction,
+        identifier_width=scenario.identifier_width,
         seed=data_seed,
     )
     realized = generate_synthetic_workload(connection, workload)
@@ -545,7 +576,7 @@ def _run_unit(
         fingerprints,
         fingerprint_groups,
         profiles,
-    ) = _candidate_representatives(connection, candidates, plan_dir)
+    ) = _candidate_representatives(connection, candidates, plan_dir, logical_plan)
     by_strategy = {item.strategy.strategy_id: item for item in representatives}
     strategy_ids = tuple(by_strategy)
     total_rounds = config.warmup_runs + config.measured_runs
@@ -562,7 +593,7 @@ def _run_unit(
             candidate = by_strategy[strategy_id]
             latency_ms, lineage_ms, output_count, result_digest = _execute_candidate(
                 connection,
-                compile_phase2_strategy(candidate),
+                compile_phase2_strategy(candidate, logical_plan),
                 logical_plan=logical_plan,
                 execution_id=f"{run_id}:{unit_id}:{round_index}:{strategy_id}",
             )
@@ -800,11 +831,15 @@ def run_phase2c(
         _write_json_atomic(state_path, state)
         _write_json_atomic(results_root / "latest_run.json", {"run_id": run_id})
 
-    logical_plan = build_phase2_experiment_plan(source_lineage=config.source_lineage)
+    logical_plan = build_phase2_experiment_plan(
+        source_lineage=config.source_lineage,
+        mask_event_id=config.mask_event_id,
+    )
     candidates = generate_duckdb_candidates(
         logical_plan,
         materialization_targets=config.materialization_targets,
         filter_orders=config.filter_orders,
+        operator_placements=config.operator_placements,
     )
     units = tuple(
         (scenario, row_count, data_seed)
@@ -902,5 +937,9 @@ def load_phase2c_config(path: str | Path) -> Phase2CConfig:
         filter_orders=tuple(
             tuple(str(operator_id) for operator_id in order)
             for order in payload.get("filter_orders", ())
+        ),
+        mask_event_id=bool(payload.get("mask_event_id", False)),
+        operator_placements=tuple(
+            (str(item[0]), str(item[1])) for item in payload.get("operator_placements", ())
         ),
     )

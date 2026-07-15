@@ -30,6 +30,7 @@ class SyntheticDataConfig:
     policy_selectivity: float
     join_match_rate: float
     hot_key_fraction: float
+    identifier_width: int = 18
     seed: int = 0
 
     def __post_init__(self) -> None:
@@ -49,6 +50,8 @@ class SyntheticDataConfig:
                 raise ValueError(f"{name} must be in [0, 1]")
         if self.hot_key_fraction > self.join_match_rate:
             raise ValueError("hot_key_fraction cannot exceed join_match_rate")
+        if not 18 <= self.identifier_width <= 4096:
+            raise ValueError("identifier_width must be between 18 and 4096 characters")
         if self.seed < 0:
             raise ValueError("seed cannot be negative")
 
@@ -70,6 +73,7 @@ class SyntheticWorkloadStats:
     policy_selectivity: float
     join_match_rate: float
     hot_key_fraction: float
+    identifier_width: int
 
 
 def _count(row_count: int, fraction: float) -> int:
@@ -110,7 +114,10 @@ def generate_synthetic_workload(
           SELECT CAST(i AS BIGINT) AS i FROM range(?) AS generated(i)
         )
         SELECT
-          printf('event-%012d', i) AS event_id,
+          CASE WHEN ? = 18
+            THEN printf('event-%012d', i)
+            ELSE rpad(printf('event-%012d', i), ?, 'x')
+          END AS event_id,
           CASE WHEN ((i + ?) % ?) < ?
             THEN TIMESTAMPTZ '2026-06-01 00:00:00+00:00'
                  + CAST((i % 86400) AS BIGINT) * INTERVAL '1 second'
@@ -136,6 +143,8 @@ def generate_synthetic_workload(
         """,
         (
             row_count,
+            config.identifier_width,
+            config.identifier_width,
             temporal_offset,
             row_count,
             temporal_count,
@@ -231,4 +240,5 @@ def generate_synthetic_workload(
         policy_selectivity=ratio(row[3]),
         join_match_rate=ratio(join_row[0]),
         hot_key_fraction=ratio(row[4]),
+        identifier_width=config.identifier_width,
     )

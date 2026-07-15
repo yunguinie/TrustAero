@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from trustaero.ir.models import (
     ApprovedPhysicalPlan,
+    PhysicalOperatorPlacementSpec,
     PhysicalStrategySpec,
     ValidatedLogicalPlan,
 )
@@ -15,6 +16,7 @@ def generate_duckdb_candidates(
     *,
     materialization_targets: tuple[str, ...] = (),
     filter_orders: tuple[tuple[str, ...], ...] = (),
+    operator_placements: tuple[tuple[str, str], ...] = (),
 ) -> tuple[ApprovedPhysicalPlan, ...]:
     """Generate fused, one-boundary, and bounded ordered-filter candidates.
 
@@ -40,6 +42,22 @@ def generate_duckdb_candidates(
                 strategy_id=f"ordered-materialized-{readable_order}",
                 execution_mode="ordered_materialized",
                 filter_order=order,
+            )
+        )
+    for operator_id, after_operator_id in dict.fromkeys(operator_placements):
+        strategies.append(
+            PhysicalStrategySpec(
+                strategy_id=(
+                    f"place-{operator_id.removeprefix('gov-')}-after-"
+                    f"{after_operator_id.removeprefix('op-')}"
+                ),
+                execution_mode="governance_placed",
+                placements=(
+                    PhysicalOperatorPlacementSpec(
+                        operator_id=operator_id,
+                        after_operator_id=after_operator_id,
+                    ),
+                ),
             )
         )
     candidates = tuple(

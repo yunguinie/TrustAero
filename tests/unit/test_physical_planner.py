@@ -9,7 +9,7 @@ import pytest
 
 from trustaero.catalog.in_memory import InMemoryCatalog
 from trustaero.ir.enums import ObligationType, ValidationStatus
-from trustaero.ir.models import PolicySet, ValidatedLogicalPlan
+from trustaero.ir.models import Mask, PolicySet, ValidatedLogicalPlan
 from trustaero.planner import generate_duckdb_candidates
 from trustaero.planner.physical import plan_physical_execution
 from trustaero.validator.physical_dag import validate_physical_plan_dag
@@ -215,3 +215,28 @@ def test_phase2_ordered_filter_candidate_has_valid_rewired_dag() -> None:
     assert by_logical["op-temporal"].inputs == ("phys-op-spatial",)
     assert by_logical["op-event-project"].inputs == ("phys-op-temporal",)
     assert validate_physical_plan_dag(candidate) == ()
+
+
+def test_mask_placement_rewires_only_projection_safe_path() -> None:
+    from trustaero.experiments.phase2a import build_phase2_experiment_plan
+
+    logical = build_phase2_experiment_plan(source_lineage=True, mask_event_id=True)
+    mask = next(operator for operator in logical.operators if isinstance(operator, Mask))
+    candidate = generate_duckdb_candidates(
+        logical,
+        operator_placements=((mask.operator_id, "op-event-project"),),
+    )[1]
+    by_logical = {
+        operator.logical_operator_id: operator for operator in candidate.physical_operators
+    }
+
+    assert by_logical[mask.operator_id].inputs == ("phys-op-event-project",)
+    assert by_logical["op-join"].inputs[0] == f"phys-{mask.operator_id}"
+    assert by_logical["gov-002-lineagecapture"].inputs == ("phys-op-output",)
+    assert validate_physical_plan_dag(candidate) == ()
+
+    with pytest.raises(ValueError, match="must project every masked field"):
+        generate_duckdb_candidates(
+            logical,
+            operator_placements=((mask.operator_id, "op-events"),),
+        )

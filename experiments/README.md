@@ -249,3 +249,28 @@ The diagnostic uses 100K and 500K rows, three independent seeds, and ten
 measured repetitions. It is a reversal-discovery experiment, not final paper
 evidence. A later confirmation run must freeze scenarios before increasing to
 five or more seeds and 30 repetitions.
+
+## Phase 2E: governed Mask placement
+
+Phase 2D confirmed that DuckDB already handles ordinary filter ordering better
+than forced materialization. Phase 2E therefore evaluates a decision the
+database does not understand: whether a required `hash(event_id)` runs before
+or after a Join. The early candidate prevents raw identifiers from entering the
+Join; the late candidate hashes only matched rows. The approved placement may
+cross only projections retaining `event_id` and joins on different keys.
+
+The runner records both latency and two governance-aware work metrics:
+`raw_sensitive_rows_exposed_to_join` and `mask_rows_processed`. Identifier
+width and Join match rate are controlled independently to look for the expected
+privacy/cost tradeoff without moving Mask across a semantic use.
+
+Run the short calibration with:
+
+```powershell
+python -u scripts/run_phase2c.py `
+  --config experiments/configs/phase2e_calibration.json `
+  --progress
+```
+
+The later three-seed diagnostic uses `phase2e_diagnostic.json`; it must run only
+after a clean commit and remains screening evidence rather than a paper claim.

@@ -14,9 +14,12 @@ from typing import Literal
 from trustaero.ir.enums import LineageLevel
 from trustaero.ir.models import (
     ApprovedPhysicalPlan,
+    Join,
+    Mask,
     Operator,
     PhysicalOperatorSpec,
     PhysicalStrategySpec,
+    Project,
     ValidatedLogicalPlan,
 )
 
@@ -166,6 +169,95 @@ def _ordered_filter_specs(
     return tuple(rewired)
 
 
+def _placed_mask_specs(
+    plan: ValidatedLogicalPlan,
+    physical_operators: tuple[PhysicalOperatorSpec, ...],
+    *,
+    operator_id: str,
+    after_operator_id: str,
+) -> tuple[tuple[PhysicalOperatorSpec, ...], str]:
+    """Move one output Mask earlier across a tiny independently checked path.
+
+    The target must be a Project that explicitly carries every masked field.
+    Between that target and the original Mask, only projections retaining the
+    fields and joins on different keys are permitted. This implements the V1
+    rule that masked values may be projected but not reused semantically.
+    """
+
+    by_id = {operator.operator_id: operator for operator in plan.operators}
+    moving = by_id.get(operator_id)
+    target = by_id.get(after_operator_id)
+    if not isinstance(moving, Mask):
+        raise ValueError("Governance placement supports only Mask in the current fragment")
+    if not isinstance(target, Project) or not set(moving.fields) <= set(target.fields):
+        raise ValueError("Mask placement target must project every masked field")
+    if len(moving.inputs) != 1:
+        raise ValueError("Placed Mask must have exactly one original input")
+
+    consumers: dict[str, list[str]] = {operator_id: [] for operator_id in by_id}
+    for operator in plan.operators:
+        for input_id in operator.inputs:
+            consumers.setdefault(input_id, []).append(operator.operator_id)
+
+    # Follow the only downstream path from the target until the original Mask.
+    path: list[Operator] = []
+    current_id = after_operator_id
+    while current_id != operator_id:
+        next_ids = consumers.get(current_id, [])
+        if len(next_ids) != 1:
+            raise ValueError("Mask placement path must be complete and unbranched")
+        current_id = next_ids[0]
+        current = by_id[current_id]
+        if current_id != operator_id:
+            path.append(current)
+    for operator in path:
+        if isinstance(operator, Project):
+            if not set(moving.fields) <= set(operator.fields):
+                raise ValueError("A downstream Project would discard a masked field")
+        elif isinstance(operator, Join):
+            if set(moving.fields) & {operator.left_field, operator.right_field}:
+                raise ValueError("Mask cannot move before a Join that uses the masked field")
+        else:
+            raise ValueError(
+                "Mask placement cannot cross a semantic operator outside the V1 safe fragment"
+            )
+
+    original_input = moving.inputs[0]
+    moving_consumers = consumers.get(operator_id, [])
+    if len(moving_consumers) > 1:
+        raise ValueError("Placed Mask cannot have branched consumers")
+    target_consumer = consumers[after_operator_id][0]
+    physical_moving = _physical_operator_id(operator_id)
+    physical_target = _physical_operator_id(after_operator_id)
+    physical_original_input = _physical_operator_id(original_input)
+    physical_target_consumer = _physical_operator_id(target_consumer)
+    physical_moving_consumer = (
+        _physical_operator_id(moving_consumers[0]) if moving_consumers else None
+    )
+
+    rewired: list[PhysicalOperatorSpec] = []
+    for physical_operator in physical_operators:
+        inputs = physical_operator.inputs
+        if physical_operator.logical_operator_id == operator_id:
+            inputs = (physical_target,)
+        elif physical_operator.physical_operator_id == physical_target_consumer:
+            inputs = tuple(physical_moving if item == physical_target else item for item in inputs)
+        elif (
+            physical_moving_consumer is not None
+            and physical_operator.physical_operator_id == physical_moving_consumer
+        ):
+            inputs = tuple(
+                physical_original_input if item == physical_moving else item for item in inputs
+            )
+        rewired.append(physical_operator.model_copy(update={"inputs": inputs}))
+    output_operator = (
+        physical_original_input
+        if plan.output_operator == operator_id
+        else _physical_operator_id(plan.output_operator)
+    )
+    return tuple(rewired), output_operator
+
+
 def plan_physical_execution(
     plan: ValidatedLogicalPlan,
     *,
@@ -192,12 +284,24 @@ def plan_physical_execution(
     if selected_strategy.execution_mode == "ordered_materialized" and backend != "duckdb":
         raise ValueError("Ordered filter execution is implemented for DuckDB only")
 
+    if selected_strategy.execution_mode == "governance_placed" and backend != "duckdb":
+        raise ValueError("Governance placement is implemented for DuckDB only")
+
     physical_operators = tuple(_operator_spec(operator, backend) for operator in plan.operators)
+    physical_output_operator = _physical_operator_id(plan.output_operator)
     if selected_strategy.execution_mode == "ordered_materialized":
         physical_operators = _ordered_filter_specs(
             plan,
             physical_operators,
             selected_strategy.filter_order,
+        )
+    elif selected_strategy.execution_mode == "governance_placed":
+        placement = selected_strategy.placements[0]
+        physical_operators, physical_output_operator = _placed_mask_specs(
+            plan,
+            physical_operators,
+            operator_id=placement.operator_id,
+            after_operator_id=placement.after_operator_id,
         )
     unimplemented = tuple(
         dict.fromkeys(
@@ -212,7 +316,7 @@ def plan_physical_execution(
         "backend": backend,
         "strategy": selected_strategy.model_dump(mode="json"),
         "operators": [operator.model_dump(mode="json") for operator in physical_operators],
-        "output_operator": _physical_operator_id(plan.output_operator),
+        "output_operator": physical_output_operator,
         "policy_snapshot": plan.bindings.policy_snapshot,
         "data_snapshots": plan.bindings.data_snapshots,
         "lineage_instrumentation": [
@@ -225,7 +329,7 @@ def plan_physical_execution(
         physical_plan_id=_physical_plan_id(payload),
         logical_plan_id=plan.logical_plan_id,
         logical_plan_digest=plan.validation.canonical_digest,
-        output_operator=_physical_operator_id(plan.output_operator),
+        output_operator=physical_output_operator,
         physical_operators=physical_operators,
         strategy=selected_strategy,
         bindings=plan.bindings,

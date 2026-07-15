@@ -9,7 +9,7 @@ closed.
 
 from __future__ import annotations
 
-from trustaero.ir.models import ApprovedPhysicalPlan
+from trustaero.ir.models import ApprovedPhysicalPlan, Mask, ValidatedLogicalPlan
 
 _SUPPORTED_BOUNDARIES = frozenset(
     {
@@ -75,7 +75,56 @@ def _join_sql(
     )
 
 
-def compile_phase2_strategy(candidate: ApprovedPhysicalPlan) -> str:
+def _compile_masked_phase2_strategy(
+    candidate: ApprovedPhysicalPlan,
+    logical_plan: ValidatedLogicalPlan,
+) -> str:
+    """Compile the reviewed event-id hash placement experiment."""
+
+    masks = [operator for operator in logical_plan.operators if isinstance(operator, Mask)]
+    if len(masks) != 1 or masks[0].fields != ("event_id",) or masks[0].method != "hash":
+        raise ValueError("Phase 2 Mask placement supports only hash(event_id)")
+    mask = masks[0]
+    predicates = (_temporal("events"), _spatial("events"), _policy("events"))
+    strategy = candidate.strategy
+    if strategy.execution_mode == "fused":
+        return (
+            "SELECT sha256(joined.event_id) AS event_id, joined.severity_label\n"
+            "FROM (\n"
+            "  SELECT events.event_id, dimension.severity_label\n"
+            "  FROM synthetic_events AS events\n"
+            "  INNER JOIN severity_dim AS dimension\n"
+            "    ON events.join_key = dimension.dimension_key\n"
+            f"  WHERE {_where(*predicates)}\n"
+            ") AS joined\n"
+            "ORDER BY event_id"
+        )
+    if strategy.execution_mode != "governance_placed":
+        raise ValueError("Mask experiment accepts only fused or placed execution")
+    placement = strategy.placements[0]
+    if (
+        placement.operator_id != mask.operator_id
+        or placement.after_operator_id != "op-event-project"
+    ):
+        raise ValueError("Unsupported Phase 2 Mask placement")
+    return (
+        "WITH masked_events AS MATERIALIZED (\n"
+        "  SELECT sha256(events.event_id) AS event_id, events.join_key\n"
+        "  FROM synthetic_events AS events\n"
+        f"  WHERE {_where(*predicates)}\n"
+        ")\n"
+        "SELECT masked_events.event_id, dimension.severity_label\n"
+        "FROM masked_events\n"
+        "INNER JOIN severity_dim AS dimension\n"
+        "  ON masked_events.join_key = dimension.dimension_key\n"
+        "ORDER BY masked_events.event_id"
+    )
+
+
+def compile_phase2_strategy(
+    candidate: ApprovedPhysicalPlan,
+    logical_plan: ValidatedLogicalPlan | None = None,
+) -> str:
     """Compile one approved Phase 2 strategy to result-equivalent DuckDB SQL.
 
     This is deliberately not a general SQL optimizer. It realizes only the
@@ -83,6 +132,12 @@ def compile_phase2_strategy(candidate: ApprovedPhysicalPlan) -> str:
     experiment query. The caller still has to compare returned rows and
     inspect DuckDB's actual physical plan.
     """
+
+    has_mask = any(operator.operator_type == "Mask" for operator in candidate.physical_operators)
+    if has_mask:
+        if logical_plan is None:
+            raise ValueError("Mask compilation requires the bound validated logical plan")
+        return _compile_masked_phase2_strategy(candidate, logical_plan)
 
     strategy = candidate.strategy
     if strategy.execution_mode == "fused":

@@ -51,6 +51,28 @@
       "title": "ObligationType",
       "type": "string"
     },
+    "PhysicalOperatorPlacementSpec": {
+      "additionalProperties": false,
+      "description": "Move one reviewed governance operator after an earlier logical node.",
+      "properties": {
+        "after_operator_id": {
+          "minLength": 1,
+          "title": "After Operator Id",
+          "type": "string"
+        },
+        "operator_id": {
+          "minLength": 1,
+          "title": "Operator Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator_id",
+        "after_operator_id"
+      ],
+      "title": "PhysicalOperatorPlacementSpec",
+      "type": "object"
+    },
     "PhysicalOperatorSpec": {
       "additionalProperties": false,
       "description": "Backend-facing operator placeholder derived from a validated operator.",
@@ -120,7 +142,8 @@
           "enum": [
             "fused",
             "materialized",
-            "ordered_materialized"
+            "ordered_materialized",
+            "governance_placed"
           ],
           "title": "Execution Mode",
           "type": "string"
@@ -139,6 +162,14 @@
             "type": "string"
           },
           "title": "Materialize After",
+          "type": "array"
+        },
+        "placements": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PhysicalOperatorPlacementSpec"
+          },
+          "title": "Placements",
           "type": "array"
         },
         "strategy_id": {
