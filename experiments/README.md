@@ -358,3 +358,46 @@ These cross-validation numbers are diagnostic. The feature basis was designed
 after inspecting Phase 2E/F, and controlled realized cardinalities currently
 stand in for estimated cardinalities. V2 requires a newly frozen Phase 2G run
 before making any generalization claim.
+
+## V2 targeted boundary calibration
+
+The first V2 regression did not improve the stricter scenario-family split, so
+the next run fills specific missing boundaries instead of launching a new
+holdout. Its scenarios declare their own scale subsets to avoid an expensive
+full Cartesian matrix.
+
+Run from the activated `TrustAero_env` environment with a visible ETA:
+
+```powershell
+python -u scripts/run_phase2c.py `
+  --config experiments/configs/phase2v2_boundary_calibration.json `
+  --progress
+```
+
+Resume safely after an interruption:
+
+```powershell
+python -u scripts/run_phase2c.py `
+  --config experiments/configs/phase2v2_boundary_calibration.json `
+  --progress --resume
+```
+
+This development protocol contains 32 atomic units, 448 measured executions,
+and 128 warmup executions. It uses only two seeds and must not be reported as
+stable paper evidence. The maximum 2048-byte workload is capped at 450K rows
+because Phase 2F already approached the 4 GB DuckDB memory setting at 500K.
+
+After completion, rerun V2 development with the new run directory added:
+
+```powershell
+python scripts/develop_optimizer_v2.py `
+  results/phase2e_confirmation/20260715T140108314442Z `
+  results/phase2f_optimizer_holdout/20260715T152953290778Z `
+  results/phase2v2_boundary_calibration/<run_id> `
+  --output-dir results/optimizer_v2_development/phase2ef_boundary
+```
+
+The strict acceptance gate is recorded in
+`docs/phase2v2-boundary-protocol.md`. Do not freeze Phase 2G merely because one
+cross-validation number improves; tail regret and match-rate monotonicity must
+also pass.

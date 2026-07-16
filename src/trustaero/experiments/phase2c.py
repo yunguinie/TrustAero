@@ -39,7 +39,7 @@ from trustaero.planner import generate_duckdb_candidates
 
 @dataclass(frozen=True)
 class Phase2CScenario:
-    """One controlled distribution; scale and seed form separate axes."""
+    """One controlled distribution with an optional targeted scale subset."""
 
     scenario_id: str
     temporal_selectivity: float
@@ -48,6 +48,7 @@ class Phase2CScenario:
     join_match_rate: float
     hot_key_fraction: float
     identifier_width: int = 18
+    row_counts: tuple[int, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.scenario_id:
@@ -66,6 +67,10 @@ class Phase2CScenario:
             raise ValueError("hot_key_fraction cannot exceed join_match_rate")
         if not 18 <= self.identifier_width <= 4096:
             raise ValueError("identifier_width must be between 18 and 4096 characters")
+        if any(value < 1 for value in self.row_counts):
+            raise ValueError("scenario row_counts must be positive")
+        if len(set(self.row_counts)) != len(self.row_counts):
+            raise ValueError("scenario row_counts cannot contain duplicates")
 
 
 @dataclass(frozen=True)
@@ -95,12 +100,18 @@ class Phase2CConfig:
     operator_placements: tuple[tuple[str, str], ...] = ()
 
     def __post_init__(self) -> None:
-        if not self.scenarios or not self.row_counts or not self.seeds:
-            raise ValueError("Phase 2C scenarios, row_counts, and seeds cannot be empty")
+        if not self.scenarios or not self.seeds:
+            raise ValueError("Phase 2C scenarios and seeds cannot be empty")
+        if not self.row_counts and any(not item.row_counts for item in self.scenarios):
+            raise ValueError(
+                "global row_counts are required when a scenario has no targeted row_counts"
+            )
         if len({item.scenario_id for item in self.scenarios}) != len(self.scenarios):
             raise ValueError("Phase 2C scenario IDs must be unique")
         if any(value < 1 for value in self.row_counts):
             raise ValueError("row_counts must be positive")
+        if len(set(self.row_counts)) != len(self.row_counts):
+            raise ValueError("row_counts cannot contain duplicates")
         if any(value < 0 for value in self.seeds):
             raise ValueError("seeds cannot be negative")
         if self.warmup_runs < 0 or self.measured_runs < 1:
@@ -783,6 +794,23 @@ def _finalize(output_dir: Path, config: Phase2CConfig, run_id: str) -> None:
     )
 
 
+def phase2c_experiment_units(
+    config: Phase2CConfig,
+) -> tuple[tuple[Phase2CScenario, int, int], ...]:
+    """Expand only declared scenario/scale/seed combinations.
+
+    A scenario-specific scale list overrides the global list. This supports a
+    fractional boundary design without changing legacy Cartesian protocols.
+    """
+
+    return tuple(
+        (scenario, row_count, data_seed)
+        for scenario in config.scenarios
+        for row_count in (scenario.row_counts or config.row_counts)
+        for data_seed in config.seeds
+    )
+
+
 def run_phase2c(
     config: Phase2CConfig,
     *,
@@ -841,12 +869,7 @@ def run_phase2c(
         filter_orders=config.filter_orders,
         operator_placements=config.operator_placements,
     )
-    units = tuple(
-        (scenario, row_count, data_seed)
-        for scenario in config.scenarios
-        for row_count in config.row_counts
-        for data_seed in config.seeds
-    )
+    units = phase2c_experiment_units(config)
     completed = set(state["completed_units"])
     reporter = _ProgressReporter(
         output_dir=output_dir,
@@ -914,11 +937,19 @@ def load_phase2c_config(path: str | Path) -> Phase2CConfig:
     """Load the versioned JSON experiment protocol used by the CLI."""
 
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
-    scenarios = tuple(Phase2CScenario(**item) for item in payload["scenarios"])
+    scenarios = tuple(
+        Phase2CScenario(
+            **{
+                **item,
+                "row_counts": tuple(int(value) for value in item.get("row_counts", ())),
+            }
+        )
+        for item in payload["scenarios"]
+    )
     return Phase2CConfig(
         results_dir=str(payload["results_dir"]),
         scenarios=scenarios,
-        row_counts=tuple(int(item) for item in payload["row_counts"]),
+        row_counts=tuple(int(item) for item in payload.get("row_counts", ())),
         seeds=tuple(int(item) for item in payload["seeds"]),
         warmup_runs=int(payload.get("warmup_runs", 5)),
         measured_runs=int(payload.get("measured_runs", 30)),

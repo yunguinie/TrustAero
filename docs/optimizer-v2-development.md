@@ -24,6 +24,10 @@ not yet be tested on a newly frozen holdout. The result is useful because it
 prevents an under-supported linear model from being promoted based only on the
 more favorable workload-level split.
 
+The fitted ridge model passes all 80 comparisons in the initial match-rate
+monotonicity audit. This is necessary but not sufficient: a model can follow
+the expected direction and still place the decision boundary incorrectly.
+
 The scenario-family split misses three boundaries: narrow/high-match at 300K,
 wide/high-match at 100K, and very-wide/low-match at 500K. These failures imply
 that the existing grid is too sparse to separate fixed materialization cost,

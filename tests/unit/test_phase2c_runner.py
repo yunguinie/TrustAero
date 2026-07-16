@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import json
 from dataclasses import replace
+from pathlib import Path
 
 import pytest
 
@@ -13,6 +14,8 @@ from trustaero.experiments.phase2c import (
     Phase2CConfig,
     Phase2CScenario,
     balanced_candidate_orders,
+    load_phase2c_config,
+    phase2c_experiment_units,
     run_phase2c,
 )
 
@@ -87,3 +90,70 @@ def test_paper_protocol_rejects_dirty_worktree(monkeypatch: pytest.MonkeyPatch) 
 
     with pytest.raises(ValueError, match="clean Git worktree"):
         run_phase2c(replace(_unit_config(), require_clean_git=True))
+
+
+def test_targeted_scenario_scales_avoid_unneeded_cartesian_units() -> None:
+    base = _unit_config().scenarios[0]
+    first = replace(base, scenario_id="first", row_counts=(100, 200))
+    second = replace(base, scenario_id="second", row_counts=(300,))
+    config = replace(
+        _unit_config(),
+        scenarios=(first, second),
+        row_counts=(),
+        seeds=(1, 2),
+    )
+
+    units = phase2c_experiment_units(config)
+
+    assert [(scenario.scenario_id, rows, seed) for scenario, rows, seed in units] == [
+        ("first", 100, 1),
+        ("first", 100, 2),
+        ("first", 200, 1),
+        ("first", 200, 2),
+        ("second", 300, 1),
+        ("second", 300, 2),
+    ]
+
+
+def test_global_scales_remain_backward_compatible() -> None:
+    config = replace(_unit_config(), row_counts=(100, 200), seeds=(1,))
+
+    units = phase2c_experiment_units(config)
+
+    assert [rows for _scenario, rows, _seed in units] == [100, 200]
+
+
+def test_config_requires_a_scale_for_every_scenario() -> None:
+    with pytest.raises(ValueError, match="global row_counts"):
+        replace(_unit_config(), row_counts=())
+
+
+def test_loader_converts_targeted_scale_lists_to_tuples(tmp_path: Path) -> None:
+    config_path = tmp_path / "targeted.json"
+    config_path.write_text(
+        json.dumps(
+            {
+                "results_dir": "results/targeted",
+                "row_counts": [],
+                "seeds": [1],
+                "materialization_targets": ["op-policy"],
+                "scenarios": [
+                    {
+                        "scenario_id": "targeted",
+                        "temporal_selectivity": 1.0,
+                        "spatial_selectivity": 1.0,
+                        "policy_selectivity": 1.0,
+                        "join_match_rate": 1.0,
+                        "hot_key_fraction": 0.05,
+                        "identifier_width": 512,
+                        "row_counts": [150000, 350000],
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    config = load_phase2c_config(config_path)
+
+    assert config.scenarios[0].row_counts == (150_000, 350_000)

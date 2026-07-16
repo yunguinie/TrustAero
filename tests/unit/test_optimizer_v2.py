@@ -6,11 +6,12 @@ import math
 
 from trustaero.experiments.optimizer_v2 import (
     MaskWorkloadObservation,
+    audit_match_rate_monotonicity,
     cross_validate_mask_v2,
     fit_mask_v2_model,
 )
 from trustaero.optimizer.mask import MaskPlacementFeatures
-from trustaero.optimizer.mask_v2 import mask_v2_feature_vector
+from trustaero.optimizer.mask_v2 import MaskV2Model, mask_v2_feature_vector
 
 
 def _observations() -> list[MaskWorkloadObservation]:
@@ -61,3 +62,25 @@ def test_scenario_cross_validation_keeps_each_family_in_one_fold() -> None:
     for row in rows:
         assert row["holdout_group"] == row["scenario_group_id"]
         assert row["evaluation_scheme"] == "v2_leave_one_scenario_out"
+
+
+def test_match_rate_monotonicity_audit_detects_wrong_direction() -> None:
+    model = MaskV2Model(
+        intercept=0.0,
+        coefficients=(0.0, 0.0, 1.0, 0.0, 0.0),
+        feature_means=(0.0, 0.0, 0.0, 0.0, 0.0),
+        feature_scales=(1.0, 1.0, 1.0, 1.0, 1.0),
+        ridge_lambda=0.01,
+        training_sample_count=10,
+    )
+
+    audit = audit_match_rate_monotonicity(
+        model,
+        row_counts=(100_000,),
+        identifier_widths=(512,),
+        match_rates=(0.1, 0.5, 1.0),
+    )
+
+    assert audit["comparison_count"] == 2
+    assert audit["violation_count"] == 2
+    assert audit["passes"] is False

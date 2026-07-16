@@ -324,6 +324,62 @@ def cross_validate_mask_v2(
     return output
 
 
+def audit_match_rate_monotonicity(
+    model: MaskV2Model,
+    *,
+    row_counts: tuple[int, ...],
+    identifier_widths: tuple[int, ...],
+    match_rates: tuple[float, ...] = (0.0, 0.1, 0.25, 0.5, 0.75, 1.0),
+    tolerance: float = 1e-9,
+) -> dict[str, Any]:
+    """Check that higher Join match rate never makes early Mask less attractive.
+
+    For fixed rows and width, late Mask hashes more rows as the match rate
+    rises, while early Mask already hashes every input row. Therefore the
+    predicted log(early/late) ratio should be non-increasing. This is an audit,
+    not a post-hoc repair of model predictions.
+    """
+
+    ordered_rates = tuple(sorted(set(match_rates)))
+    if len(ordered_rates) < 2 or any(not 0.0 <= value <= 1.0 for value in ordered_rates):
+        raise ValueError("match_rates must contain at least two values in [0, 1]")
+    if not row_counts or not identifier_widths:
+        raise ValueError("monotonicity audit grids cannot be empty")
+    violations: list[dict[str, Any]] = []
+    comparisons = 0
+    for row_count in row_counts:
+        for width in identifier_widths:
+            predictions = [
+                model.predict_log_latency_ratio(
+                    MaskPlacementFeatures(
+                        join_input_rows=row_count,
+                        identifier_width_bytes=width,
+                        join_match_rate=match_rate,
+                    )
+                )
+                for match_rate in ordered_rates
+            ]
+            for index in range(1, len(ordered_rates)):
+                comparisons += 1
+                if predictions[index] > predictions[index - 1] + tolerance:
+                    violations.append(
+                        {
+                            "join_input_rows": row_count,
+                            "identifier_width_bytes": width,
+                            "lower_match_rate": ordered_rates[index - 1],
+                            "higher_match_rate": ordered_rates[index],
+                            "lower_prediction": predictions[index - 1],
+                            "higher_prediction": predictions[index],
+                        }
+                    )
+    return {
+        "comparison_count": comparisons,
+        "violation_count": len(violations),
+        "passes": not violations,
+        "examples": violations[:10],
+    }
+
+
 def _v1_rows(observations: list[MaskWorkloadObservation]) -> list[dict[str, Any]]:
     output: list[dict[str, Any]] = []
     for item in observations:
@@ -448,6 +504,13 @@ def develop_mask_optimizer_v2(
         grouped.setdefault(str(row["evaluation_scheme"]), []).append(row)
     schemes = {name: _scheme_summary(rows) for name, rows in sorted(grouped.items())}
     final_model = fit_mask_v2_model(observations, ridge_lambda=ridge_lambda)
+    monotonicity = audit_match_rate_monotonicity(
+        final_model,
+        row_counts=tuple(sorted({item.features.join_input_rows for item in observations})),
+        identifier_widths=tuple(
+            sorted({item.features.identifier_width_bytes for item in observations})
+        ),
+    )
     summary: dict[str, Any] = {
         "evaluation_label": "development_cross_validation",
         "observation_count": len(observations),
@@ -456,6 +519,7 @@ def develop_mask_optimizer_v2(
         "feature_names": list(MASK_V2_FEATURE_NAMES),
         "ridge_lambda": ridge_lambda,
         "schemes": schemes,
+        "match_rate_monotonicity_audit": monotonicity,
         "limitations": [
             "Phase 2F is development data for V2 after being a valid held-out test for V1.",
             "Feature-basis development inspected Phase 2E/F, so CV is descriptive, not final.",

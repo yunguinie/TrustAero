@@ -1,0 +1,99 @@
+{
+  "results_dir": "results/phase2v2_boundary_calibration",
+  "warmup_runs": 2,
+  "measured_runs": 7,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260717,
+  "tie_threshold_fraction": 0.03,
+  "source_lineage": true,
+  "require_clean_git": true,
+  "materialization_targets": [],
+  "filter_orders": [],
+  "mask_event_id": true,
+  "operator_placements": [["gov-001-mask", "op-event-project"]],
+  "row_counts": [],
+  "seeds": [21, 22],
+  "scenarios": [
+    {
+      "scenario_id": "w256_match100",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 1.0,
+      "hot_key_fraction": 0.05,
+      "identifier_width": 256,
+      "row_counts": [200000, 400000]
+    },
+    {
+      "scenario_id": "w512_match100",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 1.0,
+      "hot_key_fraction": 0.05,
+      "identifier_width": 512,
+      "row_counts": [150000, 350000]
+    },
+    {
+      "scenario_id": "w768_match100",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 1.0,
+      "hot_key_fraction": 0.05,
+      "identifier_width": 768,
+      "row_counts": [150000, 350000]
+    },
+    {
+      "scenario_id": "w1024_match025",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 0.25,
+      "hot_key_fraction": 0.03,
+      "identifier_width": 1024,
+      "row_counts": [250000, 450000]
+    },
+    {
+      "scenario_id": "w1024_match075",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 0.75,
+      "hot_key_fraction": 0.05,
+      "identifier_width": 1024,
+      "row_counts": [250000, 450000]
+    },
+    {
+      "scenario_id": "w2048_match010",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 0.1,
+      "hot_key_fraction": 0.02,
+      "identifier_width": 2048,
+      "row_counts": [350000, 450000]
+    },
+    {
+      "scenario_id": "w2048_match025",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 0.25,
+      "hot_key_fraction": 0.03,
+      "identifier_width": 2048,
+      "row_counts": [350000, 450000]
+    },
+    {
+      "scenario_id": "w2048_match075",
+      "temporal_selectivity": 1.0,
+      "spatial_selectivity": 1.0,
+      "policy_selectivity": 1.0,
+      "join_match_rate": 0.75,
+      "hot_key_fraction": 0.05,
+      "identifier_width": 2048,
+      "row_counts": [250000, 450000]
+    }
+  ]
+}
