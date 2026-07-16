@@ -401,3 +401,14 @@ The strict acceptance gate is recorded in
 `docs/phase2v2-boundary-protocol.md`. Do not freeze Phase 2G merely because one
 cross-validation number improves; tail regret and match-rate monotonicity must
 also pass.
+
+The V2 development command now evaluates an additional decomposed candidate-
+cost model. It writes `decomposed_cost_model.json` and adds both workload- and
+scenario-family-held-out rows to `cross_validation_predictions.csv`. The model
+estimates early and late latency separately from input, hash, Join-payload, and
+materialization work; it never replaces the feasibility checks.
+
+On the current 30 development observations this model improves exact selection
+to 80%, but its P95 and maximum regret worsen to 37.64% and 39.20%. It is
+therefore an explanatory baseline, not the model to take into Phase 2G. See
+`docs/decomposed-mask-cost-model.md` for the formula and frozen interpretation.

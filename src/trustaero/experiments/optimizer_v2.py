@@ -20,6 +20,11 @@ from trustaero.optimizer.mask import (
     MaskPlacementFeatures,
     choose_mask_placement,
 )
+from trustaero.optimizer.mask_cost import (
+    DecomposedMaskCostModel,
+    choose_mask_placement_by_cost,
+    mask_candidate_cost_features,
+)
 from trustaero.optimizer.mask_v2 import (
     MASK_V2_FEATURE_NAMES,
     MaskV2Model,
@@ -65,8 +70,15 @@ def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     if not rows:
         path.write_text("", encoding="utf-8")
         return
+    fieldnames: list[str] = []
+    seen: set[str] = set()
+    for row in rows:
+        for name in row:
+            if name not in seen:
+                seen.add(name)
+                fieldnames.append(name)
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
 
@@ -245,6 +257,71 @@ def fit_mask_v2_model(
     )
 
 
+def fit_decomposed_mask_cost_model(
+    observations: list[MaskWorkloadObservation],
+    *,
+    ridge_lambda: float = 0.1,
+    max_iterations: int = 20_000,
+    tolerance: float = 1e-10,
+) -> DecomposedMaskCostModel:
+    """Fit shared operation costs with non-negative coordinate descent.
+
+    Each workload contributes one early and one late candidate. The free
+    intercept captures fixed query overhead; operation coefficients cannot
+    become negative merely to improve fit on the current development matrix.
+    """
+
+    if not observations:
+        raise ValueError("Decomposed Mask cost fitting requires observations")
+    if ridge_lambda < 0.0 or max_iterations < 1 or tolerance <= 0.0:
+        raise ValueError("Decomposed Mask fitting parameters are invalid")
+    design: list[tuple[float, ...]] = []
+    targets: list[float] = []
+    for item in observations:
+        for placement, latency_ms in (
+            (MaskPlacement.EARLY, item.median_early_latency_ms),
+            (MaskPlacement.LATE, item.median_late_latency_ms),
+        ):
+            if latency_ms <= 0.0:
+                raise ValueError("Decomposed Mask cost targets must be positive")
+            design.append(mask_candidate_cost_features(item.features, placement))
+            targets.append(math.log(latency_ms))
+    coefficient_count = len(design[0])
+    intercept = statistics.mean(targets)
+    coefficients = [0.0] * coefficient_count
+    for _iteration in range(max_iterations):
+        largest_change = 0.0
+        new_intercept = statistics.mean(
+            target
+            - sum(value * coefficient for value, coefficient in zip(row, coefficients, strict=True))
+            for row, target in zip(design, targets, strict=True)
+        )
+        largest_change = max(largest_change, abs(new_intercept - intercept))
+        intercept = new_intercept
+        for index in range(coefficient_count):
+            numerator = 0.0
+            denominator = ridge_lambda
+            for row, target in zip(design, targets, strict=True):
+                residual_without_term = target - intercept - sum(
+                    row[other] * coefficients[other]
+                    for other in range(coefficient_count)
+                    if other != index
+                )
+                numerator += row[index] * residual_without_term
+                denominator += row[index] ** 2
+            updated = max(0.0, numerator / denominator) if denominator else 0.0
+            largest_change = max(largest_change, abs(updated - coefficients[index]))
+            coefficients[index] = updated
+        if largest_change < tolerance:
+            break
+    return DecomposedMaskCostModel(
+        intercept_log_ms=intercept,
+        coefficients=tuple(coefficients),
+        ridge_lambda=ridge_lambda,
+        training_candidate_count=len(design),
+    )
+
+
 def _prediction_row(
     observation: MaskWorkloadObservation,
     *,
@@ -324,6 +401,47 @@ def cross_validate_mask_v2(
     return output
 
 
+def cross_validate_decomposed_mask_cost(
+    observations: list[MaskWorkloadObservation],
+    *,
+    split: str,
+    ridge_lambda: float = 0.1,
+) -> list[dict[str, Any]]:
+    """Evaluate candidate-cost estimation with the same leakage-safe splits."""
+
+    if split == "workload":
+        scheme = "decomposed_cost_leave_one_workload_out"
+    elif split == "scenario":
+        scheme = "decomposed_cost_leave_one_scenario_out"
+    else:
+        raise ValueError("split must be 'workload' or 'scenario'")
+
+    def group_key(item: MaskWorkloadObservation) -> str:
+        return item.workload_id if split == "workload" else item.scenario_group_id
+
+    output: list[dict[str, Any]] = []
+    for group in sorted({group_key(item) for item in observations}):
+        training = [item for item in observations if group_key(item) != group]
+        testing = [item for item in observations if group_key(item) == group]
+        model = fit_decomposed_mask_cost_model(training, ridge_lambda=ridge_lambda)
+        for item in testing:
+            decision = choose_mask_placement_by_cost(item.features, model)
+            predicted_log_ratio = math.log(
+                decision.estimated_early_latency_ms / decision.estimated_late_latency_ms
+            )
+            row = _prediction_row(
+                item,
+                scheme=scheme,
+                holdout_group=group,
+                placement=decision.placement,
+                predicted_log_ratio=predicted_log_ratio,
+            )
+            row["estimated_early_latency_ms"] = decision.estimated_early_latency_ms
+            row["estimated_late_latency_ms"] = decision.estimated_late_latency_ms
+            output.append(row)
+    return output
+
+
 def audit_match_rate_monotonicity(
     model: MaskV2Model,
     *,
@@ -370,6 +488,51 @@ def audit_match_rate_monotonicity(
                             "higher_match_rate": ordered_rates[index],
                             "lower_prediction": predictions[index - 1],
                             "higher_prediction": predictions[index],
+                        }
+                    )
+    return {
+        "comparison_count": comparisons,
+        "violation_count": len(violations),
+        "passes": not violations,
+        "examples": violations[:10],
+    }
+
+
+def audit_decomposed_cost_monotonicity(
+    model: DecomposedMaskCostModel,
+    *,
+    row_counts: tuple[int, ...],
+    identifier_widths: tuple[int, ...],
+    match_rates: tuple[float, ...] = (0.0, 0.1, 0.25, 0.5, 0.75, 1.0),
+) -> dict[str, Any]:
+    """Audit the early/late cost ratio over increasing Join match rates."""
+
+    ordered_rates = tuple(sorted(set(match_rates)))
+    violations: list[dict[str, Any]] = []
+    comparisons = 0
+    for row_count in row_counts:
+        for width in identifier_widths:
+            ratios: list[float] = []
+            for match_rate in ordered_rates:
+                features = MaskPlacementFeatures(
+                    join_input_rows=row_count,
+                    identifier_width_bytes=width,
+                    join_match_rate=match_rate,
+                )
+                early = model.predict_log_latency_ms(features, MaskPlacement.EARLY)
+                late = model.predict_log_latency_ms(features, MaskPlacement.LATE)
+                ratios.append(early - late)
+            for index in range(1, len(ratios)):
+                comparisons += 1
+                if ratios[index] > ratios[index - 1] + 1e-9:
+                    violations.append(
+                        {
+                            "join_input_rows": row_count,
+                            "identifier_width_bytes": width,
+                            "lower_match_rate": ordered_rates[index - 1],
+                            "higher_match_rate": ordered_rates[index],
+                            "lower_log_cost_ratio": ratios[index - 1],
+                            "higher_log_cost_ratio": ratios[index],
                         }
                     )
     return {
@@ -499,13 +662,23 @@ def develop_mask_optimizer_v2(
     predictions.extend(
         cross_validate_mask_v2(observations, split="scenario", ridge_lambda=ridge_lambda)
     )
+    predictions.extend(cross_validate_decomposed_mask_cost(observations, split="workload"))
+    predictions.extend(cross_validate_decomposed_mask_cost(observations, split="scenario"))
     grouped: dict[str, list[dict[str, Any]]] = {}
     for row in predictions:
         grouped.setdefault(str(row["evaluation_scheme"]), []).append(row)
     schemes = {name: _scheme_summary(rows) for name, rows in sorted(grouped.items())}
     final_model = fit_mask_v2_model(observations, ridge_lambda=ridge_lambda)
+    decomposed_model = fit_decomposed_mask_cost_model(observations)
     monotonicity = audit_match_rate_monotonicity(
         final_model,
+        row_counts=tuple(sorted({item.features.join_input_rows for item in observations})),
+        identifier_widths=tuple(
+            sorted({item.features.identifier_width_bytes for item in observations})
+        ),
+    )
+    decomposed_monotonicity = audit_decomposed_cost_monotonicity(
+        decomposed_model,
         row_counts=tuple(sorted({item.features.join_input_rows for item in observations})),
         identifier_widths=tuple(
             sorted({item.features.identifier_width_bytes for item in observations})
@@ -520,6 +693,7 @@ def develop_mask_optimizer_v2(
         "ridge_lambda": ridge_lambda,
         "schemes": schemes,
         "match_rate_monotonicity_audit": monotonicity,
+        "decomposed_cost_monotonicity_audit": decomposed_monotonicity,
         "limitations": [
             "Phase 2F is development data for V2 after being a valid held-out test for V1.",
             "Feature-basis development inspected Phase 2E/F, so CV is descriptive, not final.",
@@ -539,6 +713,13 @@ def develop_mask_optimizer_v2(
     model_payload["status"] = "development_only_not_held_out_validated"
     (output / "model.json").write_text(
         json.dumps(model_payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    decomposed_payload = decomposed_model.to_dict()
+    decomposed_payload["training_source_run_ids"] = summary["source_run_ids"]
+    decomposed_payload["status"] = "development_only_rejected_by_tail_regret_gate"
+    (output / "decomposed_cost_model.json").write_text(
+        json.dumps(decomposed_payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
     )
     (output / "report.md").write_text(_report(summary), encoding="utf-8")
     return output

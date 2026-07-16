@@ -2,12 +2,18 @@
 
 from __future__ import annotations
 
+import csv
 import math
+from pathlib import Path
 
+import trustaero.experiments.optimizer_v2 as optimizer_v2
 from trustaero.experiments.optimizer_v2 import (
     MaskWorkloadObservation,
+    audit_decomposed_cost_monotonicity,
     audit_match_rate_monotonicity,
+    cross_validate_decomposed_mask_cost,
     cross_validate_mask_v2,
+    fit_decomposed_mask_cost_model,
     fit_mask_v2_model,
 )
 from trustaero.optimizer.mask import MaskPlacementFeatures
@@ -84,3 +90,40 @@ def test_match_rate_monotonicity_audit_detects_wrong_direction() -> None:
     assert audit["comparison_count"] == 2
     assert audit["violation_count"] == 2
     assert audit["passes"] is False
+
+
+def test_decomposed_cost_fit_is_nonnegative_and_group_cross_validated() -> None:
+    observations = _observations()
+
+    model = fit_decomposed_mask_cost_model(observations)
+    rows = cross_validate_decomposed_mask_cost(observations, split="scenario")
+    audit = audit_decomposed_cost_monotonicity(
+        model,
+        row_counts=(100_000, 300_000),
+        identifier_widths=(128, 2048),
+    )
+
+    assert model.training_candidate_count == 16
+    assert all(value >= 0.0 for value in model.coefficients)
+    assert len(rows) == 8
+    assert {row["evaluation_scheme"] for row in rows} == {
+        "decomposed_cost_leave_one_scenario_out"
+    }
+    assert audit["passes"] is True
+
+
+def test_prediction_csv_supports_model_specific_explanation_columns(tmp_path: Path) -> None:
+    path = tmp_path / "predictions.csv"
+
+    optimizer_v2._write_csv(
+        path,
+        [
+            {"scheme": "v1", "choice": "late"},
+            {"scheme": "cost", "choice": "early", "estimated_early_ms": 10.0},
+        ],
+    )
+
+    with path.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    assert rows[0]["estimated_early_ms"] == ""
+    assert rows[1]["estimated_early_ms"] == "10.0"
