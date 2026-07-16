@@ -6,6 +6,8 @@ import csv
 import json
 from pathlib import Path
 
+import pytest
+
 from trustaero.experiments.optimizer_v1 import evaluate_mask_optimizer_v1
 
 
@@ -76,6 +78,8 @@ def test_evaluator_uses_semantics_not_brittle_early_strategy_id(tmp_path: Path) 
     assert summary["case_count"] == 2
     assert summary["exact_top1_rate"] == 1.0
     assert summary["median_regret_percent"] == 0.0
+    assert summary["geometric_speedup_vs_fixed_late_ratio"] == pytest.approx(1.2)
+    assert (output / "scenario_summary.csv").exists()
     assert {row["selected_strategy_id"] for row in cases} == {
         "early-physical-id-may-change"
     }

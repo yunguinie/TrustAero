@@ -332,3 +332,29 @@ This is an optimizer screening experiment, not yet the final paper benchmark.
 A positive result still needs a larger frozen protocol and a real public
 dataset. A negative result should be used to revise the model and then create a
 new, untouched holdout rather than silently retuning against Phase 2F.
+
+## Optimizer V2 development
+
+After freezing the V1 held-out result, Phase 2E and Phase 2F may be used as V2
+development data. V2 predicts the log latency ratio between early and late
+Mask from a small, inspectable basis: input rows, identifier width, Join match
+rate, raw input work, and matched work.
+
+Run grouped development cross-validation with:
+
+```powershell
+python scripts/develop_optimizer_v2.py `
+  results/phase2e_confirmation/20260715T140108314442Z `
+  results/phase2f_optimizer_holdout/20260715T152953290778Z `
+  --output-dir results/optimizer_v2_development/phase2ef
+```
+
+The script aggregates repetitions within each seed and then aggregates paired
+seed ratios per workload. It reports both leave-one-workload-out and the more
+conservative leave-one-scenario-family-out cross-validation. Its fitted model
+is marked `development_only_not_held_out_validated`.
+
+These cross-validation numbers are diagnostic. The feature basis was designed
+after inspecting Phase 2E/F, and controlled realized cardinalities currently
+stand in for estimated cardinalities. V2 requires a newly frozen Phase 2G run
+before making any generalization claim.
