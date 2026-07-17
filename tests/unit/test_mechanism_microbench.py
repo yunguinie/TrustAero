@@ -46,6 +46,7 @@ def test_units_do_not_cross_irrelevant_match_rate_dimension(tmp_path: Path) -> N
     assert len([unit for unit in units if unit.benchmark == "hash"]) == 2
     assert len([unit for unit in units if unit.benchmark == "materialization"]) == 2
     assert len([unit for unit in units if unit.benchmark == "join_payload"]) == 6
+    assert len([unit for unit in units if unit.benchmark == "mask_fragment"]) == 6
 
 
 def test_microbench_writes_valid_complete_artifacts_and_resumes(tmp_path: Path) -> None:
@@ -64,16 +65,27 @@ def test_microbench_writes_valid_complete_artifacts_and_resumes(tmp_path: Path) 
 
     assert summary["status"] == "complete"
     assert summary["all_validations_passed"] is True
-    assert summary["unit_count"] == 3
-    assert summary["measurement_count"] == 6
+    assert summary["unit_count"] == 4
+    assert summary["measurement_count"] == 8
+    assert summary["mask_fragment_unit_count"] == 1
+    assert summary["result_equivalent_fragment_count"] == 1
+    assert summary["distinct_physical_plan_fragment_count"] == 1
+    assert summary["spilled_profile_count"] == 0
+    assert summary["spilled_unit_count"] == 0
     assert checkpoint["status"] == "complete"
-    assert len(measurements) == 6
+    assert len(measurements) == 8
     assert any(row["operator_name"] == "HASH_JOIN" for row in operators)
     assert {row["derived_component"] for row in paired} == {
         "hash_incremental",
         "join_incremental",
         "materialization_roundtrip",
+        "early_minus_late",
     }
+    fragment_rows = [
+        row for row in measurements if row["benchmark"] == "mask_fragment"
+    ]
+    assert len({row["result_digest"] for row in fragment_rows}) == 1
+    assert len({row["physical_plan_fingerprint"] for row in fragment_rows}) == 2
     assert (output / "progress.json").exists()
 
     resumed = run_mechanism_microbench(config, resume_run_id=output.name)

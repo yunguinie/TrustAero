@@ -481,3 +481,18 @@ within the 3% band, 7.13% mean regret, 39.20% P95 regret, and 49.32% maximum
 regret. It is a frozen negative result; Phase 2G remains unauthorized. See
 `docs/mechanism-mask-cost-results.md` and
 `experiments/frozen/phase2_mechanism_formula_negative.json`.
+
+## Phase 2I complete physical fragments
+
+Because isolated operator times did not add up to accurate end-to-end choices,
+Phase 2I measures the complete early- and late-Mask DuckDB fragments, including
+`HASH_JOIN`, `ORDER_BY`, projection, and the early `MATERIALIZED` CTE boundary.
+The existing checkpoint runner now accepts `mask_fragment` and additionally
+requires equal content digests, different actual-plan fingerprints, exact Join
+cardinality, and stable repeated profile shapes.
+
+The smoke and 72-unit pilot protocols are frozen in
+`phase2i_fragment_smoke.json` and `phase2i_fragment_pilot.json`. Both retain
+terminal progress, ETA, atomic per-unit checkpoints, and resume. Phase 2I is
+development measurement only; it does not authorize Phase 2G or train a new
+optimizer. See `docs/phase2i-fragment-protocol.md`.

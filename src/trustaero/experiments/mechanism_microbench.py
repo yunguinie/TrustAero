@@ -26,7 +26,12 @@ from typing import Any
 
 from trustaero.execution import observe_duckdb_plan
 
-SUPPORTED_MICROBENCHMARKS = ("hash", "join_payload", "materialization")
+SUPPORTED_MICROBENCHMARKS = (
+    "hash",
+    "join_payload",
+    "materialization",
+    "mask_fragment",
+)
 
 
 @dataclass(frozen=True)
@@ -109,14 +114,17 @@ def mechanism_microbench_units(
 ) -> tuple[MechanismMicrobenchUnit, ...]:
     """Expand only dimensions that affect a mechanism.
 
-    Hash and materialization have no match-rate axis. Join payload explicitly
-    crosses the declared match rates while holding the dimension side fixed.
+    Hash and materialization have no match-rate axis. Join payload and the
+    complete Mask fragment explicitly cross the declared match rates while
+    holding the dimension side fixed.
     """
 
     output: list[MechanismMicrobenchUnit] = []
     for benchmark in config.benchmarks:
         rates: tuple[float | None, ...] = (
-            tuple(config.match_rates) if benchmark == "join_payload" else (None,)
+            tuple(config.match_rates)
+            if benchmark in {"join_payload", "mask_fragment"}
+            else (None,)
         )
         for row_count in config.row_counts:
             for width in config.identifier_widths:
@@ -227,6 +235,7 @@ def _create_data(connection: Any, unit: MechanismMicrobenchUnit) -> int:
 
     connection.execute("DROP TABLE IF EXISTS micro_materialized")
     connection.execute("DROP TABLE IF EXISTS micro_join_output")
+    connection.execute("DROP TABLE IF EXISTS micro_fragment_output")
     connection.execute("DROP TABLE IF EXISTS micro_events")
     connection.execute("DROP TABLE IF EXISTS micro_dimension")
     blocks = math.ceil(unit.identifier_width / 32)
@@ -302,6 +311,30 @@ def _component_sql(benchmark: str) -> dict[str, str]:
                 "FROM micro_materialized"
             ),
         }
+    if benchmark == "mask_fragment":
+        return {
+            "early_mask_fragment": (
+                "CREATE TEMP TABLE micro_fragment_output AS "
+                "WITH masked_events AS MATERIALIZED ("
+                "SELECT row_id, sha256(sensitive_value) AS masked_value, join_key "
+                "FROM micro_events"
+                ") "
+                "SELECT masked.row_id, masked.masked_value, dimension.marker "
+                "FROM masked_events AS masked "
+                "INNER JOIN micro_dimension AS dimension "
+                "ON masked.join_key = dimension.dimension_key "
+                "ORDER BY masked.masked_value, masked.row_id"
+            ),
+            "late_mask_fragment": (
+                "CREATE TEMP TABLE micro_fragment_output AS "
+                "SELECT events.row_id, sha256(events.sensitive_value) AS masked_value, "
+                "dimension.marker "
+                "FROM micro_events AS events "
+                "INNER JOIN micro_dimension AS dimension "
+                "ON events.join_key = dimension.dimension_key "
+                "ORDER BY masked_value, events.row_id"
+            ),
+        }
     raise ValueError(f"Unsupported microbenchmark: {benchmark}")
 
 
@@ -321,6 +354,9 @@ def _validate_result(
     if component in {"materialization_write", "materialization_read"}:
         if result != (unit.row_count, unit.row_count * unit.identifier_width):
             raise ValueError("Materialized payload checksum is inconsistent")
+    if component in {"early_mask_fragment", "late_mask_fragment"}:
+        if result[:2] != (matched_rows, matched_rows * 64):
+            raise ValueError("Mask fragment output cardinality or hash width is inconsistent")
 
 
 def _execute_component(
@@ -335,15 +371,28 @@ def _execute_component(
         output_table = "micro_materialized"
     elif component in {"join_payload_baseline", "join_payload"}:
         output_table = "micro_join_output"
+    elif component in {"early_mask_fragment", "late_mask_fragment"}:
+        output_table = "micro_fragment_output"
     if output_table is not None:
         connection.execute(f"DROP TABLE IF EXISTS {output_table}")
         started = time.perf_counter()
         connection.execute(sql)
         latency_ms = (time.perf_counter() - started) * 1000.0
-        result = connection.execute(
-            "SELECT count(*)::BIGINT, sum(length(sensitive_value))::HUGEINT "
-            f"FROM {output_table}"
-        ).fetchone()
+        if output_table == "micro_fragment_output":
+            # The content checksum proves the two fragments are result
+            # equivalent without returning every wide row to Python.
+            result = connection.execute(
+                "SELECT count(*)::BIGINT, "
+                "sum(length(masked_value))::HUGEINT, "
+                "sum(row_id)::HUGEINT, sum(marker)::HUGEINT, "
+                "bit_xor(hash(row_id, masked_value, marker)) "
+                "FROM micro_fragment_output"
+            ).fetchone()
+        else:
+            result = connection.execute(
+                "SELECT count(*)::BIGINT, sum(length(sensitive_value))::HUGEINT "
+                f"FROM {output_table}"
+            ).fetchone()
     else:
         started = time.perf_counter()
         result = connection.execute(sql).fetchone()
@@ -405,6 +454,8 @@ def _profiles(
                     connection.execute(sql_by_component["materialization_write"])
             elif component in {"join_payload_baseline", "join_payload"}:
                 connection.execute("DROP TABLE IF EXISTS micro_join_output")
+            elif component in {"early_mask_fragment", "late_mask_fragment"}:
+                connection.execute("DROP TABLE IF EXISTS micro_fragment_output")
             observation = observe_duckdb_plan(
                 connection,
                 sql_by_component[component],
@@ -417,6 +468,8 @@ def _profiles(
             )
             if component in {"join_payload_baseline", "join_payload"}:
                 connection.execute("DROP TABLE IF EXISTS micro_join_output")
+            elif component in {"early_mask_fragment", "late_mask_fragment"}:
+                connection.execute("DROP TABLE IF EXISTS micro_fragment_output")
         if len({item.operator_names for item in observations}) != 1:
             raise ValueError(
                 f"Physical operator shape changed within {component} profiles"
@@ -517,6 +570,7 @@ def _run_unit(
                         "component": component,
                         "latency_ms": latency_ms,
                         "result_digest": _digest(result),
+                        "physical_plan_fingerprint": profiles[component]["fingerprint"],
                         "logical_payload_bytes": (
                             matched_rows * unit.identifier_width
                             if unit.benchmark == "join_payload"
@@ -524,6 +578,41 @@ def _run_unit(
                         ),
                     }
                 )
+    validation_details: dict[str, Any] = {}
+    if unit.benchmark == "mask_fragment":
+        result_digests = {str(row["result_digest"]) for row in measurements}
+        if len(result_digests) != 1:
+            raise ValueError("Early and late Mask fragments produced different results")
+        fingerprints = {
+            str(profile["fingerprint"]) for profile in profiles.values()
+        }
+        if len(fingerprints) != 2:
+            raise ValueError("Mask fragments did not produce distinct physical plans")
+        for component, profile in profiles.items():
+            operator_names = list(profile["operator_names"])
+            if "HASH_JOIN" not in operator_names or "ORDER_BY" not in operator_names:
+                raise ValueError(
+                    f"{component} did not retain the required Join and sort operators"
+                )
+            join_cardinalities = [
+                int(cardinality)
+                for name, cardinality in zip(
+                    operator_names,
+                    profile["operator_cardinalities"],
+                    strict=True,
+                )
+                if name == "HASH_JOIN"
+            ]
+            if join_cardinalities != [matched_rows]:
+                raise ValueError(
+                    f"{component} HASH_JOIN cardinality does not match the workload"
+                )
+        validation_details = {
+            "result_equivalent": True,
+            "physical_plans_distinct": True,
+            "join_cardinality_exact": True,
+            "required_operators_present": True,
+        }
     return {
         "unit": asdict(unit),
         "unit_id": unit.unit_id,
@@ -531,6 +620,7 @@ def _run_unit(
         "profiles": profiles,
         "measurements": measurements,
         "validation_passed": True,
+        "validation_details": validation_details,
     }
 
 
@@ -648,6 +738,12 @@ def _finalize(
                 "materialization_roundtrip",
                 "sum",
             ),
+            "mask_fragment": (
+                "early_mask_fragment",
+                "late_mask_fragment",
+                "early_minus_late",
+                "subtract",
+            ),
         }
         left_name, right_name, derived_name, operation = paired_components[
             str(unit["benchmark"])
@@ -689,6 +785,22 @@ def _finalize(
     _write_csv(output_dir / "paired_costs.csv", paired_rows)
     _write_csv(output_dir / "operator_summary.csv", operator_rows)
     negative = sum(float(row["median_paired_cost_ms"]) < 0.0 for row in paired_rows)
+    fragment_payloads = [
+        payload for payload in payloads if payload["unit"]["benchmark"] == "mask_fragment"
+    ]
+    profile_temp_bytes = [
+        int(profile["peak_temp_directory_bytes"])
+        for payload in payloads
+        for profile in payload["profiles"].values()
+    ]
+    spilled_units = {
+        str(payload["unit_id"])
+        for payload in payloads
+        if any(
+            int(profile["peak_temp_directory_bytes"]) > 0
+            for profile in payload["profiles"].values()
+        )
+    }
     _write_json_atomic(
         output_dir / "summary.json",
         {
@@ -704,10 +816,25 @@ def _finalize(
                 payload.get("validation_passed") is True for payload in payloads
             ),
             "negative_median_paired_difference_count": negative,
+            "mask_fragment_unit_count": len(fragment_payloads),
+            "result_equivalent_fragment_count": sum(
+                payload.get("validation_details", {}).get("result_equivalent") is True
+                for payload in fragment_payloads
+            ),
+            "distinct_physical_plan_fragment_count": sum(
+                payload.get("validation_details", {}).get("physical_plans_distinct")
+                is True
+                for payload in fragment_payloads
+            ),
+            "spilled_profile_count": sum(value > 0 for value in profile_temp_bytes),
+            "spilled_unit_count": len(spilled_units),
+            "max_peak_temp_directory_bytes": max(profile_temp_bytes, default=0),
             "benchmarks": list(config.benchmarks),
             "note": (
                 "Paired differences are diagnostics, not guaranteed pure operator costs; "
-                "DuckDB may fuse or defer payload work. Physical profiles are retained."
+                "DuckDB may fuse or defer payload work. For mask_fragment, a negative "
+                "early_minus_late value means early Mask was faster. Physical profiles "
+                "and content-equivalence checks are retained."
             ),
         },
     )
@@ -766,6 +893,7 @@ def run_mechanism_microbench(
     units = mechanism_microbench_units(config)
     completed = set(checkpoint["completed_units"])
     started = time.perf_counter()
+    session_completed = 0
     connection = duckdb.connect(":memory:")
     try:
         connection.execute(f"SET threads TO {config.duckdb_threads}")
@@ -795,12 +923,17 @@ def run_mechanism_microbench(
                 raise
             _write_json_atomic(output_dir / "units" / f"{unit.unit_id}.json", payload)
             completed.add(unit.unit_id)
+            session_completed += 1
             checkpoint["completed_units"] = sorted(completed)
             checkpoint["updated_at"] = datetime.now(UTC).isoformat()
             _write_json_atomic(checkpoint_path, checkpoint)
             elapsed = time.perf_counter() - started
             done = len(completed)
-            eta = elapsed / done * (len(units) - done) if done else 0.0
+            eta = (
+                elapsed / session_completed * (len(units) - done)
+                if session_completed
+                else 0.0
+            )
             progress = {
                 "run_id": run_id,
                 "completed_units": done,
