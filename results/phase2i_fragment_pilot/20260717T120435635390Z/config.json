@@ -1,0 +1,33 @@
+{
+  "benchmarks": [
+    "mask_fragment"
+  ],
+  "duckdb_memory_limit_mb": 4096,
+  "duckdb_threads": 4,
+  "identifier_widths": [
+    256,
+    512,
+    1024,
+    2048
+  ],
+  "match_rates": [
+    0.1,
+    0.5,
+    1.0
+  ],
+  "measured_runs": 15,
+  "order_seed": 20260720,
+  "profile_runs": 5,
+  "require_clean_git": true,
+  "results_dir": "results/phase2i_fragment_pilot",
+  "row_counts": [
+    50000,
+    150000
+  ],
+  "seeds": [
+    707,
+    808,
+    909
+  ],
+  "warmup_runs": 2
+}

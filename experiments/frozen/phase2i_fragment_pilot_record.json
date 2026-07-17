@@ -1,0 +1,53 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "phase2i_complete_fragment_development_pilot_not_phase2g",
+  "protocol_commit": "58ced0e286dfa2b04542a7873472fb4400aeb830",
+  "analysis_commit": "3c9e5634f00806056910b7e81425346844f80d89",
+  "run_id": "20260717T120435635390Z",
+  "status": "complete",
+  "phase2g_authorized": false,
+  "optimizer_training_recommendation": "defer_until_boundary_confirmation",
+  "unit_count": 72,
+  "family_count": 24,
+  "measurement_count": 2160,
+  "operator_summary_count": 1440,
+  "all_validations_passed": true,
+  "result_equivalent_fragment_count": 72,
+  "distinct_physical_plan_fragment_count": 72,
+  "spilled_unit_count": 0,
+  "unit_classification_counts": {
+    "early": 6,
+    "late": 56,
+    "tie": 10
+  },
+  "family_classification_counts": {
+    "stable_early": 1,
+    "stable_late": 17,
+    "stable_tie": 1,
+    "mixed": 5
+  },
+  "stable_reversal_observed": true,
+  "stable_early_family": {
+    "family_id": "n150000-w256-m1000",
+    "early_seed_count": 3,
+    "median_early_latency_ms": 782.5340999988839,
+    "median_late_latency_ms": 825.1438000006601,
+    "median_early_minus_late_percent": -5.163912035907215
+  },
+  "files": [
+    {"path": "pilot/config.json", "sha256": "3b947e1a77b06aeeb399701b2360f0a1afac9768502cc6c08c5dafffb7bcf2b2"},
+    {"path": "pilot/environment.json", "sha256": "1b1696467f753a1f02c65c151bead230e399d8dde37744c6c801677ed783fc85"},
+    {"path": "pilot/summary.json", "sha256": "4b2b3de48fa68a3f2da6348fa60443d16c6fdcc723532e14566986da995ac42c"},
+    {"path": "pilot/raw_measurements.csv", "sha256": "777e53dbf2f04e8048d688cb26d511b7fe5b1b524660db4ba88a60fef541b39b"},
+    {"path": "pilot/component_summary.csv", "sha256": "c1373f2abe9d32a08dedac3693b1721b12cd6b250dca399aeca8a0fd5f2fd5e1"},
+    {"path": "pilot/paired_costs.csv", "sha256": "44451e1d2fd3331bf182ec9dff9a15cb41be45b50078e676df8e11c31a042a86"},
+    {"path": "pilot/operator_summary.csv", "sha256": "d5e2f7e1a359a032e42b9e368c4197bfb9003a74b270c2cb5792340a130be323"},
+    {"path": "analysis/analysis_summary.json", "sha256": "4a1b5eee381c3690eafe598314ff88a7f4ae52ec81dedb1a861d42022976deb5"},
+    {"path": "analysis/unit_summary.csv", "sha256": "d6867a20a2536f9578f9bcb02a8a66c03b32b0f749882a33fa284667e40688b8"},
+    {"path": "analysis/family_summary.csv", "sha256": "af3f47b5f2b92fc6ea5586b8505680bca8ef9589fc43ecbf88a504ea9d45d523"},
+    {"path": "analysis/report.md", "sha256": "a404945048e7958c6c222f34060d59f4356a6b83db44c3130e6a89f462880e7a"},
+    {"path": "plans/early_mask_fragment-analyze-r0.json", "sha256": "e6a9a065cb299e91fdde815f0933d681874a2855ce41d5678dedb900ed2494a4"},
+    {"path": "plans/late_mask_fragment-analyze-r0.json", "sha256": "96773f1ec12a785ab5383dd10ddf35b37b336f523c29251f57ff48509c766735"}
+  ],
+  "interpretation": "Complete physical fragments show a stable early/late reversal, but only one stable-early family is observed. Confirm the high-match boundary with new seeds before fitting another selector."
+}

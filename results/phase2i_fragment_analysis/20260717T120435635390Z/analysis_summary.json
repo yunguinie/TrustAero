@@ -1,0 +1,25 @@
+{
+  "evaluation_label": "phase2i_fragment_pilot_development_analysis",
+  "family_count": 24,
+  "mixed_family_count": 5,
+  "optimizer_training_recommendation": "defer_until_boundary_confirmation",
+  "phase2g_authorized": false,
+  "scientific_boundary": "The fixed 3% tie band classifies complete seed families. No optimizer is fitted, and the development pilot is not held-out Phase 2G evidence.",
+  "source_commit_hash": "58ced0e286dfa2b04542a7873472fb4400aeb830",
+  "source_run_id": "20260717T120435635390Z",
+  "spilled_unit_count": 0,
+  "stable_early_family_count": 1,
+  "stable_early_family_ids": [
+    "n150000-w256-m1000"
+  ],
+  "stable_late_family_count": 17,
+  "stable_reversal_observed": true,
+  "stable_tie_family_count": 1,
+  "tie_threshold_fraction": 0.03,
+  "unit_classification_counts": {
+    "early": 6,
+    "late": 56,
+    "tie": 10
+  },
+  "unit_count": 72
+}
