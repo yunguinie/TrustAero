@@ -7,6 +7,7 @@
   "seeds": [101, 202],
   "warmup_runs": 2,
   "measured_runs": 7,
+  "profile_runs": 1,
   "duckdb_threads": 4,
   "duckdb_memory_limit_mb": 4096,
   "order_seed": 20260717,

@@ -61,6 +61,7 @@ Each mechanism/scale/width/match/seed unit is atomic. The runner provides:
 - per-unit JSON checkpoints and safe resume;
 - result checksums and expected row/cardinality validation;
 - raw measurements, component summaries, paired costs, plans, and memory/spill;
+- repeated per-operator timing/cardinality summaries;
 - visible unit progress, elapsed time, and ETA.
 
 An interrupted unit is repeated in full. A completed unit is never measured
@@ -114,6 +115,23 @@ python -u scripts/run_mechanism_microbench.py `
 Do not combine the original and refined Join measurements as if they were the
 same target. Hash and materialization pilot observations remain useful
 development diagnostics; Join must be recollected under the refined protocol.
+
+The refined wall-clock subtraction also proved unsuitable: 17 of 36 median
+differences were negative because DuckDB's joined and filtered pipelines do not
+form two additive, otherwise identical executions. The saved plans do expose a
+separate `HASH_JOIN` operator timing and actual cardinality. The next frozen
+calibration therefore repeats `EXPLAIN ANALYZE` five times per unit and reports
+median/P95 timing for every physical operator in `operator_summary.csv`:
+
+```powershell
+python -u scripts/run_mechanism_microbench.py `
+  --config experiments/configs/phase2h_join_operator_calibration.json `
+  --progress
+```
+
+This is not a third attempt to tune a winner threshold. It changes the measured
+quantity from an invalid whole-query subtraction to DuckDB's directly observed
+`HASH_JOIN` operator cost, with a predeclared repeat count and new seeds.
 
 After interruption, use the exact same committed code and configuration:
 

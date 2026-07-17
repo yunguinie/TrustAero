@@ -461,3 +461,9 @@ unstable scalar Join diagnostic. The refined Join protocol forces equal-schema
 payload materialization on both sides of the paired subtraction and is frozen
 in `experiments/configs/phase2h_join_payload_refinement.json`. Do not build the
 cost formula until that refinement passes validation and seed-stability checks.
+
+The refinement confirms that whole-query subtraction is not an additive Join
+cost: 17/36 median differences are negative. The runner now supports repeated
+physical profiles and writes `operator_summary.csv`. The frozen follow-up
+`phase2h_join_operator_calibration.json` uses five `EXPLAIN ANALYZE` repetitions
+and new seeds to measure `HASH_JOIN` timing/cardinality directly.

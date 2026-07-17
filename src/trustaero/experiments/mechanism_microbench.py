@@ -41,6 +41,7 @@ class MechanismMicrobenchConfig:
     benchmarks: tuple[str, ...] = SUPPORTED_MICROBENCHMARKS
     warmup_runs: int = 3
     measured_runs: int = 15
+    profile_runs: int = 3
     duckdb_threads: int = 4
     duckdb_memory_limit_mb: int = 4096
     order_seed: int = 20260717
@@ -74,9 +75,9 @@ class MechanismMicrobenchConfig:
             value not in SUPPORTED_MICROBENCHMARKS for value in self.benchmarks
         ):
             raise ValueError("benchmarks contain an unsupported mechanism")
-        if self.warmup_runs < 0 or self.measured_runs < 1:
+        if self.warmup_runs < 0 or self.measured_runs < 1 or self.profile_runs < 1:
             raise ValueError(
-                "warmup_runs must be non-negative and measured_runs positive"
+                "warmup_runs must be non-negative; measured_runs and profile_runs positive"
             )
         if self.duckdb_threads < 1 or self.duckdb_memory_limit_mb < 128:
             raise ValueError("DuckDB resource limits are invalid")
@@ -376,6 +377,7 @@ def _profiles(
     unit: MechanismMicrobenchUnit,
     sql_by_component: dict[str, str],
     output_dir: Path,
+    profile_runs: int,
 ) -> dict[str, dict[str, Any]]:
     """Capture real operator trees once; timed samples remain plain executions."""
 
@@ -391,38 +393,71 @@ def _profiles(
     else:
         profile_components = tuple(sql_by_component)
     for component in profile_components:
-        if component == "materialization_write":
-            connection.execute("DROP TABLE IF EXISTS micro_materialized")
-        elif component == "materialization_read":
-            if connection.execute(
-                "SELECT count(*) FROM information_schema.tables "
-                "WHERE table_name = 'micro_materialized'"
-            ).fetchone() == (0,):
-                connection.execute(sql_by_component["materialization_write"])
-        elif component in {"join_payload_baseline", "join_payload"}:
-            connection.execute("DROP TABLE IF EXISTS micro_join_output")
-        observation = observe_duckdb_plan(
-            connection,
-            sql_by_component[component],
-            analyze=True,
-        )
+        observations = []
+        for profile_index in range(profile_runs):
+            if component == "materialization_write":
+                connection.execute("DROP TABLE IF EXISTS micro_materialized")
+            elif component == "materialization_read":
+                if connection.execute(
+                    "SELECT count(*) FROM information_schema.tables "
+                    "WHERE table_name = 'micro_materialized'"
+                ).fetchone() == (0,):
+                    connection.execute(sql_by_component["materialization_write"])
+            elif component in {"join_payload_baseline", "join_payload"}:
+                connection.execute("DROP TABLE IF EXISTS micro_join_output")
+            observation = observe_duckdb_plan(
+                connection,
+                sql_by_component[component],
+                analyze=True,
+            )
+            observations.append(observation)
+            (profile_dir / f"{component}-analyze-r{profile_index}.json").write_text(
+                observation.plan_json + "\n",
+                encoding="utf-8",
+            )
+            if component in {"join_payload_baseline", "join_payload"}:
+                connection.execute("DROP TABLE IF EXISTS micro_join_output")
+        if len({item.operator_names for item in observations}) != 1:
+            raise ValueError(
+                f"Physical operator shape changed within {component} profiles"
+            )
+        if len({item.fingerprint for item in observations}) != 1:
+            raise ValueError(
+                f"Physical plan fingerprint changed within {component} profiles"
+            )
+        reference = observations[0]
         output[component] = {
-            "fingerprint": observation.fingerprint,
-            "profile_latency_ms": observation.profile_latency_ms,
-            "operator_names": list(observation.operator_names),
-            "operator_timings_ms": list(observation.operator_timings_ms),
-            "operator_cardinalities": list(observation.actual_cardinalities),
-            "rows_scanned": list(observation.rows_scanned),
-            "peak_buffer_memory_bytes": observation.peak_buffer_memory_bytes,
-            "peak_temp_directory_bytes": observation.peak_temp_directory_bytes,
-            "total_memory_allocated_bytes": observation.total_memory_allocated_bytes,
+            "fingerprint": reference.fingerprint,
+            "profile_runs": profile_runs,
+            "profile_latency_ms": statistics.median(
+                item.profile_latency_ms for item in observations
+            ),
+            "operator_names": list(reference.operator_names),
+            "operator_timings_ms": [
+                statistics.median(
+                    item.operator_timings_ms[index] for item in observations
+                )
+                for index in range(len(reference.operator_names))
+            ],
+            "operator_cardinalities": list(reference.actual_cardinalities),
+            "rows_scanned": list(reference.rows_scanned),
+            "peak_buffer_memory_bytes": max(
+                item.peak_buffer_memory_bytes for item in observations
+            ),
+            "peak_temp_directory_bytes": max(
+                item.peak_temp_directory_bytes for item in observations
+            ),
+            "total_memory_allocated_bytes": max(
+                item.total_memory_allocated_bytes for item in observations
+            ),
+            "profile_samples": [
+                {
+                    "profile_latency_ms": item.profile_latency_ms,
+                    "operator_timings_ms": list(item.operator_timings_ms),
+                }
+                for item in observations
+            ],
         }
-        (profile_dir / f"{component}-analyze.json").write_text(
-            observation.plan_json + "\n",
-            encoding="utf-8",
-        )
-        if component in {"join_payload_baseline", "join_payload"}:
-            connection.execute("DROP TABLE IF EXISTS micro_join_output")
     if unit.benchmark == "materialization":
         connection.execute("DROP TABLE IF EXISTS micro_materialized")
     return output
@@ -439,7 +474,13 @@ def _run_unit(
 ) -> dict[str, Any]:
     matched_rows = _create_data(connection, unit)
     sql_by_component = _component_sql(unit.benchmark)
-    profiles = _profiles(connection, unit, sql_by_component, output_dir)
+    profiles = _profiles(
+        connection,
+        unit,
+        sql_by_component,
+        output_dir,
+        config.profile_runs,
+    )
     components = tuple(sql_by_component)
     total_rounds = config.warmup_runs + config.measured_runs
     offset = int.from_bytes(
@@ -528,6 +569,7 @@ def _finalize(
     measurements = [row for payload in payloads for row in payload["measurements"]]
     component_rows: list[dict[str, Any]] = []
     paired_rows: list[dict[str, Any]] = []
+    operator_rows: list[dict[str, Any]] = []
     for payload in payloads:
         unit = payload["unit"]
         by_component: dict[str, list[dict[str, Any]]] = {}
@@ -565,6 +607,33 @@ def _finalize(
                     ),
                 }
             )
+        for component, profile in payload["profiles"].items():
+            samples = profile["profile_samples"]
+            for operator_index, operator_name in enumerate(profile["operator_names"]):
+                timings = [
+                    float(sample["operator_timings_ms"][operator_index])
+                    for sample in samples
+                ]
+                operator_rows.append(
+                    {
+                        "unit_id": payload["unit_id"],
+                        **unit,
+                        "matched_rows": payload["matched_rows"],
+                        "component": component,
+                        "operator_index": operator_index,
+                        "operator_name": operator_name,
+                        "profile_runs": len(timings),
+                        "median_operator_timing_ms": statistics.median(timings),
+                        "p95_operator_timing_ms": _percentile95(timings),
+                        "min_operator_timing_ms": min(timings),
+                        "max_operator_timing_ms": max(timings),
+                        "actual_cardinality": profile["operator_cardinalities"][
+                            operator_index
+                        ],
+                        "rows_scanned": profile["rows_scanned"][operator_index],
+                        "physical_plan_fingerprint": profile["fingerprint"],
+                    }
+                )
         paired_components = {
             "hash": ("hash_sha256", "hash_scan", "hash_incremental", "subtract"),
             "join_payload": (
@@ -618,6 +687,7 @@ def _finalize(
     _write_csv(output_dir / "raw_measurements.csv", measurements)
     _write_csv(output_dir / "component_summary.csv", component_rows)
     _write_csv(output_dir / "paired_costs.csv", paired_rows)
+    _write_csv(output_dir / "operator_summary.csv", operator_rows)
     negative = sum(float(row["median_paired_cost_ms"]) < 0.0 for row in paired_rows)
     _write_json_atomic(
         output_dir / "summary.json",
@@ -629,6 +699,7 @@ def _finalize(
             "measurement_count": len(measurements),
             "component_summary_count": len(component_rows),
             "paired_cost_count": len(paired_rows),
+            "operator_summary_count": len(operator_rows),
             "all_validations_passed": all(
                 payload.get("validation_passed") is True for payload in payloads
             ),
@@ -773,6 +844,7 @@ def load_mechanism_microbench_config(path: str | Path) -> MechanismMicrobenchCon
         ),
         warmup_runs=int(payload.get("warmup_runs", 3)),
         measured_runs=int(payload.get("measured_runs", 15)),
+        profile_runs=int(payload.get("profile_runs", 3)),
         duckdb_threads=int(payload.get("duckdb_threads", 4)),
         duckdb_memory_limit_mb=int(payload.get("duckdb_memory_limit_mb", 4096)),
         order_seed=int(payload.get("order_seed", 20260717)),

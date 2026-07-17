@@ -27,6 +27,7 @@ def _config(results_dir: Path) -> MechanismMicrobenchConfig:
         seeds=(1,),
         warmup_runs=0,
         measured_runs=1,
+        profile_runs=1,
         duckdb_threads=1,
         duckdb_memory_limit_mb=512,
         require_clean_git=False,
@@ -58,6 +59,8 @@ def test_microbench_writes_valid_complete_artifacts_and_resumes(tmp_path: Path) 
         measurements = list(csv.DictReader(handle))
     with (output / "paired_costs.csv").open(newline="", encoding="utf-8") as handle:
         paired = list(csv.DictReader(handle))
+    with (output / "operator_summary.csv").open(newline="", encoding="utf-8") as handle:
+        operators = list(csv.DictReader(handle))
 
     assert summary["status"] == "complete"
     assert summary["all_validations_passed"] is True
@@ -65,6 +68,7 @@ def test_microbench_writes_valid_complete_artifacts_and_resumes(tmp_path: Path) 
     assert summary["measurement_count"] == 6
     assert checkpoint["status"] == "complete"
     assert len(measurements) == 6
+    assert any(row["operator_name"] == "HASH_JOIN" for row in operators)
     assert {row["derived_component"] for row in paired} == {
         "hash_incremental",
         "join_incremental",
