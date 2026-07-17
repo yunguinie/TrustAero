@@ -527,3 +527,11 @@ predeclared regret and coverage gates. Passing Phase 2K still does not authorize
 Phase 2G until the resulting model artifact is separately frozen. See
 `docs/pipeline-aware-mask-optimizer.md` and
 `experiments/configs/phase2k_pipeline_optimizer_development.json`.
+
+The one-shot Phase 2K evaluation merges 162 paired replicates into 40 complete
+families. Its direct formula collapses to fixed late Mask; the guarded version
+matches frozen V1 at 77.5% within the 3% band and therefore fails the required
+strict-improvement check. This is frozen as a negative result without post-hoc
+parameter tuning, and Phase 2G remains unauthorized. See
+`docs/phase2k-pipeline-optimizer-results.md` and
+`experiments/frozen/phase2k_pipeline_optimizer_negative.json`.

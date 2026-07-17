@@ -1,0 +1,55 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "phase2k_pipeline_optimizer_development_not_phase2g",
+  "protocol_commit": "412e66148a03b02eab98a7bcef88400b51d98cae",
+  "status": "development_only_rejected_by_predeclared_gate",
+  "phase2g_authorized": false,
+  "family_count": 40,
+  "replicate_count": 162,
+  "tie_threshold_fraction": 0.03,
+  "ridge_lambda": 0.1,
+  "uncertainty_multiplier": 1.0,
+  "minimum_direct_coverage": 0.25,
+  "development_gate_passes": false,
+  "failed_gate_checks": [
+    "within_tie_rate_strictly_improves_v1"
+  ],
+  "guarded_pipeline_metrics": {
+    "exact_top1_rate": 0.75,
+    "within_tie_rate": 0.775,
+    "mean_regret_percent": 1.5463027347207954,
+    "p95_regret_percent": 9.559887083390661,
+    "max_regret_percent": 11.463621465547003,
+    "direct_model_coverage": 0.4
+  },
+  "frozen_v1_metrics": {
+    "exact_top1_rate": 0.75,
+    "within_tie_rate": 0.775,
+    "mean_regret_percent": 1.5463027347207954,
+    "p95_regret_percent": 9.559887083390661,
+    "max_regret_percent": 11.463621465547003
+  },
+  "files": [
+    {
+      "path": "results/phase2k_pipeline_optimizer_development/fixed_formula_v1/family_observations.csv",
+      "sha256": "3a88f8464bc59357101a98117e84963724d734479a96a712d9e9e325938459f1"
+    },
+    {
+      "path": "results/phase2k_pipeline_optimizer_development/fixed_formula_v1/cross_validation_predictions.csv",
+      "sha256": "77a4ff89831ebf21ef45cf9eed99280f9cee6e766799d89774ffb2d6734de53c"
+    },
+    {
+      "path": "results/phase2k_pipeline_optimizer_development/fixed_formula_v1/pipeline_mask_cost_model.json",
+      "sha256": "d9cf1605ccdb9e3359fc0d73b7145e3f29c88632f52b3c93b68424017a7c94c4"
+    },
+    {
+      "path": "results/phase2k_pipeline_optimizer_development/fixed_formula_v1/summary.json",
+      "sha256": "23d0e55d9be6658bbc5eeec0be91e7bcd8375a6a85d6fbda79c39a0eba00168d"
+    },
+    {
+      "path": "results/phase2k_pipeline_optimizer_development/fixed_formula_v1/report.md",
+      "sha256": "66385967994bd518dba623c1dba94387991eecb337edd1fca578c93de2cc939f"
+    }
+  ],
+  "interpretation": "The direct formula collapses to fixed late Mask and the uncertainty-guarded selector does not strictly improve frozen V1 within the 3% band. The negative result is frozen without post-hoc tuning."
+}

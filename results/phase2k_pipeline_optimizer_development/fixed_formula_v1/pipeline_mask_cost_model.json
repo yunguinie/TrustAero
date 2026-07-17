@@ -1,0 +1,75 @@
+{
+  "coefficient_constraint": "non_negative",
+  "coefficients": [
+    0.0,
+    0.794741299722926,
+    0.0,
+    0.15328437694529598,
+    0.03674407917193372
+  ],
+  "development_gate": {
+    "baseline": "v1_frozen_baseline",
+    "checks": {
+      "all_cost_coefficients_non_negative": true,
+      "all_governance_audits_pass": true,
+      "direct_model_coverage_meets_minimum": true,
+      "max_regret_does_not_worsen_v1": true,
+      "mean_regret_does_not_worsen_v1": true,
+      "p95_regret_does_not_worsen_v1": true,
+      "within_tie_rate_strictly_improves_v1": false
+    },
+    "passes": false,
+    "primary": "pipeline_cost_guarded_leave_one_family_out"
+  },
+  "feature_means": [
+    3.889040254999538,
+    3.5990968858104426,
+    2.9585918122851225,
+    0.5760376044298338,
+    0.5
+  ],
+  "feature_names": [
+    "log_scan_payload_mib",
+    "log_hash_input_payload_mib",
+    "log_join_input_payload_mib",
+    "log_join_output_rows_100k",
+    "early_materialization_boundary"
+  ],
+  "feature_scales": [
+    0.8665845647949373,
+    1.006563093409106,
+    1.157847698910138,
+    0.34607967810706886,
+    0.5
+  ],
+  "formula_schema_version": 1,
+  "hashed_identifier_width_bytes": 64,
+  "intercept_log_ms": 6.5180545591244785,
+  "model_type": "pipeline_mask_cost_v2",
+  "paired_log_ratio_rmse": 0.21834090881185986,
+  "ridge_lambda": 0.1,
+  "scientific_boundary": "Only candidates already proven legal may be ranked; uncertainty falls back to the frozen governance-aware V1 selector.",
+  "source_run_ids": [
+    "20260717T120435635390Z",
+    "20260717T134222171980Z"
+  ],
+  "status": "development_only_rejected_by_predeclared_gate",
+  "support_feature_names": [
+    "log_input_rows_100k",
+    "log_identifier_width_ratio",
+    "join_match_rate"
+  ],
+  "support_maxima": [
+    1.0986122886681098,
+    3.4965075614664802,
+    1.0
+  ],
+  "support_minima": [
+    0.4054651081081644,
+    1.0986122886681098,
+    0.1
+  ],
+  "target": "log_complete_fragment_latency_ms",
+  "training_family_count": 40,
+  "uncertainty_multiplier": 1.0
+}
