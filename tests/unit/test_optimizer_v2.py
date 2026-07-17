@@ -16,6 +16,7 @@ from trustaero.experiments.optimizer_v2 import (
     cross_validate_mask_v2,
     cross_validate_regret_aware_mask_residual,
     fit_decomposed_mask_cost_model,
+    fit_local_regret_guard_model,
     fit_mask_v2_model,
     fit_regret_aware_mask_residual_model,
 )
@@ -41,6 +42,39 @@ def _observations() -> list[MaskWorkloadObservation]:
                     workload_id=f"run/s{scenario_index}/n{row_count}",
                     scenario_group_id=f"run/s{scenario_index}",
                     source_run_id="run",
+                    source_commit_hash="abc123",
+                    scenario_id=f"s{scenario_index}",
+                    row_count=row_count,
+                    seed_count=3,
+                    features=features,
+                    observed_log_early_late_ratio=target,
+                    median_early_latency_ms=100.0 * math.exp(target),
+                    median_late_latency_ms=100.0,
+                    tie_threshold_fraction=0.03,
+                )
+            )
+    return output
+
+
+def _guard_observations() -> list[MaskWorkloadObservation]:
+    """Provide enough scenario families for nested grouped calibration."""
+
+    output: list[MaskWorkloadObservation] = []
+    for scenario_index, width in enumerate((128, 256, 512, 768, 1024, 2048)):
+        for row_count in (100_000, 300_000):
+            features = MaskPlacementFeatures(
+                join_input_rows=row_count,
+                identifier_width_bytes=width,
+                join_match_rate=(scenario_index + 1) / 6,
+            )
+            target = (
+                0.2 - 0.05 * math.log1p(width / 64) - 0.1 * features.join_match_rate
+            )
+            output.append(
+                MaskWorkloadObservation(
+                    workload_id=f"guard/s{scenario_index}/n{row_count}",
+                    scenario_group_id=f"guard/s{scenario_index}",
+                    source_run_id="guard",
                     source_commit_hash="abc123",
                     scenario_id=f"s{scenario_index}",
                     row_count=row_count,
@@ -153,3 +187,17 @@ def test_regret_aware_residual_is_grouped_explainable_and_monotone() -> None:
     assert all("base_log_early_late_ratio" in row for row in rows)
     assert all("residual_correction" in row for row in rows)
     assert audit["passes"] is True
+
+
+def test_local_guard_calibration_excludes_outer_scenario_family() -> None:
+    observations = _guard_observations()
+    outer_group = "guard/s0"
+    outer_training = [
+        item for item in observations if item.scenario_group_id != outer_group
+    ]
+
+    guard = fit_local_regret_guard_model(outer_training, neighbor_group_count=3)
+
+    calibration_groups = {point.scenario_group_id for point in guard.calibration_points}
+    assert outer_group not in calibration_groups
+    assert calibration_groups == {item.scenario_group_id for item in outer_training}

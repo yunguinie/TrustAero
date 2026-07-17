@@ -11,6 +11,7 @@ import csv
 import json
 import math
 import statistics
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
@@ -24,6 +25,12 @@ from trustaero.optimizer.mask_cost import (
     DecomposedMaskCostModel,
     choose_mask_placement_by_cost,
     mask_candidate_cost_features,
+)
+from trustaero.optimizer.mask_guard import (
+    LocalRegretCalibrationPoint,
+    LocalRegretGuardModel,
+    choose_mask_placement_with_local_guard,
+    mask_guard_feature_vector,
 )
 from trustaero.optimizer.mask_residual import (
     MATCH_MONOTONE_FEATURE_INDICES,
@@ -487,6 +494,94 @@ def fit_regret_aware_mask_residual_model(
     )
 
 
+def _placement_regret_fraction(
+    observation: MaskWorkloadObservation,
+    placement: MaskPlacement,
+) -> float:
+    """Return the slowdown versus the paired oracle for one placement."""
+
+    actual = observation.observed_log_early_late_ratio
+    if placement is MaskPlacement.EARLY:
+        return max(0.0, math.exp(actual) - 1.0)
+    return max(0.0, math.exp(-actual) - 1.0)
+
+
+def fit_local_regret_guard_model(
+    observations: list[MaskWorkloadObservation],
+    *,
+    neighbor_group_count: int = 3,
+    residual_ridge_lambda: float = 0.1,
+    regret_weight_cap: float = 10.0,
+    confidence_multiplier: float = 1.0,
+) -> LocalRegretGuardModel:
+    """Build calibration points from inner leave-one-scenario-out predictions.
+
+    Every calibration regret is produced by a residual model that excluded the
+    calibration point's complete scenario family.  The final residual model is
+    fitted only after these out-of-fold records have been frozen.
+    """
+
+    groups = sorted({item.scenario_group_id for item in observations})
+    if len(groups) <= neighbor_group_count:
+        raise ValueError("Local regret guard needs more scenario groups than neighbors")
+    raw = [mask_guard_feature_vector(item.features) for item in observations]
+    feature_count = len(raw[0])
+    means = tuple(
+        statistics.mean(row[index] for row in raw) for index in range(feature_count)
+    )
+    scales = tuple(
+        statistics.pstdev(row[index] for row in raw) or 1.0
+        for index in range(feature_count)
+    )
+    calibration: list[LocalRegretCalibrationPoint] = []
+    for group in groups:
+        inner_training = [
+            item for item in observations if item.scenario_group_id != group
+        ]
+        inner_testing = [
+            item for item in observations if item.scenario_group_id == group
+        ]
+        inner_model = fit_regret_aware_mask_residual_model(
+            inner_training,
+            ridge_lambda=residual_ridge_lambda,
+            regret_weight_cap=regret_weight_cap,
+            confidence_multiplier=confidence_multiplier,
+        )
+        for item in inner_testing:
+            residual_decision = choose_mask_placement_with_residual(
+                item.features, inner_model
+            )
+            v1_decision = choose_mask_placement(item.features)
+            calibration.append(
+                LocalRegretCalibrationPoint(
+                    scenario_group_id=item.scenario_group_id,
+                    workload_id=item.workload_id,
+                    feature_vector=mask_guard_feature_vector(item.features),
+                    residual_regret_fraction=_placement_regret_fraction(
+                        item,
+                        residual_decision.placement,
+                    ),
+                    v1_regret_fraction=_placement_regret_fraction(
+                        item,
+                        v1_decision.placement,
+                    ),
+                )
+            )
+    final_residual = fit_regret_aware_mask_residual_model(
+        observations,
+        ridge_lambda=residual_ridge_lambda,
+        regret_weight_cap=regret_weight_cap,
+        confidence_multiplier=confidence_multiplier,
+    )
+    return LocalRegretGuardModel(
+        residual_model=final_residual,
+        calibration_points=tuple(calibration),
+        feature_means=means,
+        feature_scales=scales,
+        neighbor_group_count=neighbor_group_count,
+    )
+
+
 def _prediction_row(
     observation: MaskWorkloadObservation,
     *,
@@ -660,6 +755,67 @@ def cross_validate_regret_aware_mask_residual(
                 }
             )
             output.append(row)
+    return output
+
+
+def cross_validate_local_regret_guard(
+    observations: list[MaskWorkloadObservation],
+    *,
+    neighbor_group_count: int = 3,
+    residual_ridge_lambda: float = 0.1,
+    regret_weight_cap: float = 10.0,
+    confidence_multiplier: float = 1.0,
+    progress_callback: Callable[[int, int, str], None] | None = None,
+) -> list[dict[str, Any]]:
+    """Run nested leave-one-scenario-family-out guard evaluation."""
+
+    output: list[dict[str, Any]] = []
+    groups = sorted({item.scenario_group_id for item in observations})
+    for group_index, outer_group in enumerate(groups, start=1):
+        outer_training = [
+            item for item in observations if item.scenario_group_id != outer_group
+        ]
+        outer_testing = [
+            item for item in observations if item.scenario_group_id == outer_group
+        ]
+        guard = fit_local_regret_guard_model(
+            outer_training,
+            neighbor_group_count=neighbor_group_count,
+            residual_ridge_lambda=residual_ridge_lambda,
+            regret_weight_cap=regret_weight_cap,
+            confidence_multiplier=confidence_multiplier,
+        )
+        for item in outer_testing:
+            decision = choose_mask_placement_with_local_guard(item.features, guard)
+            residual_score = guard.residual_model.predict_corrected_log_ratio(
+                item.features
+            )
+            row = _prediction_row(
+                item,
+                scheme="guarded_residual_nested_leave_one_scenario_out",
+                holdout_group=outer_group,
+                placement=decision.placement,
+                predicted_log_ratio=residual_score,
+            )
+            row.update(
+                {
+                    "selected_selector": decision.selected_selector,
+                    "guard_reason_code": decision.reason_code,
+                    "residual_placement": decision.residual_placement.value,
+                    "v1_placement": decision.v1_placement.value,
+                    "estimated_local_residual_regret": (
+                        decision.estimated_local_residual_regret
+                    ),
+                    "estimated_local_v1_regret": decision.estimated_local_v1_regret,
+                    "neighbor_group_ids": "|".join(decision.neighbor_group_ids),
+                    "neighbor_distances": "|".join(
+                        f"{value:.12g}" for value in decision.neighbor_distances
+                    ),
+                }
+            )
+            output.append(row)
+        if progress_callback is not None:
+            progress_callback(group_index, len(groups), outer_group)
     return output
 
 
@@ -933,6 +1089,8 @@ def develop_mask_optimizer_v2(
     residual_ridge_lambda: float = 0.1,
     regret_weight_cap: float = 10.0,
     confidence_multiplier: float = 1.0,
+    neighbor_group_count: int = 3,
+    guard_progress_callback: Callable[[int, int, str], None] | None = None,
 ) -> Path:
     """Fit development candidates, run grouped CV, and save auditable artifacts."""
 
@@ -964,6 +1122,16 @@ def develop_mask_optimizer_v2(
         )
     )
     predictions.extend(
+        cross_validate_local_regret_guard(
+            observations,
+            neighbor_group_count=neighbor_group_count,
+            residual_ridge_lambda=residual_ridge_lambda,
+            regret_weight_cap=regret_weight_cap,
+            confidence_multiplier=confidence_multiplier,
+            progress_callback=guard_progress_callback,
+        )
+    )
+    predictions.extend(
         cross_validate_regret_aware_mask_residual(
             observations,
             split="scenario",
@@ -981,6 +1149,13 @@ def develop_mask_optimizer_v2(
     residual_model = fit_regret_aware_mask_residual_model(
         observations,
         ridge_lambda=residual_ridge_lambda,
+        regret_weight_cap=regret_weight_cap,
+        confidence_multiplier=confidence_multiplier,
+    )
+    guard_model = fit_local_regret_guard_model(
+        observations,
+        neighbor_group_count=neighbor_group_count,
+        residual_ridge_lambda=residual_ridge_lambda,
         regret_weight_cap=regret_weight_cap,
         confidence_multiplier=confidence_multiplier,
     )
@@ -1028,6 +1203,20 @@ def develop_mask_optimizer_v2(
         "corrected_score_is_match_monotone": residual_monotonicity["passes"],
     }
     passes_development_gate = all(gate_checks.values())
+    guard_primary = schemes["guarded_residual_nested_leave_one_scenario_out"]
+    guard_gate_checks = {
+        "within_tie_rate_strictly_improves_v1": (
+            guard_primary["within_tie_rate"] > baseline["within_tie_rate"]
+        ),
+        "p95_regret_does_not_worsen_v1": (
+            guard_primary["p95_regret_percent"] <= baseline["p95_regret_percent"] + 1e-9
+        ),
+        "max_regret_does_not_worsen_v1": (
+            guard_primary["max_regret_percent"] <= baseline["max_regret_percent"] + 1e-9
+        ),
+        "corrected_score_is_match_monotone": residual_monotonicity["passes"],
+    }
+    guard_passes_development_gate = all(guard_gate_checks.values())
     summary: dict[str, Any] = {
         "evaluation_label": "development_cross_validation",
         "observation_count": len(observations),
@@ -1040,6 +1229,7 @@ def develop_mask_optimizer_v2(
         "residual_ridge_lambda": residual_ridge_lambda,
         "regret_weight_cap": regret_weight_cap,
         "confidence_multiplier": confidence_multiplier,
+        "neighbor_group_count": neighbor_group_count,
         "schemes": schemes,
         "match_rate_monotonicity_audit": monotonicity,
         "decomposed_cost_monotonicity_audit": decomposed_monotonicity,
@@ -1050,12 +1240,20 @@ def develop_mask_optimizer_v2(
             "baseline_scheme": "v1_frozen_baseline",
             "primary_scheme": "residual_ranking_leave_one_scenario_out",
         },
+        "local_guard_development_gate": {
+            "passes": guard_passes_development_gate,
+            "checks": guard_gate_checks,
+            "baseline_scheme": "v1_frozen_baseline",
+            "primary_scheme": "guarded_residual_nested_leave_one_scenario_out",
+            "nesting": "outer_and_inner_leave_one_scenario_family_out",
+        },
         "limitations": [
             "Phase 2F is development data for V2 after being a valid held-out test for V1.",
             "Feature-basis development inspected Phase 2E/F, so CV is descriptive, not final.",
             "Cardinality features use realized controlled statistics; estimator error is untested.",
             "Only synthetic workloads, two Mask placements, one machine, and one DBMS are covered.",
             "Regret weighting and confidence fallback were frozen before this development rerun.",
+            "The local guard uses three nearest scenario families without tuning k on outer folds.",
         ],
     }
     output = Path(output_dir).resolve()
@@ -1088,6 +1286,18 @@ def develop_mask_optimizer_v2(
     residual_payload["development_gate"] = summary["residual_development_gate"]
     (output / "residual_ranking_model.json").write_text(
         json.dumps(residual_payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    guard_payload = guard_model.to_dict()
+    guard_payload["training_source_run_ids"] = summary["source_run_ids"]
+    guard_payload["status"] = (
+        "development_gate_passed_not_held_out_validated"
+        if guard_passes_development_gate
+        else "development_only_rejected_by_predeclared_gate"
+    )
+    guard_payload["development_gate"] = summary["local_guard_development_gate"]
+    (output / "local_regret_guard_model.json").write_text(
+        json.dumps(guard_payload, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     (output / "report.md").write_text(_report(summary), encoding="utf-8")

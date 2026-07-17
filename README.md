@@ -69,6 +69,8 @@ For the current system pipeline, see [docs/architecture.md](docs/architecture.md
 The optimizer development rationale is documented in
 [docs/decomposed-mask-cost-model.md](docs/decomposed-mask-cost-model.md) and
 [docs/regret-aware-mask-residual-model.md](docs/regret-aware-mask-residual-model.md).
+The nested uncertainty policy is described in
+[docs/local-regret-guard.md](docs/local-regret-guard.md).
 For the first repeatable semantic evaluation layer, see
 [docs/phase0-experiments.md](docs/phase0-experiments.md).
 

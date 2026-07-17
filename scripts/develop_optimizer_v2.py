@@ -37,7 +37,22 @@ def main() -> None:
         default=1.0,
         help="Residual-RMSE margin required to overturn the base score.",
     )
+    parser.add_argument(
+        "--neighbor-group-count",
+        type=int,
+        default=3,
+        help="Frozen number of nearest scenario families used by the local guard.",
+    )
+    parser.add_argument(
+        "--progress",
+        action="store_true",
+        help="Print one progress line after each completed outer guard fold.",
+    )
     args = parser.parse_args()
+
+    def report_guard_progress(completed: int, total: int, group: str) -> None:
+        print(f"[local-guard {completed}/{total}] completed {group}", flush=True)
+
     print(
         develop_mask_optimizer_v2(
             args.run_dirs,
@@ -46,6 +61,8 @@ def main() -> None:
             residual_ridge_lambda=args.residual_ridge_lambda,
             regret_weight_cap=args.regret_weight_cap,
             confidence_multiplier=args.confidence_multiplier,
+            neighbor_group_count=args.neighbor_group_count,
+            guard_progress_callback=report_guard_progress if args.progress else None,
         )
     )
 
