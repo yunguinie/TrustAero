@@ -25,6 +25,12 @@ from trustaero.optimizer.mask_cost import (
     choose_mask_placement_by_cost,
     mask_candidate_cost_features,
 )
+from trustaero.optimizer.mask_residual import (
+    MATCH_MONOTONE_FEATURE_INDICES,
+    RegretAwareMaskResidualModel,
+    choose_mask_placement_with_residual,
+    mask_residual_feature_vector,
+)
 from trustaero.optimizer.mask_v2 import (
     MASK_V2_FEATURE_NAMES,
     MaskV2Model,
@@ -96,7 +102,9 @@ def _scenario_widths(config: dict[str, Any]) -> dict[str, int]:
     return output
 
 
-def _unit_choices(rows: list[dict[str, str]]) -> dict[str, dict[MaskPlacement, dict[str, str]]]:
+def _unit_choices(
+    rows: list[dict[str, str]],
+) -> dict[str, dict[MaskPlacement, dict[str, str]]]:
     units: dict[str, dict[MaskPlacement, dict[str, str]]] = {}
     for row in rows:
         placement = (
@@ -106,7 +114,9 @@ def _unit_choices(rows: list[dict[str, str]]) -> dict[str, dict[MaskPlacement, d
         )
         choices = units.setdefault(row["unit_id"], {})
         if placement in choices:
-            raise ValueError(f"Unit {row['unit_id']} has duplicate {placement.value} candidates")
+            raise ValueError(
+                f"Unit {row['unit_id']} has duplicate {placement.value} candidates"
+            )
         choices[placement] = row
     for unit_id, choices in units.items():
         if set(choices) != {MaskPlacement.EARLY, MaskPlacement.LATE}:
@@ -123,7 +133,10 @@ def load_mask_workload_observations(
     for run_value in run_dirs:
         run_dir = Path(run_value).resolve()
         summary = _read_object(run_dir / "summary.json")
-        if summary.get("status") != "complete" or summary.get("all_results_equivalent") is not True:
+        if (
+            summary.get("status") != "complete"
+            or summary.get("all_results_equivalent") is not True
+        ):
             raise ValueError(f"Source run is incomplete or non-equivalent: {run_dir}")
         run_id = str(summary.get("run_id", run_dir.name))
         tie_threshold = float(summary["tie_threshold_fraction"])
@@ -131,7 +144,9 @@ def load_mask_workload_observations(
         environment = _read_object(run_dir / "environment.json")
         source_commit = str(environment.get("commit_hash", "unknown"))
         grouped: dict[tuple[str, int], list[dict[MaskPlacement, dict[str, str]]]] = {}
-        for choices in _unit_choices(_read_csv(run_dir / "strategy_summary.csv")).values():
+        for choices in _unit_choices(
+            _read_csv(run_dir / "strategy_summary.csv")
+        ).values():
             late = choices[MaskPlacement.LATE]
             key = (late["scenario_id"], int(late["row_count"]))
             grouped.setdefault(key, []).append(choices)
@@ -216,13 +231,18 @@ def fit_mask_v2_model(
 
     feature_count = len(MASK_V2_FEATURE_NAMES)
     if len(observations) <= feature_count:
-        raise ValueError(f"Mask V2 needs more than {feature_count} workload observations")
+        raise ValueError(
+            f"Mask V2 needs more than {feature_count} workload observations"
+        )
     if ridge_lambda < 0.0:
         raise ValueError("ridge_lambda must be non-negative")
     raw = [mask_v2_feature_vector(item.features) for item in observations]
-    means = tuple(statistics.mean(row[index] for row in raw) for index in range(feature_count))
+    means = tuple(
+        statistics.mean(row[index] for row in raw) for index in range(feature_count)
+    )
     scales = tuple(
-        statistics.pstdev(row[index] for row in raw) or 1.0 for index in range(feature_count)
+        statistics.pstdev(row[index] for row in raw) or 1.0
+        for index in range(feature_count)
     )
     design = [
         [1.0]
@@ -293,7 +313,10 @@ def fit_decomposed_mask_cost_model(
         largest_change = 0.0
         new_intercept = statistics.mean(
             target
-            - sum(value * coefficient for value, coefficient in zip(row, coefficients, strict=True))
+            - sum(
+                value * coefficient
+                for value, coefficient in zip(row, coefficients, strict=True)
+            )
             for row, target in zip(design, targets, strict=True)
         )
         largest_change = max(largest_change, abs(new_intercept - intercept))
@@ -302,10 +325,14 @@ def fit_decomposed_mask_cost_model(
             numerator = 0.0
             denominator = ridge_lambda
             for row, target in zip(design, targets, strict=True):
-                residual_without_term = target - intercept - sum(
-                    row[other] * coefficients[other]
-                    for other in range(coefficient_count)
-                    if other != index
+                residual_without_term = (
+                    target
+                    - intercept
+                    - sum(
+                        row[other] * coefficients[other]
+                        for other in range(coefficient_count)
+                        if other != index
+                    )
                 )
                 numerator += row[index] * residual_without_term
                 denominator += row[index] ** 2
@@ -319,6 +346,144 @@ def fit_decomposed_mask_cost_model(
         coefficients=tuple(coefficients),
         ridge_lambda=ridge_lambda,
         training_candidate_count=len(design),
+    )
+
+
+def _regret_weight(observation: MaskWorkloadObservation, *, cap: float) -> float:
+    """Give costly ranking errors more influence than near-tie errors.
+
+    The gap is divided by the experiment's predeclared tie band and capped so
+    one noisy workload cannot dominate the whole fit.  The formula is frozen;
+    it is not selected by trying several weights on the same observations.
+    """
+
+    if cap <= 0.0:
+        raise ValueError("regret weight cap must be positive")
+    possible_regret = math.exp(abs(observation.observed_log_early_late_ratio)) - 1.0
+    tie_band = max(observation.tie_threshold_fraction, 1e-9)
+    return 1.0 + min(possible_regret / tie_band, cap)
+
+
+def fit_regret_aware_mask_residual_model(
+    observations: list[MaskWorkloadObservation],
+    *,
+    ridge_lambda: float = 0.1,
+    regret_weight_cap: float = 10.0,
+    confidence_multiplier: float = 1.0,
+    max_iterations: int = 20_000,
+    tolerance: float = 1e-10,
+) -> RegretAwareMaskResidualModel:
+    """Fit a sign-constrained residual over the decomposed base-cost ratio."""
+
+    if len(observations) <= len(MATCH_MONOTONE_FEATURE_INDICES):
+        raise ValueError("Mask residual fitting requires more independent observations")
+    if (
+        ridge_lambda < 0.0
+        or regret_weight_cap <= 0.0
+        or confidence_multiplier < 0.0
+        or max_iterations < 1
+        or tolerance <= 0.0
+    ):
+        raise ValueError("Mask residual fitting parameters are invalid")
+
+    base_model = fit_decomposed_mask_cost_model(observations)
+    raw = [mask_residual_feature_vector(item.features) for item in observations]
+    feature_count = len(raw[0])
+    means = tuple(
+        statistics.mean(row[index] for row in raw) for index in range(feature_count)
+    )
+    scales = tuple(
+        statistics.pstdev(row[index] for row in raw) or 1.0
+        for index in range(feature_count)
+    )
+    design = [
+        tuple(
+            (row[index] - means[index]) / scales[index]
+            for index in range(feature_count)
+        )
+        for row in raw
+    ]
+    targets = [
+        item.observed_log_early_late_ratio
+        - (
+            base_model.predict_log_latency_ms(item.features, MaskPlacement.EARLY)
+            - base_model.predict_log_latency_ms(item.features, MaskPlacement.LATE)
+        )
+        for item in observations
+    ]
+    weights = [_regret_weight(item, cap=regret_weight_cap) for item in observations]
+    weight_sum = sum(weights)
+    intercept = (
+        sum(weight * target for weight, target in zip(weights, targets, strict=True))
+        / weight_sum
+    )
+    coefficients = [0.0] * feature_count
+    constrained = set(MATCH_MONOTONE_FEATURE_INDICES)
+    for _iteration in range(max_iterations):
+        largest_change = 0.0
+        new_intercept = (
+            sum(
+                weight
+                * (
+                    target
+                    - sum(
+                        value * coefficient
+                        for value, coefficient in zip(row, coefficients, strict=True)
+                    )
+                )
+                for row, target, weight in zip(design, targets, weights, strict=True)
+            )
+            / weight_sum
+        )
+        largest_change = max(largest_change, abs(new_intercept - intercept))
+        intercept = new_intercept
+        for index in range(feature_count):
+            numerator = 0.0
+            denominator = ridge_lambda
+            for row, target, weight in zip(design, targets, weights, strict=True):
+                residual_without_term = (
+                    target
+                    - intercept
+                    - sum(
+                        row[other] * coefficients[other]
+                        for other in range(feature_count)
+                        if other != index
+                    )
+                )
+                numerator += weight * row[index] * residual_without_term
+                denominator += weight * row[index] ** 2
+            updated = numerator / denominator if denominator else 0.0
+            if index in constrained:
+                updated = min(0.0, updated)
+            largest_change = max(largest_change, abs(updated - coefficients[index]))
+            coefficients[index] = updated
+        if largest_change < tolerance:
+            break
+
+    squared_error = 0.0
+    for row, target, weight in zip(design, targets, weights, strict=True):
+        prediction = intercept + sum(
+            value * coefficient
+            for value, coefficient in zip(row, coefficients, strict=True)
+        )
+        squared_error += weight * (target - prediction) ** 2
+    return RegretAwareMaskResidualModel(
+        base_model=base_model,
+        residual_intercept=intercept,
+        residual_coefficients=tuple(coefficients),
+        feature_means=means,
+        feature_scales=scales,
+        support_minima=tuple(
+            min(row[index] for row in raw) for index in range(feature_count)
+        ),
+        support_maxima=tuple(
+            max(row[index] for row in raw) for index in range(feature_count)
+        ),
+        ridge_lambda=ridge_lambda,
+        weighted_residual_rmse=math.sqrt(squared_error / weight_sum),
+        confidence_multiplier=confidence_multiplier,
+        training_sample_count=len(observations),
+        regret_weight_cap=regret_weight_cap,
     )
 
 
@@ -356,7 +521,8 @@ def _prediction_row(
         "selected_placement": placement.value,
         "oracle_placement": oracle.value,
         "exact_top1": placement is oracle,
-        "within_tie_threshold": regret_ratio - 1.0 <= observation.tie_threshold_fraction,
+        "within_tie_threshold": regret_ratio - 1.0
+        <= observation.tie_threshold_fraction,
         "regret_percent": (regret_ratio - 1.0) * 100.0,
         "speedup_vs_fixed_late_ratio": speedup_late,
         "speedup_vs_fixed_early_ratio": speedup_early,
@@ -442,6 +608,61 @@ def cross_validate_decomposed_mask_cost(
     return output
 
 
+def cross_validate_regret_aware_mask_residual(
+    observations: list[MaskWorkloadObservation],
+    *,
+    split: str,
+    ridge_lambda: float = 0.1,
+    regret_weight_cap: float = 10.0,
+    confidence_multiplier: float = 1.0,
+) -> list[dict[str, Any]]:
+    """Evaluate residual ranking without sharing a scenario family across folds."""
+
+    if split == "workload":
+        scheme = "residual_ranking_leave_one_workload_out"
+    elif split == "scenario":
+        scheme = "residual_ranking_leave_one_scenario_out"
+    else:
+        raise ValueError("split must be 'workload' or 'scenario'")
+
+    def group_key(item: MaskWorkloadObservation) -> str:
+        return item.workload_id if split == "workload" else item.scenario_group_id
+
+    output: list[dict[str, Any]] = []
+    for group in sorted({group_key(item) for item in observations}):
+        training = [item for item in observations if group_key(item) != group]
+        testing = [item for item in observations if group_key(item) == group]
+        model = fit_regret_aware_mask_residual_model(
+            training,
+            ridge_lambda=ridge_lambda,
+            regret_weight_cap=regret_weight_cap,
+            confidence_multiplier=confidence_multiplier,
+        )
+        for item in testing:
+            decision = choose_mask_placement_with_residual(item.features, model)
+            row = _prediction_row(
+                item,
+                scheme=scheme,
+                holdout_group=group,
+                placement=decision.placement,
+                predicted_log_ratio=decision.decision_log_early_late_ratio,
+            )
+            row.update(
+                {
+                    "base_log_early_late_ratio": decision.base_log_early_late_ratio,
+                    "residual_correction": decision.residual_correction,
+                    "corrected_log_early_late_ratio": (
+                        decision.corrected_log_early_late_ratio
+                    ),
+                    "within_training_support": decision.within_training_support,
+                    "used_base_fallback": decision.used_base_fallback,
+                    "decision_reason_code": decision.reason_code,
+                }
+            )
+            output.append(row)
+    return output
+
+
 def audit_match_rate_monotonicity(
     model: MaskV2Model,
     *,
@@ -459,7 +680,9 @@ def audit_match_rate_monotonicity(
     """
 
     ordered_rates = tuple(sorted(set(match_rates)))
-    if len(ordered_rates) < 2 or any(not 0.0 <= value <= 1.0 for value in ordered_rates):
+    if len(ordered_rates) < 2 or any(
+        not 0.0 <= value <= 1.0 for value in ordered_rates
+    ):
         raise ValueError("match_rates must contain at least two values in [0, 1]")
     if not row_counts or not identifier_widths:
         raise ValueError("monotonicity audit grids cannot be empty")
@@ -543,6 +766,56 @@ def audit_decomposed_cost_monotonicity(
     }
 
 
+def audit_residual_ranking_monotonicity(
+    model: RegretAwareMaskResidualModel,
+    *,
+    row_counts: tuple[int, ...],
+    identifier_widths: tuple[int, ...],
+    match_rates: tuple[float, ...] = (0.0, 0.1, 0.25, 0.5, 0.75, 1.0),
+) -> dict[str, Any]:
+    """Audit the learned corrected score before uncertainty fallback.
+
+    Fallback is a separate out-of-distribution policy and may switch at the
+    training-support boundary.  Mixing that switch into this audit would test
+    support coverage rather than the learned cost curve's physical direction.
+    """
+
+    ordered_rates = tuple(sorted(set(match_rates)))
+    violations: list[dict[str, Any]] = []
+    comparisons = 0
+    for row_count in row_counts:
+        for width in identifier_widths:
+            scores = [
+                model.predict_corrected_log_ratio(
+                    MaskPlacementFeatures(
+                        join_input_rows=row_count,
+                        identifier_width_bytes=width,
+                        join_match_rate=match_rate,
+                    )
+                )
+                for match_rate in ordered_rates
+            ]
+            for index in range(1, len(scores)):
+                comparisons += 1
+                if scores[index] > scores[index - 1] + 1e-9:
+                    violations.append(
+                        {
+                            "join_input_rows": row_count,
+                            "identifier_width_bytes": width,
+                            "lower_match_rate": ordered_rates[index - 1],
+                            "higher_match_rate": ordered_rates[index],
+                            "lower_corrected_score": scores[index - 1],
+                            "higher_corrected_score": scores[index],
+                        }
+                    )
+    return {
+        "comparison_count": comparisons,
+        "violation_count": len(violations),
+        "passes": not violations,
+        "examples": violations[:10],
+    }
+
+
 def _v1_rows(observations: list[MaskWorkloadObservation]) -> list[dict[str, Any]]:
     output: list[dict[str, Any]] = []
     for item in observations:
@@ -577,7 +850,8 @@ def _scheme_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "exact_top1_count": sum(bool(row["exact_top1"]) for row in rows),
         "exact_top1_rate": sum(bool(row["exact_top1"]) for row in rows) / len(rows),
         "within_tie_count": sum(bool(row["within_tie_threshold"]) for row in rows),
-        "within_tie_rate": sum(bool(row["within_tie_threshold"]) for row in rows) / len(rows),
+        "within_tie_rate": sum(bool(row["within_tie_threshold"]) for row in rows)
+        / len(rows),
         "mean_regret_percent": statistics.mean(regrets),
         "median_regret_percent": statistics.median(regrets),
         "p95_regret_percent": _percentile(regrets, 0.95),
@@ -591,7 +865,9 @@ def _scheme_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def _observation_rows(observations: list[MaskWorkloadObservation]) -> list[dict[str, Any]]:
+def _observation_rows(
+    observations: list[MaskWorkloadObservation],
+) -> list[dict[str, Any]]:
     return [
         {
             "workload_id": item.workload_id,
@@ -620,18 +896,21 @@ def _report(summary: dict[str, Any]) -> str:
         "",
         "This is grouped development cross-validation, not an independent held-out result.",
         "",
-        "| Scheme | Exact top-1 | Within 3% | Mean regret | P95 regret | vs late | vs early |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "| Scheme | Exact top-1 | Within 3% | Mean regret | P95 regret | "
+        "Max regret | vs late | vs early |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for name, values in schemes.items():
         lines.append(
             "| {name} | {exact:.1%} | {within:.1%} | {mean:.2f}% | {p95:.2f}% | "
+            "{maximum:.2f}% | "
             "{late:.3f}x | {early:.3f}x |".format(
                 name=name,
                 exact=values["exact_top1_rate"],
                 within=values["within_tie_rate"],
                 mean=values["mean_regret_percent"],
                 p95=values["p95_regret_percent"],
+                maximum=values["max_regret_percent"],
                 late=values["geometric_speedup_vs_fixed_late_ratio"],
                 early=values["geometric_speedup_vs_fixed_early_ratio"],
             )
@@ -651,54 +930,132 @@ def develop_mask_optimizer_v2(
     output_dir: str | Path,
     *,
     ridge_lambda: float = 0.01,
+    residual_ridge_lambda: float = 0.1,
+    regret_weight_cap: float = 10.0,
+    confidence_multiplier: float = 1.0,
 ) -> Path:
-    """Fit V2, run two leakage-resistant CV schemes, and save artifacts."""
+    """Fit development candidates, run grouped CV, and save auditable artifacts."""
 
     observations = load_mask_workload_observations(run_dirs)
     predictions = _v1_rows(observations)
     predictions.extend(
-        cross_validate_mask_v2(observations, split="workload", ridge_lambda=ridge_lambda)
+        cross_validate_mask_v2(
+            observations, split="workload", ridge_lambda=ridge_lambda
+        )
     )
     predictions.extend(
-        cross_validate_mask_v2(observations, split="scenario", ridge_lambda=ridge_lambda)
+        cross_validate_mask_v2(
+            observations, split="scenario", ridge_lambda=ridge_lambda
+        )
     )
-    predictions.extend(cross_validate_decomposed_mask_cost(observations, split="workload"))
-    predictions.extend(cross_validate_decomposed_mask_cost(observations, split="scenario"))
+    predictions.extend(
+        cross_validate_decomposed_mask_cost(observations, split="workload")
+    )
+    predictions.extend(
+        cross_validate_decomposed_mask_cost(observations, split="scenario")
+    )
+    predictions.extend(
+        cross_validate_regret_aware_mask_residual(
+            observations,
+            split="workload",
+            ridge_lambda=residual_ridge_lambda,
+            regret_weight_cap=regret_weight_cap,
+            confidence_multiplier=confidence_multiplier,
+        )
+    )
+    predictions.extend(
+        cross_validate_regret_aware_mask_residual(
+            observations,
+            split="scenario",
+            ridge_lambda=residual_ridge_lambda,
+            regret_weight_cap=regret_weight_cap,
+            confidence_multiplier=confidence_multiplier,
+        )
+    )
     grouped: dict[str, list[dict[str, Any]]] = {}
     for row in predictions:
         grouped.setdefault(str(row["evaluation_scheme"]), []).append(row)
     schemes = {name: _scheme_summary(rows) for name, rows in sorted(grouped.items())}
     final_model = fit_mask_v2_model(observations, ridge_lambda=ridge_lambda)
     decomposed_model = fit_decomposed_mask_cost_model(observations)
+    residual_model = fit_regret_aware_mask_residual_model(
+        observations,
+        ridge_lambda=residual_ridge_lambda,
+        regret_weight_cap=regret_weight_cap,
+        confidence_multiplier=confidence_multiplier,
+    )
     monotonicity = audit_match_rate_monotonicity(
         final_model,
-        row_counts=tuple(sorted({item.features.join_input_rows for item in observations})),
+        row_counts=tuple(
+            sorted({item.features.join_input_rows for item in observations})
+        ),
         identifier_widths=tuple(
             sorted({item.features.identifier_width_bytes for item in observations})
         ),
     )
     decomposed_monotonicity = audit_decomposed_cost_monotonicity(
         decomposed_model,
-        row_counts=tuple(sorted({item.features.join_input_rows for item in observations})),
+        row_counts=tuple(
+            sorted({item.features.join_input_rows for item in observations})
+        ),
         identifier_widths=tuple(
             sorted({item.features.identifier_width_bytes for item in observations})
         ),
     )
+    residual_monotonicity = audit_residual_ranking_monotonicity(
+        residual_model,
+        row_counts=tuple(
+            sorted({item.features.join_input_rows for item in observations})
+        ),
+        identifier_widths=tuple(
+            sorted({item.features.identifier_width_bytes for item in observations})
+        ),
+    )
+    baseline = schemes["v1_frozen_baseline"]
+    residual_primary = schemes["residual_ranking_leave_one_scenario_out"]
+    gate_checks = {
+        "within_tie_rate_strictly_improves_v1": (
+            residual_primary["within_tie_rate"] > baseline["within_tie_rate"]
+        ),
+        "p95_regret_does_not_worsen_v1": (
+            residual_primary["p95_regret_percent"]
+            <= baseline["p95_regret_percent"] + 1e-9
+        ),
+        "max_regret_does_not_worsen_v1": (
+            residual_primary["max_regret_percent"]
+            <= baseline["max_regret_percent"] + 1e-9
+        ),
+        "corrected_score_is_match_monotone": residual_monotonicity["passes"],
+    }
+    passes_development_gate = all(gate_checks.values())
     summary: dict[str, Any] = {
         "evaluation_label": "development_cross_validation",
         "observation_count": len(observations),
         "source_run_ids": sorted({item.source_run_id for item in observations}),
-        "source_commit_hashes": sorted({item.source_commit_hash for item in observations}),
+        "source_commit_hashes": sorted(
+            {item.source_commit_hash for item in observations}
+        ),
         "feature_names": list(MASK_V2_FEATURE_NAMES),
         "ridge_lambda": ridge_lambda,
+        "residual_ridge_lambda": residual_ridge_lambda,
+        "regret_weight_cap": regret_weight_cap,
+        "confidence_multiplier": confidence_multiplier,
         "schemes": schemes,
         "match_rate_monotonicity_audit": monotonicity,
         "decomposed_cost_monotonicity_audit": decomposed_monotonicity,
+        "residual_ranking_monotonicity_audit": residual_monotonicity,
+        "residual_development_gate": {
+            "passes": passes_development_gate,
+            "checks": gate_checks,
+            "baseline_scheme": "v1_frozen_baseline",
+            "primary_scheme": "residual_ranking_leave_one_scenario_out",
+        },
         "limitations": [
             "Phase 2F is development data for V2 after being a valid held-out test for V1.",
             "Feature-basis development inspected Phase 2E/F, so CV is descriptive, not final.",
             "Cardinality features use realized controlled statistics; estimator error is untested.",
             "Only synthetic workloads, two Mask placements, one machine, and one DBMS are covered.",
+            "Regret weighting and confidence fallback were frozen before this development rerun.",
         ],
     }
     output = Path(output_dir).resolve()
@@ -719,6 +1076,18 @@ def develop_mask_optimizer_v2(
     decomposed_payload["status"] = "development_only_rejected_by_tail_regret_gate"
     (output / "decomposed_cost_model.json").write_text(
         json.dumps(decomposed_payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    residual_payload = residual_model.to_dict()
+    residual_payload["training_source_run_ids"] = summary["source_run_ids"]
+    residual_payload["status"] = (
+        "development_gate_passed_not_held_out_validated"
+        if passes_development_gate
+        else "development_only_rejected_by_predeclared_gate"
+    )
+    residual_payload["development_gate"] = summary["residual_development_gate"]
+    (output / "residual_ranking_model.json").write_text(
+        json.dumps(residual_payload, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     (output / "report.md").write_text(_report(summary), encoding="utf-8")

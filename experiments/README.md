@@ -412,3 +412,19 @@ On the current 30 development observations this model improves exact selection
 to 80%, but its P95 and maximum regret worsen to 37.64% and 39.20%. It is
 therefore an explanatory baseline, not the model to take into Phase 2G. See
 `docs/decomposed-mask-cost-model.md` for the formula and frozen interpretation.
+
+The same command also evaluates a regret-aware residual ranking model. It keeps
+the decomposed early/late candidate costs as its base score and fits only the
+remaining paired log-ratio error. Severe wrong choices receive continuously
+higher (capped) training weight, complete scenario families remain isolated in
+the primary cross-validation split, and match-rate interaction coefficients
+are sign-constrained. An uncertain sign flip or extrapolation outside the
+training feature support falls back to the auditable base score. The command
+writes `residual_ranking_model.json`; its embedded gate status determines
+whether a new Phase 2G holdout may be frozen.
+
+On the current 30-observation development matrix, strict scenario-family CV
+reaches 80% within the 3% tie band and 3.25% mean regret, but P95 and maximum
+regret are still 28.43% and 37.64%. The artifact is rejected by the predeclared
+tail-risk gate, so Phase 2G remains unfrozen. See
+`docs/regret-aware-mask-residual-model.md` for the failure analysis.

@@ -11,10 +11,13 @@ from trustaero.experiments.optimizer_v2 import (
     MaskWorkloadObservation,
     audit_decomposed_cost_monotonicity,
     audit_match_rate_monotonicity,
+    audit_residual_ranking_monotonicity,
     cross_validate_decomposed_mask_cost,
     cross_validate_mask_v2,
+    cross_validate_regret_aware_mask_residual,
     fit_decomposed_mask_cost_model,
     fit_mask_v2_model,
+    fit_regret_aware_mask_residual_model,
 )
 from trustaero.optimizer.mask import MaskPlacementFeatures
 from trustaero.optimizer.mask_v2 import MaskV2Model, mask_v2_feature_vector
@@ -112,7 +115,9 @@ def test_decomposed_cost_fit_is_nonnegative_and_group_cross_validated() -> None:
     assert audit["passes"] is True
 
 
-def test_prediction_csv_supports_model_specific_explanation_columns(tmp_path: Path) -> None:
+def test_prediction_csv_supports_model_specific_explanation_columns(
+    tmp_path: Path,
+) -> None:
     path = tmp_path / "predictions.csv"
 
     optimizer_v2._write_csv(
@@ -127,3 +132,24 @@ def test_prediction_csv_supports_model_specific_explanation_columns(tmp_path: Pa
         rows = list(csv.DictReader(handle))
     assert rows[0]["estimated_early_ms"] == ""
     assert rows[1]["estimated_early_ms"] == "10.0"
+
+
+def test_regret_aware_residual_is_grouped_explainable_and_monotone() -> None:
+    observations = _observations()
+
+    model = fit_regret_aware_mask_residual_model(observations)
+    rows = cross_validate_regret_aware_mask_residual(observations, split="scenario")
+    audit = audit_residual_ranking_monotonicity(
+        model,
+        row_counts=(100_000, 300_000),
+        identifier_widths=(128, 2048),
+    )
+
+    assert model.training_sample_count == 8
+    assert len(rows) == 8
+    assert {row["evaluation_scheme"] for row in rows} == {
+        "residual_ranking_leave_one_scenario_out"
+    }
+    assert all("base_log_early_late_ratio" in row for row in rows)
+    assert all("residual_correction" in row for row in rows)
+    assert audit["passes"] is True
