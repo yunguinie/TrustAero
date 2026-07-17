@@ -1,0 +1,475 @@
+{
+  "calibration_points": [
+    {
+      "feature_vector": [
+        0.6931471805599453,
+        0.24783616390458127,
+        1.0
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T140108314442Z/narrow_high_match",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260715T140108314442Z/narrow_high_match/n100000"
+    },
+    {
+      "feature_vector": [
+        1.3862943611198906,
+        0.24783616390458127,
+        1.0
+      ],
+      "residual_regret_fraction": 0.03567447691559944,
+      "scenario_group_id": "20260715T140108314442Z/narrow_high_match",
+      "v1_regret_fraction": 0.03567447691559944,
+      "workload_id": "20260715T140108314442Z/narrow_high_match/n300000"
+    },
+    {
+      "feature_vector": [
+        0.6931471805599453,
+        2.833213344056216,
+        1.0
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T140108314442Z/wide_high_match",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260715T140108314442Z/wide_high_match/n100000"
+    },
+    {
+      "feature_vector": [
+        1.3862943611198906,
+        2.833213344056216,
+        1.0
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T140108314442Z/wide_high_match",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260715T140108314442Z/wide_high_match/n300000"
+    },
+    {
+      "feature_vector": [
+        0.6931471805599453,
+        2.833213344056216,
+        0.1
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T140108314442Z/wide_low_match",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260715T140108314442Z/wide_low_match/n100000"
+    },
+    {
+      "feature_vector": [
+        1.3862943611198906,
+        2.833213344056216,
+        0.1
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T140108314442Z/wide_low_match",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260715T140108314442Z/wide_low_match/n300000"
+    },
+    {
+      "feature_vector": [
+        1.0986122886681098,
+        2.1972245773362196,
+        1.0
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T152953290778Z/medium_width_high_match",
+      "v1_regret_fraction": 0.10941750648166071,
+      "workload_id": "20260715T152953290778Z/medium_width_high_match/n200000"
+    },
+    {
+      "feature_vector": [
+        1.791759469228055,
+        2.1972245773362196,
+        1.0
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T152953290778Z/medium_width_high_match",
+      "v1_regret_fraction": 0.09822589492046174,
+      "workload_id": "20260715T152953290778Z/medium_width_high_match/n500000"
+    },
+    {
+      "feature_vector": [
+        1.0986122886681098,
+        3.4965075614664802,
+        1.0
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T152953290778Z/verywide_high_match",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260715T152953290778Z/verywide_high_match/n200000"
+    },
+    {
+      "feature_vector": [
+        1.791759469228055,
+        3.4965075614664802,
+        1.0
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T152953290778Z/verywide_high_match",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260715T152953290778Z/verywide_high_match/n500000"
+    },
+    {
+      "feature_vector": [
+        1.0986122886681098,
+        3.4965075614664802,
+        0.1
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T152953290778Z/verywide_low_match",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260715T152953290778Z/verywide_low_match/n200000"
+    },
+    {
+      "feature_vector": [
+        1.791759469228055,
+        3.4965075614664802,
+        0.1
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T152953290778Z/verywide_low_match",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260715T152953290778Z/verywide_low_match/n500000"
+    },
+    {
+      "feature_vector": [
+        1.0986122886681098,
+        3.4965075614664802,
+        0.5
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T152953290778Z/verywide_medium_match",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260715T152953290778Z/verywide_medium_match/n200000"
+    },
+    {
+      "feature_vector": [
+        1.791759469228055,
+        3.4965075614664802,
+        0.5
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260715T152953290778Z/verywide_medium_match",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260715T152953290778Z/verywide_medium_match/n500000"
+    },
+    {
+      "feature_vector": [
+        1.252762968495368,
+        2.833213344056216,
+        0.25
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260716T012853745457Z/w1024_match025",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260716T012853745457Z/w1024_match025/n250000"
+    },
+    {
+      "feature_vector": [
+        1.7047480922384253,
+        2.833213344056216,
+        0.25
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260716T012853745457Z/w1024_match025",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260716T012853745457Z/w1024_match025/n450000"
+    },
+    {
+      "feature_vector": [
+        1.252762968495368,
+        2.833213344056216,
+        0.75
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260716T012853745457Z/w1024_match075",
+      "v1_regret_fraction": 0.09000633336836272,
+      "workload_id": "20260716T012853745457Z/w1024_match075/n250000"
+    },
+    {
+      "feature_vector": [
+        1.7047480922384253,
+        2.833213344056216,
+        0.75
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260716T012853745457Z/w1024_match075",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260716T012853745457Z/w1024_match075/n450000"
+    },
+    {
+      "feature_vector": [
+        1.5040773967762742,
+        3.4965075614664802,
+        0.1
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260716T012853745457Z/w2048_match010",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260716T012853745457Z/w2048_match010/n350000"
+    },
+    {
+      "feature_vector": [
+        1.7047480922384253,
+        3.4965075614664802,
+        0.1
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260716T012853745457Z/w2048_match010",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260716T012853745457Z/w2048_match010/n450000"
+    },
+    {
+      "feature_vector": [
+        1.5040773967762742,
+        3.4965075614664802,
+        0.25
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260716T012853745457Z/w2048_match025",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260716T012853745457Z/w2048_match025/n350000"
+    },
+    {
+      "feature_vector": [
+        1.7047480922384253,
+        3.4965075614664802,
+        0.25
+      ],
+      "residual_regret_fraction": 0.05499074883581345,
+      "scenario_group_id": "20260716T012853745457Z/w2048_match025",
+      "v1_regret_fraction": 0.05499074883581345,
+      "workload_id": "20260716T012853745457Z/w2048_match025/n450000"
+    },
+    {
+      "feature_vector": [
+        1.252762968495368,
+        3.4965075614664802,
+        0.75
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260716T012853745457Z/w2048_match075",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260716T012853745457Z/w2048_match075/n250000"
+    },
+    {
+      "feature_vector": [
+        1.7047480922384253,
+        3.4965075614664802,
+        0.75
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260716T012853745457Z/w2048_match075",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260716T012853745457Z/w2048_match075/n450000"
+    },
+    {
+      "feature_vector": [
+        1.0986122886681098,
+        1.6094379124341003,
+        1.0
+      ],
+      "residual_regret_fraction": 0.28427362885041907,
+      "scenario_group_id": "20260716T012853745457Z/w256_match100",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260716T012853745457Z/w256_match100/n200000"
+    },
+    {
+      "feature_vector": [
+        1.6094379124341003,
+        1.6094379124341003,
+        1.0
+      ],
+      "residual_regret_fraction": 0.37637880784098665,
+      "scenario_group_id": "20260716T012853745457Z/w256_match100",
+      "v1_regret_fraction": 0.0,
+      "workload_id": "20260716T012853745457Z/w256_match100/n400000"
+    },
+    {
+      "feature_vector": [
+        0.9162907318741551,
+        2.1972245773362196,
+        1.0
+      ],
+      "residual_regret_fraction": 0.06749841554739788,
+      "scenario_group_id": "20260716T012853745457Z/w512_match100",
+      "v1_regret_fraction": 0.06749841554739788,
+      "workload_id": "20260716T012853745457Z/w512_match100/n150000"
+    },
+    {
+      "feature_vector": [
+        1.5040773967762742,
+        2.1972245773362196,
+        1.0
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260716T012853745457Z/w512_match100",
+      "v1_regret_fraction": 0.21326039953034037,
+      "workload_id": "20260716T012853745457Z/w512_match100/n350000"
+    },
+    {
+      "feature_vector": [
+        0.9162907318741551,
+        2.5649493574615367,
+        1.0
+      ],
+      "residual_regret_fraction": 0.1556678559160376,
+      "scenario_group_id": "20260716T012853745457Z/w768_match100",
+      "v1_regret_fraction": 0.1556678559160376,
+      "workload_id": "20260716T012853745457Z/w768_match100/n150000"
+    },
+    {
+      "feature_vector": [
+        1.5040773967762742,
+        2.5649493574615367,
+        1.0
+      ],
+      "residual_regret_fraction": 0.0,
+      "scenario_group_id": "20260716T012853745457Z/w768_match100",
+      "v1_regret_fraction": 0.18031315983764817,
+      "workload_id": "20260716T012853745457Z/w768_match100/n350000"
+    }
+  ],
+  "development_gate": {
+    "baseline_scheme": "v1_frozen_baseline",
+    "checks": {
+      "corrected_score_is_match_monotone": true,
+      "max_regret_does_not_worsen_v1": false,
+      "p95_regret_does_not_worsen_v1": false,
+      "within_tie_rate_strictly_improves_v1": false
+    },
+    "nesting": "outer_and_inner_leave_one_scenario_family_out",
+    "passes": false,
+    "primary_scheme": "guarded_residual_nested_leave_one_scenario_out"
+  },
+  "feature_means": [
+    1.3546260758419337,
+    2.741904755566427,
+    0.6533333333333333
+  ],
+  "feature_names": [
+    "log_input_rows",
+    "log_identifier_width",
+    "join_match_rate"
+  ],
+  "feature_scales": [
+    0.34594471411990724,
+    0.8785376826712987,
+    0.376592913133296
+  ],
+  "model_type": "local_regret_guard_v1",
+  "neighbor_group_count": 3,
+  "residual_model": {
+    "base_model": {
+      "coefficient_constraint": "non_negative",
+      "coefficients": [
+        0.1575783994113242,
+        0.406216223576636,
+        0.05345652367966646,
+        0.0
+      ],
+      "feature_names": [
+        "input_rows_log100k",
+        "hash_input_log_mib",
+        "join_payload_log_mib",
+        "materialized_payload_log_mib"
+      ],
+      "hashed_identifier_width_bytes": 64,
+      "intercept_log_ms": 5.220859896649043,
+      "model_type": "decomposed_mask_cost_v1",
+      "ridge_lambda": 0.1,
+      "target": "log(governed_latency_ms)",
+      "training_candidate_count": 60
+    },
+    "confidence_multiplier": 1.0,
+    "feature_means": [
+      1.3546260758419337,
+      1.954689550578421,
+      2.741904755566427,
+      8.289870148471243,
+      3.8130425696175654,
+      0.6533333333333333,
+      0.8576437847966678,
+      1.6137994017966806,
+      2.1821086770477462
+    ],
+    "feature_names": [
+      "log_input_rows",
+      "log_input_rows_squared",
+      "log_width_ratio",
+      "log_width_ratio_squared",
+      "log_rows_width_interaction",
+      "join_match_rate",
+      "match_log_rows_interaction",
+      "match_log_width_interaction",
+      "match_log_rows_width_interaction"
+    ],
+    "feature_scales": [
+      0.34594471411990724,
+      0.8919511173482044,
+      0.8785376826712987,
+      3.8323712012720947,
+      1.673667659122302,
+      0.376592913133296,
+      0.5302690244893197,
+      1.0364295543944653,
+      1.5185320653700631
+    ],
+    "match_monotone_feature_indices": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "model_type": "regret_aware_mask_residual_v1",
+    "regret_weight_cap": 10.0,
+    "residual_coefficients": [
+      -0.25668067933828775,
+      0.5707634745955853,
+      0.5990166019069209,
+      -0.09128178990162936,
+      -0.9002068276371895,
+      -0.08866431505007868,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "residual_intercept": 0.045531718533127194,
+    "ridge_lambda": 0.1,
+    "support_maxima": [
+      1.791759469228055,
+      3.210401995568401,
+      3.4965075614664802,
+      12.225565127392272,
+      6.264900532485061,
+      1.0,
+      1.791759469228055,
+      3.4965075614664802,
+      6.264900532485061
+    ],
+    "support_minima": [
+      0.6931471805599453,
+      0.4804530139182014,
+      0.24783616390458127,
+      0.06142276413893847,
+      0.171786938251253,
+      0.1,
+      0.06931471805599453,
+      0.24783616390458127,
+      0.171786938251253
+    ],
+    "target": "observed_log_early_late_ratio_minus_base_log_ratio",
+    "training_sample_count": 30,
+    "uncertainty_policy": "retain_base_on_out_of_support_or_low_confidence_sign_flip",
+    "weighted_residual_rmse": 0.17872256520801272
+  },
+  "selector_policy": "lower_unweighted_mean_regret_over_nearest_scenario_groups",
+  "status": "development_only_rejected_by_predeclared_gate",
+  "tie_break": "frozen_v1",
+  "training_source_run_ids": [
+    "20260715T140108314442Z",
+    "20260715T152953290778Z",
+    "20260716T012853745457Z"
+  ]
+}

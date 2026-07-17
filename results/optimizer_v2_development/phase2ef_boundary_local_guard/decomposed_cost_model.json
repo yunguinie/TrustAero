@@ -1,0 +1,27 @@
+{
+  "coefficient_constraint": "non_negative",
+  "coefficients": [
+    0.1575783994113242,
+    0.406216223576636,
+    0.05345652367966646,
+    0.0
+  ],
+  "feature_names": [
+    "input_rows_log100k",
+    "hash_input_log_mib",
+    "join_payload_log_mib",
+    "materialized_payload_log_mib"
+  ],
+  "hashed_identifier_width_bytes": 64,
+  "intercept_log_ms": 5.220859896649043,
+  "model_type": "decomposed_mask_cost_v1",
+  "ridge_lambda": 0.1,
+  "status": "development_only_rejected_by_tail_regret_gate",
+  "target": "log(governed_latency_ms)",
+  "training_candidate_count": 60,
+  "training_source_run_ids": [
+    "20260715T140108314442Z",
+    "20260715T152953290778Z",
+    "20260716T012853745457Z"
+  ]
+}

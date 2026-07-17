@@ -1,0 +1,66 @@
+{
+  "freeze_schema_version": 1,
+  "artifact_label": "phase2_local_guard_negative",
+  "frozen_on": "2026-07-17",
+  "source_commit_hash": "377bf0dbb4737d2fe9446e7a2d6535128b3f2e54",
+  "source_directory": "results/optimizer_v2_development/phase2ef_boundary_local_guard",
+  "evaluation_scope": "development_nested_scenario_family_cross_validation",
+  "status": "development_only_rejected_by_predeclared_gate",
+  "phase2g_authorized": false,
+  "primary_metrics": {
+    "observation_count": 30,
+    "within_tie_rate": 0.7,
+    "mean_regret_percent": 4.65129244946239,
+    "p95_regret_percent": 28.42736288504191,
+    "max_regret_percent": 37.63788078409866
+  },
+  "gate_checks": {
+    "within_tie_rate_strictly_improves_v1": false,
+    "p95_regret_does_not_worsen_v1": false,
+    "max_regret_does_not_worsen_v1": false,
+    "corrected_score_is_match_monotone": true
+  },
+  "files": [
+    {
+      "path": "cross_validation_predictions.csv",
+      "bytes": 94181,
+      "sha256": "11f5f8b054991e675ffa097305c14ef55ab9a81646175b8364dddca754605ff9"
+    },
+    {
+      "path": "decomposed_cost_model.json",
+      "bytes": 726,
+      "sha256": "12f52842c4e260de240b06f4bb36055c4649e65f11fbe54df5746481e7cf9af6"
+    },
+    {
+      "path": "local_regret_guard_model.json",
+      "bytes": 14417,
+      "sha256": "58784b3af221e957048b0072d8e5268c9fc5c8f3d3812b49ce637a35642a0667"
+    },
+    {
+      "path": "model.json",
+      "bytes": 1006,
+      "sha256": "4c0001483b0160cc7b6000d6ebc7a3fe86db2d43531a5232ba12558d141981fd"
+    },
+    {
+      "path": "observations.csv",
+      "bytes": 7931,
+      "sha256": "f73c667e642332505b6d09b1a38dc8caedf8dcb4f95951ae04f6e7945ee26c19"
+    },
+    {
+      "path": "report.md",
+      "bytes": 1214,
+      "sha256": "3b227499fe6bded319c6441cad773d2294daa1cdeb6276ff2ecd21b7653bad24"
+    },
+    {
+      "path": "residual_ranking_model.json",
+      "bytes": 3172,
+      "sha256": "1e91d01c2770755432bdb2b6b34173e678fc004154bf7be1d845c6bf8b4756e0"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 6879,
+      "sha256": "21f2deb1622dbbc224e366700b17b5a409ed9b4427d7f8ccc8753baf7234437c"
+    }
+  ],
+  "immutability_note": "The listed result files are force-tracked despite the results/ ignore rule. Any future change must create a new freeze artifact, never overwrite this one."
+}

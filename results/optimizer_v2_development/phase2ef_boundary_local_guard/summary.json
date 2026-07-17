@@ -1,0 +1,181 @@
+{
+  "confidence_multiplier": 1.0,
+  "decomposed_cost_monotonicity_audit": {
+    "comparison_count": 270,
+    "examples": [],
+    "passes": true,
+    "violation_count": 0
+  },
+  "evaluation_label": "development_cross_validation",
+  "feature_names": [
+    "join_input_rows_100k",
+    "identifier_width_kib",
+    "join_match_rate",
+    "raw_input_work_100k_kib",
+    "matched_work_100k_kib"
+  ],
+  "limitations": [
+    "Phase 2F is development data for V2 after being a valid held-out test for V1.",
+    "Feature-basis development inspected Phase 2E/F, so CV is descriptive, not final.",
+    "Cardinality features use realized controlled statistics; estimator error is untested.",
+    "Only synthetic workloads, two Mask placements, one machine, and one DBMS are covered.",
+    "Regret weighting and confidence fallback were frozen before this development rerun.",
+    "The local guard uses three nearest scenario families without tuning k on outer folds."
+  ],
+  "local_guard_development_gate": {
+    "baseline_scheme": "v1_frozen_baseline",
+    "checks": {
+      "corrected_score_is_match_monotone": true,
+      "max_regret_does_not_worsen_v1": false,
+      "p95_regret_does_not_worsen_v1": false,
+      "within_tie_rate_strictly_improves_v1": false
+    },
+    "nesting": "outer_and_inner_leave_one_scenario_family_out",
+    "passes": false,
+    "primary_scheme": "guarded_residual_nested_leave_one_scenario_out"
+  },
+  "match_rate_monotonicity_audit": {
+    "comparison_count": 270,
+    "examples": [],
+    "passes": true,
+    "violation_count": 0
+  },
+  "neighbor_group_count": 3,
+  "observation_count": 30,
+  "regret_weight_cap": 10.0,
+  "residual_development_gate": {
+    "baseline_scheme": "v1_frozen_baseline",
+    "checks": {
+      "corrected_score_is_match_monotone": true,
+      "max_regret_does_not_worsen_v1": false,
+      "p95_regret_does_not_worsen_v1": false,
+      "within_tie_rate_strictly_improves_v1": true
+    },
+    "passes": false,
+    "primary_scheme": "residual_ranking_leave_one_scenario_out"
+  },
+  "residual_ranking_monotonicity_audit": {
+    "comparison_count": 270,
+    "examples": [],
+    "passes": true,
+    "violation_count": 0
+  },
+  "residual_ridge_lambda": 0.1,
+  "ridge_lambda": 0.01,
+  "schemes": {
+    "decomposed_cost_leave_one_scenario_out": {
+      "exact_top1_count": 24,
+      "exact_top1_rate": 0.8,
+      "geometric_speedup_vs_fixed_early_ratio": 1.2176478351852353,
+      "geometric_speedup_vs_fixed_late_ratio": 1.0511263179392258,
+      "max_regret_percent": 39.20446796131576,
+      "mean_regret_percent": 4.028151164417562,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 37.63788078409866,
+      "within_tie_count": 24,
+      "within_tie_rate": 0.8
+    },
+    "decomposed_cost_leave_one_workload_out": {
+      "exact_top1_count": 24,
+      "exact_top1_rate": 0.8,
+      "geometric_speedup_vs_fixed_early_ratio": 1.2176478351852353,
+      "geometric_speedup_vs_fixed_late_ratio": 1.0511263179392258,
+      "max_regret_percent": 39.20446796131576,
+      "mean_regret_percent": 4.028151164417562,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 37.63788078409866,
+      "within_tie_count": 24,
+      "within_tie_rate": 0.8
+    },
+    "guarded_residual_nested_leave_one_scenario_out": {
+      "exact_top1_count": 21,
+      "exact_top1_rate": 0.7,
+      "geometric_speedup_vs_fixed_early_ratio": 1.2092744833325242,
+      "geometric_speedup_vs_fixed_late_ratio": 1.043898078174474,
+      "max_regret_percent": 37.63788078409866,
+      "mean_regret_percent": 4.65129244946239,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 28.42736288504191,
+      "within_tie_count": 21,
+      "within_tie_rate": 0.7
+    },
+    "residual_ranking_leave_one_scenario_out": {
+      "exact_top1_count": 24,
+      "exact_top1_rate": 0.8,
+      "geometric_speedup_vs_fixed_early_ratio": 1.2251320825937668,
+      "geometric_speedup_vs_fixed_late_ratio": 1.0575870442623496,
+      "max_regret_percent": 37.63788078409866,
+      "mean_regret_percent": 3.248279779687514,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 28.42736288504191,
+      "within_tie_count": 24,
+      "within_tie_rate": 0.8
+    },
+    "residual_ranking_leave_one_workload_out": {
+      "exact_top1_count": 25,
+      "exact_top1_rate": 0.8333333333333334,
+      "geometric_speedup_vs_fixed_early_ratio": 1.2278024270687584,
+      "geometric_speedup_vs_fixed_late_ratio": 1.0598922012006038,
+      "max_regret_percent": 37.63788078409866,
+      "mean_regret_percent": 3.0232850611961872,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 28.42736288504191,
+      "within_tie_count": 25,
+      "within_tie_rate": 0.8333333333333334
+    },
+    "v1_frozen_baseline": {
+      "exact_top1_count": 21,
+      "exact_top1_rate": 0.7,
+      "geometric_speedup_vs_fixed_early_ratio": 1.2221481781862809,
+      "geometric_speedup_vs_fixed_late_ratio": 1.0550112088177392,
+      "max_regret_percent": 21.326039953034037,
+      "mean_regret_percent": 3.350182637844407,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 18.031315983764816,
+      "within_tie_count": 21,
+      "within_tie_rate": 0.7
+    },
+    "v2_leave_one_scenario_out": {
+      "exact_top1_count": 21,
+      "exact_top1_rate": 0.7,
+      "geometric_speedup_vs_fixed_early_ratio": 1.2119093132576548,
+      "geometric_speedup_vs_fixed_late_ratio": 1.04617257741602,
+      "max_regret_percent": 37.63788078409866,
+      "mean_regret_percent": 4.408730288108824,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 28.42736288504191,
+      "within_tie_count": 21,
+      "within_tie_rate": 0.7
+    },
+    "v2_leave_one_workload_out": {
+      "exact_top1_count": 22,
+      "exact_top1_rate": 0.7333333333333333,
+      "geometric_speedup_vs_fixed_early_ratio": 1.213326171357595,
+      "geometric_speedup_vs_fixed_late_ratio": 1.0473956706574297,
+      "max_regret_percent": 37.63788078409866,
+      "mean_regret_percent": 4.2898153650568265,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 28.42736288504191,
+      "within_tie_count": 22,
+      "within_tie_rate": 0.7333333333333333
+    }
+  },
+  "source_commit_hashes": [
+    "35c3d037490e1cef8dfb6cc5c8e146a05fc347b3",
+    "6e17b28f710bd45d14ef97e7c82ab2fec21843bc",
+    "d25ffa0373337a549a07158b9967701c4df725d3"
+  ],
+  "source_run_ids": [
+    "20260715T140108314442Z",
+    "20260715T152953290778Z",
+    "20260716T012853745457Z"
+  ]
+}

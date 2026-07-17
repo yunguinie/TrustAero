@@ -1,0 +1,41 @@
+{
+  "coefficients": [
+    -0.06884098685301841,
+    -0.06638863390968282,
+    -0.5984099497551725,
+    -0.36626447873405166,
+    0.1809197915340097
+  ],
+  "feature_means": [
+    3.1,
+    1.201171875,
+    0.6533333333333333,
+    4.044010416666667,
+    2.040677083333333
+  ],
+  "feature_names": [
+    "join_input_rows_100k",
+    "identifier_width_kib",
+    "join_match_rate",
+    "raw_input_work_100k_kib",
+    "matched_work_100k_kib"
+  ],
+  "feature_scales": [
+    1.3063945294843617,
+    0.7063097003021305,
+    0.376592913133296,
+    3.248916395772237,
+    2.138737564947524
+  ],
+  "intercept": 0.14705872079968568,
+  "model_type": "mask_latency_ratio_ridge_v2",
+  "ridge_lambda": 0.01,
+  "status": "development_only_not_held_out_validated",
+  "target": "log(early_mask_latency_ms / late_mask_latency_ms)",
+  "training_sample_count": 30,
+  "training_source_run_ids": [
+    "20260715T140108314442Z",
+    "20260715T152953290778Z",
+    "20260716T012853745457Z"
+  ]
+}
