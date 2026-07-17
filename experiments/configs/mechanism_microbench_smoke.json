@@ -1,0 +1,14 @@
+{
+  "results_dir": "results/mechanism_microbench_smoke",
+  "benchmarks": ["hash", "join_payload", "materialization"],
+  "row_counts": [1000],
+  "identifier_widths": [64],
+  "match_rates": [0.5],
+  "seeds": [1],
+  "warmup_runs": 0,
+  "measured_runs": 1,
+  "duckdb_threads": 1,
+  "duckdb_memory_limit_mb": 512,
+  "order_seed": 20260717,
+  "require_clean_git": false
+}

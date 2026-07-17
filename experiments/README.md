@@ -441,3 +441,17 @@ within the 3% band, 4.65% mean regret, 28.43% P95 regret, and 37.64% maximum
 regret. Do not tune the neighbor count on these outer-fold answers and do not
 freeze Phase 2G. Add `--progress` to the development command to print each
 completed outer guard fold in the VS Code terminal.
+
+## Phase 2H mechanism microbenchmarks
+
+The next stage measures SHA-256 work, Join payload consumption, and explicit
+materialization separately rather than fitting another boundary over the same
+end-to-end observations. The checkpointed runner is
+`scripts/run_mechanism_microbench.py`; the smoke and pilot protocols are in
+`experiments/configs/mechanism_microbench_smoke.json` and
+`experiments/configs/phase2h_mechanism_pilot.json`.
+
+The pilot is development calibration, not Phase 2G and not paper evidence. It
+has 80 atomic units and prints elapsed time plus ETA with `--progress`. See
+`docs/mechanism-microbenchmarks.md` for the isolation assumptions, output
+artifacts, resume command, and scientific boundary.
