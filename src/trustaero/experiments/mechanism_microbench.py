@@ -183,7 +183,17 @@ def _write_json_atomic(path: Path, payload: object) -> None:
         json.dumps(payload, indent=2, sort_keys=True, default=str) + "\n",
         encoding="utf-8",
     )
-    os.replace(temporary, path)
+    # Virus scanners and concurrent readers can briefly retain a Windows file
+    # handle after reading the progress file. Retry only that transient atomic
+    # replace; all other filesystem errors still fail immediately.
+    for attempt in range(6):
+        try:
+            os.replace(temporary, path)
+            break
+        except PermissionError:
+            if attempt == 5:
+                raise
+            time.sleep(0.02 * (2**attempt))
 
 
 def _environment(
@@ -215,6 +225,7 @@ def _create_data(connection: Any, unit: MechanismMicrobenchUnit) -> int:
     """Create deterministic exact-width strings and a fixed-size Join build side."""
 
     connection.execute("DROP TABLE IF EXISTS micro_materialized")
+    connection.execute("DROP TABLE IF EXISTS micro_join_output")
     connection.execute("DROP TABLE IF EXISTS micro_events")
     connection.execute("DROP TABLE IF EXISTS micro_dimension")
     blocks = math.ceil(unit.identifier_width / 32)
@@ -268,12 +279,13 @@ def _component_sql(benchmark: str) -> dict[str, str]:
     if benchmark == "join_payload":
         return {
             "join_payload_baseline": (
-                "SELECT count(*)::BIGINT, sum(length(sensitive_value))::HUGEINT "
+                "CREATE TEMP TABLE micro_join_output AS "
+                "SELECT row_id, sensitive_value, 0::BIGINT AS marker "
                 "FROM micro_events WHERE will_match"
             ),
             "join_payload": (
-                "SELECT count(*)::BIGINT, "
-                "sum(length(events.sensitive_value) + dimension.marker)::HUGEINT "
+                "CREATE TEMP TABLE micro_join_output AS "
+                "SELECT events.row_id, events.sensitive_value, dimension.marker "
                 "FROM micro_events AS events INNER JOIN micro_dimension AS dimension "
                 "ON events.join_key = dimension.dimension_key"
             ),
@@ -303,7 +315,7 @@ def _validate_result(
     if component == "hash_sha256" and result != (unit.row_count * 64,):
         raise ValueError("SHA-256 output checksum is inconsistent")
     if component in {"join_payload_baseline", "join_payload"}:
-        if not result or int(result[0]) != matched_rows:
+        if result != (matched_rows, matched_rows * unit.identifier_width):
             raise ValueError("Join match cardinality is inconsistent")
     if component in {"materialization_write", "materialization_read"}:
         if result != (unit.row_count, unit.row_count * unit.identifier_width):
@@ -317,14 +329,19 @@ def _execute_component(
     sql: str,
     matched_rows: int,
 ) -> tuple[float, tuple[Any, ...]]:
+    output_table: str | None = None
     if component == "materialization_write":
-        connection.execute("DROP TABLE IF EXISTS micro_materialized")
+        output_table = "micro_materialized"
+    elif component in {"join_payload_baseline", "join_payload"}:
+        output_table = "micro_join_output"
+    if output_table is not None:
+        connection.execute(f"DROP TABLE IF EXISTS {output_table}")
         started = time.perf_counter()
         connection.execute(sql)
         latency_ms = (time.perf_counter() - started) * 1000.0
         result = connection.execute(
             "SELECT count(*)::BIGINT, sum(length(sensitive_value))::HUGEINT "
-            "FROM micro_materialized"
+            f"FROM {output_table}"
         ).fetchone()
     else:
         started = time.perf_counter()
@@ -368,11 +385,22 @@ def _profiles(
     profile_components: tuple[str, ...]
     if unit.benchmark == "materialization":
         connection.execute("DROP TABLE IF EXISTS micro_materialized")
-        connection.execute(sql_by_component["materialization_write"])
-        profile_components = ("materialization_read",)
+        profile_components = ("materialization_write", "materialization_read")
+    elif unit.benchmark == "join_payload":
+        profile_components = tuple(sql_by_component)
     else:
         profile_components = tuple(sql_by_component)
     for component in profile_components:
+        if component == "materialization_write":
+            connection.execute("DROP TABLE IF EXISTS micro_materialized")
+        elif component == "materialization_read":
+            if connection.execute(
+                "SELECT count(*) FROM information_schema.tables "
+                "WHERE table_name = 'micro_materialized'"
+            ).fetchone() == (0,):
+                connection.execute(sql_by_component["materialization_write"])
+        elif component in {"join_payload_baseline", "join_payload"}:
+            connection.execute("DROP TABLE IF EXISTS micro_join_output")
         observation = observe_duckdb_plan(
             connection,
             sql_by_component[component],
@@ -393,6 +421,8 @@ def _profiles(
             observation.plan_json + "\n",
             encoding="utf-8",
         )
+        if component in {"join_payload_baseline", "join_payload"}:
+            connection.execute("DROP TABLE IF EXISTS micro_join_output")
     if unit.benchmark == "materialization":
         connection.execute("DROP TABLE IF EXISTS micro_materialized")
     return output

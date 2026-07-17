@@ -111,3 +111,26 @@ def test_loader_and_validation_reject_duplicate_dimensions(tmp_path: Path) -> No
     assert loaded.row_counts == (100,)
     with pytest.raises(ValueError, match="identifier_widths cannot contain duplicates"):
         replace(loaded, identifier_widths=(64, 64))
+
+
+def test_atomic_json_retries_transient_windows_permission_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    real_replace = microbench.os.replace
+    attempts = 0
+
+    def flaky_replace(source: Path, destination: Path) -> None:
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise PermissionError("transient reader lock")
+        real_replace(source, destination)
+
+    monkeypatch.setattr(microbench.os, "replace", flaky_replace)
+    path = tmp_path / "progress.json"
+
+    microbench._write_json_atomic(path, {"complete": True})
+
+    assert attempts == 2
+    assert json.loads(path.read_text(encoding="utf-8")) == {"complete": True}

@@ -455,3 +455,9 @@ The pilot is development calibration, not Phase 2G and not paper evidence. It
 has 80 atomic units and prints elapsed time plus ETA with `--progress`. See
 `docs/mechanism-microbenchmarks.md` for the isolation assumptions, output
 artifacts, resume command, and scientific boundary.
+
+The first pilot found identifiable hash and materialization scaling but an
+unstable scalar Join diagnostic. The refined Join protocol forces equal-schema
+payload materialization on both sides of the paired subtraction and is frozen
+in `experiments/configs/phase2h_join_payload_refinement.json`. Do not build the
+cost formula until that refinement passes validation and seed-stability checks.

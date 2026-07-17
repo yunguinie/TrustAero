@@ -21,10 +21,17 @@ that subtraction perfectly removes every vectorized scan effect.
 ### Join payload
 
 The dimension table size and Join key type stay fixed. Match rate changes only
-which fact rows use a key present in that dimension. The paired queries compare
-a matched-row payload baseline with an inner Join that consumes the same
-sensitive value plus a dimension marker. This avoids changing the Join build
-side when match rate changes.
+which fact rows use a key present in that dimension. The initial pilot compared
+scalar payload consumers, but showed that `length(string)` can be satisfied
+largely from string metadata and does not force the full payload through the
+Join. The refined paired queries instead materialize identical output schemas:
+
+- baseline: materialize matched fact rows without a Join;
+- Join: materialize the same rows and payload after the dimension Join.
+
+The paired subtraction controls common output materialization while forcing
+real payload production. This avoids changing the Join build side when match
+rate changes.
 
 DuckDB may use vector references or late payload consumption instead of copying
 strings through the hash table. That is a result to measure, not an assumption
@@ -79,6 +86,34 @@ python -u scripts/run_mechanism_microbench.py `
   --config experiments/configs/phase2h_mechanism_pilot.json `
   --progress
 ```
+
+## First pilot diagnosis
+
+The first 80-unit run completed with 1120 measurements and no failed
+validation, negative median paired diagnostic, or disk spill. It produced
+clear scale/width signals for two mechanisms:
+
+- incremental SHA-256 diagnostic: about 221 ms to 3696 ms;
+- materialization round trip: about 27 ms to 442 ms.
+
+The original scalar Join diagnostic ranged only from about 1.3 ms to 7.9 ms.
+Its median relative gap between the two seeds was about 31%, with a maximum
+above 100%, and it had no stable width or match-rate trend. Therefore it is not
+eligible for a cost formula. This is a benchmark-design finding, not evidence
+that Join payload is free.
+
+The refined Join-only protocol uses new seeds and the materialized paired
+queries described above:
+
+```powershell
+python -u scripts/run_mechanism_microbench.py `
+  --config experiments/configs/phase2h_join_payload_refinement.json `
+  --progress
+```
+
+Do not combine the original and refined Join measurements as if they were the
+same target. Hash and materialization pilot observations remain useful
+development diagnostics; Join must be recollected under the refined protocol.
 
 After interruption, use the exact same committed code and configuration:
 
