@@ -31,6 +31,15 @@ from trustaero.optimizer.mask_mechanism import (
     NonnegativeMechanismCost,
     choose_mask_placement_by_mechanism,
 )
+from trustaero.optimizer.mask_pipeline import (
+    PIPELINE_COST_FEATURE_NAMES,
+    PIPELINE_SUPPORT_FEATURE_NAMES,
+    PipelineMaskCostDecision,
+    PipelineMaskCostModel,
+    choose_mask_placement_by_pipeline_cost,
+    pipeline_cost_feature_vector,
+    pipeline_support_feature_vector,
+)
 from trustaero.optimizer.mask_residual import (
     MASK_RESIDUAL_FEATURE_NAMES,
     RegretAwareMaskResidualDecision,
@@ -59,6 +68,8 @@ __all__ = [
     "HASH_FEATURE_NAMES",
     "JOIN_FEATURE_NAMES",
     "MATERIALIZATION_FEATURE_NAMES",
+    "PIPELINE_COST_FEATURE_NAMES",
+    "PIPELINE_SUPPORT_FEATURE_NAMES",
     "MASK_RESIDUAL_FEATURE_NAMES",
     "DecomposedMaskCostDecision",
     "DecomposedMaskCostModel",
@@ -68,6 +79,8 @@ __all__ = [
     "MechanismMaskCostDecision",
     "MechanismMaskCostModel",
     "NonnegativeMechanismCost",
+    "PipelineMaskCostDecision",
+    "PipelineMaskCostModel",
     "RegretAwareMaskResidualDecision",
     "RegretAwareMaskResidualModel",
     "choose_mask_placement",
@@ -76,8 +89,11 @@ __all__ = [
     "choose_mask_placement_with_local_guard",
     "choose_mask_placement_with_residual",
     "choose_mask_placement_by_mechanism",
+    "choose_mask_placement_by_pipeline_cost",
     "mask_candidate_cost_features",
     "mask_guard_feature_vector",
     "mask_v2_feature_vector",
     "mask_residual_feature_vector",
+    "pipeline_cost_feature_vector",
+    "pipeline_support_feature_vector",
 ]

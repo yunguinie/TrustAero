@@ -517,3 +517,13 @@ optimizer-design gate checks pass, including adjacency of the stable-early
 region. This permits pipeline-aware model design only; Phase 2G remains
 unauthorized. See `docs/phase2j-boundary-results.md` and
 `experiments/frozen/phase2j_boundary_confirmation_record.json`.
+
+## Phase 2K pipeline-aware optimizer development
+
+Phase 2K fits one complete-fragment cost formula on the combined Phase 2I/J
+development families. It uses whole-family cross-validation, non-negative
+physical-work coefficients, an uncertainty fallback to frozen V1, and
+predeclared regret and coverage gates. Passing Phase 2K still does not authorize
+Phase 2G until the resulting model artifact is separately frozen. See
+`docs/pipeline-aware-mask-optimizer.md` and
+`experiments/configs/phase2k_pipeline_optimizer_development.json`.

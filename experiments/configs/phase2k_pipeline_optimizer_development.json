@@ -1,0 +1,14 @@
+{
+  "source_run_dirs": [
+    "results/phase2i_fragment_pilot/20260717T120435635390Z",
+    "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z"
+  ],
+  "output_dir": "results/phase2k_pipeline_optimizer_development/fixed_formula_v1",
+  "tie_threshold_fraction": 0.03,
+  "ridge_lambda": 0.1,
+  "uncertainty_multiplier": 1.0,
+  "minimum_direct_coverage": 0.25,
+  "evaluation_unit": "complete_rows_width_match_family",
+  "cross_validation": "leave_one_complete_family_out",
+  "phase2g_authorized": false
+}
