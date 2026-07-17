@@ -132,3 +132,28 @@ def test_seed_agreement_must_be_a_strict_majority(tmp_path: Path) -> None:
             tmp_path / "analysis",
             required_seed_agreement_fraction=0.5,
         )
+
+
+def test_family_relative_difference_preserves_seed_pairing() -> None:
+    units = []
+    for seed, (early, late) in enumerate(
+        ((90.0, 100.0), (180.0, 200.0), (9000.0, 10000.0),
+         (90000.0, 100000.0), (5000.0, 4500.0))
+    ):
+        units.append(
+            {
+                "family_id": "paired",
+                "row_count": 100_000,
+                "identifier_width": 128,
+                "match_rate": 1.0,
+                "seed": seed,
+                "early_median_latency_ms": early,
+                "late_median_latency_ms": late,
+                "classification": "early" if early < late * 0.97 else "late",
+            }
+        )
+
+    family = phase2i_analysis._family_rows(units, 0.8)[0]
+
+    assert family["family_classification"] == "stable_early"
+    assert family["median_early_minus_late_percent"] == pytest.approx(-10.0)

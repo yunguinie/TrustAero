@@ -135,6 +135,14 @@ def _family_rows(
         late_values = [float(row["late_median_latency_ms"]) for row in rows]
         median_early = statistics.median(early_values)
         median_late = statistics.median(late_values)
+        paired_relative_differences = [
+            (early / late - 1.0) * 100.0
+            for early, late in zip(early_values, late_values, strict=True)
+        ]
+        paired_speedups = [
+            max(early, late) / min(early, late)
+            for early, late in zip(early_values, late_values, strict=True)
+        ]
         output.append(
             {
                 "family_id": family_id,
@@ -149,12 +157,12 @@ def _family_rows(
                 "family_classification": classification,
                 "median_early_latency_ms": median_early,
                 "median_late_latency_ms": median_late,
-                "median_early_minus_late_percent": (
-                    median_early / median_late - 1.0
-                )
-                * 100.0,
-                "median_winner_speedup_ratio": max(median_early, median_late)
-                / min(median_early, median_late),
+                # Preserve the paired-seed design: compute each seed's
+                # relative difference first, then aggregate those ratios.
+                "median_early_minus_late_percent": statistics.median(
+                    paired_relative_differences
+                ),
+                "median_winner_speedup_ratio": statistics.median(paired_speedups),
             }
         )
     return output
