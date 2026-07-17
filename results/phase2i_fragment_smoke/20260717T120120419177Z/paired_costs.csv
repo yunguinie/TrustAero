@@ -1,0 +1,5 @@
+unit_id,benchmark,identifier_width,match_rate,row_count,seed,matched_rows,derived_component,left_component,right_component,paired_operation,pairs,median_paired_cost_ms,p95_paired_cost_ms,min_paired_cost_ms,max_paired_cost_ms
+mask_fragment-n2000-w512-m0250-s707,mask_fragment,512,0.25,2000,707,500,early_minus_late,early_mask_fragment,late_mask_fragment,subtract,3,13.06190004106611,16.225699975620955,3.1609999714419246,16.225699975620955
+mask_fragment-n2000-w512-m0750-s707,mask_fragment,512,0.75,2000,707,1500,early_minus_late,early_mask_fragment,late_mask_fragment,subtract,3,3.547100001014769,4.162399971392006,0.4239000263623893,4.162399971392006
+mask_fragment-n2000-w64-m0250-s707,mask_fragment,64,0.25,2000,707,500,early_minus_late,early_mask_fragment,late_mask_fragment,subtract,3,3.529600042384118,6.0659999144263566,2.7837000088766217,6.0659999144263566
+mask_fragment-n2000-w64-m0750-s707,mask_fragment,64,0.75,2000,707,1500,early_minus_late,early_mask_fragment,late_mask_fragment,subtract,3,0.21840003319084644,0.3586999955587089,-15.477799985092133,0.3586999955587089

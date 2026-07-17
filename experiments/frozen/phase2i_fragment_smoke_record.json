@@ -1,0 +1,48 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "phase2i_protocol_smoke_not_performance_evidence",
+  "protocol_commit": "d3d72da",
+  "run_id": "20260717T120120419177Z",
+  "status": "complete",
+  "phase2g_authorized": false,
+  "unit_count": 4,
+  "measurement_count": 24,
+  "operator_summary_count": 80,
+  "all_validations_passed": true,
+  "result_equivalent_fragment_count": 4,
+  "distinct_physical_plan_fragment_count": 4,
+  "spilled_profile_count": 0,
+  "spilled_unit_count": 0,
+  "early_faster_unit_count": 0,
+  "interpretation": "The smoke validates execution and evidence capture only. Its 2K-row timings are not optimizer or paper performance evidence.",
+  "files": [
+    {
+      "path": "config.json",
+      "sha256": "d7ddcabc52a7786cc3d31fa81de09a6cf2ad746f37fdbea4bc4563e010cd1df2"
+    },
+    {
+      "path": "environment.json",
+      "sha256": "122777fd31d24e8ca469567db4e655a3e6824563f6bffe74dcf7ad0115735eaa"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "8a87b5edbd5ecfac86d797d12058a6c7e1983582f30777fe2dbe0a99f52f3652"
+    },
+    {
+      "path": "paired_costs.csv",
+      "sha256": "05b528adee8709580044788a4d69022c87fad948ca2d4506f4ef2f0293049100"
+    },
+    {
+      "path": "component_summary.csv",
+      "sha256": "343803d3eb2df901b72c7367ce4f0def44249b258500dc95193f44f412cd52e9"
+    },
+    {
+      "path": "operator_summary.csv",
+      "sha256": "fbb577d4dbbd60c8ac34871963994a2719ed313b8ba26b1f89fa231f82b804ac"
+    },
+    {
+      "path": "raw_measurements.csv",
+      "sha256": "357ff5d38cfb6b5137292ba3f1c6b9c78b132759b9b5e7bd1b5ba1bd3c3a575e"
+    }
+  ]
+}

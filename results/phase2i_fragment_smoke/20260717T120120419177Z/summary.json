@@ -1,0 +1,22 @@
+{
+  "all_validations_passed": true,
+  "benchmarks": [
+    "mask_fragment"
+  ],
+  "component_summary_count": 8,
+  "distinct_physical_plan_fragment_count": 4,
+  "evaluation_label": "mechanism_microbenchmark",
+  "mask_fragment_unit_count": 4,
+  "max_peak_temp_directory_bytes": 0,
+  "measurement_count": 24,
+  "negative_median_paired_difference_count": 0,
+  "note": "Paired differences are diagnostics, not guaranteed pure operator costs; DuckDB may fuse or defer payload work. For mask_fragment, a negative early_minus_late value means early Mask was faster. Physical profiles and content-equivalence checks are retained.",
+  "operator_summary_count": 80,
+  "paired_cost_count": 4,
+  "result_equivalent_fragment_count": 4,
+  "run_id": "20260717T120120419177Z",
+  "spilled_profile_count": 0,
+  "spilled_unit_count": 0,
+  "status": "complete",
+  "unit_count": 4
+}
