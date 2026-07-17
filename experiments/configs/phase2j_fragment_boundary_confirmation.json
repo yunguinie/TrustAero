@@ -1,0 +1,15 @@
+{
+  "results_dir": "results/phase2j_fragment_boundary_confirmation",
+  "benchmarks": ["mask_fragment"],
+  "row_counts": [100000, 150000, 200000],
+  "identifier_widths": [128, 256, 512],
+  "match_rates": [0.9, 1.0],
+  "seeds": [1111, 1222, 1333, 1444, 1555],
+  "warmup_runs": 2,
+  "measured_runs": 15,
+  "profile_runs": 3,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260721,
+  "require_clean_git": true
+}

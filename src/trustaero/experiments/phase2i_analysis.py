@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 import statistics
 from pathlib import Path
 from typing import Any, cast
@@ -108,7 +109,10 @@ def _unit_rows(
     return output
 
 
-def _family_rows(unit_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _family_rows(
+    unit_rows: list[dict[str, Any]],
+    required_seed_agreement_fraction: float,
+) -> list[dict[str, Any]]:
     grouped: dict[str, list[dict[str, Any]]] = {}
     for row in unit_rows:
         grouped.setdefault(str(row["family_id"]), []).append(row)
@@ -118,11 +122,12 @@ def _family_rows(unit_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     output: list[dict[str, Any]] = []
     for family_id, rows in sorted(grouped.items()):
         classes = [str(row["classification"]) for row in rows]
-        if all(value == "early" for value in classes):
+        required_count = math.ceil(required_seed_agreement_fraction * len(rows))
+        if classes.count("early") >= required_count:
             classification = "stable_early"
-        elif all(value == "late" for value in classes):
+        elif classes.count("late") >= required_count:
             classification = "stable_late"
-        elif all(value == "tie" for value in classes):
+        elif classes.count("tie") >= required_count:
             classification = "stable_tie"
         else:
             classification = "mixed"
@@ -137,6 +142,7 @@ def _family_rows(unit_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "identifier_width": rows[0]["identifier_width"],
                 "match_rate": rows[0]["match_rate"],
                 "seed_count": len(rows),
+                "required_seed_agreement_count": required_count,
                 "early_count": classes.count("early"),
                 "late_count": classes.count("late"),
                 "tie_count": classes.count("tie"),
@@ -156,7 +162,7 @@ def _family_rows(unit_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def _report(summary: dict[str, Any], families: list[dict[str, Any]]) -> str:
     lines = [
-        "# Phase 2I complete-fragment pilot analysis",
+        "# Complete Mask-fragment family analysis",
         "",
         "This is development evidence, not an independent Phase 2G result.",
         "",
@@ -167,6 +173,8 @@ def _report(summary: dict[str, Any], families: list[dict[str, Any]]) -> str:
         f"- Stable tie families: {summary['stable_tie_family_count']}",
         f"- Mixed families: {summary['mixed_family_count']}",
         f"- Stable reversal observed: {summary['stable_reversal_observed']}",
+        f"- Required seed agreement: {summary['required_seed_agreement_fraction']:.0%}",
+        f"- Optimizer-design gate passed: {summary['optimizer_design_gate_passes']}",
         "",
         "| Rows | Width | Match | Early/Tie/Late seeds | Family | Early ms | Late ms |",
         "|---:|---:|---:|---:|---|---:|---:|",
@@ -189,12 +197,46 @@ def _report(summary: dict[str, Any], families: list[dict[str, Any]]) -> str:
     lines.extend(
         [
             "",
-            "The stable early region contains too few families to fit a new selector ",
-            "responsibly. Confirm the high-match boundary with a separately frozen ",
-            "matrix and new seeds before designing a pipeline-aware optimizer.",
+            "Passing this gate permits pipeline-aware model design only. It does not ",
+            "authorize Phase 2G or a held-out generalization claim.",
         ]
     )
     return "\n".join(lines) + "\n"
+
+
+def _stable_early_region_has_adjacent_families(
+    families: list[dict[str, Any]],
+) -> bool:
+    """Detect a neighboring pair on the observed rows/width/match grid."""
+
+    early_families = [
+        row for row in families if row["family_classification"] == "stable_early"
+    ]
+    row_axis = sorted({int(row["row_count"]) for row in families})
+    width_axis = sorted({int(row["identifier_width"]) for row in families})
+    match_axis = sorted({float(row["match_rate"]) for row in families})
+
+    def adjacent(left: dict[str, Any], right: dict[str, Any]) -> bool:
+        indices_left = (
+            row_axis.index(int(left["row_count"])),
+            width_axis.index(int(left["identifier_width"])),
+            match_axis.index(float(left["match_rate"])),
+        )
+        indices_right = (
+            row_axis.index(int(right["row_count"])),
+            width_axis.index(int(right["identifier_width"])),
+            match_axis.index(float(right["match_rate"])),
+        )
+        differences = [
+            abs(a - b) for a, b in zip(indices_left, indices_right, strict=True)
+        ]
+        return sorted(differences) == [0, 0, 1]
+
+    return any(
+        adjacent(left, right)
+        for index, left in enumerate(early_families)
+        for right in early_families[index + 1 :]
+    )
 
 
 def analyze_phase2i_fragment_run(
@@ -202,11 +244,17 @@ def analyze_phase2i_fragment_run(
     output_dir_value: str | Path,
     *,
     tie_threshold_fraction: float = 0.03,
+    required_seed_agreement_fraction: float = 1.0,
+    evaluation_label: str = "phase2i_fragment_pilot_development_analysis",
 ) -> Path:
     """Validate a complete pilot and emit deterministic unit/family summaries."""
 
     if not 0.0 <= tie_threshold_fraction < 1.0:
         raise ValueError("tie_threshold_fraction must be in [0, 1)")
+    if not 0.5 < required_seed_agreement_fraction <= 1.0:
+        raise ValueError("required_seed_agreement_fraction must be in (0.5, 1]")
+    if not evaluation_label:
+        raise ValueError("evaluation_label cannot be empty")
     run_dir = Path(run_dir_value).resolve()
     output_dir = Path(output_dir_value).resolve()
     summary = _read_object(run_dir / "summary.json")
@@ -223,7 +271,7 @@ def analyze_phase2i_fragment_run(
     )
     if len(units) != unit_count:
         raise ValueError("Phase 2I component summary does not cover every unit")
-    families = _family_rows(units)
+    families = _family_rows(units, required_seed_agreement_fraction)
     class_counts = {
         name: sum(row["family_classification"] == name for row in families)
         for name in ("stable_early", "stable_late", "stable_tie", "mixed")
@@ -233,11 +281,23 @@ def analyze_phase2i_fragment_run(
         for name in ("early", "late", "tie")
     }
     environment = _read_object(run_dir / "environment.json")
+    early_families = [
+        row for row in families if row["family_classification"] == "stable_early"
+    ]
+    early_region_adjacent = _stable_early_region_has_adjacent_families(families)
+    optimizer_design_checks = {
+        "at_least_two_stable_early_families": len(early_families) >= 2,
+        "at_least_one_stable_late_family": class_counts["stable_late"] >= 1,
+        "stable_early_region_has_adjacent_families": early_region_adjacent,
+        "no_spilled_units": int(summary.get("spilled_unit_count", 0)) == 0,
+    }
+    optimizer_design_gate_passes = all(optimizer_design_checks.values())
     analysis_summary: dict[str, Any] = {
-        "evaluation_label": "phase2i_fragment_pilot_development_analysis",
+        "evaluation_label": evaluation_label,
         "source_run_id": str(summary["run_id"]),
         "source_commit_hash": str(environment.get("commit_hash", "unknown")),
         "tie_threshold_fraction": tie_threshold_fraction,
+        "required_seed_agreement_fraction": required_seed_agreement_fraction,
         "unit_count": len(units),
         "family_count": len(families),
         "unit_classification_counts": unit_class_counts,
@@ -255,7 +315,13 @@ def analyze_phase2i_fragment_run(
         ],
         "spilled_unit_count": int(summary.get("spilled_unit_count", 0)),
         "phase2g_authorized": False,
-        "optimizer_training_recommendation": "defer_until_boundary_confirmation",
+        "optimizer_design_gate": optimizer_design_checks,
+        "optimizer_design_gate_passes": optimizer_design_gate_passes,
+        "optimizer_training_recommendation": (
+            "eligible_for_pipeline_model_design"
+            if optimizer_design_gate_passes
+            else "defer_optimizer_training"
+        ),
         "scientific_boundary": (
             "The fixed 3% tie band classifies complete seed families. No optimizer "
             "is fitted, and the development pilot is not held-out Phase 2G evidence."

@@ -17,11 +17,23 @@ def main() -> None:
         default=0.03,
         help="Frozen practical-tie fraction; defaults to 0.03.",
     )
+    parser.add_argument(
+        "--required-seed-agreement",
+        type=float,
+        default=1.0,
+        help="Fraction of a family's seeds required for a stable label.",
+    )
+    parser.add_argument(
+        "--evaluation-label",
+        default="phase2i_fragment_pilot_development_analysis",
+    )
     args = parser.parse_args()
     output = analyze_phase2i_fragment_run(
         args.run_dir,
         args.output_dir,
         tie_threshold_fraction=args.tie_threshold,
+        required_seed_agreement_fraction=args.required_seed_agreement,
+        evaluation_label=args.evaluation_label,
     )
     print(output)
 

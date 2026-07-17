@@ -496,3 +496,16 @@ The smoke and 72-unit pilot protocols are frozen in
 terminal progress, ETA, atomic per-unit checkpoints, and resume. Phase 2I is
 development measurement only; it does not authorize Phase 2G or train a new
 optimizer. See `docs/phase2i-fragment-protocol.md`.
+
+## Phase 2J high-match boundary confirmation
+
+Phase 2J freezes 90 complete-fragment units around the single stable-early
+Phase 2I point. It uses three scales, three narrow-to-medium widths, 90%/100%
+match rates, and five new seeds. A family needs at least four of five seeds
+outside the existing 3% tie band in the same direction.
+
+The predeclared optimizer-design gate additionally requires at least two
+adjacent stable-early families, one stable-late family, and no spill. Passing
+only permits model design; it does not authorize Phase 2G. See
+`docs/phase2j-boundary-protocol.md` and
+`experiments/configs/phase2j_fragment_boundary_confirmation.json`.
