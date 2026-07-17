@@ -535,3 +535,13 @@ strict-improvement check. This is frozen as a negative result without post-hoc
 parameter tuning, and Phase 2G remains unauthorized. See
 `docs/phase2k-pipeline-optimizer-results.md` and
 `experiments/frozen/phase2k_pipeline_optimizer_negative.json`.
+
+## Phase 2L paired operator attribution
+
+Phase 2L uses the already frozen Phase 2I/J `EXPLAIN ANALYZE` artifacts to
+compare early/late operator roles within the same data seed. It predeclares
+sign, rank-association, dominance, and stable-region reversal thresholds before
+the combined analysis. Operator timings are treated as descriptive association,
+not an additive causal decomposition. See
+`docs/phase2l-operator-attribution-protocol.md` and
+`experiments/configs/phase2l_pipeline_attribution.json`.

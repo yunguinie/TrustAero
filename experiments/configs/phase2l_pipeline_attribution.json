@@ -1,0 +1,14 @@
+{
+  "source_run_dirs": [
+    "results/phase2i_fragment_pilot/20260717T120435635390Z",
+    "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z"
+  ],
+  "output_dir": "results/phase2l_pipeline_attribution/frozen_analysis_v1",
+  "tie_threshold_fraction": 0.03,
+  "required_family_agreement_fraction": 0.8,
+  "minimum_sign_agreement": 0.65,
+  "minimum_absolute_spearman": 0.4,
+  "minimum_dominant_family_fraction": 0.2,
+  "require_stable_region_direction_reversal": true,
+  "phase2g_authorized": false
+}
