@@ -509,3 +509,11 @@ adjacent stable-early families, one stable-late family, and no spill. Passing
 only permits model design; it does not authorize Phase 2G. See
 `docs/phase2j-boundary-protocol.md` and
 `experiments/configs/phase2j_fragment_boundary_confirmation.json`.
+
+The completed confirmation has 90/90 equivalent result pairs, 90/90 distinct
+actual-plan pairs, exact Join cardinalities, and no spill. The frozen 4/5 rule
+finds five stable-early, three stable-late, and ten mixed families. All four
+optimizer-design gate checks pass, including adjacency of the stable-early
+region. This permits pipeline-aware model design only; Phase 2G remains
+unauthorized. See `docs/phase2j-boundary-results.md` and
+`experiments/frozen/phase2j_boundary_confirmation_record.json`.

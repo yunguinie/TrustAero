@@ -1,0 +1,62 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "phase2j_boundary_confirmation_development_not_phase2g",
+  "protocol_commit": "86a3c5594a7b0bd7b33efe4c4ffaf5dc0aa17226",
+  "analysis_commit": "bcbc170c96249f86d5560aa97625ed397139791b",
+  "run_id": "20260717T134222171980Z",
+  "status": "complete",
+  "phase2g_authorized": false,
+  "optimizer_design_gate_passes": true,
+  "optimizer_training_recommendation": "eligible_for_pipeline_model_design",
+  "unit_count": 90,
+  "family_count": 18,
+  "measurement_count": 2700,
+  "operator_summary_count": 1800,
+  "all_validations_passed": true,
+  "result_equivalent_fragment_count": 90,
+  "distinct_physical_plan_fragment_count": 90,
+  "spilled_unit_count": 0,
+  "classification_protocol": {
+    "tie_threshold_fraction": 0.03,
+    "required_seed_agreement_fraction": 0.8,
+    "seeds_per_family": 5
+  },
+  "unit_classification_counts": {"early": 37, "late": 29, "tie": 24},
+  "family_classification_counts": {
+    "stable_early": 5,
+    "stable_late": 3,
+    "stable_tie": 0,
+    "mixed": 10
+  },
+  "optimizer_design_gate": {
+    "at_least_two_stable_early_families": true,
+    "at_least_one_stable_late_family": true,
+    "stable_early_region_has_adjacent_families": true,
+    "no_spilled_units": true
+  },
+  "stable_early_family_ids": [
+    "n100000-w128-m1000",
+    "n150000-w128-m0900",
+    "n200000-w128-m0900",
+    "n200000-w128-m1000",
+    "n200000-w256-m1000"
+  ],
+  "files": [
+    {"path": "run/config.json", "sha256": "02a42ee9c807730a66d13b211ee4032745191d9810dc9991e279bc365aa77e14"},
+    {"path": "run/environment.json", "sha256": "93f9cfa8fcf715f3d31b31fa1094706ca581a1207855de173ff484d203beac37"},
+    {"path": "run/summary.json", "sha256": "686f53d2e49d7481cee3d3aa199b904090e4dd1b0bd1cb761bd799b4dbe52faf"},
+    {"path": "run/raw_measurements.csv", "sha256": "1e44c546e932cfd6c443316a0928efdddd2e1f8f90e71c1934f596fd8f7cd9c1"},
+    {"path": "run/component_summary.csv", "sha256": "0a1064a9e04f253cb8e0cf9abaa88c6b20077d647c9ebc4d0a4807cf5c7bce93"},
+    {"path": "run/paired_costs.csv", "sha256": "951100c15bba16800483b316a3f3fa895e4afee89663df2d96f28405b8d55561"},
+    {"path": "run/operator_summary.csv", "sha256": "c8ae091881a25b78d3dab659950ef0b2dc97d5554aedb3b24f3e32499ccdaab4"},
+    {"path": "analysis/analysis_summary.json", "sha256": "c61c047f7849da93ea41aee3eb677f85c9ae3e143b450548f86860da94001948"},
+    {"path": "analysis/unit_summary.csv", "sha256": "b34b9a41f61ac09d4e4ed968d6605a353cfe5463542ba50b31ab5512d12332f0"},
+    {"path": "analysis/family_summary.csv", "sha256": "2b1086bae9e2d63b2a30f2330315aaa5e9f2281d482583a7f1a416b76f2b6f55"},
+    {"path": "analysis/report.md", "sha256": "6367c44b093c32ef53f713afd6080623389bb3bcc49fcdfd08ff8621149ffa93"},
+    {"path": "stable_early/early.json", "sha256": "8d2a7d26693f488894918b2643f40ad20297c756cc7ae6e9f3abce3db78f5aa5"},
+    {"path": "stable_early/late.json", "sha256": "e17c6eefa3770026cb6b185dfaaecaddefb0f8a4f006fb8f5b8cb1808c1dc132"},
+    {"path": "stable_late/early.json", "sha256": "e0abf13b5124cb06cc95b5b62a7ad77409712e0661c4e62a8780644afa588ea8"},
+    {"path": "stable_late/late.json", "sha256": "7c2ad71d89a5983c27316f7b023a02e1c88950db4ff36d550ca3940fe5e9b2c2"}
+  ],
+  "interpretation": "The predeclared gate passes: stable early and late regions coexist and the stable-early region contains adjacent grid families. This permits pipeline-aware model design only; Phase 2G remains unauthorized."
+}
