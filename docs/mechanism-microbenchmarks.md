@@ -133,6 +133,27 @@ This is not a third attempt to tune a winner threshold. It changes the measured
 quantity from an invalid whole-query subtraction to DuckDB's directly observed
 `HASH_JOIN` operator cost, with a predeclared repeat count and new seeds.
 
+The operator calibration completed all 36 units with 360 wall-clock samples,
+324 operator summaries, exact Join cardinalities, stable physical shapes, and
+no spill. Across scenario groups, the relative gap between the two seeds for
+median `HASH_JOIN` time has a median of about 9% and a maximum of about 45%.
+The within-unit max-minus-min range remains large for some sub-millisecond
+operators, so the median of five profiles must be used rather than one sample.
+
+The resulting `HASH_JOIN` timing primarily follows input and matched-output
+cardinality. Width is weak and non-monotone, consistent with DuckDB passing
+vectors/references instead of copying the entire string inside the hash table.
+Therefore the next explainable formula should assign:
+
+- raw byte hashing to the measured SHA-256 term;
+- explicit/intermediate payload movement to the materialization term;
+- Join build/probe work to input and matched-output rows, not a forced width
+  coefficient.
+
+This mechanism allocation is a development hypothesis. It must still face
+complete scenario-family cross-validation against V1, linear V2, the residual
+model, and the rejected local guard before any Phase 2G freeze.
+
 After interruption, use the exact same committed code and configuration:
 
 ```powershell

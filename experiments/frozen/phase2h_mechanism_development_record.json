@@ -1,0 +1,51 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "development_mechanism_microbenchmarks_not_phase2g",
+  "phase2g_authorized": false,
+  "runs": [
+    {
+      "label": "mechanism_pilot",
+      "run_id": "20260717T082251698399Z",
+      "source_commit": "6a8db4f",
+      "unit_count": 80,
+      "measurement_count": 1120,
+      "all_validations_passed": true,
+      "spill_count": 0,
+      "findings": {
+        "hash_incremental_range_ms": [221.000400022604, 3696.34110003244],
+        "materialization_roundtrip_range_ms": [27.097399986815, 442.423000058625],
+        "scalar_join_incremental_range_ms": [1.336899993476, 7.910000043921],
+        "scalar_join_median_relative_seed_gap": 0.308819404331,
+        "scalar_join_max_relative_seed_gap": 1.318411190437
+      },
+      "decision": "retain_hash_and_materialization_diagnostics_reject_scalar_join_target"
+    },
+    {
+      "label": "join_payload_refinement",
+      "run_id": "20260717T083527137011Z",
+      "source_commit": "1c0bc4b",
+      "unit_count": 36,
+      "measurement_count": 504,
+      "negative_paired_median_count": 17,
+      "all_validations_passed": true,
+      "spill_count": 0,
+      "decision": "reject_whole_query_subtraction_as_non_additive"
+    },
+    {
+      "label": "join_operator_calibration",
+      "run_id": "20260717T084603958765Z",
+      "source_commit": "c183ceb",
+      "unit_count": 36,
+      "measurement_count": 360,
+      "operator_summary_count": 324,
+      "profile_runs_per_component": 5,
+      "all_cardinalities_exact": true,
+      "all_validations_passed": true,
+      "spill_count": 0,
+      "hash_join_median_relative_seed_gap": 0.089560148384,
+      "hash_join_max_relative_seed_gap": 0.447106736806,
+      "decision": "use_row_and_output_cardinality_join_term_in_formula_development"
+    }
+  ],
+  "scientific_boundary": "These runs may design and fit a development formula. They are not a held-out Phase 2G result and cannot change Phase 2G workloads."
+}

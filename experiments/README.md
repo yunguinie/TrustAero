@@ -467,3 +467,9 @@ cost: 17/36 median differences are negative. The runner now supports repeated
 physical profiles and writes `operator_summary.csv`. The frozen follow-up
 `phase2h_join_operator_calibration.json` uses five `EXPLAIN ANALYZE` repetitions
 and new seeds to measure `HASH_JOIN` timing/cardinality directly.
+
+That operator calibration completed all 36 units with exact cardinalities and
+no spill. Median cross-seed relative difference for `HASH_JOIN` timing is about
+9% (maximum about 45%). The evidence supports a row/cardinality Join term; it
+does not support forcing identifier width into the hash-table cost. Width must
+enter the next formula through measured hashing and payload/materialization.
