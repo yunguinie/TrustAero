@@ -473,3 +473,11 @@ no spill. Median cross-seed relative difference for `HASH_JOIN` timing is about
 9% (maximum about 45%). The evidence supports a row/cardinality Join term; it
 does not support forcing identifier width into the hash-table cost. Width must
 enter the next formula through measured hashing and payload/materialization.
+
+The resulting mechanism formula was committed before evaluation and fitted
+only from those independent component measurements. It preserved all injected
+governance constraints and match-rate monotonicity, but reached only 66.7%
+within the 3% band, 7.13% mean regret, 39.20% P95 regret, and 49.32% maximum
+regret. It is a frozen negative result; Phase 2G remains unauthorized. See
+`docs/mechanism-mask-cost-results.md` and
+`experiments/frozen/phase2_mechanism_formula_negative.json`.

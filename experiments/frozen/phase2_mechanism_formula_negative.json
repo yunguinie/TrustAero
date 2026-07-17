@@ -1,0 +1,57 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "mechanism_formula_development_not_phase2g",
+  "formula_commit": "6d987f1ee466289ad8dd6e8b419f7a2d7142c382",
+  "formula_frozen_before_end_to_end_evaluation": true,
+  "status": "development_only_rejected_by_predeclared_gate",
+  "phase2g_authorized": false,
+  "primary_result": {
+    "observation_count": 30,
+    "within_tie_rate": 0.6666666666666666,
+    "mean_regret_percent": 7.134432100763101,
+    "p95_regret_percent": 39.20446796131576,
+    "max_regret_percent": 49.316427973052356
+  },
+  "v1_baseline": {
+    "within_tie_rate": 0.7,
+    "mean_regret_percent": 3.350182637844407,
+    "p95_regret_percent": 18.031315983764816,
+    "max_regret_percent": 21.326039953034037
+  },
+  "gate_checks": {
+    "within_tie_rate_strictly_improves_v1": false,
+    "mean_regret_does_not_worsen_v1": false,
+    "p95_regret_does_not_worsen_v1": false,
+    "max_regret_does_not_worsen_v1": false,
+    "match_rate_monotonicity_passes": true,
+    "governance_hard_constraints_pass": true
+  },
+  "component_diagnostics": {
+    "sha256_median_absolute_relative_error_percent": 9.462181403345586,
+    "hash_join_median_absolute_relative_error_percent": 10.405438956137868,
+    "materialization_median_absolute_relative_error_percent": 33.352597436350706
+  },
+  "result_files": [
+    {
+      "path": "component_cross_validation.csv",
+      "sha256": "b74ffadd5f94a9486e5bb9144c4444a62c1bd8fe97c28cb5425a1fc8ea5a0eb5"
+    },
+    {
+      "path": "end_to_end_predictions.csv",
+      "sha256": "02cc81b3227bdb7b1aa3205a233d3780f10955a20fd50899ea99c518e10bab1a"
+    },
+    {
+      "path": "mechanism_mask_cost_model.json",
+      "sha256": "5567838265cba60c3632a9fb4ab8a8ebdddc6002f679a879b838ff0de02cd481"
+    },
+    {
+      "path": "report.md",
+      "sha256": "c06d7b55183c6a06312d89098b68f56e9d24a602df250871a044f676f77344b9"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "d7fe193575d7d3ec392d88d0f840675b2a4a274a2b16dd09efe97318c7ff8abc"
+    }
+  ],
+  "interpretation": "The additive mechanism formula preserves governance but does not model DuckDB pipeline and materialization interactions accurately enough to improve V1. The result must not be retuned or relabeled as held-out evidence."
+}

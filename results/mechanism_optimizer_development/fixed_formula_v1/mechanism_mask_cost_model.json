@@ -1,0 +1,61 @@
+{
+  "formula_schema_version": 1,
+  "hash_cost": {
+    "coefficient_constraint": "non_negative",
+    "coefficients": [
+      58.3970312149683,
+      11.581755759453635
+    ],
+    "component_name": "sha256",
+    "feature_names": [
+      "rows_100k",
+      "input_bytes_mib"
+    ],
+    "intercept_ms": 125.50924764026351,
+    "ridge_lambda": 0.01,
+    "source_run_ids": [
+      "20260717T082251698399Z"
+    ],
+    "training_group_count": 8
+  },
+  "hashed_identifier_width_bytes": 64,
+  "join_cost": {
+    "coefficient_constraint": "non_negative",
+    "coefficients": [
+      0.028132344403286144,
+      0.7309002004920918
+    ],
+    "component_name": "hash_join",
+    "feature_names": [
+      "input_rows_100k",
+      "output_rows_100k"
+    ],
+    "intercept_ms": 0.5174542152599516,
+    "ridge_lambda": 0.01,
+    "source_run_ids": [
+      "20260717T084603958765Z"
+    ],
+    "training_group_count": 6
+  },
+  "materialization_cost": {
+    "coefficient_constraint": "non_negative",
+    "coefficients": [
+      0.0,
+      1.2296516440201581
+    ],
+    "component_name": "materialization_roundtrip",
+    "feature_names": [
+      "rows_100k",
+      "payload_bytes_mib"
+    ],
+    "intercept_ms": 9.172110913959521,
+    "ridge_lambda": 0.01,
+    "source_run_ids": [
+      "20260717T082251698399Z"
+    ],
+    "training_group_count": 8
+  },
+  "model_type": "mechanism_mask_cost_v1",
+  "scientific_boundary": "Candidate legality and raw-exposure limits are hard feasibility constraints evaluated before runtime cost.",
+  "target_unit": "milliseconds"
+}

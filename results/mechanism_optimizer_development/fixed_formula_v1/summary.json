@@ -1,0 +1,124 @@
+{
+  "component_cross_validation": {
+    "hash_join": {
+      "group_count": 6,
+      "max_absolute_relative_error_percent": 31.341805640752817,
+      "mean_absolute_relative_error_percent": 13.086342576589576,
+      "median_absolute_relative_error_percent": 10.405438956137868,
+      "p95_absolute_relative_error_percent": 31.341805640752817
+    },
+    "materialization_roundtrip": {
+      "group_count": 8,
+      "max_absolute_relative_error_percent": 63.225973141847,
+      "mean_absolute_relative_error_percent": 34.429702581408876,
+      "median_absolute_relative_error_percent": 33.352597436350706,
+      "p95_absolute_relative_error_percent": 63.225973141847
+    },
+    "sha256": {
+      "group_count": 8,
+      "max_absolute_relative_error_percent": 41.67152297676785,
+      "mean_absolute_relative_error_percent": 12.803972837218822,
+      "median_absolute_relative_error_percent": 9.462181403345586,
+      "p95_absolute_relative_error_percent": 41.67152297676785
+    }
+  },
+  "evaluation_label": "mechanism_formula_development_not_phase2g",
+  "formula_frozen_before_end_to_end_evaluation": true,
+  "gate_policy": {
+    "baseline": "v1_frozen_baseline",
+    "checks": {
+      "governance_hard_constraints_pass": true,
+      "match_rate_monotonicity_passes": true,
+      "max_regret_does_not_worsen_v1": false,
+      "mean_regret_does_not_worsen_v1": false,
+      "p95_regret_does_not_worsen_v1": false,
+      "within_tie_rate_strictly_improves_v1": false
+    },
+    "primary": "mechanism_formula_fixed_development"
+  },
+  "governance_audit": {
+    "injected_case_count": 4,
+    "passes": true,
+    "violation_count": 0,
+    "violations": []
+  },
+  "monotonicity_audit": {
+    "comparison_count": 270,
+    "expected_direction": "log(early/late) nonincreasing with match_rate",
+    "passes": true,
+    "violation_count": 0,
+    "violations": []
+  },
+  "observation_count": 30,
+  "passes_development_gate": false,
+  "phase2g_authorized": false,
+  "schemes": {
+    "guarded_residual_nested_leave_one_scenario_out": {
+      "exact_top1_count": 21,
+      "exact_top1_rate": 0.7,
+      "geometric_speedup_vs_fixed_early_ratio": 1.2092744833325242,
+      "geometric_speedup_vs_fixed_late_ratio": 1.043898078174474,
+      "max_regret_percent": 37.63788078409866,
+      "mean_regret_percent": 4.65129244946239,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 28.42736288504191,
+      "within_tie_count": 21,
+      "within_tie_rate": 0.7
+    },
+    "mechanism_formula_fixed_development": {
+      "exact_top1_count": 20,
+      "exact_top1_rate": 0.6666666666666666,
+      "geometric_speedup_vs_fixed_early_ratio": 1.1852874117148935,
+      "geometric_speedup_vs_fixed_late_ratio": 1.0231913996595412,
+      "max_regret_percent": 49.316427973052356,
+      "mean_regret_percent": 7.134432100763101,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 39.20446796131576,
+      "within_tie_count": 20,
+      "within_tie_rate": 0.6666666666666666
+    },
+    "residual_ranking_leave_one_scenario_out": {
+      "exact_top1_count": 24,
+      "exact_top1_rate": 0.8,
+      "geometric_speedup_vs_fixed_early_ratio": 1.2251320825937668,
+      "geometric_speedup_vs_fixed_late_ratio": 1.0575870442623496,
+      "max_regret_percent": 37.63788078409866,
+      "mean_regret_percent": 3.248279779687514,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 28.42736288504191,
+      "within_tie_count": 24,
+      "within_tie_rate": 0.8
+    },
+    "v1_frozen_baseline": {
+      "exact_top1_count": 21,
+      "exact_top1_rate": 0.7,
+      "geometric_speedup_vs_fixed_early_ratio": 1.2221481781862809,
+      "geometric_speedup_vs_fixed_late_ratio": 1.0550112088177392,
+      "max_regret_percent": 21.326039953034037,
+      "mean_regret_percent": 3.350182637844407,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 18.031315983764816,
+      "within_tie_count": 21,
+      "within_tie_rate": 0.7
+    },
+    "v2_leave_one_scenario_out": {
+      "exact_top1_count": 21,
+      "exact_top1_rate": 0.7,
+      "geometric_speedup_vs_fixed_early_ratio": 1.2119093132576548,
+      "geometric_speedup_vs_fixed_late_ratio": 1.04617257741602,
+      "max_regret_percent": 37.63788078409866,
+      "mean_regret_percent": 4.408730288108824,
+      "median_regret_percent": 0.0,
+      "observation_count": 30,
+      "p95_regret_percent": 28.42736288504191,
+      "within_tie_count": 21,
+      "within_tie_rate": 0.7
+    }
+  },
+  "scientific_boundary": "Microbenchmarks fit component costs; end-to-end winners evaluate but do not fit the formula. Phase 2G remains untouched.",
+  "status": "development_only_rejected_by_predeclared_gate"
+}
