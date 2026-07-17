@@ -1,0 +1,31 @@
+{
+  "attribution_thresholds": {
+    "minimum_absolute_spearman": 0.4,
+    "minimum_dominant_family_fraction": 0.2,
+    "minimum_sign_agreement": 0.65,
+    "require_stable_region_direction_reversal": true
+  },
+  "eligible_pipeline_interaction_roles": [],
+  "evaluation_label": "phase2l_paired_operator_attribution_development",
+  "family_classification_counts": {
+    "mixed": 14,
+    "stable_early": 5,
+    "stable_late": 20,
+    "stable_tie": 1
+  },
+  "family_count": 40,
+  "interaction_hypothesis_eligible": false,
+  "phase2g_authorized": false,
+  "replicate_count": 162,
+  "required_family_agreement_fraction": 0.8,
+  "scientific_boundary": "Paired EXPLAIN ANALYZE operator differences are descriptive association. They may motivate a new versioned interaction hypothesis but are not an additive causal decomposition of timed wall-clock latency.",
+  "source_commit_hashes": [
+    "58ced0e286dfa2b04542a7873472fb4400aeb830",
+    "86a3c5594a7b0bd7b33efe4c4ffaf5dc0aa17226"
+  ],
+  "source_run_ids": [
+    "20260717T120435635390Z",
+    "20260717T134222171980Z"
+  ],
+  "tie_threshold_fraction": 0.03
+}

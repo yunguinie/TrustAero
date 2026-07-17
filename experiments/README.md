@@ -545,3 +545,11 @@ the combined analysis. Operator timings are treated as descriptive association,
 not an additive causal decomposition. See
 `docs/phase2l-operator-attribution-protocol.md` and
 `experiments/configs/phase2l_pipeline_attribution.json`.
+
+The completed analysis covers 162 paired replicates and 40 physical families.
+Hash projection is the strongest association but does not reverse direction in
+stable-early families; no single role passes all four frozen checks. The result
+is retained as negative evidence and points to a cross-operator ablation rather
+than post-hoc threshold changes. See
+`docs/phase2l-operator-attribution-results.md` and
+`experiments/frozen/phase2l_operator_attribution_negative.json`.

@@ -1,0 +1,48 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "phase2l_paired_operator_attribution_development_not_phase2g",
+  "protocol_commit": "d91a61e845c2891c8576f17d119c05bc66c24001",
+  "status": "no_single_operator_role_passes_predeclared_attribution_gate",
+  "phase2g_authorized": false,
+  "replicate_count": 162,
+  "family_count": 40,
+  "family_classification_counts": {
+    "stable_early": 5,
+    "stable_late": 20,
+    "stable_tie": 1,
+    "mixed": 14
+  },
+  "eligible_pipeline_interaction_roles": [],
+  "strongest_single_role": {
+    "role": "hash_projection",
+    "sign_agreement_rate": 0.71875,
+    "spearman_rho": 0.6847215694908412,
+    "dominant_family_fraction": 1.0,
+    "stable_early_median_relative_delta": 0.015584932897409831,
+    "stable_late_median_relative_delta": 0.5696338722245433,
+    "failed_check": "stable_region_direction_reversal"
+  },
+  "files": [
+    {
+      "path": "results/phase2l_pipeline_attribution/frozen_analysis_v1/unit_operator_attribution.csv",
+      "sha256": "3487f71d28f6352ee67d2bf2ca99bd12417e02232931a68dea9fdcfbe6657704"
+    },
+    {
+      "path": "results/phase2l_pipeline_attribution/frozen_analysis_v1/family_operator_attribution.csv",
+      "sha256": "cab1f246fa27a4ef624e6a859ea1d74cb92fea7e5e25e16faa8ce0c72b0162f4"
+    },
+    {
+      "path": "results/phase2l_pipeline_attribution/frozen_analysis_v1/role_summary.csv",
+      "sha256": "365618bcca2d76e9b0d30b5e5448906b405eb3781ddc9af397e2f9d5dd39ebc5"
+    },
+    {
+      "path": "results/phase2l_pipeline_attribution/frozen_analysis_v1/summary.json",
+      "sha256": "9ad1cde6e13067562d0bdbbc56df07254a3c5e05ee86b058e5874b8d8185cc24"
+    },
+    {
+      "path": "results/phase2l_pipeline_attribution/frozen_analysis_v1/report.md",
+      "sha256": "62b884daf0391ab3f5b0e45fc45da0cc7d2f4e0708afe973d2a1597d27116919"
+    }
+  ],
+  "interpretation": "Hash projection is strongly associated with the end-to-end gap but does not reverse direction in stable-early families. No single profiled role justifies the next model; a versioned cross-operator ablation is required."
+}

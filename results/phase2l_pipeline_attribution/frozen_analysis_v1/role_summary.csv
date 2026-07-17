@@ -1,0 +1,9 @@
+role,decisive_unit_count,sign_agreement_rate,spearman_rho,dominant_family_count,dominant_family_fraction,stable_early_median_relative_delta,stable_late_median_relative_delta,stable_region_direction_reversal,check_sign_agreement,check_absolute_spearman,check_dominant_family_fraction,check_stable_region_direction_reversal,eligible_pipeline_interaction_role
+hash_projection,128,0.71875,0.6847215694908412,40,1.0,0.015584932897409831,0.5696338722245433,False,True,True,True,False,False
+support_projection,128,0.3359375,-0.37384642959462905,0,0.0,-0.734327493846822,-0.7780936434531913,False,False,False,False,False,False
+hash_join,128,0.6640625,0.21219203427792382,0,0.0,0.7594837880040416,0.7834420513526279,False,True,False,False,False,False
+order_by,128,0.6640625,0.3528856372281285,5,0.125,0.012423461490910967,0.1575890838806057,False,True,False,False,False,False
+materialization,128,0.6640625,0.0,7,0.175,1.0,1.0,False,True,False,False,False,False
+event_scan,128,0.6484375,0.5857322093651781,0,0.0,-0.002341562329009312,0.43003088848486126,True,False,True,False,True,False
+dimension_scan,128,0.4765625,-0.002516367680411425,0,0.0,0.026865671641790986,-0.048191924354715046,False,False,False,False,False,False
+output_sink,128,0.5390625,-0.05972245156027497,0,0.0,0.07918493680680952,0.08167483614961593,False,False,False,False,False,False
