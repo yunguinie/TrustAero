@@ -1,0 +1,36 @@
+{
+  "duckdb_memory_limit_mb": 4096,
+  "duckdb_threads": 4,
+  "measured_runs": 3,
+  "order_seed": 20260718,
+  "profile_runs": 1,
+  "require_clean_git": true,
+  "results_dir": "results/phase2m_pipeline_ablation_smoke",
+  "scenarios": [
+    {
+      "identifier_width": 128,
+      "match_rate": 1.0,
+      "region_label": "phase2l_stable_early",
+      "row_count": 200000,
+      "scenario_id": "stable-early-n200000-w128-m1000-s1666",
+      "seed": 1666
+    },
+    {
+      "identifier_width": 512,
+      "match_rate": 0.9,
+      "region_label": "phase2l_stable_late",
+      "row_count": 100000,
+      "scenario_id": "stable-late-n100000-w512-m0900-s1666",
+      "seed": 1666
+    },
+    {
+      "identifier_width": 128,
+      "match_rate": 0.9,
+      "region_label": "phase2l_mixed",
+      "row_count": 100000,
+      "scenario_id": "mixed-n100000-w128-m0900-s1666",
+      "seed": 1666
+    }
+  ],
+  "warmup_runs": 1
+}

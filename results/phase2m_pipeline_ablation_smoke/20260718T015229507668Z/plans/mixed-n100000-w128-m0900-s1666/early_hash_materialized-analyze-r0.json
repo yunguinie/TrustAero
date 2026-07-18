@@ -1,0 +1,252 @@
+{
+  "attach_load_storage_latency": 0.0,
+  "attach_replay_wal_latency": 0.0,
+  "blocked_thread_time": 0.0,
+  "checkpoint_latency": 0.0,
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "cpu_time": 0.023085500000000005,
+                      "cumulative_cardinality": 100000,
+                      "cumulative_rows_scanned": 100000,
+                      "extra_info": {
+                        "Estimated Cardinality": "100000",
+                        "Projections": [
+                          "row_id",
+                          "sensitive_value",
+                          "join_key"
+                        ],
+                        "Table": "memory.main.ablation_events",
+                        "Type": "Sequential Scan"
+                      },
+                      "operator_cardinality": 100000,
+                      "operator_name": "SEQ_SCAN",
+                      "operator_rows_scanned": 100000,
+                      "operator_timing": 0.023085500000000005,
+                      "operator_type": "TABLE_SCAN",
+                      "result_set_size": 3200000,
+                      "system_peak_buffer_memory": 0,
+                      "system_peak_temp_dir_size": 0
+                    }
+                  ],
+                  "cpu_time": 0.5216647,
+                  "cumulative_cardinality": 200000,
+                  "cumulative_rows_scanned": 100000,
+                  "extra_info": {
+                    "Estimated Cardinality": "100000",
+                    "Projections": [
+                      "row_id",
+                      "masked_value",
+                      "join_key"
+                    ]
+                  },
+                  "operator_cardinality": 100000,
+                  "operator_name": "PROJECTION",
+                  "operator_rows_scanned": 0,
+                  "operator_timing": 0.49857919999999994,
+                  "operator_type": "PROJECTION",
+                  "result_set_size": 3200000,
+                  "system_peak_buffer_memory": 0,
+                  "system_peak_temp_dir_size": 0
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "cpu_time": 0.000418,
+                                  "cumulative_cardinality": 100000,
+                                  "cumulative_rows_scanned": 0,
+                                  "extra_info": {
+                                    "CTE Index": "0",
+                                    "Estimated Cardinality": "100000"
+                                  },
+                                  "operator_cardinality": 100000,
+                                  "operator_name": "CTE_SCAN",
+                                  "operator_rows_scanned": 0,
+                                  "operator_timing": 0.000418,
+                                  "operator_type": "CTE_SCAN",
+                                  "result_set_size": 3200000,
+                                  "system_peak_buffer_memory": 0,
+                                  "system_peak_temp_dir_size": 0
+                                },
+                                {
+                                  "children": [],
+                                  "cpu_time": 2.57e-05,
+                                  "cumulative_cardinality": 10000,
+                                  "cumulative_rows_scanned": 10000,
+                                  "extra_info": {
+                                    "Estimated Cardinality": "10000",
+                                    "Projections": [
+                                      "dimension_key",
+                                      "marker"
+                                    ],
+                                    "Table": "memory.main.ablation_dimension",
+                                    "Type": "Sequential Scan"
+                                  },
+                                  "operator_cardinality": 10000,
+                                  "operator_name": "SEQ_SCAN",
+                                  "operator_rows_scanned": 10000,
+                                  "operator_timing": 2.57e-05,
+                                  "operator_type": "TABLE_SCAN",
+                                  "result_set_size": 160000,
+                                  "system_peak_buffer_memory": 0,
+                                  "system_peak_temp_dir_size": 0
+                                }
+                              ],
+                              "cpu_time": 0.006826,
+                              "cumulative_cardinality": 200000,
+                              "cumulative_rows_scanned": 10000,
+                              "extra_info": {
+                                "Conditions": "join_key = dimension_key",
+                                "Estimated Cardinality": "75289",
+                                "Join Type": "INNER"
+                              },
+                              "operator_cardinality": 90000,
+                              "operator_name": "HASH_JOIN",
+                              "operator_rows_scanned": 0,
+                              "operator_timing": 0.0063823,
+                              "operator_type": "HASH_JOIN",
+                              "result_set_size": 2880000,
+                              "system_peak_buffer_memory": 0,
+                              "system_peak_temp_dir_size": 0
+                            }
+                          ],
+                          "cpu_time": 0.0070588,
+                          "cumulative_cardinality": 290000,
+                          "cumulative_rows_scanned": 10000,
+                          "extra_info": {
+                            "Estimated Cardinality": "75289",
+                            "Projections": [
+                              "#0",
+                              "#1",
+                              "__internal_compress_integral_utinyint(#2, 0)"
+                            ]
+                          },
+                          "operator_cardinality": 90000,
+                          "operator_name": "PROJECTION",
+                          "operator_rows_scanned": 0,
+                          "operator_timing": 0.00023279999999999997,
+                          "operator_type": "PROJECTION",
+                          "result_set_size": 2250000,
+                          "system_peak_buffer_memory": 0,
+                          "system_peak_temp_dir_size": 0
+                        }
+                      ],
+                      "cpu_time": 0.09017689999999999,
+                      "cumulative_cardinality": 380000,
+                      "cumulative_rows_scanned": 10000,
+                      "extra_info": {
+                        "Order By": [
+                          "masked.masked_value ASC",
+                          "masked.row_id ASC"
+                        ]
+                      },
+                      "operator_cardinality": 90000,
+                      "operator_name": "ORDER_BY",
+                      "operator_rows_scanned": 0,
+                      "operator_timing": 0.08311809999999999,
+                      "operator_type": "ORDER_BY",
+                      "result_set_size": 2250000,
+                      "system_peak_buffer_memory": 0,
+                      "system_peak_temp_dir_size": 0
+                    }
+                  ],
+                  "cpu_time": 0.0909521,
+                  "cumulative_cardinality": 470000,
+                  "cumulative_rows_scanned": 10000,
+                  "extra_info": {
+                    "Estimated Cardinality": "75289",
+                    "Projections": [
+                      "#0",
+                      "#1",
+                      "__internal_decompress_integral_bigint(#2, 0)"
+                    ]
+                  },
+                  "operator_cardinality": 90000,
+                  "operator_name": "PROJECTION",
+                  "operator_rows_scanned": 0,
+                  "operator_timing": 0.0007751999999999998,
+                  "operator_type": "PROJECTION",
+                  "result_set_size": 2880000,
+                  "system_peak_buffer_memory": 0,
+                  "system_peak_temp_dir_size": 0
+                }
+              ],
+              "cpu_time": 0.6210441999999999,
+              "cumulative_cardinality": 670000,
+              "cumulative_rows_scanned": 110000,
+              "extra_info": {
+                "CTE Name": "masked_events",
+                "Estimated Cardinality": "75289",
+                "Table Index": "0"
+              },
+              "operator_cardinality": 0,
+              "operator_name": "CTE",
+              "operator_rows_scanned": 0,
+              "operator_timing": 0.008427399999999998,
+              "operator_type": "CTE",
+              "result_set_size": 0,
+              "system_peak_buffer_memory": 0,
+              "system_peak_temp_dir_size": 0
+            }
+          ],
+          "cpu_time": 0.6703958999999999,
+          "cumulative_cardinality": 670001,
+          "cumulative_rows_scanned": 110000,
+          "extra_info": {},
+          "operator_cardinality": 1,
+          "operator_name": "BATCH_CREATE_TABLE_AS",
+          "operator_rows_scanned": 0,
+          "operator_timing": 0.049351700000000005,
+          "operator_type": "BATCH_CREATE_TABLE_AS",
+          "result_set_size": 8,
+          "system_peak_buffer_memory": 0,
+          "system_peak_temp_dir_size": 0
+        }
+      ],
+      "cpu_time": 0.6703963,
+      "cumulative_cardinality": 670001,
+      "cumulative_rows_scanned": 110000,
+      "extra_info": {},
+      "operator_cardinality": 0,
+      "operator_name": "EXPLAIN_ANALYZE",
+      "operator_rows_scanned": 0,
+      "operator_timing": 4e-07,
+      "operator_type": "EXPLAIN_ANALYZE",
+      "result_set_size": 0,
+      "system_peak_buffer_memory": 0,
+      "system_peak_temp_dir_size": 0
+    }
+  ],
+  "commit_local_storage_latency": 0.0,
+  "cpu_time": 0.6703963,
+  "cumulative_cardinality": 670001,
+  "cumulative_rows_scanned": 110000,
+  "extra_info": {},
+  "latency": 0.6858963,
+  "query_name": "EXPLAIN (ANALYZE, FORMAT JSON) CREATE TEMP TABLE ablation_output AS WITH masked_events AS MATERIALIZED (SELECT row_id, sha256(sensitive_value) AS masked_value, join_key FROM ablation_events) SELECT masked.row_id, masked.masked_value, dimension.marker FROM masked_events AS masked INNER JOIN ablation_dimension AS dimension ON masked.join_key = dimension.dimension_key ORDER BY masked.masked_value, masked.row_id",
+  "result_set_size": 0,
+  "rows_returned": 0,
+  "system_peak_buffer_memory": 256021504,
+  "system_peak_temp_dir_size": 0,
+  "total_bytes_read": 0,
+  "total_bytes_written": 0,
+  "total_memory_allocated": 28573696,
+  "waiting_to_attach_latency": 0.0,
+  "wal_replay_entry_count": 0,
+  "write_to_wal_latency": 0.0
+}

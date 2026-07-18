@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-07-18T01:52:29.517665+00:00",
+  "commit_hash": "ea37d0c07d329a3ac0a3d4d5e45802744319b23f",
+  "duckdb_memory_limit_mb": 4096,
+  "duckdb_threads": 4,
+  "git_dirty": false,
+  "logical_cpu_count": 8,
+  "packages": {
+    "duckdb": "1.5.4",
+    "trustaero": "0.1.0"
+  },
+  "platform": "Windows-10-10.0.19045-SP0",
+  "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+  "python_version": "3.11.15 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:12:53) [MSC v.1942 64 bit (AMD64)]"
+}

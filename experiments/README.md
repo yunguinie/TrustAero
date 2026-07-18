@@ -564,3 +564,12 @@ boundaries, verifies complete output digests and exact Join cardinality, and
 retains progress/resume support. Smoke timing is not performance evidence. See
 `docs/phase2m-pipeline-ablation-protocol.md` and
 `experiments/configs/phase2m_pipeline_ablation_smoke.json`.
+
+The completed smoke validates all three scenarios, four distinct plans per
+scenario, every requested boundary, exact Join cardinality, equal output, and
+zero spill. Join-materialized is the diagnostic fastest in all three instances,
+but it writes raw matched values to an intermediate and is therefore
+policy-conditional. A compact development matrix is authorized only with
+explicit raw-exposure annotations; Phase 2G remains unauthorized. See
+`docs/phase2m-pipeline-ablation-smoke-results.md` and
+`experiments/frozen/phase2m_pipeline_ablation_smoke_record.json`.
