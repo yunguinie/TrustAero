@@ -573,3 +573,10 @@ policy-conditional. A compact development matrix is authorized only with
 explicit raw-exposure annotations; Phase 2G remains unauthorized. See
 `docs/phase2m-pipeline-ablation-smoke-results.md` and
 `experiments/frozen/phase2m_pipeline_ablation_smoke_record.json`.
+
+The compact Phase 2M protocol reuses only the same three development families
+with five new seeds. It annotates raw Join, raw materialization, and masked
+materialization exposure before comparing cost under three fixed policy
+profiles. Complete-family analysis reports policy-dependent legal optima and
+governance overhead. See `docs/phase2m-compact-ablation-protocol.md` and
+`experiments/configs/phase2m_pipeline_ablation_compact.json`.

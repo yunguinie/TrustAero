@@ -1,0 +1,44 @@
+{
+  "results_dir": "results/phase2m_pipeline_ablation_compact",
+  "scenario_templates": [
+    {
+      "scenario_id_prefix": "stable-early-n200000-w128-m1000",
+      "region_label": "phase2l_stable_early",
+      "row_count": 200000,
+      "identifier_width": 128,
+      "match_rate": 1.0
+    },
+    {
+      "scenario_id_prefix": "stable-late-n100000-w512-m0900",
+      "region_label": "phase2l_stable_late",
+      "row_count": 100000,
+      "identifier_width": 512,
+      "match_rate": 0.9
+    },
+    {
+      "scenario_id_prefix": "mixed-n100000-w128-m0900",
+      "region_label": "phase2l_mixed",
+      "row_count": 100000,
+      "identifier_width": 128,
+      "match_rate": 0.9
+    }
+  ],
+  "seeds": [1777, 1888, 1999, 2111, 2222],
+  "warmup_runs": 2,
+  "measured_runs": 15,
+  "profile_runs": 3,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260719,
+  "require_clean_git": true,
+  "analysis": {
+    "tie_threshold_fraction": 0.03,
+    "required_seed_agreement_fraction": 0.8,
+    "policy_profiles": [
+      "raw_permissive",
+      "no_raw_materialization",
+      "no_raw_join"
+    ]
+  },
+  "phase2g_authorized": false
+}

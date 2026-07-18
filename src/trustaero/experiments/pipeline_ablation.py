@@ -80,6 +80,51 @@ class PipelineAblationConfig:
             raise ValueError("Ablation DuckDB resource limits are invalid")
 
 
+@dataclass(frozen=True)
+class PipelineAblationExposure:
+    """Governance-relevant intermediate exposure for one physical variant."""
+
+    raw_rows_exposed_to_join: int
+    raw_rows_materialized: int
+    masked_rows_materialized: int
+
+    def __post_init__(self) -> None:
+        if min(
+            self.raw_rows_exposed_to_join,
+            self.raw_rows_materialized,
+            self.masked_rows_materialized,
+        ) < 0:
+            raise ValueError("Ablation exposure row counts cannot be negative")
+
+
+def pipeline_ablation_exposure(
+    scenario: PipelineAblationScenario,
+    variant: str,
+) -> PipelineAblationExposure:
+    """Return exposure annotations before any runtime ranking occurs.
+
+    Raw Join exposure counts fact-side rows entering the Join, matching the
+    conservative V1 convention. Raw materialization counts matched rows written
+    by the Join-materialized diagnostic. Masked materialization is safe from
+    raw-value exposure but still carries a physical cost.
+    """
+
+    if variant not in PIPELINE_ABLATION_VARIANTS:
+        raise ValueError(f"Unknown ablation variant: {variant}")
+    matched_rows = round(scenario.row_count * scenario.match_rate)
+    if variant == "late_fused":
+        return PipelineAblationExposure(scenario.row_count, 0, 0)
+    if variant == "late_join_materialized":
+        return PipelineAblationExposure(
+            scenario.row_count, matched_rows, 0
+        )
+    if variant == "late_hash_materialized":
+        return PipelineAblationExposure(
+            scenario.row_count, 0, matched_rows
+        )
+    return PipelineAblationExposure(0, 0, scenario.row_count)
+
+
 def pipeline_ablation_sql() -> dict[str, str]:
     """Return the four frozen, result-equivalent physical-fragment requests."""
 
@@ -581,6 +626,9 @@ def _finalize(output_dir: Path, config: PipelineAblationConfig, run_id: str) -> 
         for variant, rows in sorted(by_variant.items()):
             values = [float(row["latency_ms"]) for row in rows]
             profile = payload["profiles"][variant]
+            exposure = pipeline_ablation_exposure(
+                PipelineAblationScenario(**scenario), variant
+            )
             component_rows.append(
                 {
                     "scenario_id": payload["scenario_id"],
@@ -597,6 +645,7 @@ def _finalize(output_dir: Path, config: PipelineAblationConfig, run_id: str) -> 
                     "peak_temp_directory_bytes": profile[
                         "peak_temp_directory_bytes"
                     ],
+                    **asdict(exposure),
                 }
             )
             boundary_rows.append(
@@ -669,6 +718,7 @@ def _finalize(output_dir: Path, config: PipelineAblationConfig, run_id: str) -> 
                 payload["validation_details"]["join_cardinality_exact"] is True
                 for payload in payloads
             ),
+            "exposure_annotated_component_count": len(component_rows),
             "spilled_profile_count": sum(value > 0 for value in temp_bytes),
             "spilled_scenario_count": len(spilled_units),
             "max_peak_temp_directory_bytes": max(temp_bytes, default=0),
@@ -809,8 +859,30 @@ def load_pipeline_ablation_config(path: str | Path) -> PipelineAblationConfig:
     if not isinstance(payload, dict):
         raise ValueError("Phase 2M config must contain a JSON object")
     raw_scenarios = payload.get("scenarios")
+    raw_templates = payload.get("scenario_templates")
+    raw_seeds = payload.get("seeds")
+    if raw_scenarios is not None and raw_templates is not None:
+        raise ValueError("Phase 2M config cannot mix scenarios and templates")
+    if raw_templates is not None:
+        if not isinstance(raw_templates, list) or not isinstance(raw_seeds, list):
+            raise ValueError("Phase 2M templates require a seed list")
+        expanded: list[dict[str, Any]] = []
+        for template in raw_templates:
+            if not isinstance(template, dict):
+                raise ValueError("Phase 2M scenario template must be an object")
+            item = cast(dict[str, Any], template)
+            for raw_seed in raw_seeds:
+                seed = int(raw_seed)
+                expanded.append(
+                    {
+                        **item,
+                        "scenario_id": f"{item['scenario_id_prefix']}-s{seed}",
+                        "seed": seed,
+                    }
+                )
+        raw_scenarios = expanded
     if not isinstance(raw_scenarios, list):
-        raise ValueError("Phase 2M config requires a scenario list")
+        raise ValueError("Phase 2M config requires scenarios or templates")
     scenarios = []
     for raw in raw_scenarios:
         if not isinstance(raw, dict):
