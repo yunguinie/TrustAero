@@ -553,3 +553,14 @@ is retained as negative evidence and points to a cross-operator ablation rather
 than post-hoc threshold changes. See
 `docs/phase2l-operator-attribution-results.md` and
 `experiments/frozen/phase2l_operator_attribution_negative.json`.
+
+## Phase 2M complete-pipeline ablation
+
+Phase 2M freezes four result-equivalent SQL fragments that place explicit
+boundaries after Join, after Hash, or before Join. The smoke uses one existing
+stable-early, one stable-late, and one mixed region with a new development seed.
+It parses actual DuckDB JSON plans, rejects collapsed fingerprints or misplaced
+boundaries, verifies complete output digests and exact Join cardinality, and
+retains progress/resume support. Smoke timing is not performance evidence. See
+`docs/phase2m-pipeline-ablation-protocol.md` and
+`experiments/configs/phase2m_pipeline_ablation_smoke.json`.
