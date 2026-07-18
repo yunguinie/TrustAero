@@ -121,9 +121,7 @@ def _unit_choices(
         )
         choices = units.setdefault(row["unit_id"], {})
         if placement in choices:
-            raise ValueError(
-                f"Unit {row['unit_id']} has duplicate {placement.value} candidates"
-            )
+            raise ValueError(f"Unit {row['unit_id']} has duplicate {placement.value} candidates")
         choices[placement] = row
     for unit_id, choices in units.items():
         if set(choices) != {MaskPlacement.EARLY, MaskPlacement.LATE}:
@@ -140,10 +138,7 @@ def load_mask_workload_observations(
     for run_value in run_dirs:
         run_dir = Path(run_value).resolve()
         summary = _read_object(run_dir / "summary.json")
-        if (
-            summary.get("status") != "complete"
-            or summary.get("all_results_equivalent") is not True
-        ):
+        if summary.get("status") != "complete" or summary.get("all_results_equivalent") is not True:
             raise ValueError(f"Source run is incomplete or non-equivalent: {run_dir}")
         run_id = str(summary.get("run_id", run_dir.name))
         tie_threshold = float(summary["tie_threshold_fraction"])
@@ -151,9 +146,7 @@ def load_mask_workload_observations(
         environment = _read_object(run_dir / "environment.json")
         source_commit = str(environment.get("commit_hash", "unknown"))
         grouped: dict[tuple[str, int], list[dict[MaskPlacement, dict[str, str]]]] = {}
-        for choices in _unit_choices(
-            _read_csv(run_dir / "strategy_summary.csv")
-        ).values():
+        for choices in _unit_choices(_read_csv(run_dir / "strategy_summary.csv")).values():
             late = choices[MaskPlacement.LATE]
             key = (late["scenario_id"], int(late["row_count"]))
             grouped.setdefault(key, []).append(choices)
@@ -222,9 +215,7 @@ def _solve_linear_system(matrix: list[list[float]], vector: list[float]) -> list
             multiplier = augmented[row_index][column]
             augmented[row_index] = [
                 value - multiplier * pivot_value
-                for value, pivot_value in zip(
-                    augmented[row_index], augmented[column], strict=True
-                )
+                for value, pivot_value in zip(augmented[row_index], augmented[column], strict=True)
             ]
     return [augmented[index][-1] for index in range(size)]
 
@@ -238,25 +229,16 @@ def fit_mask_v2_model(
 
     feature_count = len(MASK_V2_FEATURE_NAMES)
     if len(observations) <= feature_count:
-        raise ValueError(
-            f"Mask V2 needs more than {feature_count} workload observations"
-        )
+        raise ValueError(f"Mask V2 needs more than {feature_count} workload observations")
     if ridge_lambda < 0.0:
         raise ValueError("ridge_lambda must be non-negative")
     raw = [mask_v2_feature_vector(item.features) for item in observations]
-    means = tuple(
-        statistics.mean(row[index] for row in raw) for index in range(feature_count)
-    )
+    means = tuple(statistics.mean(row[index] for row in raw) for index in range(feature_count))
     scales = tuple(
-        statistics.pstdev(row[index] for row in raw) or 1.0
-        for index in range(feature_count)
+        statistics.pstdev(row[index] for row in raw) or 1.0 for index in range(feature_count)
     )
     design = [
-        [1.0]
-        + [
-            (row[index] - means[index]) / scales[index]
-            for index in range(feature_count)
-        ]
+        [1.0] + [(row[index] - means[index]) / scales[index] for index in range(feature_count)]
         for row in raw
     ]
     targets = [item.observed_log_early_late_ratio for item in observations]
@@ -320,10 +302,7 @@ def fit_decomposed_mask_cost_model(
         largest_change = 0.0
         new_intercept = statistics.mean(
             target
-            - sum(
-                value * coefficient
-                for value, coefficient in zip(row, coefficients, strict=True)
-            )
+            - sum(value * coefficient for value, coefficient in zip(row, coefficients, strict=True))
             for row, target in zip(design, targets, strict=True)
         )
         largest_change = max(largest_change, abs(new_intercept - intercept))
@@ -396,18 +375,12 @@ def fit_regret_aware_mask_residual_model(
     base_model = fit_decomposed_mask_cost_model(observations)
     raw = [mask_residual_feature_vector(item.features) for item in observations]
     feature_count = len(raw[0])
-    means = tuple(
-        statistics.mean(row[index] for row in raw) for index in range(feature_count)
-    )
+    means = tuple(statistics.mean(row[index] for row in raw) for index in range(feature_count))
     scales = tuple(
-        statistics.pstdev(row[index] for row in raw) or 1.0
-        for index in range(feature_count)
+        statistics.pstdev(row[index] for row in raw) or 1.0 for index in range(feature_count)
     )
     design = [
-        tuple(
-            (row[index] - means[index]) / scales[index]
-            for index in range(feature_count)
-        )
+        tuple((row[index] - means[index]) / scales[index] for index in range(feature_count))
         for row in raw
     ]
     targets = [
@@ -421,8 +394,7 @@ def fit_regret_aware_mask_residual_model(
     weights = [_regret_weight(item, cap=regret_weight_cap) for item in observations]
     weight_sum = sum(weights)
     intercept = (
-        sum(weight * target for weight, target in zip(weights, targets, strict=True))
-        / weight_sum
+        sum(weight * target for weight, target in zip(weights, targets, strict=True)) / weight_sum
     )
     coefficients = [0.0] * feature_count
     constrained = set(MATCH_MONOTONE_FEATURE_INDICES)
@@ -470,8 +442,7 @@ def fit_regret_aware_mask_residual_model(
     squared_error = 0.0
     for row, target, weight in zip(design, targets, weights, strict=True):
         prediction = intercept + sum(
-            value * coefficient
-            for value, coefficient in zip(row, coefficients, strict=True)
+            value * coefficient for value, coefficient in zip(row, coefficients, strict=True)
         )
         squared_error += weight * (target - prediction) ** 2
     return RegretAwareMaskResidualModel(
@@ -480,12 +451,8 @@ def fit_regret_aware_mask_residual_model(
         residual_coefficients=tuple(coefficients),
         feature_means=means,
         feature_scales=scales,
-        support_minima=tuple(
-            min(row[index] for row in raw) for index in range(feature_count)
-        ),
-        support_maxima=tuple(
-            max(row[index] for row in raw) for index in range(feature_count)
-        ),
+        support_minima=tuple(min(row[index] for row in raw) for index in range(feature_count)),
+        support_maxima=tuple(max(row[index] for row in raw) for index in range(feature_count)),
         ridge_lambda=ridge_lambda,
         weighted_residual_rmse=math.sqrt(squared_error / weight_sum),
         confidence_multiplier=confidence_multiplier,
@@ -526,21 +493,14 @@ def fit_local_regret_guard_model(
         raise ValueError("Local regret guard needs more scenario groups than neighbors")
     raw = [mask_guard_feature_vector(item.features) for item in observations]
     feature_count = len(raw[0])
-    means = tuple(
-        statistics.mean(row[index] for row in raw) for index in range(feature_count)
-    )
+    means = tuple(statistics.mean(row[index] for row in raw) for index in range(feature_count))
     scales = tuple(
-        statistics.pstdev(row[index] for row in raw) or 1.0
-        for index in range(feature_count)
+        statistics.pstdev(row[index] for row in raw) or 1.0 for index in range(feature_count)
     )
     calibration: list[LocalRegretCalibrationPoint] = []
     for group in groups:
-        inner_training = [
-            item for item in observations if item.scenario_group_id != group
-        ]
-        inner_testing = [
-            item for item in observations if item.scenario_group_id == group
-        ]
+        inner_training = [item for item in observations if item.scenario_group_id != group]
+        inner_testing = [item for item in observations if item.scenario_group_id == group]
         inner_model = fit_regret_aware_mask_residual_model(
             inner_training,
             ridge_lambda=residual_ridge_lambda,
@@ -548,9 +508,7 @@ def fit_local_regret_guard_model(
             confidence_multiplier=confidence_multiplier,
         )
         for item in inner_testing:
-            residual_decision = choose_mask_placement_with_residual(
-                item.features, inner_model
-            )
+            residual_decision = choose_mask_placement_with_residual(item.features, inner_model)
             v1_decision = choose_mask_placement(item.features)
             calibration.append(
                 LocalRegretCalibrationPoint(
@@ -616,8 +574,7 @@ def _prediction_row(
         "selected_placement": placement.value,
         "oracle_placement": oracle.value,
         "exact_top1": placement is oracle,
-        "within_tie_threshold": regret_ratio - 1.0
-        <= observation.tie_threshold_fraction,
+        "within_tie_threshold": regret_ratio - 1.0 <= observation.tie_threshold_fraction,
         "regret_percent": (regret_ratio - 1.0) * 100.0,
         "speedup_vs_fixed_late_ratio": speedup_late,
         "speedup_vs_fixed_early_ratio": speedup_early,
@@ -746,9 +703,7 @@ def cross_validate_regret_aware_mask_residual(
                 {
                     "base_log_early_late_ratio": decision.base_log_early_late_ratio,
                     "residual_correction": decision.residual_correction,
-                    "corrected_log_early_late_ratio": (
-                        decision.corrected_log_early_late_ratio
-                    ),
+                    "corrected_log_early_late_ratio": (decision.corrected_log_early_late_ratio),
                     "within_training_support": decision.within_training_support,
                     "used_base_fallback": decision.used_base_fallback,
                     "decision_reason_code": decision.reason_code,
@@ -772,12 +727,8 @@ def cross_validate_local_regret_guard(
     output: list[dict[str, Any]] = []
     groups = sorted({item.scenario_group_id for item in observations})
     for group_index, outer_group in enumerate(groups, start=1):
-        outer_training = [
-            item for item in observations if item.scenario_group_id != outer_group
-        ]
-        outer_testing = [
-            item for item in observations if item.scenario_group_id == outer_group
-        ]
+        outer_training = [item for item in observations if item.scenario_group_id != outer_group]
+        outer_testing = [item for item in observations if item.scenario_group_id == outer_group]
         guard = fit_local_regret_guard_model(
             outer_training,
             neighbor_group_count=neighbor_group_count,
@@ -787,9 +738,7 @@ def cross_validate_local_regret_guard(
         )
         for item in outer_testing:
             decision = choose_mask_placement_with_local_guard(item.features, guard)
-            residual_score = guard.residual_model.predict_corrected_log_ratio(
-                item.features
-            )
+            residual_score = guard.residual_model.predict_corrected_log_ratio(item.features)
             row = _prediction_row(
                 item,
                 scheme="guarded_residual_nested_leave_one_scenario_out",
@@ -803,9 +752,7 @@ def cross_validate_local_regret_guard(
                     "guard_reason_code": decision.reason_code,
                     "residual_placement": decision.residual_placement.value,
                     "v1_placement": decision.v1_placement.value,
-                    "estimated_local_residual_regret": (
-                        decision.estimated_local_residual_regret
-                    ),
+                    "estimated_local_residual_regret": (decision.estimated_local_residual_regret),
                     "estimated_local_v1_regret": decision.estimated_local_v1_regret,
                     "neighbor_group_ids": "|".join(decision.neighbor_group_ids),
                     "neighbor_distances": "|".join(
@@ -836,9 +783,7 @@ def audit_match_rate_monotonicity(
     """
 
     ordered_rates = tuple(sorted(set(match_rates)))
-    if len(ordered_rates) < 2 or any(
-        not 0.0 <= value <= 1.0 for value in ordered_rates
-    ):
+    if len(ordered_rates) < 2 or any(not 0.0 <= value <= 1.0 for value in ordered_rates):
         raise ValueError("match_rates must contain at least two values in [0, 1]")
     if not row_counts or not identifier_widths:
         raise ValueError("monotonicity audit grids cannot be empty")
@@ -1006,8 +951,7 @@ def _scheme_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "exact_top1_count": sum(bool(row["exact_top1"]) for row in rows),
         "exact_top1_rate": sum(bool(row["exact_top1"]) for row in rows) / len(rows),
         "within_tie_count": sum(bool(row["within_tie_threshold"]) for row in rows),
-        "within_tie_rate": sum(bool(row["within_tie_threshold"]) for row in rows)
-        / len(rows),
+        "within_tie_rate": sum(bool(row["within_tie_threshold"]) for row in rows) / len(rows),
         "mean_regret_percent": statistics.mean(regrets),
         "median_regret_percent": statistics.median(regrets),
         "p95_regret_percent": _percentile(regrets, 0.95),
@@ -1097,21 +1041,13 @@ def develop_mask_optimizer_v2(
     observations = load_mask_workload_observations(run_dirs)
     predictions = _v1_rows(observations)
     predictions.extend(
-        cross_validate_mask_v2(
-            observations, split="workload", ridge_lambda=ridge_lambda
-        )
+        cross_validate_mask_v2(observations, split="workload", ridge_lambda=ridge_lambda)
     )
     predictions.extend(
-        cross_validate_mask_v2(
-            observations, split="scenario", ridge_lambda=ridge_lambda
-        )
+        cross_validate_mask_v2(observations, split="scenario", ridge_lambda=ridge_lambda)
     )
-    predictions.extend(
-        cross_validate_decomposed_mask_cost(observations, split="workload")
-    )
-    predictions.extend(
-        cross_validate_decomposed_mask_cost(observations, split="scenario")
-    )
+    predictions.extend(cross_validate_decomposed_mask_cost(observations, split="workload"))
+    predictions.extend(cross_validate_decomposed_mask_cost(observations, split="scenario"))
     predictions.extend(
         cross_validate_regret_aware_mask_residual(
             observations,
@@ -1161,27 +1097,21 @@ def develop_mask_optimizer_v2(
     )
     monotonicity = audit_match_rate_monotonicity(
         final_model,
-        row_counts=tuple(
-            sorted({item.features.join_input_rows for item in observations})
-        ),
+        row_counts=tuple(sorted({item.features.join_input_rows for item in observations})),
         identifier_widths=tuple(
             sorted({item.features.identifier_width_bytes for item in observations})
         ),
     )
     decomposed_monotonicity = audit_decomposed_cost_monotonicity(
         decomposed_model,
-        row_counts=tuple(
-            sorted({item.features.join_input_rows for item in observations})
-        ),
+        row_counts=tuple(sorted({item.features.join_input_rows for item in observations})),
         identifier_widths=tuple(
             sorted({item.features.identifier_width_bytes for item in observations})
         ),
     )
     residual_monotonicity = audit_residual_ranking_monotonicity(
         residual_model,
-        row_counts=tuple(
-            sorted({item.features.join_input_rows for item in observations})
-        ),
+        row_counts=tuple(sorted({item.features.join_input_rows for item in observations})),
         identifier_widths=tuple(
             sorted({item.features.identifier_width_bytes for item in observations})
         ),
@@ -1193,12 +1123,10 @@ def develop_mask_optimizer_v2(
             residual_primary["within_tie_rate"] > baseline["within_tie_rate"]
         ),
         "p95_regret_does_not_worsen_v1": (
-            residual_primary["p95_regret_percent"]
-            <= baseline["p95_regret_percent"] + 1e-9
+            residual_primary["p95_regret_percent"] <= baseline["p95_regret_percent"] + 1e-9
         ),
         "max_regret_does_not_worsen_v1": (
-            residual_primary["max_regret_percent"]
-            <= baseline["max_regret_percent"] + 1e-9
+            residual_primary["max_regret_percent"] <= baseline["max_regret_percent"] + 1e-9
         ),
         "corrected_score_is_match_monotone": residual_monotonicity["passes"],
     }
@@ -1221,9 +1149,7 @@ def develop_mask_optimizer_v2(
         "evaluation_label": "development_cross_validation",
         "observation_count": len(observations),
         "source_run_ids": sorted({item.source_run_id for item in observations}),
-        "source_commit_hashes": sorted(
-            {item.source_commit_hash for item in observations}
-        ),
+        "source_commit_hashes": sorted({item.source_commit_hash for item in observations}),
         "feature_names": list(MASK_V2_FEATURE_NAMES),
         "ridge_lambda": ridge_lambda,
         "residual_ridge_lambda": residual_ridge_lambda,

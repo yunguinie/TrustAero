@@ -61,9 +61,7 @@ class MechanismMicrobenchConfig:
             value < 1 or value > 4096 for value in self.identifier_widths
         ):
             raise ValueError("identifier_widths must be in [1, 4096]")
-        if not self.match_rates or any(
-            not 0.0 <= value <= 1.0 for value in self.match_rates
-        ):
+        if not self.match_rates or any(not 0.0 <= value <= 1.0 for value in self.match_rates):
             raise ValueError("match_rates must be in [0, 1]")
         if not self.seeds or any(value < 0 for value in self.seeds):
             raise ValueError("seeds must contain non-negative values")
@@ -100,13 +98,8 @@ class MechanismMicrobenchUnit:
 
     @property
     def unit_id(self) -> str:
-        match = (
-            "na" if self.match_rate is None else f"{round(self.match_rate * 1000):04d}"
-        )
-        return (
-            f"{self.benchmark}-n{self.row_count}-w{self.identifier_width}"
-            f"-m{match}-s{self.seed}"
-        )
+        match = "na" if self.match_rate is None else f"{round(self.match_rate * 1000):04d}"
+        return f"{self.benchmark}-n{self.row_count}-w{self.identifier_width}-m{match}-s{self.seed}"
 
 
 def mechanism_microbench_units(
@@ -122,9 +115,7 @@ def mechanism_microbench_units(
     output: list[MechanismMicrobenchUnit] = []
     for benchmark in config.benchmarks:
         rates: tuple[float | None, ...] = (
-            tuple(config.match_rates)
-            if benchmark in {"join_payload", "mask_fragment"}
-            else (None,)
+            tuple(config.match_rates) if benchmark in {"join_payload", "mask_fragment"} else (None,)
         )
         for row_count in config.row_counts:
             for width in config.identifier_widths:
@@ -179,9 +170,7 @@ def _git_dirty(root: Path) -> bool:
 
 
 def _digest(value: object) -> str:
-    encoded = json.dumps(
-        value, default=str, sort_keys=True, separators=(",", ":")
-    ).encode()
+    encoded = json.dumps(value, default=str, sort_keys=True, separators=(",", ":")).encode()
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
 
 
@@ -240,9 +229,7 @@ def _create_data(connection: Any, unit: MechanismMicrobenchUnit) -> int:
     connection.execute("DROP TABLE IF EXISTS micro_dimension")
     blocks = math.ceil(unit.identifier_width / 32)
     matched_rows = (
-        unit.row_count
-        if unit.match_rate is None
-        else round(unit.row_count * unit.match_rate)
+        unit.row_count if unit.match_rate is None else round(unit.row_count * unit.match_rate)
     )
     dimension_rows = min(unit.row_count, 10_000)
     connection.execute(
@@ -413,10 +400,7 @@ def _component_orders(
         return tuple(components for _ in range(round_count))
     values = list(components)
     return tuple(
-        tuple(
-            values[(offset + index) % len(values) :]
-            + values[: (offset + index) % len(values)]
-        )
+        tuple(values[(offset + index) % len(values) :] + values[: (offset + index) % len(values)])
         for index in range(round_count)
     )
 
@@ -471,13 +455,9 @@ def _profiles(
             elif component in {"early_mask_fragment", "late_mask_fragment"}:
                 connection.execute("DROP TABLE IF EXISTS micro_fragment_output")
         if len({item.operator_names for item in observations}) != 1:
-            raise ValueError(
-                f"Physical operator shape changed within {component} profiles"
-            )
+            raise ValueError(f"Physical operator shape changed within {component} profiles")
         if len({item.fingerprint for item in observations}) != 1:
-            raise ValueError(
-                f"Physical plan fingerprint changed within {component} profiles"
-            )
+            raise ValueError(f"Physical plan fingerprint changed within {component} profiles")
         reference = observations[0]
         output[component] = {
             "fingerprint": reference.fingerprint,
@@ -487,16 +467,12 @@ def _profiles(
             ),
             "operator_names": list(reference.operator_names),
             "operator_timings_ms": [
-                statistics.median(
-                    item.operator_timings_ms[index] for item in observations
-                )
+                statistics.median(item.operator_timings_ms[index] for item in observations)
                 for index in range(len(reference.operator_names))
             ],
             "operator_cardinalities": list(reference.actual_cardinalities),
             "rows_scanned": list(reference.rows_scanned),
-            "peak_buffer_memory_bytes": max(
-                item.peak_buffer_memory_bytes for item in observations
-            ),
+            "peak_buffer_memory_bytes": max(item.peak_buffer_memory_bytes for item in observations),
             "peak_temp_directory_bytes": max(
                 item.peak_temp_directory_bytes for item in observations
             ),
@@ -583,17 +559,13 @@ def _run_unit(
         result_digests = {str(row["result_digest"]) for row in measurements}
         if len(result_digests) != 1:
             raise ValueError("Early and late Mask fragments produced different results")
-        fingerprints = {
-            str(profile["fingerprint"]) for profile in profiles.values()
-        }
+        fingerprints = {str(profile["fingerprint"]) for profile in profiles.values()}
         if len(fingerprints) != 2:
             raise ValueError("Mask fragments did not produce distinct physical plans")
         for component, profile in profiles.items():
             operator_names = list(profile["operator_names"])
             if "HASH_JOIN" not in operator_names or "ORDER_BY" not in operator_names:
-                raise ValueError(
-                    f"{component} did not retain the required Join and sort operators"
-                )
+                raise ValueError(f"{component} did not retain the required Join and sort operators")
             join_cardinalities = [
                 int(cardinality)
                 for name, cardinality in zip(
@@ -604,9 +576,7 @@ def _run_unit(
                 if name == "HASH_JOIN"
             ]
             if join_cardinalities != [matched_rows]:
-                raise ValueError(
-                    f"{component} HASH_JOIN cardinality does not match the workload"
-                )
+                raise ValueError(f"{component} HASH_JOIN cardinality does not match the workload")
         validation_details = {
             "result_equivalent": True,
             "physical_plans_distinct": True,
@@ -688,21 +658,16 @@ def _finalize(
                         else None
                     ),
                     "physical_plan_fingerprint": profile.get("fingerprint"),
-                    "physical_operator_names": "|".join(
-                        profile.get("operator_names", [])
-                    ),
+                    "physical_operator_names": "|".join(profile.get("operator_names", [])),
                     "peak_buffer_memory_bytes": profile.get("peak_buffer_memory_bytes"),
-                    "peak_temp_directory_bytes": profile.get(
-                        "peak_temp_directory_bytes"
-                    ),
+                    "peak_temp_directory_bytes": profile.get("peak_temp_directory_bytes"),
                 }
             )
         for component, profile in payload["profiles"].items():
             samples = profile["profile_samples"]
             for operator_index, operator_name in enumerate(profile["operator_names"]):
                 timings = [
-                    float(sample["operator_timings_ms"][operator_index])
-                    for sample in samples
+                    float(sample["operator_timings_ms"][operator_index]) for sample in samples
                 ]
                 operator_rows.append(
                     {
@@ -717,9 +682,7 @@ def _finalize(
                         "p95_operator_timing_ms": _percentile95(timings),
                         "min_operator_timing_ms": min(timings),
                         "max_operator_timing_ms": max(timings),
-                        "actual_cardinality": profile["operator_cardinalities"][
-                            operator_index
-                        ],
+                        "actual_cardinality": profile["operator_cardinalities"][operator_index],
                         "rows_scanned": profile["rows_scanned"][operator_index],
                         "physical_plan_fingerprint": profile["fingerprint"],
                     }
@@ -745,23 +708,15 @@ def _finalize(
                 "subtract",
             ),
         }
-        left_name, right_name, derived_name, operation = paired_components[
-            str(unit["benchmark"])
-        ]
+        left_name, right_name, derived_name, operation = paired_components[str(unit["benchmark"])]
         left = {
-            int(row["repeat_index"]): float(row["latency_ms"])
-            for row in by_component[left_name]
+            int(row["repeat_index"]): float(row["latency_ms"]) for row in by_component[left_name]
         }
         right = {
-            int(row["repeat_index"]): float(row["latency_ms"])
-            for row in by_component[right_name]
+            int(row["repeat_index"]): float(row["latency_ms"]) for row in by_component[right_name]
         }
         paired_values = [
-            (
-                left[index] + right[index]
-                if operation == "sum"
-                else left[index] - right[index]
-            )
+            (left[index] + right[index] if operation == "sum" else left[index] - right[index])
             for index in sorted(set(left) & set(right))
         ]
         paired_rows.append(
@@ -822,8 +777,7 @@ def _finalize(
                 for payload in fragment_payloads
             ),
             "distinct_physical_plan_fragment_count": sum(
-                payload.get("validation_details", {}).get("physical_plans_distinct")
-                is True
+                payload.get("validation_details", {}).get("physical_plans_distinct") is True
                 for payload in fragment_payloads
             ),
             "spilled_profile_count": sum(value > 0 for value in profile_temp_bytes),
@@ -869,9 +823,7 @@ def run_mechanism_microbench(
         checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
         if checkpoint.get("config_digest") != config_digest:
             raise ValueError("Resume config does not match the original mechanism run")
-        environment = json.loads(
-            (output_dir / "environment.json").read_text(encoding="utf-8")
-        )
+        environment = json.loads((output_dir / "environment.json").read_text(encoding="utf-8"))
         if environment.get("commit_hash") != commit_hash:
             raise ValueError("Cannot resume mechanism run after the Git commit changed")
     else:
@@ -929,11 +881,7 @@ def run_mechanism_microbench(
             _write_json_atomic(checkpoint_path, checkpoint)
             elapsed = time.perf_counter() - started
             done = len(completed)
-            eta = (
-                elapsed / session_completed * (len(units) - done)
-                if session_completed
-                else 0.0
-            )
+            eta = elapsed / session_completed * (len(units) - done) if session_completed else 0.0
             progress = {
                 "run_id": run_id,
                 "completed_units": done,

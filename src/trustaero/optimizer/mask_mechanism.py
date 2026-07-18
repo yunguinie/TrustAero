@@ -205,13 +205,9 @@ class MechanismMaskCostModel:
                 raise TypeError("Mechanism components must be objects")
             return cls(
                 hash_cost=NonnegativeMechanismCost.from_dict(hash_payload),
-                materialization_cost=NonnegativeMechanismCost.from_dict(
-                    materialization_payload
-                ),
+                materialization_cost=NonnegativeMechanismCost.from_dict(materialization_payload),
                 join_cost=NonnegativeMechanismCost.from_dict(join_payload),
-                hashed_identifier_width_bytes=int(
-                    payload["hashed_identifier_width_bytes"]
-                ),
+                hashed_identifier_width_bytes=int(payload["hashed_identifier_width_bytes"]),
             )
         except (KeyError, TypeError, ValueError) as error:
             raise ValueError("Malformed mechanism Mask cost artifact") from error

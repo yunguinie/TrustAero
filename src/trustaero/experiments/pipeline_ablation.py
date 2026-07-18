@@ -89,11 +89,14 @@ class PipelineAblationExposure:
     masked_rows_materialized: int
 
     def __post_init__(self) -> None:
-        if min(
-            self.raw_rows_exposed_to_join,
-            self.raw_rows_materialized,
-            self.masked_rows_materialized,
-        ) < 0:
+        if (
+            min(
+                self.raw_rows_exposed_to_join,
+                self.raw_rows_materialized,
+                self.masked_rows_materialized,
+            )
+            < 0
+        ):
             raise ValueError("Ablation exposure row counts cannot be negative")
 
 
@@ -115,13 +118,9 @@ def pipeline_ablation_exposure(
     if variant == "late_fused":
         return PipelineAblationExposure(scenario.row_count, 0, 0)
     if variant == "late_join_materialized":
-        return PipelineAblationExposure(
-            scenario.row_count, matched_rows, 0
-        )
+        return PipelineAblationExposure(scenario.row_count, matched_rows, 0)
     if variant == "late_hash_materialized":
-        return PipelineAblationExposure(
-            scenario.row_count, 0, matched_rows
-        )
+        return PipelineAblationExposure(scenario.row_count, 0, matched_rows)
     return PipelineAblationExposure(0, 0, scenario.row_count)
 
 
@@ -131,16 +130,14 @@ def pipeline_ablation_sql() -> dict[str, str]:
     prefix = "CREATE TEMP TABLE ablation_output AS "
     return {
         "late_fused": (
-            prefix
-            + "SELECT events.row_id, sha256(events.sensitive_value) AS masked_value, "
+            prefix + "SELECT events.row_id, sha256(events.sensitive_value) AS masked_value, "
             "dimension.marker FROM ablation_events AS events "
             "INNER JOIN ablation_dimension AS dimension "
             "ON events.join_key = dimension.dimension_key "
             "ORDER BY masked_value, events.row_id"
         ),
         "late_join_materialized": (
-            prefix
-            + "WITH joined_events AS MATERIALIZED ("
+            prefix + "WITH joined_events AS MATERIALIZED ("
             "SELECT events.row_id, events.sensitive_value, dimension.marker "
             "FROM ablation_events AS events "
             "INNER JOIN ablation_dimension AS dimension "
@@ -150,8 +147,7 @@ def pipeline_ablation_sql() -> dict[str, str]:
             "ORDER BY masked_value, joined.row_id"
         ),
         "late_hash_materialized": (
-            prefix
-            + "WITH masked_events AS MATERIALIZED ("
+            prefix + "WITH masked_events AS MATERIALIZED ("
             "SELECT events.row_id, sha256(events.sensitive_value) AS masked_value, "
             "dimension.marker FROM ablation_events AS events "
             "INNER JOIN ablation_dimension AS dimension "
@@ -161,8 +157,7 @@ def pipeline_ablation_sql() -> dict[str, str]:
             "ORDER BY masked.masked_value, masked.row_id"
         ),
         "early_hash_materialized": (
-            prefix
-            + "WITH masked_events AS MATERIALIZED ("
+            prefix + "WITH masked_events AS MATERIALIZED ("
             "SELECT row_id, sha256(sensitive_value) AS masked_value, join_key "
             "FROM ablation_events"
             ") SELECT masked.row_id, masked.masked_value, dimension.marker "
@@ -207,9 +202,7 @@ def _git_dirty(root: Path) -> bool:
 
 
 def _digest(value: object) -> str:
-    encoded = json.dumps(
-        value, default=str, sort_keys=True, separators=(",", ":")
-    ).encode()
+    encoded = json.dumps(value, default=str, sort_keys=True, separators=(",", ":")).encode()
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
 
 
@@ -436,19 +429,14 @@ def _execute_variant(
     latency_ms = (time.perf_counter() - started) * 1000.0
     result = _result_checksum(connection)
     if result[:2] != (matched_rows, matched_rows * 64):
-        raise ValueError(
-            f"{scenario.scenario_id}/{variant} cardinality or hash width is invalid"
-        )
+        raise ValueError(f"{scenario.scenario_id}/{variant} cardinality or hash width is invalid")
     return latency_ms, result
 
 
 def _variant_orders(round_count: int, offset: int) -> tuple[tuple[str, ...], ...]:
     values = list(PIPELINE_ABLATION_VARIANTS)
     return tuple(
-        tuple(
-            values[(offset + index) % len(values) :]
-            + values[: (offset + index) % len(values)]
-        )
+        tuple(values[(offset + index) % len(values) :] + values[: (offset + index) % len(values)])
         for index in range(round_count)
     )
 
@@ -486,9 +474,7 @@ def _profile_variants(
             "fingerprint": reference.fingerprint,
             "operator_names": list(reference.operator_names),
             "operator_timings_ms": [
-                statistics.median(
-                    item.operator_timings_ms[index] for item in observations
-                )
+                statistics.median(item.operator_timings_ms[index] for item in observations)
                 for index in range(len(reference.operator_names))
             ],
             "operator_cardinalities": list(reference.actual_cardinalities),
@@ -497,9 +483,7 @@ def _profile_variants(
             "profile_latency_ms": statistics.median(
                 item.profile_latency_ms for item in observations
             ),
-            "peak_buffer_memory_bytes": max(
-                item.peak_buffer_memory_bytes for item in observations
-            ),
+            "peak_buffer_memory_bytes": max(item.peak_buffer_memory_bytes for item in observations),
             "peak_temp_directory_bytes": max(
                 item.peak_temp_directory_bytes for item in observations
             ),
@@ -532,9 +516,7 @@ def _run_scenario(
     orders = _variant_orders(
         config.warmup_runs + config.measured_runs,
         int.from_bytes(
-            hashlib.sha256(
-                f"{scenario.scenario_id}:{config.order_seed}".encode()
-            ).digest()[:4],
+            hashlib.sha256(f"{scenario.scenario_id}:{config.order_seed}".encode()).digest()[:4],
             "big",
         ),
     )
@@ -626,9 +608,7 @@ def _finalize(output_dir: Path, config: PipelineAblationConfig, run_id: str) -> 
         for variant, rows in sorted(by_variant.items()):
             values = [float(row["latency_ms"]) for row in rows]
             profile = payload["profiles"][variant]
-            exposure = pipeline_ablation_exposure(
-                PipelineAblationScenario(**scenario), variant
-            )
+            exposure = pipeline_ablation_exposure(PipelineAblationScenario(**scenario), variant)
             component_rows.append(
                 {
                     "scenario_id": payload["scenario_id"],
@@ -642,9 +622,7 @@ def _finalize(output_dir: Path, config: PipelineAblationConfig, run_id: str) -> 
                     "max_latency_ms": max(values),
                     "physical_plan_fingerprint": profile["fingerprint"],
                     "peak_buffer_memory_bytes": profile["peak_buffer_memory_bytes"],
-                    "peak_temp_directory_bytes": profile[
-                        "peak_temp_directory_bytes"
-                    ],
+                    "peak_temp_directory_bytes": profile["peak_temp_directory_bytes"],
                     **asdict(exposure),
                 }
             )
@@ -664,9 +642,7 @@ def _finalize(output_dir: Path, config: PipelineAblationConfig, run_id: str) -> 
                         "variant": variant,
                         "operator_index": index,
                         "operator_name": name,
-                        "median_operator_timing_ms": profile["operator_timings_ms"][
-                            index
-                        ],
+                        "median_operator_timing_ms": profile["operator_timings_ms"][index],
                         "actual_cardinality": profile["operator_cardinalities"][index],
                         "rows_scanned": profile["rows_scanned"][index],
                         "physical_plan_fingerprint": profile["fingerprint"],
@@ -703,8 +679,7 @@ def _finalize(output_dir: Path, config: PipelineAblationConfig, run_id: str) -> 
                 payload.get("validation_passed") is True for payload in payloads
             ),
             "result_equivalent_scenario_count": sum(
-                payload["validation_details"]["result_equivalent"] is True
-                for payload in payloads
+                payload["validation_details"]["result_equivalent"] is True for payload in payloads
             ),
             "distinct_plan_scenario_count": sum(
                 payload["validation_details"]["four_physical_plans_distinct"] is True
@@ -765,9 +740,7 @@ def run_pipeline_ablation_smoke(
         checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
         if checkpoint.get("config_digest") != config_digest:
             raise ValueError("Resume config differs from the Phase 2M run")
-        environment = json.loads(
-            (output_dir / "environment.json").read_text(encoding="utf-8")
-        )
+        environment = json.loads((output_dir / "environment.json").read_text(encoding="utf-8"))
         if environment.get("commit_hash") != commit_hash:
             raise ValueError("Cannot resume Phase 2M after the Git commit changed")
     else:
@@ -814,9 +787,7 @@ def run_pipeline_ablation_smoke(
                     },
                 )
                 raise
-            _write_json_atomic(
-                output_dir / "units" / f"{scenario.scenario_id}.json", payload
-            )
+            _write_json_atomic(output_dir / "units" / f"{scenario.scenario_id}.json", payload)
             completed.add(scenario.scenario_id)
             session_completed += 1
             checkpoint["completed_scenarios"] = sorted(completed)

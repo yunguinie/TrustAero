@@ -31,8 +31,7 @@ def main() -> None:
     def report(completed: int, total: int, family_id: str, elapsed: float) -> None:
         eta = max(0.0, elapsed / completed * (total - completed))
         print(
-            f"[pipeline-cv {completed}/{total}] {family_id} "
-            f"elapsed={elapsed:.1f}s eta={eta:.1f}s",
+            f"[pipeline-cv {completed}/{total}] {family_id} elapsed={elapsed:.1f}s eta={eta:.1f}s",
             flush=True,
         )
 

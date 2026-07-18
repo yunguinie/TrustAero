@@ -206,9 +206,7 @@ def fit_nonnegative_mechanism_cost(
                 item.target_ms
                 - sum(
                     value * coefficient
-                    for value, coefficient in zip(
-                        item.features, coefficients, strict=True
-                    )
+                    for value, coefficient in zip(item.features, coefficients, strict=True)
                 )
                 for item in observations
             ),
@@ -330,10 +328,7 @@ def fit_mechanism_mask_model(
             join_cost=models["hash_join"],
         ),
         cv_rows,
-        {
-            name: _component_cv_summary(rows)
-            for name, rows in sorted(grouped_cv.items())
-        },
+        {name: _component_cv_summary(rows) for name, rows in sorted(grouped_cv.items())},
     )
 
 
@@ -372,22 +367,17 @@ def _prediction_row(
         "selected_placement": decision.placement.value,
         "oracle_placement": oracle.value,
         "exact_top1": decision.placement is oracle,
-        "within_tie_threshold": regret_ratio - 1.0
-        <= observation.tie_threshold_fraction,
+        "within_tie_threshold": regret_ratio - 1.0 <= observation.tie_threshold_fraction,
         "regret_percent": (regret_ratio - 1.0) * 100.0,
         "speedup_vs_fixed_late_ratio": speedup_late,
         "speedup_vs_fixed_early_ratio": speedup_early,
         "estimated_early_latency_ms": early,
         "estimated_late_latency_ms": late,
         "early_sha256_ms": decision.early_components_ms["sha256_ms"],
-        "early_payload_movement_ms": decision.early_components_ms[
-            "payload_movement_ms"
-        ],
+        "early_payload_movement_ms": decision.early_components_ms["payload_movement_ms"],
         "early_hash_join_ms": decision.early_components_ms["hash_join_ms"],
         "late_sha256_ms": decision.late_components_ms["sha256_ms"],
-        "late_payload_movement_ms": decision.late_components_ms[
-            "payload_movement_ms"
-        ],
+        "late_payload_movement_ms": decision.late_components_ms["payload_movement_ms"],
         "late_hash_join_ms": decision.late_components_ms["hash_join_ms"],
         "decision_reason_code": decision.reason_code,
     }
@@ -405,26 +395,17 @@ def _scheme_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "observation_count": len(rows),
         "exact_top1_count": sum(_boolean(row["exact_top1"]) for row in rows),
         "exact_top1_rate": sum(_boolean(row["exact_top1"]) for row in rows) / len(rows),
-        "within_tie_count": sum(
-            _boolean(row["within_tie_threshold"]) for row in rows
-        ),
-        "within_tie_rate": sum(
-            _boolean(row["within_tie_threshold"]) for row in rows
-        )
-        / len(rows),
+        "within_tie_count": sum(_boolean(row["within_tie_threshold"]) for row in rows),
+        "within_tie_rate": sum(_boolean(row["within_tie_threshold"]) for row in rows) / len(rows),
         "mean_regret_percent": statistics.mean(regrets),
         "median_regret_percent": statistics.median(regrets),
         "p95_regret_percent": _percentile(regrets, 0.95),
         "max_regret_percent": max(regrets),
         "geometric_speedup_vs_fixed_late_ratio": math.exp(
-            statistics.mean(
-                math.log(float(row["speedup_vs_fixed_late_ratio"])) for row in rows
-            )
+            statistics.mean(math.log(float(row["speedup_vs_fixed_late_ratio"])) for row in rows)
         ),
         "geometric_speedup_vs_fixed_early_ratio": math.exp(
-            statistics.mean(
-                math.log(float(row["speedup_vs_fixed_early_ratio"])) for row in rows
-            )
+            statistics.mean(math.log(float(row["speedup_vs_fixed_early_ratio"])) for row in rows)
         ),
     }
 
@@ -553,11 +534,7 @@ def _comparison_rows(
         if row["evaluation_scheme"] in retained
     ]
     for scheme in retained:
-        scheme_ids = {
-            str(row["workload_id"])
-            for row in rows
-            if row["evaluation_scheme"] == scheme
-        }
+        scheme_ids = {str(row["workload_id"]) for row in rows if row["evaluation_scheme"] == scheme}
         if scheme_ids != workload_ids:
             raise ValueError(f"Frozen comparison workload mismatch for {scheme}")
     return rows
@@ -625,9 +602,7 @@ def develop_mechanism_mask_optimizer(
     primary = schemes["mechanism_formula_fixed_development"]
     monotonicity = audit_mechanism_monotonicity(
         model,
-        row_counts=tuple(
-            sorted({item.features.join_input_rows for item in observations})
-        ),
+        row_counts=tuple(sorted({item.features.join_input_rows for item in observations})),
         identifier_widths=tuple(
             sorted({item.features.identifier_width_bytes for item in observations})
         ),

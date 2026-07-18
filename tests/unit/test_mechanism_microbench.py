@@ -81,9 +81,7 @@ def test_microbench_writes_valid_complete_artifacts_and_resumes(tmp_path: Path) 
         "materialization_roundtrip",
         "early_minus_late",
     }
-    fragment_rows = [
-        row for row in measurements if row["benchmark"] == "mask_fragment"
-    ]
+    fragment_rows = [row for row in measurements if row["benchmark"] == "mask_fragment"]
     assert len({row["result_digest"] for row in fragment_rows}) == 1
     assert len({row["physical_plan_fingerprint"] for row in fragment_rows}) == 2
     assert (output / "progress.json").exists()
@@ -92,15 +90,11 @@ def test_microbench_writes_valid_complete_artifacts_and_resumes(tmp_path: Path) 
     assert resumed == output
 
 
-def test_resume_rejects_commit_change(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_resume_rejects_commit_change(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     pytest.importorskip("duckdb")
     config = _config(tmp_path / "resume")
     output = run_mechanism_microbench(config)
-    original = json.loads((output / "environment.json").read_text(encoding="utf-8"))[
-        "commit_hash"
-    ]
+    original = json.loads((output / "environment.json").read_text(encoding="utf-8"))["commit_hash"]
     monkeypatch.setattr(microbench, "_git_commit", lambda _root: original + "-changed")
 
     with pytest.raises(ValueError, match="Git commit changed"):

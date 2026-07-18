@@ -107,9 +107,7 @@ def _operator_role_totals(rows: list[dict[str, str]]) -> dict[str, float]:
 
     # SHA-256 dominates the projection timings in this frozen fragment. The
     # role is selected by timing, not by a brittle operator index.
-    hash_projection = max(
-        projections, key=lambda row: float(row["median_operator_timing_ms"])
-    )
+    hash_projection = max(projections, key=lambda row: float(row["median_operator_timing_ms"]))
     event_scan = max(scans, key=lambda row: int(row["rows_scanned"]))
 
     def timing(row: dict[str, str]) -> float:
@@ -123,26 +121,18 @@ def _operator_role_totals(rows: list[dict[str, str]]) -> dict[str, float]:
     roles["support_projection"] = sum(
         timing(row) for row in projections if row is not hash_projection
     )
-    roles["hash_join"] = sum(
-        timing(row) for row in rows if row["operator_name"] == "HASH_JOIN"
-    )
-    roles["order_by"] = sum(
-        timing(row) for row in rows if row["operator_name"] == "ORDER_BY"
-    )
+    roles["hash_join"] = sum(timing(row) for row in rows if row["operator_name"] == "HASH_JOIN")
+    roles["order_by"] = sum(timing(row) for row in rows if row["operator_name"] == "ORDER_BY")
     roles["materialization"] = sum(
         timing(row) for row in rows if row["operator_name"] in {"CTE", "CTE_SCAN"}
     )
     roles["event_scan"] = timing(event_scan)
     roles["dimension_scan"] = sum(timing(row) for row in scans if row is not event_scan)
     roles["output_sink"] = sum(
-        timing(row)
-        for row in rows
-        if row["operator_name"] == "BATCH_CREATE_TABLE_AS"
+        timing(row) for row in rows if row["operator_name"] == "BATCH_CREATE_TABLE_AS"
     )
     accounted = sum(roles.values())
-    expected = sum(
-        timing(row) for row in rows if row["operator_name"] not in _IGNORED_OPERATORS
-    )
+    expected = sum(timing(row) for row in rows if row["operator_name"] not in _IGNORED_OPERATORS)
     if not math.isclose(accounted, expected, rel_tol=1e-9, abs_tol=1e-9):
         raise ValueError("Operator-role mapping does not account for every profiled operator")
     return roles
@@ -170,10 +160,7 @@ def _pearson(left: list[float], right: list[float]) -> float:
         raise ValueError("Correlation requires equal vectors with at least two values")
     left_mean = statistics.mean(left)
     right_mean = statistics.mean(right)
-    numerator = sum(
-        (a - left_mean) * (b - right_mean)
-        for a, b in zip(left, right, strict=True)
-    )
+    numerator = sum((a - left_mean) * (b - right_mean) for a, b in zip(left, right, strict=True))
     left_scale = math.sqrt(sum((value - left_mean) ** 2 for value in left))
     right_scale = math.sqrt(sum((value - right_mean) ** 2 for value in right))
     if left_scale <= 1e-15 or right_scale <= 1e-15:
@@ -203,8 +190,7 @@ def _load_units(
             summary.get("status") != "complete"
             or summary.get("all_validations_passed") is not True
             or int(summary.get("result_equivalent_fragment_count", -2)) != unit_count
-            or int(summary.get("distinct_physical_plan_fragment_count", -3))
-            != unit_count
+            or int(summary.get("distinct_physical_plan_fragment_count", -3)) != unit_count
         ):
             raise ValueError(f"Invalid Phase 2L source run: {run_dir}")
         run_id = str(summary["run_id"])
@@ -224,9 +210,7 @@ def _load_units(
             if row["benchmark"] != "mask_fragment":
                 continue
             replicate_id = f"{run_id}/{row['unit_id']}"
-            operator_units.setdefault(replicate_id, {}).setdefault(
-                row["component"], []
-            ).append(row)
+            operator_units.setdefault(replicate_id, {}).setdefault(row["component"], []).append(row)
 
     expected = {"early_mask_fragment", "late_mask_fragment"}
     if set(component_units) != set(operator_units):
@@ -240,12 +224,8 @@ def _load_units(
         early_ms = float(early["median_latency_ms"])
         late_ms = float(late["median_latency_ms"])
         log_ratio = math.log(early_ms / late_ms)
-        early_roles = _operator_role_totals(
-            operator_units[replicate_id]["early_mask_fragment"]
-        )
-        late_roles = _operator_role_totals(
-            operator_units[replicate_id]["late_mask_fragment"]
-        )
+        early_roles = _operator_role_totals(operator_units[replicate_id]["early_mask_fragment"])
+        late_roles = _operator_role_totals(operator_units[replicate_id]["late_mask_fragment"])
         relative_deltas = {
             role: (early_roles[role] - late_roles[role])
             / max(early_roles[role], late_roles[role], 1e-12)
@@ -338,12 +318,8 @@ def _role_rows(
     minimum_dominant_family_fraction: float,
 ) -> list[dict[str, Any]]:
     decisive = [row for row in units if row["classification"] != "tie"]
-    early_families = [
-        row for row in families if row["family_classification"] == "stable_early"
-    ]
-    late_families = [
-        row for row in families if row["family_classification"] == "stable_late"
-    ]
+    early_families = [row for row in families if row["family_classification"] == "stable_early"]
+    late_families = [row for row in families if row["family_classification"] == "stable_late"]
     output: list[dict[str, Any]] = []
     for role in OPERATOR_ROLES:
         relative = [float(row[f"{role}_relative_delta"]) for row in units]
@@ -359,32 +335,22 @@ def _role_rows(
         )
         sign_rate = agreement / nonzero_decisive if nonzero_decisive else 0.0
         early_median = (
-            statistics.median(
-                float(row[f"median_{role}_relative_delta"])
-                for row in early_families
-            )
+            statistics.median(float(row[f"median_{role}_relative_delta"]) for row in early_families)
             if early_families
             else float("nan")
         )
         late_median = (
-            statistics.median(
-                float(row[f"median_{role}_relative_delta"])
-                for row in late_families
-            )
+            statistics.median(float(row[f"median_{role}_relative_delta"]) for row in late_families)
             if late_families
             else float("nan")
         )
-        dominant_family_count = sum(
-            int(row[f"{role}_dominant_count"]) > 0 for row in families
-        )
+        dominant_family_count = sum(int(row[f"{role}_dominant_count"]) > 0 for row in families)
         dominant_fraction = dominant_family_count / len(families)
         direction_reverses = early_median < 0.0 < late_median
         checks = {
             "sign_agreement": sign_rate >= minimum_sign_agreement,
-            "absolute_spearman": abs(_spearman(relative, log_ratios))
-            >= minimum_absolute_spearman,
-            "dominant_family_fraction": dominant_fraction
-            >= minimum_dominant_family_fraction,
+            "absolute_spearman": abs(_spearman(relative, log_ratios)) >= minimum_absolute_spearman,
+            "dominant_family_fraction": dominant_fraction >= minimum_dominant_family_fraction,
             "stable_region_direction_reversal": direction_reverses,
         }
         output.append(

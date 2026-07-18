@@ -56,12 +56,8 @@ def test_exposure_annotations_distinguish_raw_and_masked_materialization() -> No
     scenario = _config(Path("unused")).scenarios[0]
 
     fused = pipeline_ablation_exposure(scenario, "late_fused")
-    raw_materialized = pipeline_ablation_exposure(
-        scenario, "late_join_materialized"
-    )
-    masked_materialized = pipeline_ablation_exposure(
-        scenario, "late_hash_materialized"
-    )
+    raw_materialized = pipeline_ablation_exposure(scenario, "late_join_materialized")
+    masked_materialized = pipeline_ablation_exposure(scenario, "late_hash_materialized")
     early = pipeline_ablation_exposure(scenario, "early_hash_materialized")
 
     assert fused.raw_rows_exposed_to_join == scenario.row_count
@@ -99,9 +95,7 @@ def test_smoke_writes_equivalent_distinct_boundary_validated_artifacts(
     assert len({row["physical_plan_fingerprint"] for row in measurements}) == 4
     assert len(boundaries) == 4
 
-    with (output / "component_summary.csv").open(
-        newline="", encoding="utf-8"
-    ) as handle:
+    with (output / "component_summary.csv").open(newline="", encoding="utf-8") as handle:
         components = list(csv.DictReader(handle))
     assert all("raw_rows_materialized" in row for row in components)
 

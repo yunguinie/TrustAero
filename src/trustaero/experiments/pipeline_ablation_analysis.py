@@ -100,9 +100,7 @@ def _practical_winner(
         if float(row["median_latency_ms"]) <= fastest_ms * (1.0 + tie_threshold_fraction)
     ]
     classification = (
-        fastest["variant"]
-        if fastest_ms < runner_up_ms * (1.0 - tie_threshold_fraction)
-        else "tie"
+        fastest["variant"] if fastest_ms < runner_up_ms * (1.0 - tie_threshold_fraction) else "tie"
     )
     return fastest["variant"], classification, fastest_ms, "|".join(near)
 
@@ -141,28 +139,19 @@ def _unit_policy_rows(
                     "allow_raw_join": policy.allow_raw_join,
                     "allow_raw_materialization": policy.allow_raw_materialization,
                     "legal_candidate_count": len(legal),
-                    "legal_candidates": "|".join(
-                        sorted(row["variant"] for row in legal)
-                    ),
+                    "legal_candidates": "|".join(sorted(row["variant"] for row in legal)),
                     "oracle_fastest_legal_variant": winner,
                     "practical_classification": classification,
                     "near_optimal_variants": near,
                     "winner_latency_ms": winner_ms,
                     "unconstrained_fastest_latency_ms": unconstrained,
-                    "governance_overhead_percent": (winner_ms / unconstrained - 1.0)
-                    * 100.0,
-                    "selected_raw_join_rows": int(
-                        winner_row["raw_rows_exposed_to_join"]
-                    ),
-                    "selected_raw_materialized_rows": int(
-                        winner_row["raw_rows_materialized"]
-                    ),
+                    "governance_overhead_percent": (winner_ms / unconstrained - 1.0) * 100.0,
+                    "selected_raw_join_rows": int(winner_row["raw_rows_exposed_to_join"]),
+                    "selected_raw_materialized_rows": int(winner_row["raw_rows_materialized"]),
                     "selected_masked_materialized_rows": int(
                         winner_row["masked_rows_materialized"]
                     ),
-                    "selected_candidate_is_legal": variant_is_legal(
-                        winner_row, policy
-                    ),
+                    "selected_candidate_is_legal": variant_is_legal(winner_row, policy),
                 }
             )
     return output
@@ -173,9 +162,7 @@ def _family_policy_rows(
 ) -> list[dict[str, Any]]:
     grouped: dict[tuple[str, str], list[dict[str, Any]]] = {}
     for row in unit_rows:
-        grouped.setdefault((str(row["family_id"]), str(row["policy_id"])), []).append(
-            row
-        )
+        grouped.setdefault((str(row["family_id"]), str(row["policy_id"])), []).append(row)
     output: list[dict[str, Any]] = []
     for (family_id, policy_id), rows in sorted(grouped.items()):
         required = math.ceil(required_seed_agreement_fraction * len(rows))
@@ -276,8 +263,7 @@ def analyze_compact_pipeline_ablation(
         or int(summary.get("result_equivalent_scenario_count", -2)) != scenario_count
         or int(summary.get("distinct_plan_scenario_count", -3)) != scenario_count
         or int(summary.get("boundary_validated_scenario_count", -4)) != scenario_count
-        or int(summary.get("exact_join_cardinality_scenario_count", -5))
-        != scenario_count
+        or int(summary.get("exact_join_cardinality_scenario_count", -5)) != scenario_count
     ):
         raise ValueError("Compact Phase 2M source run is incomplete or invalid")
     if int(summary.get("spilled_scenario_count", -1)) != 0:
@@ -293,31 +279,21 @@ def analyze_compact_pipeline_ablation(
     seed_counts = {int(row["seed_count"]) for row in families}
     complete_five_seed_families = seed_counts == {5}
     family_map = {
-        (str(row["family_id"]), str(row["policy_id"])): str(
-            row["family_classification"]
-        )
+        (str(row["family_id"]), str(row["policy_id"])): str(row["family_classification"])
         for row in families
     }
     changed_family_ids = [
         family_id
         for family_id in family_ids
-        if len(
-            {
-                family_map[(family_id, policy.policy_id)]
-                for policy in ABLATION_POLICY_PROFILES
-            }
-        )
+        if len({family_map[(family_id, policy.policy_id)] for policy in ABLATION_POLICY_PROFILES})
         > 1
     ]
     no_raw_materialization_winners = {
         family_map[(family_id, "no_raw_materialization")]
         for family_id in family_ids
-        if family_map[(family_id, "no_raw_materialization")]
-        not in {"mixed", "stable_tie"}
+        if family_map[(family_id, "no_raw_materialization")] not in {"mixed", "stable_tie"}
     }
-    all_choices_legal = all(
-        bool(row["selected_candidate_is_legal"]) for row in unit_rows
-    )
+    all_choices_legal = all(bool(row["selected_candidate_is_legal"]) for row in unit_rows)
     checks = {
         "complete_five_seed_families": complete_five_seed_families,
         "at_least_one_policy_changes_stable_optimum": bool(changed_family_ids),
@@ -342,9 +318,7 @@ def analyze_compact_pipeline_ablation(
         "required_seed_agreement_fraction": required_seed_agreement_fraction,
         "policy_changes_stable_optimum": bool(changed_family_ids),
         "policy_changed_family_ids": changed_family_ids,
-        "no_raw_materialization_stable_winners": sorted(
-            no_raw_materialization_winners
-        ),
+        "no_raw_materialization_stable_winners": sorted(no_raw_materialization_winners),
         "v2_1_hypothesis_gate": {"passes": passes, "checks": checks},
         "phase2g_authorized": False,
         "scientific_boundary": (
@@ -358,7 +332,5 @@ def analyze_compact_pipeline_ablation(
     _write_csv(output / "policy_unit_summary.csv", unit_rows)
     _write_csv(output / "policy_family_summary.csv", families)
     _write_json(output / "summary.json", analysis_summary)
-    (output / "report.md").write_text(
-        _report(analysis_summary, families), encoding="utf-8"
-    )
+    (output / "report.md").write_text(_report(analysis_summary, families), encoding="utf-8")
     return output

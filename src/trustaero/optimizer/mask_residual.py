@@ -87,18 +87,12 @@ class RegretAwareMaskResidualModel:
             raise ValueError(f"Mask residual model requires exactly {size} features")
         if any(scale <= 0.0 for scale in self.feature_scales):
             raise ValueError("Mask residual feature scales must be positive")
-        if any(
-            self.support_minima[index] > self.support_maxima[index]
-            for index in range(size)
-        ):
+        if any(self.support_minima[index] > self.support_maxima[index] for index in range(size)):
             raise ValueError("Mask residual support bounds are invalid")
         if any(
-            self.residual_coefficients[index] > 1e-12
-            for index in MATCH_MONOTONE_FEATURE_INDICES
+            self.residual_coefficients[index] > 1e-12 for index in MATCH_MONOTONE_FEATURE_INDICES
         ):
-            raise ValueError(
-                "Match-dependent residual coefficients must be non-positive"
-            )
+            raise ValueError("Match-dependent residual coefficients must be non-positive")
         if self.ridge_lambda < 0.0 or self.weighted_residual_rmse < 0.0:
             raise ValueError("Mask residual fitting statistics must be non-negative")
         if self.confidence_multiplier < 0.0 or self.regret_weight_cap <= 0.0:
@@ -119,9 +113,7 @@ class RegretAwareMaskResidualModel:
         raw = mask_residual_feature_vector(features)
         standardized = tuple(
             (value - mean) / scale
-            for value, mean, scale in zip(
-                raw, self.feature_means, self.feature_scales, strict=True
-            )
+            for value, mean, scale in zip(raw, self.feature_means, self.feature_scales, strict=True)
         )
         return self.residual_intercept + sum(
             coefficient * value
@@ -167,9 +159,7 @@ class RegretAwareMaskResidualModel:
             "confidence_multiplier": self.confidence_multiplier,
             "training_sample_count": self.training_sample_count,
             "regret_weight_cap": self.regret_weight_cap,
-            "uncertainty_policy": (
-                "retain_base_on_out_of_support_or_low_confidence_sign_flip"
-            ),
+            "uncertainty_policy": ("retain_base_on_out_of_support_or_low_confidence_sign_flip"),
         }
 
     @classmethod
@@ -178,9 +168,7 @@ class RegretAwareMaskResidualModel:
             raise ValueError("Unsupported Mask residual model_type")
         if payload.get("feature_names") != list(MASK_RESIDUAL_FEATURE_NAMES):
             raise ValueError("Mask residual artifact has an incompatible feature basis")
-        if payload.get("match_monotone_feature_indices") != list(
-            MATCH_MONOTONE_FEATURE_INDICES
-        ):
+        if payload.get("match_monotone_feature_indices") != list(MATCH_MONOTONE_FEATURE_INDICES):
             raise ValueError("Mask residual artifact has incompatible constraints")
         try:
             base_payload = payload["base_model"]
@@ -193,15 +181,9 @@ class RegretAwareMaskResidualModel:
                     float(value) for value in payload["residual_coefficients"]
                 ),
                 feature_means=tuple(float(value) for value in payload["feature_means"]),
-                feature_scales=tuple(
-                    float(value) for value in payload["feature_scales"]
-                ),
-                support_minima=tuple(
-                    float(value) for value in payload["support_minima"]
-                ),
-                support_maxima=tuple(
-                    float(value) for value in payload["support_maxima"]
-                ),
+                feature_scales=tuple(float(value) for value in payload["feature_scales"]),
+                support_minima=tuple(float(value) for value in payload["support_minima"]),
+                support_maxima=tuple(float(value) for value in payload["support_maxima"]),
                 ridge_lambda=float(payload["ridge_lambda"]),
                 weighted_residual_rmse=float(payload["weighted_residual_rmse"]),
                 confidence_multiplier=float(payload["confidence_multiplier"]),
@@ -239,9 +221,7 @@ def choose_mask_placement_with_residual(
     early_feasible = features.early_mask_legal
     late_feasible = features.late_mask_legal
     if features.max_raw_exposure_rows is not None:
-        late_feasible = (
-            late_feasible and features.join_input_rows <= features.max_raw_exposure_rows
-        )
+        late_feasible = late_feasible and features.join_input_rows <= features.max_raw_exposure_rows
     if not early_feasible and not late_feasible:
         raise ValueError("No legal Mask placement satisfies the governance constraints")
 

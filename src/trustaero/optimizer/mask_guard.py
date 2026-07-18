@@ -70,9 +70,7 @@ class LocalRegretCalibrationPoint:
             return cls(
                 scenario_group_id=str(payload["scenario_group_id"]),
                 workload_id=str(payload["workload_id"]),
-                feature_vector=tuple(
-                    float(value) for value in payload["feature_vector"]
-                ),
+                feature_vector=tuple(float(value) for value in payload["feature_vector"]),
                 residual_regret_fraction=float(payload["residual_regret_fraction"]),
                 v1_regret_fraction=float(payload["v1_regret_fraction"]),
             )
@@ -96,13 +94,9 @@ class LocalRegretGuardModel:
             raise ValueError("Local regret guard has incompatible feature scalers")
         if any(scale <= 0.0 for scale in self.feature_scales):
             raise ValueError("Local regret guard feature scales must be positive")
-        group_count = len(
-            {point.scenario_group_id for point in self.calibration_points}
-        )
+        group_count = len({point.scenario_group_id for point in self.calibration_points})
         if self.neighbor_group_count <= 0 or group_count < self.neighbor_group_count:
-            raise ValueError(
-                "Local regret guard lacks enough calibration scenario groups"
-            )
+            raise ValueError("Local regret guard lacks enough calibration scenario groups")
 
     def standardized_distance(
         self,
@@ -111,12 +105,8 @@ class LocalRegretGuardModel:
     ) -> float:
         """Compute scale-normalized Euclidean distance for two workloads."""
 
-        if len(left) != len(self.feature_scales) or len(right) != len(
-            self.feature_scales
-        ):
-            raise ValueError(
-                "Local regret guard distance received incompatible features"
-            )
+        if len(left) != len(self.feature_scales) or len(right) != len(self.feature_scales):
+            raise ValueError("Local regret guard distance received incompatible features")
         return math.sqrt(
             sum(
                 ((left_value - right_value) / scale) ** 2
@@ -142,12 +132,9 @@ class LocalRegretGuardModel:
         ranked: list[tuple[float, str, float, float]] = []
         for group_id, points in grouped.items():
             distance = min(
-                self.standardized_distance(query, point.feature_vector)
-                for point in points
+                self.standardized_distance(query, point.feature_vector) for point in points
             )
-            residual_regret = sum(
-                point.residual_regret_fraction for point in points
-            ) / len(points)
+            residual_regret = sum(point.residual_regret_fraction for point in points) / len(points)
             v1_regret = sum(point.v1_regret_fraction for point in points) / len(points)
             ranked.append((distance, group_id, residual_regret, v1_regret))
         neighbors = sorted(ranked)[: self.neighbor_group_count]
@@ -163,9 +150,7 @@ class LocalRegretGuardModel:
             "model_type": "local_regret_guard_v1",
             "feature_names": list(MASK_GUARD_FEATURE_NAMES),
             "residual_model": self.residual_model.to_dict(),
-            "calibration_points": [
-                point.to_dict() for point in self.calibration_points
-            ],
+            "calibration_points": [point.to_dict() for point in self.calibration_points],
             "feature_means": list(self.feature_means),
             "feature_scales": list(self.feature_scales),
             "neighbor_group_count": self.neighbor_group_count,
@@ -182,9 +167,7 @@ class LocalRegretGuardModel:
         try:
             residual_payload = payload["residual_model"]
             points_payload = payload["calibration_points"]
-            if not isinstance(residual_payload, dict) or not isinstance(
-                points_payload, list
-            ):
+            if not isinstance(residual_payload, dict) or not isinstance(points_payload, list):
                 raise TypeError("Local regret guard nested artifacts are malformed")
             points: list[LocalRegretCalibrationPoint] = []
             for point_payload in points_payload:
@@ -195,9 +178,7 @@ class LocalRegretGuardModel:
                 residual_model=RegretAwareMaskResidualModel.from_dict(residual_payload),
                 calibration_points=tuple(points),
                 feature_means=tuple(float(value) for value in payload["feature_means"]),
-                feature_scales=tuple(
-                    float(value) for value in payload["feature_scales"]
-                ),
+                feature_scales=tuple(float(value) for value in payload["feature_scales"]),
                 neighbor_group_count=int(payload["neighbor_group_count"]),
             )
         except (KeyError, TypeError, ValueError) as error:
@@ -227,9 +208,7 @@ def choose_mask_placement_with_local_guard(
 
     residual = choose_mask_placement_with_residual(features, model.residual_model)
     v1 = choose_mask_placement(features)
-    residual_regret, v1_regret, group_ids, distances = model.local_regret_estimates(
-        features
-    )
+    residual_regret, v1_regret, group_ids, distances = model.local_regret_estimates(features)
     if residual.placement is v1.placement:
         placement = residual.placement
         selector = "agreement"

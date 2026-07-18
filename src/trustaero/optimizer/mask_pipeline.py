@@ -109,21 +109,15 @@ class PipelineMaskCostModel:
         ):
             raise ValueError(f"Pipeline Mask model requires {feature_count} cost features")
         support_count = len(PIPELINE_SUPPORT_FEATURE_NAMES)
-        if not (
-            len(self.support_minima) == len(self.support_maxima) == support_count
-        ):
-            raise ValueError(
-                f"Pipeline Mask model requires {support_count} support features"
-            )
+        if not (len(self.support_minima) == len(self.support_maxima) == support_count):
+            raise ValueError(f"Pipeline Mask model requires {support_count} support features")
         if any(value < 0.0 for value in self.coefficients):
             raise ValueError("Pipeline cost coefficients must be non-negative")
         if any(value <= 0.0 for value in self.feature_scales):
             raise ValueError("Pipeline feature scales must be positive")
         if any(
             lower > upper
-            for lower, upper in zip(
-                self.support_minima, self.support_maxima, strict=True
-            )
+            for lower, upper in zip(self.support_minima, self.support_maxima, strict=True)
         ):
             raise ValueError("Pipeline support bounds are invalid")
         if (
@@ -157,15 +151,11 @@ class PipelineMaskCostModel:
         )
         standardized = tuple(
             (value - mean) / scale
-            for value, mean, scale in zip(
-                raw, self.feature_means, self.feature_scales, strict=True
-            )
+            for value, mean, scale in zip(raw, self.feature_means, self.feature_scales, strict=True)
         )
         return self.intercept_log_ms + sum(
             coefficient * value
-            for coefficient, value in zip(
-                self.coefficients, standardized, strict=True
-            )
+            for coefficient, value in zip(self.coefficients, standardized, strict=True)
         )
 
     def predict_latency_ms(
@@ -223,32 +213,22 @@ class PipelineMaskCostModel:
             raise ValueError("Unsupported pipeline Mask cost model_type")
         if payload.get("feature_names") != list(PIPELINE_COST_FEATURE_NAMES):
             raise ValueError("Pipeline model has an incompatible cost feature basis")
-        if payload.get("support_feature_names") != list(
-            PIPELINE_SUPPORT_FEATURE_NAMES
-        ):
+        if payload.get("support_feature_names") != list(PIPELINE_SUPPORT_FEATURE_NAMES):
             raise ValueError("Pipeline model has an incompatible support feature basis")
         try:
             return cls(
                 intercept_log_ms=float(payload["intercept_log_ms"]),
                 coefficients=tuple(float(value) for value in payload["coefficients"]),
                 feature_means=tuple(float(value) for value in payload["feature_means"]),
-                feature_scales=tuple(
-                    float(value) for value in payload["feature_scales"]
-                ),
-                support_minima=tuple(
-                    float(value) for value in payload["support_minima"]
-                ),
-                support_maxima=tuple(
-                    float(value) for value in payload["support_maxima"]
-                ),
+                feature_scales=tuple(float(value) for value in payload["feature_scales"]),
+                support_minima=tuple(float(value) for value in payload["support_minima"]),
+                support_maxima=tuple(float(value) for value in payload["support_maxima"]),
                 ridge_lambda=float(payload["ridge_lambda"]),
                 paired_log_ratio_rmse=float(payload["paired_log_ratio_rmse"]),
                 uncertainty_multiplier=float(payload["uncertainty_multiplier"]),
                 training_family_count=int(payload["training_family_count"]),
                 source_run_ids=tuple(str(value) for value in payload["source_run_ids"]),
-                hashed_identifier_width_bytes=int(
-                    payload["hashed_identifier_width_bytes"]
-                ),
+                hashed_identifier_width_bytes=int(payload["hashed_identifier_width_bytes"]),
             )
         except (KeyError, TypeError, ValueError) as error:
             raise ValueError("Malformed pipeline Mask cost artifact") from error
@@ -281,9 +261,7 @@ def choose_mask_placement_by_pipeline_cost(
     early_ms = model.predict_latency_ms(features, MaskPlacement.EARLY)
     late_ms = model.predict_latency_ms(features, MaskPlacement.LATE)
     log_ratio = math.log(early_ms / late_ms)
-    model_placement = (
-        MaskPlacement.EARLY if log_ratio < 0.0 else MaskPlacement.LATE
-    )
+    model_placement = MaskPlacement.EARLY if log_ratio < 0.0 else MaskPlacement.LATE
     fallback = choose_mask_placement(features)
 
     early_feasible = features.early_mask_legal

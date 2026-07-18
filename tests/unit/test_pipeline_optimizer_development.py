@@ -52,9 +52,7 @@ def _write_run(path: Path, *, run_id: str, seed: int, rows: int = 100_000) -> Pa
         "match_rate": 1.0,
         "seed": seed,
     }
-    with (path / "component_summary.csv").open(
-        "w", newline="", encoding="utf-8"
-    ) as handle:
+    with (path / "component_summary.csv").open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
         writer.writerows(
@@ -141,10 +139,7 @@ def test_fit_is_nonnegative_and_cross_validation_holds_out_whole_family() -> Non
     guarded = [
         row
         for row in rows
-        if row["evaluation_scheme"]
-        == "pipeline_cost_guarded_leave_one_family_out"
+        if row["evaluation_scheme"] == "pipeline_cost_guarded_leave_one_family_out"
     ]
     assert len(guarded) == len(families)
-    assert {row["holdout_family_id"] for row in guarded} == {
-        item.family_id for item in families
-    }
+    assert {row["holdout_family_id"] for row in guarded} == {item.family_id for item in families}

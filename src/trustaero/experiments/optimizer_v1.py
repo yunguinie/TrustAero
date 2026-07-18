@@ -143,9 +143,7 @@ def _case_rows(
                 "speedup_vs_fixed_early_percent": (early_ms / selected_ms - 1.0) * 100.0,
                 "fixed_early_regret_percent": (early_ms / oracle_ms - 1.0) * 100.0,
                 "fixed_late_regret_percent": (late_ms / oracle_ms - 1.0) * 100.0,
-                "selected_raw_exposure_rows": int(
-                    selected["raw_sensitive_rows_exposed_to_join"]
-                ),
+                "selected_raw_exposure_rows": int(selected["raw_sensitive_rows_exposed_to_join"]),
                 "selected_mask_rows_processed": int(selected["mask_rows_processed"]),
             }
         )
@@ -182,10 +180,7 @@ def _summarize(
             [float(row["late_latency_ms"]) / float(row["selected_latency_ms"]) for row in rows]
         ),
         "geometric_speedup_vs_fixed_early_ratio": _geometric_mean(
-            [
-                float(row["early_latency_ms"]) / float(row["selected_latency_ms"])
-                for row in rows
-            ]
+            [float(row["early_latency_ms"]) / float(row["selected_latency_ms"]) for row in rows]
         ),
         "total_latency_speedup_vs_fixed_late_ratio": sum(
             float(row["late_latency_ms"]) for row in rows
@@ -249,8 +244,7 @@ def _scenario_summaries(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 ),
                 "geometric_speedup_vs_fixed_early_ratio": _geometric_mean(
                     [
-                        float(row["early_latency_ms"])
-                        / float(row["selected_latency_ms"])
+                        float(row["early_latency_ms"]) / float(row["selected_latency_ms"])
                         for row in group
                     ]
                 ),

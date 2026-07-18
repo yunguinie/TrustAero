@@ -37,10 +37,7 @@ def test_policy_filters_raw_materialization_before_cost_ranking() -> None:
     policies = {item.policy_id: item for item in ABLATION_POLICY_PROFILES}
 
     assert variant_is_legal(raw_materialized, policies["raw_permissive"]) is True
-    assert (
-        variant_is_legal(raw_materialized, policies["no_raw_materialization"])
-        is False
-    )
+    assert variant_is_legal(raw_materialized, policies["no_raw_materialization"]) is False
     assert variant_is_legal(raw_materialized, policies["no_raw_join"]) is False
 
 
@@ -54,15 +51,11 @@ def test_unit_analysis_changes_oracle_only_after_legality_filter() -> None:
 
     results = {row["policy_id"]: row for row in _unit_policy_rows(rows, 0.03)}
 
-    assert results["raw_permissive"]["oracle_fastest_legal_variant"] == (
-        "late_join_materialized"
-    )
+    assert results["raw_permissive"]["oracle_fastest_legal_variant"] == ("late_join_materialized")
     assert results["no_raw_materialization"]["oracle_fastest_legal_variant"] == (
         "late_hash_materialized"
     )
-    assert results["no_raw_join"]["oracle_fastest_legal_variant"] == (
-        "early_hash_materialized"
-    )
+    assert results["no_raw_join"]["oracle_fastest_legal_variant"] == ("early_hash_materialized")
     assert results["no_raw_join"]["governance_overhead_percent"] == 300.0
     assert all(row["selected_candidate_is_legal"] for row in results.values())
 

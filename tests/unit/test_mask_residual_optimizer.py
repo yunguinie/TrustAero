@@ -82,9 +82,7 @@ def test_governance_exposure_limit_overrides_residual_ranking() -> None:
         max_raw_exposure_rows=0,
     )
 
-    decision = choose_mask_placement_with_residual(
-        features, _model(residual_intercept=10.0)
-    )
+    decision = choose_mask_placement_with_residual(features, _model(residual_intercept=10.0))
 
     assert decision.placement is MaskPlacement.EARLY
     assert decision.reason_code == "MASK_RESIDUAL_LATE_INFEASIBLE"

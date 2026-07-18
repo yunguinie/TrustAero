@@ -103,8 +103,7 @@ def load_pipeline_mask_families(
             summary.get("status") != "complete"
             or summary.get("all_validations_passed") is not True
             or int(summary.get("result_equivalent_fragment_count", -2)) != unit_count
-            or int(summary.get("distinct_physical_plan_fragment_count", -3))
-            != unit_count
+            or int(summary.get("distinct_physical_plan_fragment_count", -3)) != unit_count
         ):
             raise ValueError(f"Fragment source run is incomplete or invalid: {run_dir}")
         run_id = str(summary["run_id"])
@@ -160,8 +159,7 @@ def load_pipeline_mask_families(
         early_values = [item[3] for item in seeds]
         late_values = [item[4] for item in seeds]
         paired_logs = [
-            math.log(early / late)
-            for early, late in zip(early_values, late_values, strict=True)
+            math.log(early / late) for early, late in zip(early_values, late_values, strict=True)
         ]
         output.append(
             PipelineMaskFamilyObservation(
@@ -228,8 +226,7 @@ def fit_pipeline_mask_cost_model(
     means, scales = _feature_scalers(vectors)
     standardized = [
         tuple(
-            (value - mean) / scale
-            for value, mean, scale in zip(vector, means, scales, strict=True)
+            (value - mean) / scale for value, mean, scale in zip(vector, means, scales, strict=True)
         )
         for vector in vectors
     ]
@@ -240,10 +237,7 @@ def fit_pipeline_mask_cost_model(
         updated_intercept = statistics.mean(
             target
             - sum(
-                coefficient * value
-                for coefficient, value in zip(
-                    coefficients, vector, strict=True
-                )
+                coefficient * value for coefficient, value in zip(coefficients, vector, strict=True)
             )
             for vector, target in zip(standardized, targets, strict=True)
         )
@@ -253,12 +247,16 @@ def fit_pipeline_mask_cost_model(
             numerator = 0.0
             denominator = ridge_lambda
             for vector, target in zip(standardized, targets, strict=True):
-                residual_without_current = target - intercept - sum(
-                    coefficient * value
-                    for other, (coefficient, value) in enumerate(
-                        zip(coefficients, vector, strict=True)
+                residual_without_current = (
+                    target
+                    - intercept
+                    - sum(
+                        coefficient * value
+                        for other, (coefficient, value) in enumerate(
+                            zip(coefficients, vector, strict=True)
+                        )
+                        if other != index
                     )
-                    if other != index
                 )
                 numerator += vector[index] * residual_without_current
                 denominator += vector[index] ** 2
@@ -285,8 +283,7 @@ def fit_pipeline_mask_cost_model(
         ),
     )
     paired_errors = [
-        provisional.predict_log_early_late_ratio(item.features)
-        - item.observed_log_early_late_ratio
+        provisional.predict_log_early_late_ratio(item.features) - item.observed_log_early_late_ratio
         for item in observations
     ]
     rmse = math.sqrt(statistics.mean(value**2 for value in paired_errors))
@@ -443,8 +440,7 @@ def _scheme_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "family_count": len(rows),
         "exact_top1_rate": sum(bool(row["exact_top1"]) for row in rows) / len(rows),
-        "within_tie_rate": sum(bool(row["within_tie_threshold"]) for row in rows)
-        / len(rows),
+        "within_tie_rate": sum(bool(row["within_tie_threshold"]) for row in rows) / len(rows),
         "mean_regret_percent": statistics.mean(regrets),
         "p95_regret_percent": _percentile(regrets, 0.95),
         "max_regret_percent": max(regrets),
@@ -623,11 +619,7 @@ def develop_pipeline_mask_optimizer(
             {run_id for item in observations for run_id in item.source_run_ids}
         ),
         "source_commit_hashes": sorted(
-            {
-                commit
-                for item in observations
-                for commit in item.source_commit_hashes
-            }
+            {commit for item in observations for commit in item.source_commit_hashes}
         ),
         "cost_feature_names": list(PIPELINE_COST_FEATURE_NAMES),
         "support_feature_names": list(PIPELINE_SUPPORT_FEATURE_NAMES),

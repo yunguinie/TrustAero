@@ -159,9 +159,7 @@ def _family_rows(
                 "median_late_latency_ms": median_late,
                 # Preserve the paired-seed design: compute each seed's
                 # relative difference first, then aggregate those ratios.
-                "median_early_minus_late_percent": statistics.median(
-                    paired_relative_differences
-                ),
+                "median_early_minus_late_percent": statistics.median(paired_relative_differences),
                 "median_winner_speedup_ratio": statistics.median(paired_speedups),
             }
         )
@@ -217,9 +215,7 @@ def _stable_early_region_has_adjacent_families(
 ) -> bool:
     """Detect a neighboring pair on the observed rows/width/match grid."""
 
-    early_families = [
-        row for row in families if row["family_classification"] == "stable_early"
-    ]
+    early_families = [row for row in families if row["family_classification"] == "stable_early"]
     row_axis = sorted({int(row["row_count"]) for row in families})
     width_axis = sorted({int(row["identifier_width"]) for row in families})
     match_axis = sorted({float(row["match_rate"]) for row in families})
@@ -235,9 +231,7 @@ def _stable_early_region_has_adjacent_families(
             width_axis.index(int(right["identifier_width"])),
             match_axis.index(float(right["match_rate"])),
         )
-        differences = [
-            abs(a - b) for a, b in zip(indices_left, indices_right, strict=True)
-        ]
+        differences = [abs(a - b) for a, b in zip(indices_left, indices_right, strict=True)]
         return sorted(differences) == [0, 0, 1]
 
     return any(
@@ -274,9 +268,7 @@ def analyze_phase2i_fragment_run(
         or int(summary.get("distinct_physical_plan_fragment_count", -1)) != unit_count
     ):
         raise ValueError("Phase 2I source run lacks complete equivalence/plan evidence")
-    units = _unit_rows(
-        _read_csv(run_dir / "component_summary.csv"), tie_threshold_fraction
-    )
+    units = _unit_rows(_read_csv(run_dir / "component_summary.csv"), tie_threshold_fraction)
     if len(units) != unit_count:
         raise ValueError("Phase 2I component summary does not cover every unit")
     families = _family_rows(units, required_seed_agreement_fraction)
@@ -289,9 +281,7 @@ def analyze_phase2i_fragment_run(
         for name in ("early", "late", "tie")
     }
     environment = _read_object(run_dir / "environment.json")
-    early_families = [
-        row for row in families if row["family_classification"] == "stable_early"
-    ]
+    early_families = [row for row in families if row["family_classification"] == "stable_early"]
     early_region_adjacent = _stable_early_region_has_adjacent_families(families)
     optimizer_design_checks = {
         "at_least_two_stable_early_families": len(early_families) >= 2,
@@ -317,9 +307,7 @@ def analyze_phase2i_fragment_run(
             class_counts["stable_early"] > 0 and class_counts["stable_late"] > 0
         ),
         "stable_early_family_ids": [
-            row["family_id"]
-            for row in families
-            if row["family_classification"] == "stable_early"
+            row["family_id"] for row in families if row["family_classification"] == "stable_early"
         ],
         "spilled_unit_count": int(summary.get("spilled_unit_count", 0)),
         "phase2g_authorized": False,
@@ -342,7 +330,5 @@ def analyze_phase2i_fragment_run(
         json.dumps(analysis_summary, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    (output_dir / "report.md").write_text(
-        _report(analysis_summary, families), encoding="utf-8"
-    )
+    (output_dir / "report.md").write_text(_report(analysis_summary, families), encoding="utf-8")
     return output_dir

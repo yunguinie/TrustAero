@@ -67,9 +67,7 @@ def _guard_observations() -> list[MaskWorkloadObservation]:
                 identifier_width_bytes=width,
                 join_match_rate=(scenario_index + 1) / 6,
             )
-            target = (
-                0.2 - 0.05 * math.log1p(width / 64) - 0.1 * features.join_match_rate
-            )
+            target = 0.2 - 0.05 * math.log1p(width / 64) - 0.1 * features.join_match_rate
             output.append(
                 MaskWorkloadObservation(
                     workload_id=f"guard/s{scenario_index}/n{row_count}",
@@ -143,9 +141,7 @@ def test_decomposed_cost_fit_is_nonnegative_and_group_cross_validated() -> None:
     assert model.training_candidate_count == 16
     assert all(value >= 0.0 for value in model.coefficients)
     assert len(rows) == 8
-    assert {row["evaluation_scheme"] for row in rows} == {
-        "decomposed_cost_leave_one_scenario_out"
-    }
+    assert {row["evaluation_scheme"] for row in rows} == {"decomposed_cost_leave_one_scenario_out"}
     assert audit["passes"] is True
 
 
@@ -181,9 +177,7 @@ def test_regret_aware_residual_is_grouped_explainable_and_monotone() -> None:
 
     assert model.training_sample_count == 8
     assert len(rows) == 8
-    assert {row["evaluation_scheme"] for row in rows} == {
-        "residual_ranking_leave_one_scenario_out"
-    }
+    assert {row["evaluation_scheme"] for row in rows} == {"residual_ranking_leave_one_scenario_out"}
     assert all("base_log_early_late_ratio" in row for row in rows)
     assert all("residual_correction" in row for row in rows)
     assert audit["passes"] is True
@@ -192,9 +186,7 @@ def test_regret_aware_residual_is_grouped_explainable_and_monotone() -> None:
 def test_local_guard_calibration_excludes_outer_scenario_family() -> None:
     observations = _guard_observations()
     outer_group = "guard/s0"
-    outer_training = [
-        item for item in observations if item.scenario_group_id != outer_group
-    ]
+    outer_training = [item for item in observations if item.scenario_group_id != outer_group]
 
     guard = fit_local_regret_guard_model(outer_training, neighbor_group_count=3)
 

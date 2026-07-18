@@ -29,14 +29,10 @@ def main() -> None:
         [str(value) for value in config["source_run_dirs"]],
         str(config["output_dir"]),
         tie_threshold_fraction=float(config["tie_threshold_fraction"]),
-        required_family_agreement_fraction=float(
-            config["required_family_agreement_fraction"]
-        ),
+        required_family_agreement_fraction=float(config["required_family_agreement_fraction"]),
         minimum_sign_agreement=float(config["minimum_sign_agreement"]),
         minimum_absolute_spearman=float(config["minimum_absolute_spearman"]),
-        minimum_dominant_family_fraction=float(
-            config["minimum_dominant_family_fraction"]
-        ),
+        minimum_dominant_family_fraction=float(config["minimum_dominant_family_fraction"]),
     )
     print("[phase2l 2/3] paired operator roles and families analyzed", flush=True)
     print(f"[phase2l 3/3] artifacts written to {output}", flush=True)

@@ -61,9 +61,7 @@ def test_confident_pipeline_ranking_selects_predicted_candidate() -> None:
 
 
 def test_uncertain_ranking_uses_frozen_v1_fallback() -> None:
-    decision = choose_mask_placement_by_pipeline_cost(
-        _features(), _model(uncertainty_margin=2.0)
-    )
+    decision = choose_mask_placement_by_pipeline_cost(_features(), _model(uncertainty_margin=2.0))
 
     assert decision.used_fallback is True
     assert decision.placement is decision.fallback_placement
@@ -71,9 +69,7 @@ def test_uncertain_ranking_uses_frozen_v1_fallback() -> None:
 
 
 def test_raw_exposure_is_a_hard_constraint_even_when_late_is_cheaper() -> None:
-    decision = choose_mask_placement_by_pipeline_cost(
-        _features(max_raw_exposure_rows=0), _model()
-    )
+    decision = choose_mask_placement_by_pipeline_cost(_features(max_raw_exposure_rows=0), _model())
 
     assert decision.placement is MaskPlacement.EARLY
     assert decision.reason_code == "MASK_PIPELINE_LATE_INFEASIBLE"

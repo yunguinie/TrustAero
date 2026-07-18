@@ -59,13 +59,7 @@ def test_evaluator_uses_semantics_not_brittle_early_strategy_id(tmp_path: Path) 
         encoding="utf-8",
     )
     (tmp_path / "config.json").write_text(
-        json.dumps(
-            {
-                "scenarios": [
-                    {"scenario_id": "wide_high_match", "identifier_width": 1024}
-                ]
-            }
-        ),
+        json.dumps({"scenarios": [{"scenario_id": "wide_high_match", "identifier_width": 1024}]}),
         encoding="utf-8",
     )
     _write_strategy_rows(tmp_path / "strategy_summary.csv")
@@ -80,9 +74,7 @@ def test_evaluator_uses_semantics_not_brittle_early_strategy_id(tmp_path: Path) 
     assert summary["median_regret_percent"] == 0.0
     assert summary["geometric_speedup_vs_fixed_late_ratio"] == pytest.approx(1.2)
     assert (output / "scenario_summary.csv").exists()
-    assert {row["selected_strategy_id"] for row in cases} == {
-        "early-physical-id-may-change"
-    }
+    assert {row["selected_strategy_id"] for row in cases} == {"early-physical-id-may-change"}
 
 
 def test_evaluator_marks_confirmation_as_calibration(tmp_path: Path) -> None:
@@ -97,13 +89,7 @@ def test_evaluator_marks_confirmation_as_calibration(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     (tmp_path / "config.json").write_text(
-        json.dumps(
-            {
-                "scenarios": [
-                    {"scenario_id": "wide_high_match", "identifier_width": 1024}
-                ]
-            }
-        ),
+        json.dumps({"scenarios": [{"scenario_id": "wide_high_match", "identifier_width": 1024}]}),
         encoding="utf-8",
     )
     _write_strategy_rows(tmp_path / "strategy_summary.csv")
