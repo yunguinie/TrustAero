@@ -1,5 +1,16 @@
 """Governance-aware physical-plan selection for TrustAero."""
 
+from trustaero.optimizer.candidate_feasibility import (
+    RAW_JOIN_LIMIT_EXCEEDED,
+    RAW_MATERIALIZATION_LIMIT_EXCEEDED,
+    CandidateExposure,
+    CandidateFeasibilityDecision,
+    CandidateFeasibilityDiagnostic,
+    CandidateFeasibilityResult,
+    GovernanceFeasibilityPolicy,
+    evaluate_candidate_feasibility,
+    filter_feasible_candidates,
+)
 from trustaero.optimizer.mask import (
     MaskOptimizerConfig,
     MaskPlacement,
@@ -56,6 +67,13 @@ from trustaero.optimizer.mask_v2 import (
 )
 
 __all__ = [
+    "CandidateExposure",
+    "CandidateFeasibilityDecision",
+    "CandidateFeasibilityDiagnostic",
+    "CandidateFeasibilityResult",
+    "GovernanceFeasibilityPolicy",
+    "RAW_JOIN_LIMIT_EXCEEDED",
+    "RAW_MATERIALIZATION_LIMIT_EXCEEDED",
     "MaskOptimizerConfig",
     "MaskPlacement",
     "MaskPlacementDecision",
@@ -84,6 +102,8 @@ __all__ = [
     "RegretAwareMaskResidualDecision",
     "RegretAwareMaskResidualModel",
     "choose_mask_placement",
+    "evaluate_candidate_feasibility",
+    "filter_feasible_candidates",
     "choose_mask_placement_v2",
     "choose_mask_placement_by_cost",
     "choose_mask_placement_with_local_guard",

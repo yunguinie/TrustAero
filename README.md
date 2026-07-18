@@ -10,6 +10,8 @@ but it cannot execute arbitrary SQL or bypass deterministic validation.
 - versioned JSON Schemas exported from the typed models;
 - deterministic L1 structural, L2 plan-graph, and L3 governance validation;
 - stable reason codes and fail-closed outcomes;
+- a policy-before-cost physical-candidate feasibility gate for bounded raw Join
+  and raw-intermediate exposure;
 - minimal policy decisions and obligation-driven safe rewrites;
 - approved physical-plan specifications that bind to validated logical plans;
 - governed execution-certificate structure, event, DAG, and lineage-evidence
@@ -66,6 +68,8 @@ trustaero validate examples/plans/rewrite_precision.json `
   and event log are trusted.
 
 For the current system pipeline, see [docs/architecture.md](docs/architecture.md).
+The bounded physical-candidate governance gate is documented in
+[docs/candidate-feasibility.md](docs/candidate-feasibility.md).
 The optimizer development rationale is documented in
 [docs/decomposed-mask-cost-model.md](docs/decomposed-mask-cost-model.md) and
 [docs/regret-aware-mask-residual-model.md](docs/regret-aware-mask-residual-model.md).

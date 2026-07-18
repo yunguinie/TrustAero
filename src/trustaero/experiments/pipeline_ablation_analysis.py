@@ -11,6 +11,11 @@ from pathlib import Path
 from typing import Any, cast
 
 from trustaero.experiments.pipeline_ablation import PIPELINE_ABLATION_VARIANTS
+from trustaero.optimizer.candidate_feasibility import (
+    CandidateExposure,
+    GovernanceFeasibilityPolicy,
+    evaluate_candidate_feasibility,
+)
 
 
 @dataclass(frozen=True)
@@ -72,13 +77,20 @@ def _write_json(path: Path, payload: dict[str, Any]) -> None:
 def variant_is_legal(row: dict[str, str], policy: AblationPolicyProfile) -> bool:
     """Apply exposure policy before looking at a candidate's measured latency."""
 
-    raw_join_rows = int(row["raw_rows_exposed_to_join"])
-    raw_materialized_rows = int(row["raw_rows_materialized"])
-    if raw_join_rows > 0 and not policy.allow_raw_join:
-        return False
-    if raw_materialized_rows > 0 and not policy.allow_raw_materialization:
-        return False
-    return True
+    # Phase 2M uses Boolean permissions, represented as zero/unrestricted row
+    # limits in the reusable optimizer gate. Latency is deliberately absent.
+    core_policy = GovernanceFeasibilityPolicy(
+        policy_id=policy.policy_id,
+        max_raw_join_rows=None if policy.allow_raw_join else 0,
+        max_raw_materialized_rows=None if policy.allow_raw_materialization else 0,
+    )
+    exposure = CandidateExposure(
+        candidate_id=row["variant"],
+        raw_rows_exposed_to_join=int(row["raw_rows_exposed_to_join"]),
+        raw_rows_materialized=int(row["raw_rows_materialized"]),
+        masked_rows_materialized=int(row["masked_rows_materialized"]),
+    )
+    return evaluate_candidate_feasibility(exposure, core_policy).is_feasible
 
 
 def _practical_winner(
