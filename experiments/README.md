@@ -580,3 +580,12 @@ materialization exposure before comparing cost under three fixed policy
 profiles. Complete-family analysis reports policy-dependent legal optima and
 governance overhead. See `docs/phase2m-compact-ablation-protocol.md` and
 `experiments/configs/phase2m_pipeline_ablation_compact.json`.
+
+The compact run completed 15/15 units, 900 timed measurements, and 180 physical
+profiles with equal output, validated boundaries, exact Join cardinality, and
+zero spill. Policy changed the legal optimum in all three families, but the
+`no_raw_materialization` profile produced one stable tie and two mixed families,
+so the frozen V2.1 gate failed. The tie band and seed-agreement threshold were
+not changed after observing the result; Phase 2G remains unauthorized. See
+`docs/phase2m-compact-ablation-results.md` and
+`experiments/frozen/phase2m_compact_policy_ablation_negative.json`.

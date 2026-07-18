@@ -1,0 +1,132 @@
+{
+  "duckdb_memory_limit_mb": 4096,
+  "duckdb_threads": 4,
+  "measured_runs": 15,
+  "order_seed": 20260719,
+  "profile_runs": 3,
+  "require_clean_git": true,
+  "results_dir": "results/phase2m_pipeline_ablation_compact",
+  "scenarios": [
+    {
+      "identifier_width": 128,
+      "match_rate": 1.0,
+      "region_label": "phase2l_stable_early",
+      "row_count": 200000,
+      "scenario_id": "stable-early-n200000-w128-m1000-s1777",
+      "seed": 1777
+    },
+    {
+      "identifier_width": 128,
+      "match_rate": 1.0,
+      "region_label": "phase2l_stable_early",
+      "row_count": 200000,
+      "scenario_id": "stable-early-n200000-w128-m1000-s1888",
+      "seed": 1888
+    },
+    {
+      "identifier_width": 128,
+      "match_rate": 1.0,
+      "region_label": "phase2l_stable_early",
+      "row_count": 200000,
+      "scenario_id": "stable-early-n200000-w128-m1000-s1999",
+      "seed": 1999
+    },
+    {
+      "identifier_width": 128,
+      "match_rate": 1.0,
+      "region_label": "phase2l_stable_early",
+      "row_count": 200000,
+      "scenario_id": "stable-early-n200000-w128-m1000-s2111",
+      "seed": 2111
+    },
+    {
+      "identifier_width": 128,
+      "match_rate": 1.0,
+      "region_label": "phase2l_stable_early",
+      "row_count": 200000,
+      "scenario_id": "stable-early-n200000-w128-m1000-s2222",
+      "seed": 2222
+    },
+    {
+      "identifier_width": 512,
+      "match_rate": 0.9,
+      "region_label": "phase2l_stable_late",
+      "row_count": 100000,
+      "scenario_id": "stable-late-n100000-w512-m0900-s1777",
+      "seed": 1777
+    },
+    {
+      "identifier_width": 512,
+      "match_rate": 0.9,
+      "region_label": "phase2l_stable_late",
+      "row_count": 100000,
+      "scenario_id": "stable-late-n100000-w512-m0900-s1888",
+      "seed": 1888
+    },
+    {
+      "identifier_width": 512,
+      "match_rate": 0.9,
+      "region_label": "phase2l_stable_late",
+      "row_count": 100000,
+      "scenario_id": "stable-late-n100000-w512-m0900-s1999",
+      "seed": 1999
+    },
+    {
+      "identifier_width": 512,
+      "match_rate": 0.9,
+      "region_label": "phase2l_stable_late",
+      "row_count": 100000,
+      "scenario_id": "stable-late-n100000-w512-m0900-s2111",
+      "seed": 2111
+    },
+    {
+      "identifier_width": 512,
+      "match_rate": 0.9,
+      "region_label": "phase2l_stable_late",
+      "row_count": 100000,
+      "scenario_id": "stable-late-n100000-w512-m0900-s2222",
+      "seed": 2222
+    },
+    {
+      "identifier_width": 128,
+      "match_rate": 0.9,
+      "region_label": "phase2l_mixed",
+      "row_count": 100000,
+      "scenario_id": "mixed-n100000-w128-m0900-s1777",
+      "seed": 1777
+    },
+    {
+      "identifier_width": 128,
+      "match_rate": 0.9,
+      "region_label": "phase2l_mixed",
+      "row_count": 100000,
+      "scenario_id": "mixed-n100000-w128-m0900-s1888",
+      "seed": 1888
+    },
+    {
+      "identifier_width": 128,
+      "match_rate": 0.9,
+      "region_label": "phase2l_mixed",
+      "row_count": 100000,
+      "scenario_id": "mixed-n100000-w128-m0900-s1999",
+      "seed": 1999
+    },
+    {
+      "identifier_width": 128,
+      "match_rate": 0.9,
+      "region_label": "phase2l_mixed",
+      "row_count": 100000,
+      "scenario_id": "mixed-n100000-w128-m0900-s2111",
+      "seed": 2111
+    },
+    {
+      "identifier_width": 128,
+      "match_rate": 0.9,
+      "region_label": "phase2l_mixed",
+      "row_count": 100000,
+      "scenario_id": "mixed-n100000-w128-m0900-s2222",
+      "seed": 2222
+    }
+  ],
+  "warmup_runs": 2
+}

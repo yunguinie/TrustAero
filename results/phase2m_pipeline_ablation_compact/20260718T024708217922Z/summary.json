@@ -1,0 +1,21 @@
+{
+  "all_validations_passed": true,
+  "boundary_validated_scenario_count": 15,
+  "compact_matrix_authorized": true,
+  "distinct_plan_scenario_count": 15,
+  "evaluation_label": "phase2m_pipeline_ablation_smoke",
+  "exact_join_cardinality_scenario_count": 15,
+  "exposure_annotated_component_count": 60,
+  "max_peak_temp_directory_bytes": 0,
+  "measurement_count": 900,
+  "operator_summary_count": 570,
+  "phase2g_authorized": false,
+  "result_equivalent_scenario_count": 15,
+  "run_id": "20260718T024708217922Z",
+  "scenario_count": 15,
+  "scientific_boundary": "Smoke validates semantic equivalence and actual physical boundaries. Its few timings cannot support a performance or optimizer claim.",
+  "spilled_profile_count": 0,
+  "spilled_scenario_count": 0,
+  "status": "complete",
+  "variant_count": 4
+}

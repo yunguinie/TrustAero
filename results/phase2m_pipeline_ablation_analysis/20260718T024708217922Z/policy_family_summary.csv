@@ -1,0 +1,10 @@
+family_id,policy_id,region_label,row_count,identifier_width,match_rate,seed_count,required_seed_agreement_count,late_fused_count,late_join_materialized_count,late_hash_materialized_count,early_hash_materialized_count,tie_count,single_legal_candidate_count,family_classification,median_governance_overhead_percent,p95_governance_overhead_percent
+n100000-w128-m0900,no_raw_join,phase2l_mixed,100000,128,0.9,5,4,0,0,0,0,0,5,early_hash_materialized,71.92463207346577,86.96890328890206
+n100000-w128-m0900,no_raw_materialization,phase2l_mixed,100000,128,0.9,5,4,0,0,1,0,4,0,stable_tie,65.98014211739,79.93182735554679
+n100000-w128-m0900,raw_permissive,phase2l_mixed,100000,128,0.9,5,4,0,5,0,0,0,0,late_join_materialized,0.0,0.0
+n100000-w512-m0900,no_raw_join,phase2l_stable_late,100000,512,0.9,5,4,0,0,0,0,0,5,early_hash_materialized,122.62302163903489,151.2243113849514
+n100000-w512-m0900,no_raw_materialization,phase2l_stable_late,100000,512,0.9,5,4,0,0,2,0,3,0,mixed,94.56004583912683,107.75550932581832
+n100000-w512-m0900,raw_permissive,phase2l_stable_late,100000,512,0.9,5,4,0,5,0,0,0,0,late_join_materialized,0.0,0.0
+n200000-w128-m1000,no_raw_join,phase2l_stable_early,200000,128,1.0,5,4,0,0,0,0,0,5,early_hash_materialized,24.61063386352813,43.393479196962126
+n200000-w128-m1000,no_raw_materialization,phase2l_stable_early,200000,128,1.0,5,4,0,0,2,2,1,0,mixed,19.37976227616238,35.43327796879736
+n200000-w128-m1000,raw_permissive,phase2l_stable_early,200000,128,1.0,5,4,0,5,0,0,0,0,late_join_materialized,0.0,0.0

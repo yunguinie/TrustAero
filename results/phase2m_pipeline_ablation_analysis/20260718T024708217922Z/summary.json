@@ -1,0 +1,30 @@
+{
+  "evaluation_label": "phase2m_compact_policy_aware_ablation_development",
+  "family_count": 3,
+  "measurement_count": 900,
+  "no_raw_materialization_stable_winners": [],
+  "phase2g_authorized": false,
+  "policy_changed_family_ids": [
+    "n100000-w128-m0900",
+    "n100000-w512-m0900",
+    "n200000-w128-m1000"
+  ],
+  "policy_changes_stable_optimum": true,
+  "policy_profile_count": 3,
+  "required_seed_agreement_fraction": 0.8,
+  "scenario_count": 15,
+  "scientific_boundary": "The compact matrix identifies policy-dependent legal oracle plans and governance overhead on three development families. It may authorize a versioned V2.1 hypothesis, not a final generalization claim.",
+  "source_commit_hash": "92d2811fd3360a0e31cf1105104a2dbf691c0beb",
+  "source_run_id": "20260718T024708217922Z",
+  "tie_threshold_fraction": 0.03,
+  "v2_1_hypothesis_gate": {
+    "checks": {
+      "all_selected_candidates_are_legal": true,
+      "at_least_one_policy_changes_stable_optimum": true,
+      "complete_five_seed_families": true,
+      "no_raw_materialization_has_multiple_stable_winners": false,
+      "no_spilled_scenarios": true
+    },
+    "passes": false
+  }
+}

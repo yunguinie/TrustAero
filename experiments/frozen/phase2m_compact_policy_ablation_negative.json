@@ -1,0 +1,85 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "phase2m_compact_policy_aware_ablation_development_not_phase2g",
+  "protocol_commit": "92d2811fd3360a0e31cf1105104a2dbf691c0beb",
+  "run_id": "20260718T024708217922Z",
+  "status": "v2_1_hypothesis_gate_failed",
+  "phase2g_authorized": false,
+  "scenario_count": 15,
+  "family_count": 3,
+  "seed_count_per_family": 5,
+  "variant_count": 4,
+  "measurement_count": 900,
+  "profile_count": 180,
+  "all_validations_passed": true,
+  "result_equivalent_scenario_count": 15,
+  "distinct_plan_scenario_count": 15,
+  "boundary_validated_scenario_count": 15,
+  "exact_join_cardinality_scenario_count": 15,
+  "exposure_annotated_component_count": 60,
+  "spilled_scenario_count": 0,
+  "tie_threshold_fraction": 0.03,
+  "required_seed_agreement_fraction": 0.8,
+  "policy_changed_family_ids": [
+    "n100000-w128-m0900",
+    "n100000-w512-m0900",
+    "n200000-w128-m1000"
+  ],
+  "family_results": [
+    {
+      "family_id": "n100000-w128-m0900",
+      "raw_permissive": "late_join_materialized",
+      "no_raw_materialization": "stable_tie",
+      "no_raw_join": "early_hash_materialized",
+      "median_no_raw_materialization_overhead_percent": 65.98014211739,
+      "median_no_raw_join_overhead_percent": 71.92463207346577
+    },
+    {
+      "family_id": "n100000-w512-m0900",
+      "raw_permissive": "late_join_materialized",
+      "no_raw_materialization": "mixed",
+      "no_raw_join": "early_hash_materialized",
+      "median_no_raw_materialization_overhead_percent": 94.56004583912683,
+      "median_no_raw_join_overhead_percent": 122.62302163903489
+    },
+    {
+      "family_id": "n200000-w128-m1000",
+      "raw_permissive": "late_join_materialized",
+      "no_raw_materialization": "mixed",
+      "no_raw_join": "early_hash_materialized",
+      "median_no_raw_materialization_overhead_percent": 19.37976227616238,
+      "median_no_raw_join_overhead_percent": 24.61063386352813
+    }
+  ],
+  "v2_1_hypothesis_gate": {
+    "passes": false,
+    "failed_check": "no_raw_materialization_has_multiple_stable_winners",
+    "interpretation": "The middle policy has no four-of-five-seed stable winner in any of the three development families. The tie band and agreement threshold remain unchanged."
+  },
+  "files": [
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/config.json", "sha256": "74cbb7215bb6192ad6d64d002d46c7c434fbc774fe864d9ca778f729e15346b3"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/environment.json", "sha256": "0d86fc993df8e695f1abd167f849bd9a4f30690277c85ec6ec3acee7f29a6f04"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/summary.json", "sha256": "51377ab469d086efd548ac06c3fa98015ceb485fe4ad83a590c5d7e3cc649a60"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/raw_measurements.csv", "sha256": "49c2d709ad5ae6f7768dab593ccba9671f760d056178b5e8fc483e26c3989c6b"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/component_summary.csv", "sha256": "4fabf8c249a16007e633c7ea1f628afd3dc58924764b70d9298f680020059fc9"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/operator_summary.csv", "sha256": "b340e9a202f7488dd0ae876684f86d1fd7a0f5906441744981dc9850857db09c"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/boundary_summary.csv", "sha256": "d469fe4e5d80aa683ce93d40a352f89f5797db208431e840f69ef1eaf9a2e0c8"},
+    {"path": "results/phase2m_pipeline_ablation_analysis/20260718T024708217922Z/summary.json", "sha256": "420ae37b96039369c0c5a7c2f9a3254447349fbeaab0fdbca2369ce606cd3606"},
+    {"path": "results/phase2m_pipeline_ablation_analysis/20260718T024708217922Z/policy_unit_summary.csv", "sha256": "d01863203408d289cec182561307fb6bc54053d3757faf5851070e0c2b6ee3a5"},
+    {"path": "results/phase2m_pipeline_ablation_analysis/20260718T024708217922Z/policy_family_summary.csv", "sha256": "63841d566cafa6e75e07c61ea20fe0f23ba0728f52b7c86ec110509081a55554"},
+    {"path": "results/phase2m_pipeline_ablation_analysis/20260718T024708217922Z/report.md", "sha256": "1c62a1c626880d3490b6f2a4de8dc3a825b371cadc4bcfcff9d95490a5b1aab3"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/mixed-n100000-w128-m0900-s1777/early_hash_materialized-analyze-r0.json", "sha256": "d49f459cc6dd3d6377b81a8046d909358b958fc61f1d501e2cd741108a89dd49"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/mixed-n100000-w128-m0900-s1777/late_fused-analyze-r0.json", "sha256": "1da3806ca0bcb780db60f92dc5176594047411f2226204dd5f419beb2cf834b9"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/mixed-n100000-w128-m0900-s1777/late_hash_materialized-analyze-r0.json", "sha256": "2759a71c04abbf13a262d1d57472c449ec85f0e09c1e94fab863a0347a490598"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/mixed-n100000-w128-m0900-s1777/late_join_materialized-analyze-r0.json", "sha256": "a48786c8d6ef897f3e872827839c6e0105a7e25ff8c8d907b24ac9bd80a35632"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/stable-early-n200000-w128-m1000-s1777/early_hash_materialized-analyze-r0.json", "sha256": "0995f934f96059758439d396ada41dcd34772f536f8cca22a4fb4bec603f35bd"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/stable-early-n200000-w128-m1000-s1777/late_fused-analyze-r0.json", "sha256": "8bb27ac7b0ec0df3657e54435d421491ebf7674f7334dd914ff511028185a1fc"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/stable-early-n200000-w128-m1000-s1777/late_hash_materialized-analyze-r0.json", "sha256": "25badc6a246a43b912244f5d974bc7d2bd274ec57b5656d940ea8fa02e99b152"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/stable-early-n200000-w128-m1000-s1777/late_join_materialized-analyze-r0.json", "sha256": "47171b1d5a48de8d61b121a3afd5abc96ddd58be1fc4de7becd81873cce172f0"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/stable-late-n100000-w512-m0900-s1777/early_hash_materialized-analyze-r0.json", "sha256": "de2d98fc32afc7687cb6fe8048e35f97b2da7bc14c7406944d1f307537804ea4"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/stable-late-n100000-w512-m0900-s1777/late_fused-analyze-r0.json", "sha256": "b55afadcea0bdf061834c45920207ef1a2e2a63c9268648eaef70197427d927b"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/stable-late-n100000-w512-m0900-s1777/late_hash_materialized-analyze-r0.json", "sha256": "7b12f3455c030083e318dd763f22597ea2585ac1e1ebfb49595c77bb2c7f568b"},
+    {"path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/plans/stable-late-n100000-w512-m0900-s1777/late_join_materialized-analyze-r0.json", "sha256": "a87a256aa28b4e3b7705340e7f976579f0f3708bc900627ca223663c418c25f0"}
+  ],
+  "interpretation": "Policy changes the feasible optimum and can impose material governance overhead, but the remaining cost alternatives do not exhibit the predeclared stable winner diversity required to design V2.1. The result is frozen without post-hoc threshold changes."
+}
