@@ -1,0 +1,50 @@
+{
+  "protocol_id": "real-governed-pipeline-transfer-v1",
+  "frozen_at": "2026-07-24",
+  "measurement_config": "experiments/configs/real_governed_pipeline_transfer_v1.json",
+  "evaluation_config": "experiments/configs/real_governed_pipeline_transfer_evaluation_v1.json",
+  "frozen_model": "experiments/frozen/models/governed_pipeline_cost_model_v2_20260724.json",
+  "frozen_model_sha256": "56399a09a3dccd2b02793eca97145fc17c68b9da8574edfef013925457f0fd6f",
+  "source_split_rule": {
+    "datasets": ["BTS Airline On-Time Performance", "NYC TLC Yellow Taxi"],
+    "months": ["2024-02", "2024-05", "2024-08", "2024-11"],
+    "reason": "fixed quarterly coverage; no month is selected from optimizer performance"
+  },
+  "native_fields": [
+    "event time",
+    "Join key and its frequency skew",
+    "official dimension attributes"
+  ],
+  "deterministic_controlled_augmentations": [
+    "sensitive payload width",
+    "policy selectivity",
+    "query selectivity through native-time rank",
+    "dimension coverage through complete native-key selection"
+  ],
+  "measurement_scale": {
+    "rows_per_unit": 120000,
+    "source_months": 8,
+    "profiles": 4,
+    "seeds": 3,
+    "units": 96,
+    "paired_blocks_per_unit": 30,
+    "candidate_executions_per_unit": 90,
+    "total_candidate_executions": 8640
+  },
+  "predeclared_gates": {
+    "minimum_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_regret_percent": 15.0,
+    "minimum_selected_candidate_count": 2,
+    "must_not_be_worse_than_best_fixed_mean_and_p95": true,
+    "illegal_candidate_selections": 0,
+    "systematic_material_carryover_detected": false
+  },
+  "one_shot_rule": [
+    "The optimizer and evaluation gates are frozen before real timings.",
+    "The evaluator never fits coefficients or changes the tie threshold.",
+    "All three legal candidates are measured only to construct the Legal Oracle.",
+    "Pass or fail, this exact real-transfer result is retained."
+  ]
+}

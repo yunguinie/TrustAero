@@ -1,0 +1,24 @@
+{
+  "protocol_id": "governed-checkpoint-multicandidate-semantics-v1-20260724",
+  "status": "FROZEN_BEFORE_THREE_CANDIDATE_TIMING",
+  "candidate_ids": [
+    "fused_governed_pipeline",
+    "policy_first_narrow_checkpoint",
+    "query_first_raw_checkpoint"
+  ],
+  "candidate_meanings": {
+    "fused_governed_pipeline": "No durable intermediate checkpoint; query and policy predicates feed the Join pipeline.",
+    "policy_first_narrow_checkpoint": "Policy predicate runs before a narrow durable checkpoint; the query predicate follows.",
+    "query_first_raw_checkpoint": "Query predicate runs before a raw-value durable checkpoint; the policy predicate follows."
+  },
+  "required_pre_timing_checks": [
+    "all candidates return the same result digest",
+    "all candidates have distinct combined physical-plan fingerprints",
+    "raw checkpoint exposure is derived by trusted construction",
+    "governance feasibility is evaluated before cost",
+    "a required checkpoint rejects fused",
+    "a zero raw-materialization budget rejects query-first"
+  ],
+  "scientific_boundary": "This record freezes candidate semantics only. It does not assert performance diversity, optimizer accuracy, or a paper result.",
+  "paper_optimizer_performance_claim_authorized": false
+}

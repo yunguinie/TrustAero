@@ -1,0 +1,51 @@
+{
+  "absolute_half_drift_by_candidate": {
+    "fused": 0.05466623000659099,
+    "materialize-after-bts-mj-carrier-join": 0.09630554787423873,
+    "materialize-after-bts-mj-filter": 0.036422692267142676,
+    "materialize-after-bts-mj-origin-join": 0.03985795757501065
+  },
+  "diagnostic_oracle_set_within_tie_band": [
+    "fused"
+  ],
+  "formal_paper_experiment_authorized": true,
+  "heldout_optimizer_evidence": false,
+  "integrity_gates": {
+    "all_24_permutations_balanced": true,
+    "all_positions_balanced": true,
+    "artifacts_verified": true,
+    "candidate_space_complete": true,
+    "certificates_partial": true,
+    "clean_source_recorded": true,
+    "measurements_complete": true,
+    "resources_observed": true
+  },
+  "median_candidate_over_fused_ratio": {
+    "fused": 1.0,
+    "materialize-after-bts-mj-carrier-join": 1.3782044115417182,
+    "materialize-after-bts-mj-filter": 1.2963972698464423,
+    "materialize-after-bts-mj-origin-join": 1.274902332899785
+  },
+  "optimizer_selection_evaluated": false,
+  "paired_ratio_half_drift_by_candidate": {
+    "materialize-after-bts-mj-carrier-join": 0.002201415570248555,
+    "materialize-after-bts-mj-filter": 0.0723537022693781,
+    "materialize-after-bts-mj-origin-join": 0.0018647503541195931
+  },
+  "paired_ratio_outlier_fraction_by_candidate": {
+    "materialize-after-bts-mj-carrier-join": 0.08333333333333333,
+    "materialize-after-bts-mj-filter": 0.041666666666666664,
+    "materialize-after-bts-mj-origin-join": 0.08333333333333333
+  },
+  "paper_performance_evidence": true,
+  "run_id": "20260719T061237165086Z",
+  "schema_version": 1,
+  "scientific_boundary": "This full-January multi-Join run is method-level development evidence. It computes a diagnostic Oracle after timing all candidates and is not holdout evidence.",
+  "scientific_label": "bts_multijoin_formal_development_partition_v1",
+  "stability_gates": {
+    "absolute_half_drift": true,
+    "paired_ratio_half_drift": true,
+    "paired_ratio_outlier_fraction": true
+  },
+  "status": "PASS"
+}

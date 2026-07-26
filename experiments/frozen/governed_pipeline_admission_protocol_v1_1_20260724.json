@@ -1,0 +1,22 @@
+{
+  "protocol_id": "governed-pipeline-admission-v1.1",
+  "supersedes": "governed-pipeline-admission-v1",
+  "frozen_at": "2026-07-24",
+  "config_path": "experiments/configs/governed_pipeline_admission_v1_1.json",
+  "experiment_role": "development winner-diversity admission",
+  "revision_reason": "Remove join_match_rate=1.0, where query-first mechanically dominates join-first and a three-candidate winner-diversity comparison is structurally invalid.",
+  "matrix": {
+    "scenario_count": 16,
+    "unit_count": 48,
+    "measured_paired_blocks": 1440,
+    "timed_candidate_executions": 4320
+  },
+  "authorization_rule": "Only PASS_GOVERNED_PIPELINE_OPTIMIZER_ADMISSION permits training a new performance model.",
+  "scientific_boundary": [
+    "This run is a development admission test, not an optimizer evaluation.",
+    "All candidates must remain result- and record-lineage-equivalent with distinct DuckDB physical plans.",
+    "Every declared scenario must retain all three candidates after legality and safe dominance checks before timing begins.",
+    "A failure is retained and its gates are not weakened after observing results.",
+    "No optimizer speedup or unseen-data generalization claim is authorized by this experiment."
+  ]
+}

@@ -1,0 +1,11 @@
+# Frozen model bytes are SHA-256 bound by experiment protocols.  Force a
+# platform-independent line ending so Windows checkout cannot change the hash.
+experiments/frozen/models/*.json text eol=lf
+# Keep source and reproducibility metadata stable across Windows and Linux.
+*.py text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.csv text eol=lf

@@ -7,7 +7,9 @@ Cross-node graph validity and policy semantics deliberately live elsewhere.
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 from typing import Annotated, Any, Literal
 
 from pydantic import (
@@ -132,6 +134,9 @@ class LiteralExpression(StrictModel):
             DataType.STRING: value_type is str,
             DataType.INTEGER: value_type is int,
             DataType.FLOAT: value_type in (int, float),
+            # Exact decimals cross JSON as canonical strings. JSON numbers are
+            # commonly parsed as binary floats and would recreate the Q6 bug.
+            DataType.DECIMAL: value_type is str,
             DataType.BOOLEAN: value_type is bool,
             DataType.DATETIME: value_type is str,
         }[self.data_type]
@@ -144,6 +149,16 @@ class LiteralExpression(StrictModel):
                 raise ValueError("datetime literal must be ISO-8601") from exc
             if parsed.utcoffset() is None:
                 raise ValueError("datetime literal must include a UTC offset")
+        if self.data_type == DataType.DECIMAL:
+            text = str(self.value)
+            if re.fullmatch(r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?", text) is None:
+                raise ValueError("decimal literal must be a canonical base-10 string")
+            try:
+                parsed_decimal = Decimal(text)
+            except InvalidOperation as exc:  # pragma: no cover - regex is stricter
+                raise ValueError("decimal literal is invalid") from exc
+            if not parsed_decimal.is_finite():
+                raise ValueError("decimal literal must be finite")
         return self
 
 
@@ -180,6 +195,54 @@ PredicateExpression = Annotated[
 ]
 
 
+class NumericProductExpression(StrictModel):
+    """Multiply two raw numeric fields inside one aggregate input.
+
+    This deliberately small expression exists for TPC-H Q6 and similarly
+    shaped database workloads.  It is *not* a general SQL-expression escape
+    hatch: constants, division, nesting and arbitrary functions remain outside
+    the reviewed fragment and therefore fail closed.
+    """
+
+    expression_type: Literal["numeric_product"]
+    left: FieldExpression
+    right: FieldExpression
+
+
+class NumericAffineExpression(StrictModel):
+    """Add or subtract one raw numeric field from an exact decimal constant.
+
+    This bounded shape is sufficient for benchmark formulas such as
+    ``1 - discount`` and ``1 + tax``. It deliberately forbids nesting,
+    division and arbitrary functions, keeping the accepted arithmetic small
+    enough to type-check and compile independently.
+    """
+
+    expression_type: Literal["numeric_affine"]
+    constant: LiteralExpression
+    operator: Literal["add", "subtract"]
+    field: FieldExpression
+
+    @model_validator(mode="after")
+    def constant_must_be_exact_decimal(self) -> NumericAffineExpression:
+        if self.constant.data_type != DataType.DECIMAL:
+            raise ValueError("numeric-affine constants must use exact DECIMAL literals")
+        return self
+
+
+NumericFormulaFactor = Annotated[
+    FieldExpression | NumericAffineExpression,
+    Field(discriminator="expression_type"),
+]
+
+
+class NumericProductFormulaExpression(StrictModel):
+    """Multiply two or three reviewed numeric factors inside an aggregate."""
+
+    expression_type: Literal["numeric_product_formula"]
+    factors: tuple[NumericFormulaFactor, ...] = Field(min_length=2, max_length=3)
+
+
 class Filter(OperatorBase):
     operator_type: Literal["Filter"]
     expression: PredicateExpression
@@ -193,9 +256,32 @@ class Join(OperatorBase):
 
 
 class SpatialJoin(OperatorBase):
+    """Join two point relations using explicitly selected coordinate pairs.
+
+    A relation may contain several spatial descriptors after an earlier join.
+    Explicit latitude/longitude pairs keep every later SpatialJoin
+    unambiguous.  The current DuckDB execution fragment implements only
+    ``distance_within`` over EPSG:4326 points.
+    """
+
     operator_type: Literal["SpatialJoin"]
     relation: Literal["intersects", "within", "distance_within"]
+    left_fields: tuple[str, str]
+    right_fields: tuple[str, str]
     distance_km: PositiveFloat | None = None
+
+    @model_validator(mode="after")
+    def spatial_relation_parameters_must_be_consistent(self) -> SpatialJoin:
+        for side, fields in (("left", self.left_fields), ("right", self.right_fields)):
+            if any(not field.strip() for field in fields) or len(set(fields)) != 2:
+                raise ValueError(
+                    f"{side}_fields must contain distinct non-empty latitude and longitude names"
+                )
+        if self.relation == "distance_within" and self.distance_km is None:
+            raise ValueError("distance_within requires distance_km")
+        if self.relation != "distance_within" and self.distance_km is not None:
+            raise ValueError("distance_km is valid only for distance_within")
+        return self
 
 
 class Project(OperatorBase):
@@ -203,17 +289,54 @@ class Project(OperatorBase):
     fields: tuple[str, ...]
 
 
+class SortKey(StrictModel):
+    """One deterministic sort key over a field in the current relation."""
+
+    field: str = Field(min_length=1)
+    direction: Literal["asc", "desc"] = "asc"
+
+
+class Sort(OperatorBase):
+    """Order rows by an explicit, non-empty sequence of validated fields."""
+
+    operator_type: Literal["Sort"]
+    keys: tuple[SortKey, ...] = Field(min_length=1)
+
+
+class Limit(OperatorBase):
+    """Return at most a reviewed number of rows from an ordered relation.
+
+    The upper bound keeps this operator inside a small, independently
+    auditable fragment. Limit never establishes an order itself: benchmark
+    adapters must place it after an explicit ``Sort`` for Top-K semantics.
+    """
+
+    operator_type: Literal["Limit"]
+    row_count: int = Field(ge=1, le=10_000)
+
+
 class AggregateExpression(StrictModel):
     """One named aggregate result in the supported relational fragment."""
 
     function: AggregateFunction
     input_field: str | None = None
+    input_expression: NumericProductExpression | NumericProductFormulaExpression | None = None
     output_field: str = Field(min_length=1)
 
     @model_validator(mode="after")
     def input_field_must_match_function(self) -> AggregateExpression:
-        if self.function != AggregateFunction.COUNT and self.input_field is None:
-            raise ValueError("non-COUNT aggregates require input_field")
+        inputs = int(self.input_field is not None) + int(self.input_expression is not None)
+        if self.function == AggregateFunction.COUNT and inputs != 0:
+            raise ValueError("COUNT(*) cannot declare an aggregate input")
+        if self.function != AggregateFunction.COUNT and inputs != 1:
+            raise ValueError(
+                "non-COUNT aggregates require exactly one field or numeric-product input"
+            )
+        if self.input_expression is not None and self.function not in (
+            AggregateFunction.SUM,
+            AggregateFunction.AVG,
+        ):
+            raise ValueError("numeric-expression inputs support SUM and AVG only")
         return self
 
 
@@ -265,6 +388,8 @@ Operator = Annotated[
     | Join
     | SpatialJoin
     | Project
+    | Sort
+    | Limit
     | Aggregate
     | Mask
     | GeneralizeLocation
@@ -382,14 +507,21 @@ class PhysicalStrategySpec(StrictModel):
 
     Materialization is a storage boundary, not a logical rewrite: it preserves
     rows and field semantics while changing pipelining and intermediate cost.
-    IR v1 permits either one ordinary materialization boundary or one bounded
-    ordered-filter fragment. The latter materializes each pure filter stage so
-    a backend cannot silently flatten the requested experimental order.
+    IR v1 permits one ordinary materialization boundary, one bounded
+    ordered-filter fragment, or one independently checked Mask placement.  The
+    combined placement/materialization mode is deliberately narrower still:
+    it may materialize only the Mask that was moved.  This exact shape lets the
+    optimizer compare an early masked boundary with a late Mask without
+    opening a general-purpose reordering API.
     """
 
     strategy_id: str = Field(min_length=1)
     execution_mode: Literal[
-        "fused", "materialized", "ordered_materialized", "governance_placed"
+        "fused",
+        "materialized",
+        "ordered_materialized",
+        "governance_placed",
+        "governance_placed_materialized",
     ] = "fused"
     materialize_after: tuple[str, ...] = ()
     filter_order: tuple[str, ...] = ()
@@ -408,9 +540,19 @@ class PhysicalStrategySpec(StrictModel):
                 raise ValueError(
                     "ordered materialization requires at least two filters and no other decision"
                 )
-        elif self.materialize_after or self.filter_order or len(self.placements) != 1:
+        elif self.execution_mode == "governance_placed":
+            if self.materialize_after or self.filter_order or len(self.placements) != 1:
+                raise ValueError(
+                    "governance placement requires exactly one placement and no other decision"
+                )
+        elif (
+            len(self.materialize_after) != 1
+            or self.filter_order
+            or len(self.placements) != 1
+            or self.materialize_after[0] != self.placements[0].operator_id
+        ):
             raise ValueError(
-                "governance placement requires exactly one placement and no other decision"
+                "placed materialization must materialize exactly the one moved operator"
             )
         if len(self.filter_order) != len(set(self.filter_order)):
             raise ValueError("ordered filters must be unique")
@@ -434,6 +576,16 @@ class ApprovedPhysicalPlan(StrictModel):
     pending_obligations: tuple[ObligationType, ...] = ()
     unimplemented_backend_features: tuple[str, ...] = ()
     planner_notes: tuple[str, ...] = ()
+    # Optional IR-v1 extension. Both values must be supplied together when a
+    # physical plan is produced by the hierarchical governed planner.
+    planner_decision_digest: str | None = None
+    planner_selected_candidate_id: str | None = None
+
+    @model_validator(mode="after")
+    def planner_binding_is_complete(self) -> ApprovedPhysicalPlan:
+        if (self.planner_decision_digest is None) != (self.planner_selected_candidate_id is None):
+            raise ValueError("Physical planner decision binding must be complete")
+        return self
 
 
 class Obligation(StrictModel):
@@ -504,3 +656,11 @@ class GovernedExecutionCertificate(StrictModel):
     result_digest: str
     lineage_evidence: LineageEvidenceSummary | None = None
     lineage_digest: str | None = None
+    planner_decision_digest: str | None = None
+    planner_selected_candidate_id: str | None = None
+
+    @model_validator(mode="after")
+    def planner_binding_is_complete(self) -> GovernedExecutionCertificate:
+        if (self.planner_decision_digest is None) != (self.planner_selected_candidate_id is None):
+            raise ValueError("Certificate planner decision binding must be complete")
+        return self

@@ -1,0 +1,48 @@
+{
+  "absolute_half_drift_by_candidate": {
+    "fused": 0.009835373727935193,
+    "materialize-after-q06-predicate": 0.055350808355408954,
+    "materialize-after-q06-time": 0.011329001378067471
+  },
+  "diagnostic_oracle_set_within_tie_band": [
+    "fused"
+  ],
+  "formal_paper_experiment_authorized": false,
+  "heldout_optimizer_evidence": false,
+  "integrity_gates": {
+    "all_6_permutations_balanced": true,
+    "all_positions_balanced": true,
+    "candidate_space_complete": true,
+    "certificates_partial": true,
+    "clean_source_recorded": true,
+    "measurements_complete": true,
+    "resources_observed": true
+  },
+  "median_candidate_over_fused_ratio": {
+    "fused": 1.0,
+    "materialize-after-q06-predicate": 1.0930110147722851,
+    "materialize-after-q06-time": 2.838384302941426
+  },
+  "optimizer_selection_evaluated": false,
+  "paired_block_statistic": "median_of_5",
+  "paired_ratio_half_drift_by_candidate": {
+    "materialize-after-q06-predicate": 0.024465864839293694,
+    "materialize-after-q06-time": 0.10128473350070477
+  },
+  "paired_ratio_outlier_fraction_by_candidate": {
+    "materialize-after-q06-predicate": 0.13333333333333333,
+    "materialize-after-q06-time": 0.0
+  },
+  "paper_performance_evidence": true,
+  "run_id": "20260719T133156062938Z",
+  "schema_version": 1,
+  "scientific_boundary": "TPC-H SF1 Q6 is standard-benchmark method evidence. The Oracle is computed after running all candidates and is not optimizer selection or heldout evidence.",
+  "scientific_label": "tpch_sf1_q6_batched_median_development_v2",
+  "stability_gates": {
+    "absolute_half_drift": true,
+    "paired_ratio_half_drift": true,
+    "paired_ratio_outlier_fraction": false
+  },
+  "status": "FAIL",
+  "timing_protocol": "batched_median_v2"
+}

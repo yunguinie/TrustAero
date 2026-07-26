@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "record_id": "governed-aggregate-admission-v1-negative-20260726",
+  "status": "FAIL_GOVERNED_AGGREGATE_OPTIMIZER_ADMISSION_RETAIN",
+  "source_commit": "79877d766a7ed63414655f54eb5ab8058b72b660",
+  "protocol": {
+    "path": "experiments/frozen/governed_aggregate_admission_protocol_v1_20260726.json",
+    "sha256": "b70985fe091db3aa6f53ad786656515ddbfcf16f09745aafbe7e7f02acebf5d5"
+  },
+  "config": {
+    "path": "experiments/configs/governed_aggregate_admission_v1.json",
+    "sha256": "d68c7851ec6e4a6541a7f280fe8ba2ab3a45185544769f5c12ed265c0988cc00"
+  },
+  "artifacts": [
+    {
+      "path": "results/governed_aggregate_admission_v1/20260726T014138059131Z/summary.json",
+      "sha256": "44d0eeb6b13fe8bee12d19592b5586b2d959df879edbd3853b7dd43842010f09"
+    },
+    {
+      "path": "results/governed_aggregate_admission_v1/20260726T014138059131Z/measurements.csv",
+      "sha256": "047fa96a3fb702e624a9b865b5e70cfddd49468f2091305ccd9fcb00dba7433c"
+    }
+  ],
+  "observations": {
+    "paired_block_count": 480,
+    "candidate_execution_count": 960,
+    "conclusive_scenario_rate": 0.6875,
+    "singleton_winner_counts": {
+      "join_then_aggregate": 11
+    },
+    "inconclusive_scenarios": 5,
+    "partial_aggregate_singleton_wins": 0,
+    "strongest_partial_aggregation_compression": {
+      "key_domain_fraction": 0.002,
+      "mean_governed_rows": 25016,
+      "mean_governed_keys": 200,
+      "mean_key_to_row_fraction": 0.0197
+    },
+    "all_results_equal": true,
+    "all_lineage_equal": true,
+    "all_candidate_plans_distinct": true,
+    "all_candidates_governance_feasible": true
+  },
+  "diagnosis": "The data and candidate implementation behaved as designed. Even when partial aggregation reduced approximately 25,016 governed rows to 200 Join keys, DuckDB's integer Join was cheap enough that the additional Hash Aggregate and temporary materialization were not recovered. Eleven scenarios favored Join-then-Aggregate and five were practically inconclusive.",
+  "decision": "Apply the preregistered stop rule. Do not fit a cost model, run a holdout, relax the 3% materiality threshold, or retune this query family to manufacture a second winner.",
+  "retained_value": "The result establishes a supported optimizer boundary: governance-driven candidate diversity does not imply useful performance diversity for every legal query shape.",
+  "scientific_boundary": "This negative result does not invalidate the successful governed-pipeline controlled holdout, the successful policy-stratified BTS/NYC real-month holdout, semantic correctness, system scalability, lineage results, or the multisource end-to-end case study."
+}

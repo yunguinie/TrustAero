@@ -1,0 +1,23 @@
+{
+  "recorded_at": "2026-07-23",
+  "status": "FAIL_EA1_CHECKPOINT_OPTIMIZER_RETAIN",
+  "role": "dirty-worktree development smoke retained before V2 support-envelope correction",
+  "source_result_sha256": "a076167ad2a32747131358bd9805c2507429a94ac3cefb9cefc73f8f6d57732c",
+  "metrics": {
+    "confidence_family_hit_rate": 0.875,
+    "best_fixed_confidence_family_hit_rate": 0.625,
+    "seed_consistent_family_rate": 0.875,
+    "mean_diagnostic_median_regret_percent": 11.341371943643201,
+    "p95_diagnostic_median_regret_percent": 132.87601050816292,
+    "maximum_diagnostic_median_regret_percent": 139.3169161392739,
+    "strict_policy_illegal_selection_count": 0
+  },
+  "failed_scenario": "n150000-w1024-p0.1-q0.05",
+  "root_cause": "The analytic cost ranking predicted query-first correctly, but exact training min/max support bounds treated harmless held-out seed cardinality jitter as out of support and forced the conservative policy-first fallback.",
+  "cost_prediction_example_ms": {
+    "policy_first": 37.78764396892823,
+    "query_first": 14.692978357548732
+  },
+  "correction_boundary": "V2 may add a pre-registered support envelope but may not change cost weights, the 3% practical tie, governance feasibility, or development gates based on this failure.",
+  "paper_evidence": false
+}

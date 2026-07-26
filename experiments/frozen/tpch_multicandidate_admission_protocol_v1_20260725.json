@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "protocol_id": "tpch-multicandidate-admission-v1-20260725",
+  "role": "development_admission_not_paper_performance",
+  "config_path": "experiments/configs/tpch_multicandidate_admission_v1.json",
+  "runner": "scripts/run_tpch_multicandidate_admission.py",
+  "prior_semantic_evidence": "experiments/frozen/tpch_query_coverage_v2_semantic_positive_20260725.json",
+  "semantic_result_sha256": "d2c7d1bdc3bcd1dee7420b9b3d8521d27a7b0f97d9ead1cb2d20560681a5834b",
+  "candidate_selection_disclosure": "Candidate boundaries were selected after one unreplicated SF1 mechanism probe. That probe is development information, so this admission cannot be relabeled as independent holdout evidence.",
+  "candidate_selection_principle": [
+    "retain fused as the native DuckDB baseline",
+    "retain one selective branch boundary",
+    "retain one post-Join boundary",
+    "retain one post-Aggregate boundary",
+    "exclude broad branch materializations that are mechanically high-work in the mechanism probe"
+  ],
+  "measurement_protocol": {
+    "cache_state": "warm single connection",
+    "candidate_count_per_query": 4,
+    "all_candidate_permutations": 24,
+    "measured_rounds_per_permutation": 2,
+    "paired_blocks_per_query": 48,
+    "timed_executions_per_query": 192,
+    "tie_fraction": 0.03,
+    "confidence_level": 0.95,
+    "bootstrap_draws": 5000,
+    "maximum_paired_ratio_half_drift": 0.20
+  },
+  "admission_gate": [
+    "all candidate results remain identical",
+    "all four physical plans per query remain distinct",
+    "no candidate spills",
+    "both queries have a confidence-authorized singleton winner beyond 3 percent",
+    "Q3 and Q10 have different singleton winners",
+    "paired-ratio half drift remains at or below 20 percent"
+  ],
+  "scientific_boundary": "Passing authorizes design of a new SF10 protocol and cross-query selector. It does not itself authorize latency, speedup, or optimizer-generalization claims."
+}

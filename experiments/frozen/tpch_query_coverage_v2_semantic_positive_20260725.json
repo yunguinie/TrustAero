@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch-query-coverage-v2-semantic-positive-20260725",
+  "status": "PASS_TPCH_QUERY_COVERAGE_V2_SEMANTICS",
+  "source_commit": "8bb32522f777d96e78d966683ed8dcde4d2e0b0a",
+  "source_dirty": false,
+  "protocol": {
+    "path": "experiments/frozen/tpch_query_coverage_v2_protocol_20260725.json",
+    "sha256": "8ad658ae56d3dc7325405eb603288328519f4b6d613ad0b6bdafa80f8c90c201"
+  },
+  "inputs": [
+    {
+      "path": "examples/tpch/catalog_v2.json",
+      "sha256": "1a525c117016469ed8a4cf8f5fe39799b38c96f34e3a2fefc85790c92573f6ae"
+    },
+    {
+      "path": "examples/tpch/policy_v2.json",
+      "sha256": "cd45dd075b6672a4e146250bab9c52bc2a5102c9a63bbd069d4295d3558910da"
+    },
+    {
+      "path": "examples/tpch/plans/q03.json",
+      "sha256": "e6e65a492b210468179b524175f4875b058e1b149e2a90381c5606173d9f20a0"
+    },
+    {
+      "path": "examples/tpch/plans/q10.json",
+      "sha256": "ae31d02dceacd318b355602c60fd2c7759bf6e0578618f0e3f2e5bf8aacd97d9"
+    }
+  ],
+  "primary_artifact": {
+    "path": "results/tpch_query_coverage_v2/result.json",
+    "sha256": "d2c7d1bdc3bcd1dee7420b9b3d8521d27a7b0f97d9ead1cb2d20560681a5834b"
+  },
+  "observations": {
+    "official_query_denominator": 22,
+    "previous_exact_support": ["Q01", "Q06"],
+    "new_exact_support": ["Q03", "Q10"],
+    "exact_support_after_smoke": ["Q01", "Q03", "Q06", "Q10"],
+    "q03_official_rows": 10,
+    "q10_official_rows": 20,
+    "candidate_count_per_new_query": 2,
+    "distinct_duckdb_plan_count_per_new_query": 2,
+    "all_candidates_official_result_equivalent": true,
+    "all_certificates_partial_without_failure": true,
+    "raw_sql_bypass_used": false
+  },
+  "authorized_claim": "TrustAero exactly represents and executes official TPC-H Q3 and Q10 in addition to Q1 and Q6. Every new governed candidate matched the official ordered result and retained a distinct observed DuckDB physical plan.",
+  "scientific_boundary": "This is semantic and physical-plan-diversity evidence for 4 of 22 official TPC-H queries. It records no latency, speedup, optimizer accuracy, or support for the remaining 18 queries. PARTIAL certificates do not attest internal DuckDB operator outputs."
+}

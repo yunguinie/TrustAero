@@ -1,0 +1,60 @@
+{
+  "calibration_id": "ea1-governed-checkpoint-development-v1",
+  "direct_winner_classifier_used": false,
+  "intercept_ms": 7.231775860331146,
+  "model_type": "execution_aware_analytic_cost_v1",
+  "practical_tie_fraction": 0.03,
+  "rates": [
+    {
+      "feature_name": "checkpoint.narrow_write_gib",
+      "milliseconds_per_unit": 0.0
+    },
+    {
+      "feature_name": "checkpoint.post_rows_million",
+      "milliseconds_per_unit": 55.290564921614234
+    },
+    {
+      "feature_name": "checkpoint.raw_write_gib",
+      "milliseconds_per_unit": 836.3143419220852
+    },
+    {
+      "feature_name": "join.result_rows_million",
+      "milliseconds_per_unit": 0.0
+    },
+    {
+      "feature_name": "policy_hash.input_gib",
+      "milliseconds_per_unit": 203.67512455710988
+    }
+  ],
+  "stable_legal_preference": [
+    "policy_first_narrow_checkpoint",
+    "query_first_raw_checkpoint"
+  ],
+  "support_bounds": [
+    {
+      "feature_name": "checkpoint.narrow_write_gib",
+      "maximum": 0.001763344556093216,
+      "minimum": 0.0
+    },
+    {
+      "feature_name": "checkpoint.post_rows_million",
+      "maximum": 0.07889070000000001,
+      "minimum": 0.0035952999999999996
+    },
+    {
+      "feature_name": "checkpoint.raw_write_gib",
+      "maximum": 0.07608513906598091,
+      "minimum": 0.0
+    },
+    {
+      "feature_name": "join.result_rows_million",
+      "maximum": 0.03937395,
+      "minimum": 0.0
+    },
+    {
+      "feature_name": "policy_hash.input_gib",
+      "maximum": 0.15020370483398438,
+      "minimum": 0.0
+    }
+  ]
+}

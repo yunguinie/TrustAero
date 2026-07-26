@@ -1,0 +1,20 @@
+{
+  "results_dir": "results/bts_multijoin_formal_v1",
+  "sample_rows": 547271,
+  "full_month": true,
+  "warmup_blocks": 4,
+  "measured_blocks": 48,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260723,
+  "absolute_half_drift_limit": 0.5,
+  "paired_ratio_half_drift_limit": 0.2,
+  "paired_ratio_outlier_fraction_limit": 0.1,
+  "tie_threshold_fraction": 0.03,
+  "query_family_protocol_sha256": "1f1ac460f346b1f660aef0b98fe9a6d92c45fb9bad14765c542e39ac947e9425",
+  "semantic_smoke_sha256": "e01857191eef039f9c0f609f2e31e30a2d708efb369146ce62591d095077c7db",
+  "require_clean_git": true,
+  "scientific_label": "bts_multijoin_formal_development_partition_v1",
+  "paper_performance_evidence": true,
+  "heldout_optimizer_evidence": false
+}

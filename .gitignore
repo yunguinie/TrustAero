@@ -12,7 +12,12 @@ dist/
 build/
 /data/raw/
 /data/processed/
+/data/tmp/
+/tmp/
+/.test-tmp*/
 .idea/
 .vscode/
 .env
+.env.*
+!.env.example
 *.key

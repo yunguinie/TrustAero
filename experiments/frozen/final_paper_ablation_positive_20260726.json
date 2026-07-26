@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "status": "PASS_FINAL_PAPER_ABLATION_BUNDLE",
+  "analysis_method": "Frozen coefficient-family deletion without refitting or threshold retuning",
+  "artifacts": [
+    {
+      "path": "results/final_paper_ablation_v1/ablation.json",
+      "sha256": "02cdc61d899841b39c3afb8e9e25045321378df7d091a45e7361197ab32b6e2c"
+    },
+    {
+      "path": "results/final_paper_ablation_v1/report.md",
+      "sha256": "8779afd332e1ea901bbc95b9f98379fef68e418780b66dddea96885b5f18f2d5"
+    }
+  ],
+  "governed_pipeline": {
+    "full_model_oracle_set_hit_rate": 1.0,
+    "full_model_mean_regret_percent": 0.08785623250526046,
+    "without_mask_policy_oracle_set_hit_rate": 0.1875,
+    "without_mask_policy_mean_regret_percent": 26.86958588942231,
+    "without_checkpoint_oracle_set_hit_rate": 0.875,
+    "without_checkpoint_mean_regret_percent": 0.9848406825611666
+  },
+  "lineage_checkpoint": {
+    "full_model_oracle_set_hit_rate": 1.0,
+    "full_model_mean_regret_percent": 0.0,
+    "without_lineage_oracle_set_hit_rate": 0.7222222222222222,
+    "without_lineage_mean_regret_percent": 2.8296276654078953
+  },
+  "validator_boundary": "ACCEPT, REWRITE, CLARIFY, and REJECT are handling outcomes, not safety layers disabled for ablation.",
+  "certificate_boundary": "PARTIAL verification does not claim cryptographic attestation of DuckDB internal operator execution."
+}

@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "protocol_id": "real-data-query-families-v1-20260719",
+  "scientific_label": "governance_driven_query_family_design_frozen_before_performance",
+  "frozen_before_performance": true,
+  "selection_principle": "Include query shapes because they exercise a distinct governance obligation or legal-plan boundary; never add or remove a template because of observed latency.",
+  "reporting_rule": "Report every frozen template that reaches semantic readiness, including ties, regressions, rejected candidates, and unsupported templates with an operator-level reason.",
+  "templates": [
+    {
+      "template_id": "QF-BTS-MASKED-READ",
+      "workload_id": "bts",
+      "stage": "semantic_ready",
+      "observed_or_controlled": "observed",
+      "query_shape": "TemporalFilter-Filter-Project with policy-inserted output Mask and source lineage",
+      "governance_question": "Does the legal materialization boundary change when raw aircraft identifiers may or may not be stored before output Masking?",
+      "inclusion_reason": "BTS supplies native aviation timestamps and aircraft identifiers; the policy requires a hashed output and source evidence.",
+      "plan_path": "examples/real_data/plans/bts_governed_read.json",
+      "expected_validation_status": "REWRITE",
+      "required_datasets": ["bts_on_time_2024_01"],
+      "required_operator_types": ["ScanSource", "TemporalFilter", "Filter", "Project", "Mask", "LineageCapture"],
+      "required_mechanisms": ["VERSION_PIN", "MASK", "SOURCE_LINEAGE"],
+      "materialization_targets": ["bts-filter", "gov-002-mask"],
+      "governance_profiles": [
+        {
+          "profile_id": "output-mask-only",
+          "expected_feasible_candidates": ["fused", "materialize-after-bts-filter", "materialize-after-gov-002-mask"],
+          "expected_rejected_candidates": []
+        },
+        {
+          "profile_id": "no-raw-sensitive-materialization",
+          "expected_feasible_candidates": ["fused", "materialize-after-gov-002-mask"],
+          "expected_rejected_candidates": ["materialize-after-bts-filter"]
+        }
+      ],
+      "implementation_blocker": null,
+      "performance_eligible": false
+    },
+    {
+      "template_id": "QF-NYC-ZONE-AGGREGATE",
+      "workload_id": "nyc_tlc",
+      "stage": "semantic_ready",
+      "observed_or_controlled": "observed",
+      "query_shape": "TemporalFilter-Filter-Join-Aggregate with source lineage",
+      "governance_question": "What is the cost of legal materialization before or after a real skewed zone Join when both public sources require lineage?",
+      "inclusion_reason": "NYC TLC supplies a native fact-to-zone Join, temporal filtering, skew, and grouped output independent of the aviation domain.",
+      "plan_path": "examples/real_data/plans/nyc_governed_aggregate.json",
+      "expected_validation_status": "REWRITE",
+      "required_datasets": ["nyc_tlc_yellow_2024_01", "nyc_tlc_taxi_zones"],
+      "required_operator_types": ["ScanSource", "TemporalFilter", "Filter", "Join", "Aggregate", "LineageCapture"],
+      "required_mechanisms": ["VERSION_PIN", "SOURCE_LINEAGE"],
+      "materialization_targets": ["nyc-filter", "nyc-zone-join"],
+      "governance_profiles": [
+        {
+          "profile_id": "source-lineage",
+          "expected_feasible_candidates": ["fused", "materialize-after-nyc-filter", "materialize-after-nyc-zone-join"],
+          "expected_rejected_candidates": []
+        }
+      ],
+      "implementation_blocker": null,
+      "performance_eligible": false
+    },
+    {
+      "template_id": "QF-BTS-NATURAL-MULTIJOIN",
+      "workload_id": "bts_multijoin",
+      "stage": "semantic_ready",
+      "observed_or_controlled": "observed",
+      "query_shape": "Flight fact joined with airport and carrier dimensions, then governed aggregation",
+      "governance_question": "Do branch-specific obligations and selectivities change the best legal boundary in a natural aviation multi-table Join?",
+      "inclusion_reason": "This is the native BTS relational structure and prevents the aviation evaluation from being only a single-table scan.",
+      "plan_path": "examples/real_data/plans/bts_natural_multijoin.json",
+      "catalog_path": "examples/real_data/bts_multijoin_catalog.json",
+      "policy_path": "examples/real_data/bts_multijoin_policy.json",
+      "expected_validation_status": "REWRITE",
+      "required_datasets": ["bts_on_time_2024_01_multijoin", "bts_airports_2024_01", "bts_carriers_2024_01"],
+      "required_operator_types": ["ScanSource", "TemporalFilter", "Filter", "Join", "Aggregate", "LineageCapture"],
+      "required_mechanisms": ["VERSION_PIN", "SOURCE_LINEAGE"],
+      "materialization_targets": ["bts-mj-filter", "bts-mj-origin-join", "bts-mj-carrier-join"],
+      "governance_profiles": [
+        {
+          "profile_id": "source-lineage",
+          "expected_feasible_candidates": ["fused", "materialize-after-bts-mj-filter", "materialize-after-bts-mj-origin-join", "materialize-after-bts-mj-carrier-join"],
+          "expected_rejected_candidates": []
+        }
+      ],
+      "implementation_blocker": null,
+      "performance_eligible": false
+    },
+    {
+      "template_id": "QF-BTS-MASK-JOIN-PLACEMENT",
+      "workload_id": "bts_mask_join",
+      "stage": "semantic_ready",
+      "observed_or_controlled": "observed",
+      "query_shape": "Native Tail_Number Mask placed before or after an OriginAirportID Join under explicit raw-exposure policies",
+      "governance_question": "When policy permits both routes, can Mask placement trade hashing work against raw-value Join exposure without changing results?",
+      "inclusion_reason": "This directly tests the optimizer contribution on native BTS fields while respecting V1 semantics: Tail_Number is never reused as the Join key.",
+      "plan_path": "examples/real_data/plans/bts_mask_join_placement.json",
+      "catalog_path": "examples/real_data/bts_mask_join_catalog.json",
+      "policy_path": "examples/real_data/bts_mask_join_policy.json",
+      "expected_validation_status": "REWRITE",
+      "required_datasets": ["bts_on_time_2024_01_mask_join", "bts_airports_2024_01_mask_join"],
+      "required_operator_types": ["ScanSource", "TemporalFilter", "Filter", "Project", "Join", "Mask", "LineageCapture"],
+      "required_mechanisms": ["VERSION_PIN", "MASK", "SOURCE_LINEAGE"],
+      "candidate_generation": "mask_placement",
+      "materialization_targets": [],
+      "mask_placement_target": "bts-mp-project",
+      "governance_profiles": [
+        {
+          "profile_id": "raw-join-permitted",
+          "expected_feasible_candidates": ["fused", "place-002-mask-after-bts-mp-project"],
+          "expected_rejected_candidates": []
+        },
+        {
+          "profile_id": "no-raw-sensitive-join",
+          "expected_feasible_candidates": ["place-002-mask-after-bts-mp-project"],
+          "expected_rejected_candidates": ["fused"]
+        }
+      ],
+      "implementation_blocker": null,
+      "performance_eligible": false
+    },
+    {
+      "template_id": "QF-TPCH-SUPPORTED-GOVERNANCE",
+      "workload_id": "tpch_sf1_sf10",
+      "stage": "design_only",
+      "observed_or_controlled": "controlled_governance_augmentation",
+      "query_shape": "All TPC-H templates supported by the frozen TrustAero operator fragment",
+      "governance_question": "Does the legal candidate selector generalize to a standard multi-table database benchmark at SF1 and SF10?",
+      "inclusion_reason": "TPC-H provides a familiar reproducible database baseline; query inclusion is based on operator support, not performance.",
+      "plan_path": null,
+      "expected_validation_status": null,
+      "required_datasets": ["tpch_sf1", "tpch_sf10"],
+      "required_operator_types": ["ScanSource", "Filter", "Join", "Aggregate", "Project"],
+      "required_mechanisms": ["VERSION_PIN", "SOURCE_LINEAGE"],
+      "materialization_targets": [],
+      "governance_profiles": [],
+      "implementation_blocker": "Generate SF1, map supported TPC-H queries to IR, and publish the complete supported/unsupported query audit before timing.",
+      "performance_eligible": false
+    },
+    {
+      "template_id": "QF-MULTISOURCE-CERTIFICATE",
+      "workload_id": "multisource_case_study",
+      "stage": "design_only",
+      "observed_or_controlled": "controlled_governance_augmentation",
+      "query_shape": "Earthquake, well, airport, and city sources with spatial/temporal governance, lineage, and execution certificate",
+      "governance_question": "Can TrustAero close the end-to-end policy-plan-execution-evidence loop over heterogeneous sources?",
+      "inclusion_reason": "This case studies full system integration; it is not used as the main performance benchmark.",
+      "plan_path": null,
+      "expected_validation_status": null,
+      "required_datasets": ["usgs_earthquake", "oil_gas_well", "airport", "city"],
+      "required_operator_types": ["ScanSource", "TemporalFilter", "SpatialFilter", "Join", "Project"],
+      "required_mechanisms": ["VERSION_PIN", "MASK", "SOURCE_LINEAGE"],
+      "materialization_targets": [],
+      "governance_profiles": [],
+      "implementation_blocker": "Complete source audit and dataset cards, then freeze the executable spatial query and certificate evidence contract.",
+      "performance_eligible": false
+    }
+  ]
+}

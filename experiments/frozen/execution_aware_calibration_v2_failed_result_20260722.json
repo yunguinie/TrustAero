@@ -1,0 +1,35 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_aware_calibration_v2_failed_result_20260722",
+  "status": "FAIL_RETAINED_ORDER_CONFOUNDED",
+  "run_id": "20260722T102501089024Z",
+  "commit_hash": "f981df83a110a46f08ad3022acc043817dce085a",
+  "collection_complete": true,
+  "unit_count": 54,
+  "measurement_count": 6534,
+  "profile_execution_count": 1188,
+  "metrics": {
+    "oracle_3pct_hit_rate": 0.843,
+    "mean_regret_pct": 2.063,
+    "p95_regret_pct": 11.043,
+    "maximum_regret_pct": 89.529
+  },
+  "gate_results": {
+    "oracle_3pct_hit_rate": "PASS",
+    "mean_regret_pct": "PASS",
+    "p95_regret_pct": "FAIL",
+    "maximum_regret_pct": "FAIL"
+  },
+  "bounded_diagnosis": {
+    "finding": "Cyclic Latin rotations balanced candidate positions but preserved a fixed immediate predecessor for every candidate.",
+    "example": "For flow-n50000-w128-m1000-s3303, raw_materialized_aggregate preceded postjoin_mask_fused_sorted_output in every non-first round; the latter ranged from about 89 ms to 307 ms.",
+    "scientific_consequence": "Candidate carryover cannot be separated from candidate cost, so this run cannot authorize optimizer performance claims or weight changes.",
+    "corrective_action": "Keep the optimizer unchanged and rerun with a Williams design that balances both positions and direct predecessors."
+  },
+  "artifact_hashes": {
+    "execution_aware_calibration.json": "63449297b068afd176299b47371ccd95251590ea2f228d99209e2a01881e041a",
+    "measurements.csv": "5622c0371a46eb0a6767f8c8f978423e4897e12287590ed3b4e65fc8b9bfb227",
+    "summary.json": "8e839e28ed4a8118d80c064398c95da5c943e86c7ed533b3c04118cfcc0b8444"
+  },
+  "paper_performance_evidence": false
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "record_id": "multisource-case-study-end-to-end-positive-20260725",
+  "status": "PASS_MULTISOURCE_CASE_STUDY_END_TO_END",
+  "frozen_on": "2026-07-25",
+  "source_commit": "197013b393925fa46436cd035e2b7fef0792189e",
+  "source_git_dirty": false,
+  "protocol": {
+    "path": "experiments/frozen/multisource_case_study_query_protocol_v1_20260725.json",
+    "sha256": "a328697e0d830c5403c3afe10c4aef0ecf3d8dcf67ece18b9b8fd1863ea912cf"
+  },
+  "prepared_manifest": {
+    "path": "data/manifests/processed/multisource-case-v1.json",
+    "sha256": "c0427a2cee9660e2676f97e036e352223423aa7990252316b897d1db50e12959"
+  },
+  "run_id": "20260725T015936505848Z",
+  "primary_artifacts": [
+    {
+      "path": "results/multisource_case_study_v1/20260725T015936505848Z/summary.json",
+      "sha256": "dc60a796a690e66a3c6010f6a88b2cfce466c39e2d5217e0acb4f928a89164a5"
+    },
+    {
+      "path": "results/multisource_case_study_v1/20260725T015936505848Z/validated_plan.json",
+      "sha256": "09e9998bb3dda153cca3256a377d0d9690d0b2a64f57751e45d8a9f8e67efc6f"
+    },
+    {
+      "path": "results/multisource_case_study_v1/20260725T015936505848Z/approved_physical_plan.json",
+      "sha256": "373133590f38b5c39aea325d78d4f74fb51c36a662b578ea132d37a0df61b8e5"
+    },
+    {
+      "path": "results/multisource_case_study_v1/20260725T015936505848Z/certificate.json",
+      "sha256": "934a8f3117cd07b9959818d042d4bed7b7ef4f4b221f94d6857c81e61c13fb0a"
+    }
+  ],
+  "observations": {
+    "governed_output_rows": 9128,
+    "repeat_count": 2,
+    "deterministic_repeat": true,
+    "masked_non_null_values": 9128,
+    "malformed_mask_values": 0,
+    "raw_sensitive_exposure_rows": 0,
+    "lineage_level": "source",
+    "lineage_source_count": 4,
+    "certificate_status": "PARTIAL",
+    "certificate_diagnostics": 0,
+    "faults_injected": 4,
+    "faults_rejected": 4
+  },
+  "authorized_claim": "TrustAero completed one deterministic governed spatial-temporal query over four audited public sources, inserted the required Mask and source-lineage instrumentation, exposed no raw controlled sensitive values, and rejected all four frozen certificate faults.",
+  "boundary": "This is end-to-end semantic system evidence, not a performance benchmark. PARTIAL means that plan, snapshot, event, observed result digest, and lineage checks passed while internal DuckDB operator outputs were not cryptographically attested. The sensitivity label and policy are controlled experimental governance attributes, not publisher-provided metadata."
+}

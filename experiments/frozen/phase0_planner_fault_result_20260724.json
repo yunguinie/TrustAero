@@ -1,0 +1,56 @@
+{
+  "frozen_at": "2026-07-24",
+  "status": "PASS_PHASE0_PLANNER_FAULT_INJECTION",
+  "role": "formal semantic correctness result with provisional micro-overhead",
+  "source_commit": "cd97091eccbbc89403444bd9e3195b8cf5a74fe0",
+  "run_id": "20260724T034540Z",
+  "artifacts": {
+    "cases": {
+      "path": "results/phase0/20260724T034540Z/cases.csv",
+      "sha256": "371f19c749030c776bc818e958b3a9a334513fa06df000d3867bd0943c0a3679"
+    },
+    "summary": {
+      "path": "results/phase0/20260724T034540Z/summary.json",
+      "sha256": "6a12867a78b1ff766f8160d563d4cb0735e6891850ded6cf6a94c61802f856de"
+    },
+    "environment": {
+      "path": "results/phase0/20260724T034540Z/environment.json",
+      "sha256": "782b01bb6837144c3d63ff20467972f6970729c5003e9f40a96d3c21b0c37f6d"
+    },
+    "config": {
+      "path": "results/phase0/20260724T034540Z/config.json",
+      "sha256": "1d93bf841075d3503e124da3599baab83de88c92e0b7b58f347c7ca303639b7a"
+    },
+    "evaluation": {
+      "path": "results/phase0/20260724T034540Z/phase0_evaluation.json",
+      "sha256": "3465147d46a66d4c74d7d4dd64881bb18bdf2d433a5b700cd8e7f5d40b9c3e7f"
+    }
+  },
+  "correctness_metrics": {
+    "case_count": 26,
+    "status_accuracy": 1.0,
+    "reason_code_accuracy": 1.0,
+    "detection_rate": 1.0,
+    "false_reject_rate": 0.0
+  },
+  "micro_overhead_observations": {
+    "median_planner_latency_ms": 0.188,
+    "median_certificate_verification_latency_ms": 0.114,
+    "planner_case_median_range_ms": [
+      0.139,
+      0.262
+    ],
+    "certificate_case_median_range_ms": [
+      0.08,
+      0.171
+    ],
+    "background_load_controlled": false
+  },
+  "claim_boundary": [
+    "The correctness and fault-detection result is retained as valid because every expected status and stable reason code matched.",
+    "The micro-overhead values are provisional because unrelated workloads were running concurrently.",
+    "This run does not authorize an optimizer speedup, DuckDB latency, regret, or P95 performance claim."
+  ],
+  "correctness_claim_authorized": true,
+  "performance_claim_authorized": false
+}

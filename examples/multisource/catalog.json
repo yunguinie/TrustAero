@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "datasets": [
+    {
+      "dataset_id": "usgs_earthquake",
+      "versions": ["sha256:654830be9afbe1f23660c5f9f39456b37797b26c140d45ca1b647fb0805068d3"],
+      "default_version": "sha256:654830be9afbe1f23660c5f9f39456b37797b26c140d45ca1b647fb0805068d3",
+      "fields": [
+        {"name": "event_id", "data_type": "string", "roles": ["identifier"]},
+        {"name": "event_time", "data_type": "datetime", "roles": ["temporal"]},
+        {"name": "earthquake_latitude", "data_type": "float", "roles": ["spatial"]},
+        {"name": "earthquake_longitude", "data_type": "float", "roles": ["spatial"]},
+        {"name": "depth_km", "data_type": "float", "roles": []},
+        {"name": "magnitude", "data_type": "float", "roles": []},
+        {"name": "earthquake_place", "data_type": "string", "roles": []},
+        {"name": "earthquake_review_status", "data_type": "string", "roles": []}
+      ],
+      "spatial": {
+        "latitude_field": "earthquake_latitude",
+        "longitude_field": "earthquake_longitude",
+        "crs": "EPSG:4326"
+      },
+      "temporal_field": "event_time"
+    },
+    {
+      "dataset_id": "oil_gas_well",
+      "versions": ["sha256:7d8a993dc7db4ea5f06d8cb037c93be07efb7e0bf6c9bcddc696830183f99162"],
+      "default_version": "sha256:7d8a993dc7db4ea5f06d8cb037c93be07efb7e0bf6c9bcddc696830183f99162",
+      "fields": [
+        {
+          "name": "api_well_number",
+          "data_type": "string",
+          "roles": ["identifier"],
+          "sensitive": true
+        },
+        {"name": "well_name", "data_type": "string", "roles": []},
+        {"name": "well_town", "data_type": "string", "roles": []},
+        {"name": "well_county", "data_type": "string", "roles": []},
+        {"name": "well_type", "data_type": "string", "roles": []},
+        {"name": "well_status", "data_type": "string", "roles": []},
+        {"name": "well_latitude", "data_type": "float", "roles": ["spatial"]},
+        {"name": "well_longitude", "data_type": "float", "roles": ["spatial"]},
+        {"name": "last_modified", "data_type": "datetime", "roles": []}
+      ],
+      "spatial": {
+        "latitude_field": "well_latitude",
+        "longitude_field": "well_longitude",
+        "crs": "EPSG:4326"
+      },
+      "temporal_field": null
+    },
+    {
+      "dataset_id": "airport",
+      "versions": ["sha256:bc0ccfde3bbd2432d7b1d7d81409aa40d356fe02f86c3576ec8cc80f4f16d3d2"],
+      "default_version": "sha256:bc0ccfde3bbd2432d7b1d7d81409aa40d356fe02f86c3576ec8cc80f4f16d3d2",
+      "fields": [
+        {"name": "site_number", "data_type": "string", "roles": ["identifier"]},
+        {"name": "airport_id", "data_type": "string", "roles": ["identifier"]},
+        {"name": "airport_name", "data_type": "string", "roles": []},
+        {"name": "airport_city", "data_type": "string", "roles": []},
+        {"name": "airport_facility_use", "data_type": "string", "roles": []},
+        {"name": "airport_latitude", "data_type": "float", "roles": ["spatial"]},
+        {"name": "airport_longitude", "data_type": "float", "roles": ["spatial"]},
+        {"name": "airport_status", "data_type": "string", "roles": []}
+      ],
+      "spatial": {
+        "latitude_field": "airport_latitude",
+        "longitude_field": "airport_longitude",
+        "crs": "EPSG:4326"
+      },
+      "temporal_field": null
+    },
+    {
+      "dataset_id": "city",
+      "versions": ["sha256:de6d98951932e9e27e7dcf539f430eda5d79d0503bcd048a31b8ca936b34a076"],
+      "default_version": "sha256:de6d98951932e9e27e7dcf539f430eda5d79d0503bcd048a31b8ca936b34a076",
+      "fields": [
+        {"name": "geoid", "data_type": "string", "roles": ["identifier"]},
+        {"name": "place_name", "data_type": "string", "roles": []},
+        {"name": "legal_statistical_area", "data_type": "string", "roles": []},
+        {"name": "city_latitude", "data_type": "float", "roles": ["spatial"]},
+        {"name": "city_longitude", "data_type": "float", "roles": ["spatial"]},
+        {"name": "land_area_sqmi", "data_type": "float", "roles": []}
+      ],
+      "spatial": {
+        "latitude_field": "city_latitude",
+        "longitude_field": "city_longitude",
+        "crs": "EPSG:4326"
+      },
+      "temporal_field": null
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "results_dir": "results/real_governed_checkpoint_transfer_evaluation_v1",
+  "guard_path": "experiments/frozen/models/governed_checkpoint_uncertainty_v3_1_20260723.json",
+  "calibration_record_path": "results/governed_checkpoint_uncertainty_v3_1/20260723T031806298299Z/calibration.json",
+  "expected_guard_sha256": "c3a709330f063db030addd803b42c406bcfaccd8b92910b0d03ea89a9b81c476",
+  "expected_calibration_sha256": "df813650db4647f41042b57d45613011e41a70b4c96668da19ab15f4a26428f3",
+  "minimum_confidence_family_hit_rate": 0.80,
+  "minimum_improvement_over_best_fixed": 0.10,
+  "maximum_mean_regret_percent": 5.0,
+  "maximum_p95_regret_percent": 15.0,
+  "maximum_regret_percent": 25.0,
+  "minimum_singleton_families": 6,
+  "minimum_policy_singleton_families": 2,
+  "minimum_query_singleton_families": 2,
+  "maximum_out_of_support_fallback_rate": 0.0,
+  "require_seed_consistency": true,
+  "require_clean_git": true
+}

@@ -1,0 +1,29 @@
+{
+  "frozen_at": "2026-07-22",
+  "purpose": "Confirm whether the single 59.977% mask_output tail contrast is stable after isolating its three result-equivalent candidates.",
+  "source_commit": "ee45897e1ccfdf30254639c01e26bf9bb555626b",
+  "source_result": "results/execution_aware_calibration_v2/20260722T112956669678Z/execution_aware_deployment_candidate_calibration.json",
+  "source_result_sha256": "c15c7564c34e44bb10a357313af0183372aedda43fa1c0ab1dd9ae7327739656",
+  "source_measurements_sha256": "d7b4a994707c607c24139fdbcf191e0d6fd19af126cdce912deddc786d9b8792",
+  "frozen_scenario": {"row_count": 150000, "identifier_width": 128, "match_rate": 1.0},
+  "fresh_seeds": [4101, 4202, 4303],
+  "candidate_count": 3,
+  "permutation_count": 6,
+  "repetitions_per_permutation": 5,
+  "paired_blocks_per_seed": 30,
+  "total_query_executions": 270,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 10000,
+  "decision_rule": {
+    "raw_materialization_advantage": "upper CI of raw/fused ratio < 1/1.03",
+    "fused_advantage": "lower CI of raw/fused ratio > 1.03",
+    "otherwise": "no practical dominance is confidence-authorized"
+  },
+  "non_negotiable_boundaries": [
+    "No measurement is deleted as an outlier.",
+    "The experiment does not retrain or tune the optimizer.",
+    "The frozen failed maximum-regret gate is never relabeled as passing.",
+    "This development confirmation is not a final untouched holdout."
+  ]
+}

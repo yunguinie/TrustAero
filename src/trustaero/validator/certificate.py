@@ -67,11 +67,124 @@ def _result_event_digest(certificate: GovernedExecutionCertificate) -> str | Non
     return None
 
 
+def _verify_planner_decision_binding(
+    physical_plan: ApprovedPhysicalPlan,
+    certificate: GovernedExecutionCertificate,
+    observed_planner_decision_digest: str | None,
+    observed_planner_selected_candidate_id: str | None,
+) -> tuple[list[Diagnostic], bool]:
+    """Verify declared planner bindings and report independent observation.
+
+    A digest copied from the physical plan into the certificate is only a
+    structural binding. ``independently_verified`` becomes true only when the
+    caller supplies a trusted recomputation of both the digest and selection.
+    """
+
+    diagnostics: list[Diagnostic] = []
+    observed_binding_complete = (
+        observed_planner_decision_digest is not None
+        and observed_planner_selected_candidate_id is not None
+    )
+    if (observed_planner_decision_digest is None) != (
+        observed_planner_selected_candidate_id is None
+    ):
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH,
+                "Independent planner observation must include digest and candidate ID.",
+            )
+        )
+
+    declared = (
+        physical_plan.planner_decision_digest is not None
+        or certificate.planner_decision_digest is not None
+        or observed_binding_complete
+    )
+    if not declared:
+        return diagnostics, False
+
+    if physical_plan.planner_decision_digest is None:
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH,
+                "Approved physical plan is missing its planner decision binding.",
+            )
+        )
+    if certificate.planner_decision_digest is None:
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_PLANNER_DECISION_MISMATCH,
+                "Certificate is missing the physical plan's planner decision binding.",
+            )
+        )
+    if (
+        physical_plan.planner_decision_digest is not None
+        and certificate.planner_decision_digest is not None
+        and certificate.planner_decision_digest != physical_plan.planner_decision_digest
+    ):
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_PLANNER_DECISION_MISMATCH,
+                "Certificate planner digest does not match the approved physical plan.",
+                expected=physical_plan.planner_decision_digest,
+                actual=certificate.planner_decision_digest,
+            )
+        )
+    if (
+        physical_plan.planner_selected_candidate_id is not None
+        and certificate.planner_selected_candidate_id is not None
+        and certificate.planner_selected_candidate_id != physical_plan.planner_selected_candidate_id
+    ):
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.CERTIFICATE_PLANNER_DECISION_MISMATCH,
+                "Certificate selected candidate does not match the physical plan.",
+                expected=physical_plan.planner_selected_candidate_id,
+                actual=certificate.planner_selected_candidate_id,
+            )
+        )
+    if (
+        physical_plan.planner_selected_candidate_id is not None
+        and physical_plan.strategy.strategy_id != physical_plan.planner_selected_candidate_id
+    ):
+        diagnostics.append(
+            _diagnostic(
+                ReasonCode.PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH,
+                "Physical strategy does not implement the planner-selected candidate.",
+                expected=physical_plan.planner_selected_candidate_id,
+                actual=physical_plan.strategy.strategy_id,
+            )
+        )
+
+    if observed_binding_complete:
+        if physical_plan.planner_decision_digest != observed_planner_decision_digest:
+            diagnostics.append(
+                _diagnostic(
+                    ReasonCode.PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH,
+                    "Physical planner digest does not match trusted recomputation.",
+                    expected=observed_planner_decision_digest,
+                    actual=physical_plan.planner_decision_digest,
+                )
+            )
+        if physical_plan.planner_selected_candidate_id != observed_planner_selected_candidate_id:
+            diagnostics.append(
+                _diagnostic(
+                    ReasonCode.PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH,
+                    "Physical candidate does not match trusted planner recomputation.",
+                    expected=observed_planner_selected_candidate_id,
+                    actual=physical_plan.planner_selected_candidate_id,
+                )
+            )
+    return diagnostics, observed_binding_complete and not diagnostics
+
+
 def verify_execution_certificate(
     plan: ValidatedLogicalPlan,
     physical_plan: ApprovedPhysicalPlan,
     certificate: GovernedExecutionCertificate,
     observed_result_digest: str | None = None,
+    observed_planner_decision_digest: str | None = None,
+    observed_planner_selected_candidate_id: str | None = None,
 ) -> CertificateVerification:
     """Check logical/physical bindings, snapshots, evidence, and digests.
 
@@ -212,6 +325,13 @@ def verify_execution_certificate(
             )
         )
     diagnostics.extend(validate_event_coverage(physical_plan, certificate))
+    planner_diagnostics, planner_decision_verified = _verify_planner_decision_binding(
+        physical_plan,
+        certificate,
+        observed_planner_decision_digest,
+        observed_planner_selected_candidate_id,
+    )
+    diagnostics.extend(planner_diagnostics)
 
     lineage_check = verify_lineage_evidence(
         plan.lineage_requirements,
@@ -241,6 +361,8 @@ def verify_execution_certificate(
     unverified_components = ["physical_plan_execution"]
     if observed_result_digest is None:
         unverified_components.insert(0, "result_content_digest")
+    if physical_plan.planner_decision_digest is not None and not planner_decision_verified:
+        unverified_components.insert(0, "planner_decision")
 
     return CertificateVerification(
         status=status,

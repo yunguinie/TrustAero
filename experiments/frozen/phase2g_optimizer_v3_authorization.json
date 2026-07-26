@@ -1,0 +1,56 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "phase2g_optimizer_v3_independent_holdout_authorization",
+  "status": "authorized_to_run_once",
+  "phase2g_authorized": true,
+  "protocol_commit": "5015b21",
+  "authorized_runner_commit": "a77be49",
+  "protocol_path": "experiments/configs/phase2g_optimizer_v3_holdout_v1.json",
+  "protocol_sha256": "1f2cf977f19346dfe574723335ca515e0d522b991986f3349686a95f808d1c5c",
+  "frozen_model_record": "experiments/frozen/optimizer_v3_v3_development_positive.json",
+  "one_shot_rules": {
+    "new_run_limit": 1,
+    "resume_requires_same_run_id": true,
+    "resume_requires_same_source_commit": true,
+    "resume_requires_same_protocol_digest": true,
+    "labels_open_only_after_all_units_complete": true,
+    "holdout_consumed_regardless_of_outcome": true
+  },
+  "expected_workload": {
+    "family_count": 36,
+    "unit_count": 180,
+    "measurement_count": 5400,
+    "profile_execution_count": 1080
+  },
+  "immutable_files": [
+    {
+      "path": "experiments/configs/phase2g_optimizer_v3_holdout_v1.json",
+      "sha256": "1f2cf977f19346dfe574723335ca515e0d522b991986f3349686a95f808d1c5c"
+    },
+    {
+      "path": "docs/phase2g-optimizer-v3-holdout-protocol.md",
+      "sha256": "4836c57a64a77c1c9bbd5bfa02a0b4d91b25bb0f1d726f8ff402714076989a99"
+    },
+    {
+      "path": "scripts/run_phase2g_optimizer_v3.py",
+      "sha256": "584b20681a077e3e07b397a2824464b9cd8db60cf7b041cc0b2aadc3a12be8b2"
+    },
+    {
+      "path": "src/trustaero/experiments/phase2g_holdout.py",
+      "sha256": "f68ed28fabd6f063c74568158d04b1c207422bd992e4fb520aa76403b9e581ad"
+    },
+    {
+      "path": "experiments/frozen/optimizer_v3_v3_development_positive.json",
+      "sha256": "94c5e365bafccaa8890be1d8b0fe337f071b72bbf33f06e1ccaa0c83142ed6c6"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/interaction_mask_cost_model.json",
+      "sha256": "87ecf84e22accb3d5079a8189bd4f52ee3a62a326adc048515d562e48e8504d0"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/interaction_stability_models.json",
+      "sha256": "94074583813eb6f01667b207dcd0c9bfa901d54463d68daa4da3840e4da52217"
+    }
+  ],
+  "scientific_boundary": "This record authorizes exactly one Phase 2G run under the bound protocol and runner. It does not authorize changing V3 after observing Phase 2G and presenting a rerun as independent."
+}

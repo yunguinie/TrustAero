@@ -1,0 +1,24 @@
+{
+  "results_dir": "results/governed_aggregate_admission_v1",
+  "row_count": 100000,
+  "identifier_width": 256,
+  "policy_selectivities": [0.2, 0.8],
+  "query_selectivities": [0.2, 0.8],
+  "key_domain_fractions": [0.002, 0.05, 0.25, 0.5],
+  "seeds": [26101, 26202, 26303],
+  "candidate_ids": [
+    "join_then_aggregate",
+    "partial_aggregate_then_join"
+  ],
+  "warmup_rounds_per_permutation": 1,
+  "measured_rounds_per_permutation": 5,
+  "duckdb_threads": 1,
+  "duckdb_memory_limit_mb": 512,
+  "order_seed": 26072611,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 26072612,
+  "minimum_conclusive_scenario_rate": 0.5,
+  "require_clean_git": true
+}

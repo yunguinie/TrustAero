@@ -1,0 +1,19 @@
+{
+  "source_run_dir": "results/execution_aware_calibration_v2/20260722T112956669678Z",
+  "candidate_result_path": "results/execution_aware_calibration_v2/20260722T112956669678Z/execution_aware_deployment_candidate_calibration.json",
+  "tail_confirmation_path": "results/mask_output_tail_confirmation_v1/20260722T235829850542Z/tail_confirmation.json",
+  "results_dir": "results/execution_aware_oracle_stability_v1",
+  "deployable_equivalence_groups": [
+    "mask_output",
+    "mask_aggregate",
+    "mask_sorted_output"
+  ],
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 20260806,
+  "expected_measurements_sha256": "d7b4a994707c607c24139fdbcf191e0d6fd19af126cdce912deddc786d9b8792",
+  "expected_candidate_result_sha256": "c15c7564c34e44bb10a357313af0183372aedda43fa1c0ab1dd9ae7327739656",
+  "expected_tail_confirmation_sha256": "375b0a9bb815a42f847bf80c4420f8710c2422fcec28cd05b0ca65a7f6b71f63",
+  "require_clean_git": true
+}

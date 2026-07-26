@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch_q6_timezone_boundary_correction_20260719",
+  "status": "TIMING_INVALIDATED_SEMANTIC_SMOKE_REINSTATED",
+  "detected_on_commit": "cc606da06f0bb90b09ee4dfdcea7f44b5c4f9517",
+  "retracted_diagnosis": "Binary FLOAT parameters were initially blamed for the 29-row discrepancy. Controlled reproduction with and without UTC disproved that diagnosis.",
+  "confirmed_cause": "The semantic smoke explicitly set DuckDB TimeZone to UTC, but the formal timing runner omitted that setting. On this machine DuckDB inherited Asia/Shanghai, so CAST(DATE AS TIMESTAMPTZ) shifted the Q6 date boundary relative to UTC parameters.",
+  "controlled_reproduction": {
+    "official_q6_rows": 114160,
+    "utc_with_decimal_parameters_rows": 114160,
+    "utc_with_float_parameters_rows": 114160,
+    "asia_shanghai_inherited_rows": 114189,
+    "official_revenue_decimal": "123141078.2283",
+    "utc_governed_revenue_decimal": "123141078.2283",
+    "asia_shanghai_inherited_revenue_decimal": "123176766.0470"
+  },
+  "claim_status": {
+    "results/tpch_q6_semantic_smoke/result.json": "REINSTATED: it configured UTC and matched the official fixed-point result exactly",
+    "experiments/frozen/tpch_sf1_support_and_q6_record_20260719.json": "REINSTATED for semantic support accounting",
+    "tpch_q6_formal_v1": "INVALID: omitted the timezone control and also failed its stability gate",
+    "tpch_q6_batched_v2": "INVALID: omitted the timezone control and also failed its stability gate"
+  },
+  "required_fix": "Make UTC an explicit validated timing-protocol field, record it in environment.json, set it before creating the trusted view, and repeat semantic preflight before any future timing.",
+  "decimal_hardening_boundary": "An explicit exact DECIMAL IR type remains a valid independent hardening change; it is not claimed as the root-cause repair."
+}

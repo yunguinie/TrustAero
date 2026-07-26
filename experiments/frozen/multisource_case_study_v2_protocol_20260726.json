@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "protocol_id": "multisource-case-study-v2-complete-system-loop",
+  "frozen_on": "2026-07-26",
+  "experiment_role": "end_to_end_semantic_case_study_not_performance",
+  "prior_positive_record": "experiments/frozen/multisource_case_study_end_to_end_positive_20260725.json",
+  "agent_requests_path": "examples/multisource/agent_requests_v2.json",
+  "catalog_path": "examples/multisource/catalog.json",
+  "policy_path": "examples/multisource/policy.json",
+  "prepared_manifest_path": "data/manifests/processed/multisource-case-v1.json",
+  "physical_candidates": {
+    "materialization_targets": [
+      "earthquake-magnitude",
+      "earthquake-well-join",
+      "gov-001-mask"
+    ],
+    "expected_strategy_ids": [
+      "fused",
+      "materialize-after-earthquake-magnitude",
+      "materialize-after-earthquake-well-join",
+      "materialize-after-gov-001-mask"
+    ]
+  },
+  "physical_governance_policy": {
+    "policy_id": "multisource-no-raw-checkpoint-v2",
+    "max_raw_join_rows": null,
+    "max_raw_materialized_rows": 0,
+    "require_governance_checkpoint": true,
+    "rationale": "A durable checkpoint is required for audit, but the controlled raw well identifier may not be materialized."
+  },
+  "required_selected_strategy": "materialize-after-gov-001-mask",
+  "required_result_digest": "sha256:97d5a5e03f22b26f5ed5540cfd3b5aeea4f21ce5f5eca6bccc56693031294a08",
+  "required_faults": [
+    "observed_result_digest_mismatch",
+    "policy_snapshot_tamper",
+    "data_snapshot_tamper",
+    "lineage_coverage_removed",
+    "physical_dependency_order_tamper",
+    "planner_decision_tamper"
+  ],
+  "lineage_scope": {
+    "level": "source",
+    "required_source_count": 4,
+    "record_lineage_v4_reference": "experiments/frozen/record_lineage_ordinal_v4_formal_positive_20260725.json",
+    "boundary": "Ordinal record Lineage V4 supports one row-identity-preserving source with one unique STRING key. It is not falsely applied to this four-source spatial many-to-many Join."
+  },
+  "certificate_boundary": "PARTIAL is required: independent checks bind plan, planner decision, policy/data snapshots, result digest, event DAG, and source lineage, but do not cryptographically attest every DuckDB-internal operator output.",
+  "reproduce": [
+    "python -u scripts/download_datasets.py --stage multisource_case_v1",
+    "python -u scripts/prepare_multisource_case.py --progress",
+    "python -u scripts/run_multisource_case_study_v2.py --progress --require-clean"
+  ],
+  "stop_conditions": [
+    "Do not execute when either Agent validation outcome changes.",
+    "Do not rank a candidate before hard governance feasibility filtering.",
+    "Do not execute a candidate rejected by the physical governance policy.",
+    "Do not report PASS unless all six frozen faults are rejected.",
+    "Do not relabel this semantic case study as optimizer latency evidence."
+  ]
+}

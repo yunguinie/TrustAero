@@ -1,0 +1,27 @@
+{
+  "frozen_at": "2026-07-23",
+  "status": "FROZEN_BEFORE_EA1_ACTION_CONDITIONAL_V31_CALIBRATION",
+  "predecessor_failure": "experiments/frozen/governed_checkpoint_optimizer_v3_development_negative_20260723.json",
+  "method": {
+    "name": "action_conditional_grouped_conformal_v1",
+    "calibration_action": "base analytic model predicts query-first",
+    "signed_error": "actual query-minus-policy margin minus predicted margin",
+    "grouping": "median across seeds within each complete scenario family",
+    "coverage": 0.9,
+    "decision": "select query-first only when predicted margin plus its action-conditional upper error bound is below zero",
+    "fallback": "policy_first_narrow_checkpoint"
+  },
+  "numeric_source": "original EA-1 development run only",
+  "excluded_numeric_sources": [
+    "failed V2 independent holdout",
+    "failed unconditional V3 development output"
+  ],
+  "unchanged_gates": {
+    "minimum_confidence_family_hit_rate": 1.0,
+    "maximum_mean_regret_percent": 5.0,
+    "maximum_regret_percent": 15.0,
+    "seed_consistent_selection_rate": 1.0,
+    "illegal_candidate_selection_count": 0
+  },
+  "boundary": "Passing V3.1 development authorizes freezing a new untouched holdout only."
+}

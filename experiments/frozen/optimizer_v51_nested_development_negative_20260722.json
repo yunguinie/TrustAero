@@ -1,0 +1,90 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v51_nested_development_negative_20260722",
+  "status": "FAIL_OPTIMIZER_V51_NESTED_DEVELOPMENT_GATE_RETAIN",
+  "run_id": "20260722T041322186075Z",
+  "measurement_commit": "2379f6f4205f75e56e391ef29887ab864e56bb27",
+  "completed_outer_families": 40,
+  "cross_validation_rows": 120,
+  "inner_fold_count": 5,
+  "external_partition_accessed": false,
+  "real_data_labels_used_for_fitting": false,
+  "v51_model_freeze_authorized": false,
+  "full_selected_severity_exponent": 0.0,
+  "outer_exponent_selection_counts": {
+    "0.0": 38,
+    "1.0": 1,
+    "2.0": 1
+  },
+  "metrics": {
+    "v1": {
+      "within_tie_rate": 0.775,
+      "mean_regret_percent": 1.5463027347207954,
+      "p95_regret_percent": 9.559887083390661,
+      "max_regret_percent": 11.463621465547003
+    },
+    "v51_direct": {
+      "within_tie_rate": 0.775,
+      "mean_regret_percent": 1.7732208428483172,
+      "p95_regret_percent": 9.8068937360837,
+      "max_regret_percent": 13.150973892221508
+    },
+    "v51_guarded": {
+      "within_tie_rate": 0.825,
+      "mean_regret_percent": 1.524533144557861,
+      "p95_regret_percent": 7.569916245286734,
+      "max_regret_percent": 13.150973892221508,
+      "direct_coverage": 0.475
+    }
+  },
+  "passed_gates": [
+    "minimum_direct_coverage",
+    "minimum_within_tie_improvement_over_v1",
+    "maximum_p95_regret_percent"
+  ],
+  "failed_gates": [
+    "maximum_mean_regret_percent",
+    "maximum_max_regret_percent"
+  ],
+  "comparison_with_v5": {
+    "changed_final_placements": 0,
+    "changed_guarded_decision_modes": 1,
+    "changed_family": "n50000-w2048-m1000",
+    "change": "uncertain early fallback became a direct early decision, but the selected placement and 13.150973892221508 percent regret were unchanged"
+  },
+  "root_cause": "Nested validation selected the unweighted exponent in 38 of 40 outer folds and for the full model. Severity weighting increased direct coverage but did not change any final placement, so mean and maximum regret remained exactly equal to V5. The failure is therefore structural: this residual surface and conservative fallback cannot represent or protect the localized decision boundary by reweighting the same features.",
+  "prohibited_fixes": [
+    "raise the frozen mean- or maximum-regret gate",
+    "remove the n50000-w2048-m1000 family",
+    "report increased direct coverage as a performance improvement when placement did not change",
+    "keep tuning the severity exponent or cap against these outer results",
+    "reuse the consumed external holdout or real-data labels for fitting"
+  ],
+  "authorized_next_step": "Perform a read-only structural error-topology audit on the development families. Test whether the failure is caused by missing interaction structure, conflicting local observations, or the fixed fallback. Only after that audit may a distinct interpretable model family be preregistered; another weight-only V5 revision is not authorized.",
+  "immutable_files": [
+    {
+      "path": "results/optimizer_v51_nested_development/20260722T041322186075Z/config.json",
+      "sha256": "32ce40f299062fe63dd809fb092d12c3d2d1848346cda04e47a5b37c2d2db2f0"
+    },
+    {
+      "path": "results/optimizer_v51_nested_development/20260722T041322186075Z/environment.json",
+      "sha256": "9e8cda14087a3c066dde7f7ff78546da4effbb600a0564559bf37b83b3b01045"
+    },
+    {
+      "path": "results/optimizer_v51_nested_development/20260722T041322186075Z/outer_cross_validation.csv",
+      "sha256": "24bb95e5a9510a25f0f2fbc757d5fe5d66ae311a92e930ad5d590c5b0614fe4a"
+    },
+    {
+      "path": "results/optimizer_v51_nested_development/20260722T041322186075Z/hyperparameter_selections.json",
+      "sha256": "7edc11c859b31bd3dac691ea3bb44e0f716dd1c2b1b3a46f72ae7b7464918a00"
+    },
+    {
+      "path": "results/optimizer_v51_nested_development/20260722T041322186075Z/summary.json",
+      "sha256": "229338a36392578191ec17ffa38528e12f9a341af151ddb002bec23255833899"
+    },
+    {
+      "path": "results/optimizer_v51_nested_development/20260722T041322186075Z/pipeline_v51_hybrid_model.json",
+      "sha256": "e8f45ac9f650b98a423997d60ddb1c6149d6bdc2ca95f24a78ad3648c9e27a8a"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "record_id": "governed-pipeline-cost-holdout-v1-positive",
+  "recorded_at": "2026-07-24",
+  "status": "PASS_GOVERNED_PIPELINE_COST_MODEL_INDEPENDENT_HOLDOUT",
+  "evaluation_path": "results/governed_pipeline_cost_holdout_evaluation_v1/20260724T074335102248Z/evaluation.json",
+  "evaluation_sha256": "38d81e37b5c280f32c2c555cddde18d234bf69edc8c7c0cc16b8cf3512a64057",
+  "measurement_summary_sha256": "5b2e5bd9f7db6902851e044d735113d2898f0d612eff15cb14490f916fb02124",
+  "frozen_model_sha256": "56399a09a3dccd2b02793eca97145fc17c68b9da8574edfef013925457f0fd6f",
+  "development_calibration_sha256": "a59dfb321366d7bbd6f4431ac228a25a90a5dcaf7ade4b519e95a095ce616450",
+  "integrity": {
+    "unit_count": 48,
+    "measurement_rows": 4320,
+    "balanced_schedule_passed": true,
+    "result_equivalence_passed": true,
+    "record_lineage_equivalence_passed": true,
+    "physical_plan_distinctness_passed": true,
+    "systematic_material_carryover_detected": false,
+    "illegal_candidate_selections": 0,
+    "model_frozen_before_measurement": true,
+    "model_refit_or_threshold_change": false
+  },
+  "holdout_metrics": {
+    "decision_count": 48,
+    "oracle_set_hit_rate": 1.0,
+    "mean_regret_percent": 0.08785623250526046,
+    "p95_regret_percent": 0.0,
+    "maximum_regret_percent": 2.1197082360220776,
+    "selected_candidate_counts": {
+      "join_first_masked_checkpoint": 40,
+      "policy_first_masked_checkpoint": 8
+    }
+  },
+  "best_fixed_baseline": {
+    "candidate_id": "join_first_masked_checkpoint",
+    "oracle_set_hit_rate": 0.875,
+    "mean_regret_percent": 0.985,
+    "p95_regret_percent": 7.978,
+    "maximum_regret_percent": 8.853
+  },
+  "authorization": {
+    "frozen_optimizer_integration": true,
+    "model_refit": false,
+    "real_data_transfer_experiment": true,
+    "broad_paper_performance_claim": false
+  }
+}

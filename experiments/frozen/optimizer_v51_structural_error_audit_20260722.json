@@ -1,0 +1,111 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v51_structural_error_audit_20260722",
+  "status": "STRUCTURAL_PIPELINE_COST_MISMATCH_CONFIRMED",
+  "audit_scope": "read-only development-family and recorded DuckDB operator evidence",
+  "external_partition_accessed": false,
+  "real_data_labels_used_for_fitting": false,
+  "development_family_topology": {
+    "family_count": 40,
+    "late_oracle_families": 31,
+    "early_oracle_families": 9,
+    "exact_duplicate_feature_conflicts": 0,
+    "guarded_errors_above_3_percent": 7,
+    "errors_caused_by_conservative_early_fallback": 6,
+    "errors_caused_by_direct_early_ranking": 1
+  },
+  "repeated_worst_family": {
+    "family_id": "n50000-w2048-m1000",
+    "oracle_placement": "late_mask",
+    "selected_placement": "early_mask",
+    "regret_percent": 13.150973892221508,
+    "also_worst_in_optimizer_v3_v2": true
+  },
+  "operator_evidence_method": "For each family, seed, and candidate, select the maximum median PROJECTION timing as the SHA-256-dominated projection and then average seed medians. HASH_JOIN and CTE values are averaged analogously.",
+  "n50000_match_1_operator_evidence_ms": [
+    {
+      "identifier_width_bytes": 256,
+      "oracle_placement": "early_mask",
+      "early_hash_projection": 222.85,
+      "late_hash_projection": 358.21,
+      "early_hash_join": 4.51,
+      "late_hash_join": 0.94,
+      "early_cte": 4.02
+    },
+    {
+      "identifier_width_bytes": 512,
+      "oracle_placement": "late_mask",
+      "early_hash_projection": 451.72,
+      "late_hash_projection": 387.24,
+      "early_hash_join": 3.82,
+      "late_hash_join": 1.10,
+      "early_cte": 4.73
+    },
+    {
+      "identifier_width_bytes": 1024,
+      "oracle_placement": "late_mask",
+      "early_hash_projection": 938.08,
+      "late_hash_projection": 960.20,
+      "early_hash_join": 5.37,
+      "late_hash_join": 1.15,
+      "early_cte": 7.26
+    },
+    {
+      "identifier_width_bytes": 2048,
+      "oracle_placement": "late_mask",
+      "early_hash_projection": 1352.83,
+      "late_hash_projection": 1264.98,
+      "early_hash_join": 3.84,
+      "late_hash_join": 0.98,
+      "early_cte": 4.55
+    }
+  ],
+  "model_mismatch": {
+    "frozen_prior_assumption": "Join cost is calibrated with a microbenchmark that writes the raw sensitive payload into a temporary Join output.",
+    "fragment_behavior": "The real late fragment computes SHA-256 after the Join without an explicit raw-payload materialization boundary, while early forces a MATERIALIZED CTE.",
+    "observed_contradiction": "At the worst 2048-byte family, recorded late HASH_JOIN timing is lower, not higher, than early HASH_JOIN timing; the candidate-specific hash/projection and CTE costs dominate the sign.",
+    "bounded_inference": "The evidence is consistent with DuckDB avoiding the forced raw-payload copy assumed by the prior, for example through vectorized deferred expression evaluation. Operator summaries do not prove a specific internal buffer implementation."
+  },
+  "diagnostic_conclusion": "There is a learnable width-by-row-count-by-match-rate boundary and no exact duplicate-feature label conflict. However, the V5 prior assigns the wrong physical meaning to Join payload movement, while the linear residual and fixed early fallback cannot reliably repair it. Severity weighting cannot solve this structural mismatch.",
+  "rejected_next_steps": [
+    "another severity exponent or weight-cap sweep",
+    "a threshold that special-cases only n50000-w2048-m1000",
+    "claiming V5.1 improved regret because direct coverage increased",
+    "opening the independent Phase 2G partition before freezing a distinct model"
+  ],
+  "authorized_v6_requirements": [
+    "preserve governance feasibility as a hard filter before ranking",
+    "estimate early MATERIALIZED-CTE and late fused-pipeline costs separately",
+    "calibrate candidate-specific SHA-256 projection, HASH_JOIN, ORDER_BY, and materialization-boundary work from fragment-shaped operator statistics",
+    "use an interpretable bounded interaction or hinge representation instead of a family-specific exception",
+    "evaluate by complete-family outer validation against V1, rejected V3-v2, V5, and Oracle",
+    "retain the unchanged within-3-percent, mean, P95, maximum-regret, coverage, and illegal-selection gates",
+    "freeze V6 before accessing the untouched Phase 2G partition"
+  ],
+  "immutable_files": [
+    {
+      "path": "experiments/frozen/optimizer_v51_nested_development_negative_20260722.json",
+      "sha256": "42533b58f09ce2cfd911bff8e1c75ca75494e9c74b4f8e99ed33a4211016d1a1"
+    },
+    {
+      "path": "experiments/frozen/optimizer_v3_v2_development_negative.json",
+      "sha256": "35c72a50f9aa2ad9f95a17252a474cb34e59028dc7a6ef02906d6c2562cba9f3"
+    },
+    {
+      "path": "results/optimizer_v51_nested_development/20260722T041322186075Z/outer_cross_validation.csv",
+      "sha256": "24bb95e5a9510a25f0f2fbc757d5fe5d66ae311a92e930ad5d590c5b0614fe4a"
+    },
+    {
+      "path": "results/phase2i_fragment_pilot/20260717T120435635390Z/operator_summary.csv",
+      "sha256": "d5e2f7e1a359a032e42b9e368c4197bfb9003a74b270c2cb5792340a130be323"
+    },
+    {
+      "path": "src/trustaero/experiments/mechanism_microbench.py",
+      "sha256": "7d23d57cfc9299bc9bf9399305e8670ec112ce4dc8c75df0e76692fed083100c"
+    },
+    {
+      "path": "results/mechanism_optimizer_development/fixed_formula_v1/mechanism_mask_cost_model.json",
+      "sha256": "5567838265cba60c3632a9fb4ab8a8ebdddc6002f679a879b838ff0de02cd481"
+    }
+  ]
+}

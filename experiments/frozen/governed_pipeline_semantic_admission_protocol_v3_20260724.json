@@ -1,0 +1,25 @@
+{
+  "protocol_id": "governed-pipeline-semantic-admission-v3",
+  "frozen_at": "2026-07-24",
+  "config_path": "experiments/configs/governed_pipeline_semantic_admission_v3.json",
+  "supersedes": "governed-pipeline-hierarchical-admission-v2",
+  "semantic_correction": "Query-first now materializes a raw query checkpoint, then an explicitly masked checkpoint; its Join reads no sensitive_value column.",
+  "matrix": {
+    "scenario_count": 16,
+    "unit_count": 48,
+    "measured_paired_blocks": 1440,
+    "timed_candidate_executions": 4320
+  },
+  "preconditions": [
+    "Result and record-lineage digests agree across all candidates.",
+    "Every candidate has a distinct combined DuckDB physical-plan fingerprint.",
+    "A regression test inspects query-first DuckDB plan JSON and rejects sensitive_value in its output Join tree.",
+    "All three candidates remain legal and non-dominated in every declared scenario."
+  ],
+  "authorization_rule": "Only a V3 PASS may authorize a fresh cost-model calibration protocol.",
+  "scientific_boundary": [
+    "V2 and its cost calibration remain retracted or negative and are not reused as final evidence.",
+    "V3 uses new seeds and does not weaken the V2 admission gates.",
+    "A V3 failure ends this candidate family rather than triggering another boundary search."
+  ]
+}

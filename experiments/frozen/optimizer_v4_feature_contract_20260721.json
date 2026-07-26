@@ -1,0 +1,77 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v4_feature_contract_20260721",
+  "status": "FEATURE_AVAILABILITY_PASS_MODEL_NOT_FITTED",
+  "implementation_commit": "994018a",
+  "source_run_id": "20260721T095310817400Z",
+  "january_development_only": true,
+  "february_to_december_accessed": false,
+  "candidate_runtime_observed_by_extractor": false,
+  "oracle_label_observed_by_extractor": false,
+  "model_fitted": false,
+  "findings": {
+    "family_count": 12,
+    "source_scan_rows": 547271,
+    "join_input_rows": 106251,
+    "join_output_rows_by_target": {
+      "0.25": 28129,
+      "0.70": 76266,
+      "0.95": 100979
+    },
+    "selected_airports_by_target": {
+      "0.25": 51,
+      "0.70": 135,
+      "0.95": 192
+    },
+    "native_source_scan_payload_width_bytes": 31.049423411801467,
+    "controlled_sensitive_widths_bytes": [192, 384, 768, 1536],
+    "repeated_family_output_byte_identical": true
+  },
+  "hard_constraints": [
+    "governance feasibility is checked before cost ranking",
+    "candidate runtime and Oracle labels are forbidden inference features",
+    "physical source scan payload is distinct from post-filter controlled sensitive derivation",
+    "dimension build payload is distinct from projected dimension payload",
+    "V3 remains an unchanged negative baseline",
+    "February-December remain unopened until V4 is completely frozen"
+  ],
+  "rejected_shortcuts": [
+    "fit eleven unconstrained coefficients to eleven stable January labels",
+    "rename and refit the rejected Phase 2K additive pipeline formula",
+    "tune a width or match-rate threshold after reading current labels",
+    "use post-execution operator timing as an inference feature",
+    "claim feature availability is optimizer accuracy"
+  ],
+  "authorized_next_step": "Collect development-only DuckDB operator profiles for the same January candidate pairs, without opening external partitions. Use them to choose a compact predeclared V4 structure, then evaluate it by complete-family cross-validation against fixed early, fixed late, V1, V3, and Oracle.",
+  "immutable_files": [
+    {
+      "path": "results/optimizer_v4_statistics_development/20260721T095310817400Z/families.json",
+      "sha256": "77fd5f78a8b848ed10b029409f82a62356dc724c44ba7cd392b5039d19f3e60d"
+    },
+    {
+      "path": "results/optimizer_v4_statistics_development/20260721T095310817400Z/summary.json",
+      "sha256": "ade2adf34b5a59e16c8d62de07f5fd636672386e6e84d3d4f4473e48a826112b"
+    },
+    {
+      "path": "docs/optimizer-v4-feature-contract.md",
+      "sha256": "2a75d74915d66f1b3f4920e4e4397f2334427fe01837180a294f8c293268e137"
+    },
+    {
+      "path": "src/trustaero/optimizer/mask_pipeline_v4.py",
+      "sha256": "cc1b0a84e614ab632d7a314c12e1069b59f1f0729fc8357117a23f6beba3979a"
+    },
+    {
+      "path": "src/trustaero/experiments/optimizer_v4_statistics.py",
+      "sha256": "c6f2b579602364bd3877b17c72789bf1efe22b6fe037f5f5d272344b9fe38852"
+    },
+    {
+      "path": "experiments/configs/real_optimizer_transfer_development_v1.json",
+      "sha256": "9bbb11782266b110cb5f32a892c97853cbe29e83e3fbd90dd05a93775e5372ea"
+    },
+    {
+      "path": "experiments/frozen/real_optimizer_v3_transfer_negative_20260721.json",
+      "sha256": "9fa28bc759750963857a2f973b238edd24575e9bd3c921723abf7ccecc8ecaeb"
+    }
+  ],
+  "conclusion": "The V4 candidate-work inputs are available deterministically before ranking and capture the real early-versus-late work difference. No V4 prediction or performance claim is authorized yet."
+}

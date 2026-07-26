@@ -1,0 +1,128 @@
+{
+  "absolute_half_run_drift_threshold": 0.5,
+  "absolute_timing_stability_pass": true,
+  "formal_performance_experiment_authorized": true,
+  "full_month_preexperiment_authorized": true,
+  "global_gates": {
+    "all_unit_integrity_gates_pass": true,
+    "all_units_complete": true,
+    "scientific_boundary_preserved": true
+  },
+  "heldout_optimizer_evidence": false,
+  "max_half_run_median_drift_by_unit": {
+    "bts-full-2024-01": 0.057856397804415094,
+    "nyc_tlc-full-2024-01": 0.1490023067913383
+  },
+  "max_paired_ratio_half_drift_by_unit": {
+    "bts-full-2024-01": 0.1195203924110404,
+    "nyc_tlc-full-2024-01": 0.07305950508968928
+  },
+  "max_paired_ratio_outlier_fraction_by_unit": {
+    "bts-full-2024-01": 0.0,
+    "nyc_tlc-full-2024-01": 0.06666666666666667
+  },
+  "observations": [
+    {
+      "best_median_ms": 638.1159,
+      "feasible_candidate_ids": [
+        "fused",
+        "materialize-after-gov-002-mask"
+      ],
+      "fixed_fused_median_ms": 731.8711000000001,
+      "oracle_opportunity_speedup_vs_fused": 1.1469250335244743,
+      "oracle_set_within_3_percent": [
+        "materialize-after-gov-002-mask"
+      ],
+      "policy_profile": "no-raw-sensitive-materialization",
+      "rejected_candidate_ids": [
+        "materialize-after-bts-filter"
+      ],
+      "unit_id": "bts-full-2024-01"
+    },
+    {
+      "best_median_ms": 638.1159,
+      "feasible_candidate_ids": [
+        "fused",
+        "materialize-after-bts-filter",
+        "materialize-after-gov-002-mask"
+      ],
+      "fixed_fused_median_ms": 731.8711000000001,
+      "oracle_opportunity_speedup_vs_fused": 1.1469250335244743,
+      "oracle_set_within_3_percent": [
+        "materialize-after-gov-002-mask"
+      ],
+      "policy_profile": "output-mask-only",
+      "rejected_candidate_ids": [],
+      "unit_id": "bts-full-2024-01"
+    },
+    {
+      "best_median_ms": 342.01345000000003,
+      "feasible_candidate_ids": [
+        "fused",
+        "materialize-after-nyc-filter",
+        "materialize-after-nyc-zone-join"
+      ],
+      "fixed_fused_median_ms": 342.01345000000003,
+      "oracle_opportunity_speedup_vs_fused": 1.0,
+      "oracle_set_within_3_percent": [
+        "fused"
+      ],
+      "policy_profile": "no-raw-sensitive-materialization",
+      "rejected_candidate_ids": [],
+      "unit_id": "nyc_tlc-full-2024-01"
+    },
+    {
+      "best_median_ms": 342.01345000000003,
+      "feasible_candidate_ids": [
+        "fused",
+        "materialize-after-nyc-filter",
+        "materialize-after-nyc-zone-join"
+      ],
+      "fixed_fused_median_ms": 342.01345000000003,
+      "oracle_opportunity_speedup_vs_fused": 1.0,
+      "oracle_set_within_3_percent": [
+        "fused"
+      ],
+      "policy_profile": "output-mask-only",
+      "rejected_candidate_ids": [],
+      "unit_id": "nyc_tlc-full-2024-01"
+    }
+  ],
+  "order_protocol": "all_permutations",
+  "paired_ratio_half_drift_threshold": 0.2,
+  "paired_ratio_outlier_fraction_threshold": 0.1,
+  "paired_timing_stability_pass": true,
+  "paper_performance_evidence": true,
+  "policy_changes_legal_oracle_observed": false,
+  "run_id": "20260719T051929196252Z",
+  "scale_dependent_oracle_reversal_observed": false,
+  "schema_version": 1,
+  "scientific_label": "real_data_formal_development_partition_v1",
+  "status": "PASS",
+  "tie_threshold_fraction": 0.03,
+  "timing_stability_pass": true,
+  "unit_gates": {
+    "bts-full-2024-01": {
+      "all_permutations_complete": true,
+      "artifacts_verified": true,
+      "candidate_space_complete": true,
+      "certificates_partial": true,
+      "execution_order_balanced": true,
+      "latencies_positive": true,
+      "measurements_complete": true,
+      "physical_resources_observed": true,
+      "status_pass": true
+    },
+    "nyc_tlc-full-2024-01": {
+      "all_permutations_complete": true,
+      "artifacts_verified": true,
+      "candidate_space_complete": true,
+      "certificates_partial": true,
+      "execution_order_balanced": true,
+      "latencies_positive": true,
+      "measurements_complete": true,
+      "physical_resources_observed": true,
+      "status_pass": true
+    }
+  }
+}

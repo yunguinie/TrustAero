@@ -1,0 +1,16 @@
+{
+  "artifact": {
+    "artifact_id": "nyc_tlc_yellow_2024_07",
+    "dataset_id": "nyc_tlc_yellow_2024",
+    "expected_bytes": null,
+    "expected_sha256": null,
+    "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-07.parquet",
+    "stage": "main_2024",
+    "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-07.parquet"
+  },
+  "byte_size": 52299432,
+  "local_path": "data/raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-07.parquet",
+  "retrieved_at_utc": "2026-07-21T06:44:13.806846+00:00",
+  "schema_version": 1,
+  "sha256": "af12d6b04daeb78550799ae99933d495b27d715b6dbb0fad9bb750a4537d3070"
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-record-lineage-v1-pilot-positive-20260724",
+  "status": "PASS_RECORD_LINEAGE_V1_PILOT_INTEGRITY",
+  "measurement_commit": "31ccd9540d1066fa4acdd3aebf1a8852ad49253c",
+  "run_path": "results/record_lineage_pilot_v1/20260724T144615960638Z",
+  "artifacts": [
+    {
+      "path": "results/record_lineage_pilot_v1/20260724T144615960638Z/summary.json",
+      "sha256": "d969aeb1e432f486a24a50c8a9ad9be3148151ed6f7a235bf59221575bfd71a4"
+    },
+    {
+      "path": "results/record_lineage_pilot_v1/20260724T144615960638Z/environment.json",
+      "sha256": "123bc74879cdf97f6713cb1a65f4d39362b93aaa48d9ea591b9652531fc31ea8"
+    },
+    {
+      "path": "results/record_lineage_pilot_v1/20260724T144615960638Z/measurements.csv",
+      "sha256": "02dcac634a43765e550d4fc83696e857971a621dc5f8a5fec1c768daf9cfd7e3"
+    }
+  ],
+  "unit_findings": [
+    {
+      "row_count": 1000,
+      "direct_median_ms": 8.24575,
+      "record_median_ms": 62.6301,
+      "capture_median_ms": 54.7035,
+      "verification_median_ms": 47.65795,
+      "artifact_bytes": 248280,
+      "bytes_per_edge": 248.28
+    },
+    {
+      "row_count": 10000,
+      "direct_median_ms": 38.0819,
+      "record_median_ms": 486.742,
+      "capture_median_ms": 441.2543,
+      "verification_median_ms": 362.6312,
+      "artifact_bytes": 2480282,
+      "bytes_per_edge": 248.03
+    },
+    {
+      "row_count": 50000,
+      "direct_median_ms": 178.55745,
+      "record_median_ms": 2023.431,
+      "capture_median_ms": 1860.3027,
+      "verification_median_ms": 1515.0318,
+      "artifact_bytes": 12400282,
+      "bytes_per_edge": 248.01
+    }
+  ],
+  "admission": {
+    "semantic_integrity_passed": true,
+    "independent_verification_passed": true,
+    "formal_performance_experiment_admitted": false,
+    "compact_artifact_development_admitted": true
+  },
+  "interpretation": [
+    "The V1 artifact is correct and independently verifiable.",
+    "Per-edge Python objects and repeated JSON context produce approximately 248 bytes per edge.",
+    "Capture and verification costs are too high to justify immediate 100K/500K formal timing.",
+    "This result is retained as the pre-optimization development baseline."
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260719T040615396550Z",
+  "freeze_scope": "paired_timing_protocol_validation_not_paper_evidence",
+  "source_commit": "973fa92c833116943ca2e573ac790e5da63b6533",
+  "source_worktree_dirty": true,
+  "status": "PASS",
+  "paper_performance_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "protocol": {
+    "sample_rows": 100000,
+    "cache_mode": "hot_same_duckdb_connection",
+    "candidate_count": 2,
+    "permutations": 2,
+    "warmup_blocks": 4,
+    "paired_measurement_blocks": 30,
+    "timed_candidate_executions": 60,
+    "tie_threshold_fraction": 0.03,
+    "absolute_half_drift_limit": 0.5,
+    "paired_ratio_half_drift_limit": 0.2,
+    "paired_ratio_outlier_fraction_limit": 0.1
+  },
+  "observed": {
+    "filtered_rows_entering_join": 19447,
+    "early_mask_median_ms": 240.9649,
+    "late_mask_median_ms": 254.37095,
+    "early_mask_p95_ms": 333.8426,
+    "late_mask_p95_ms": 374.2573,
+    "median_early_over_late_ratio": 0.9576634420827833,
+    "max_absolute_half_drift": 0.03176601590259254,
+    "paired_ratio_half_drift": 0.05497593082197694,
+    "paired_ratio_outlier_fraction": 0.1,
+    "peak_temp_directory_bytes": 0,
+    "strict_policy_feasible_candidates": ["early_mask_before_join"]
+  },
+  "immutable_files": [
+    {
+      "path": "experiments/configs/bts_mask_join_paired_pilot.json",
+      "sha256": "6e5c92386c2f459183adcaf5c7810458f1ad32696b25e1662ea5406382aca501"
+    },
+    {
+      "path": "results/bts_mask_join_paired_pilot/20260719T040615396550Z/config.json",
+      "sha256": "fee08fc3deb810e83e63f6f5f861e00b139d54c5dbb4f0ea585adc61fac26b52"
+    },
+    {
+      "path": "results/bts_mask_join_paired_pilot/20260719T040615396550Z/environment.json",
+      "sha256": "366464a81496ba18bdf3b7893f03df84226af3c6774bfab71c3a9cfe74e6b067"
+    },
+    {
+      "path": "results/bts_mask_join_paired_pilot/20260719T040615396550Z/measurements.csv",
+      "sha256": "2d4096505e3578b26adbe523a43856a49ff9c98969cbcd6f66a91c3fb1aefefb"
+    },
+    {
+      "path": "results/bts_mask_join_paired_pilot/20260719T040615396550Z/summary.json",
+      "sha256": "1530d2b4a813710e38c64e3b67b0dd6da30bf98c87e43b5b725f1a3f3678c2e1"
+    },
+    {
+      "path": "results/bts_mask_join_paired_pilot/20260719T040615396550Z/acceptance.json",
+      "sha256": "780a542a56de1c8356e9620fb20d40767be590b5f801417abc5da56d84741305"
+    },
+    {
+      "path": "results/bts_mask_join_paired_pilot/20260719T040615396550Z/report.md",
+      "sha256": "2304f5aa831f74bc1262e7eb400a094e2ece83194d9e2b3d410abd2f7f648415"
+    }
+  ],
+  "scientific_boundary": "This frozen run validates paired timing stability on the 100K integration slice. The early-Mask diagnostic advantage cannot be reported as formal paper evidence because the source worktree was dirty, the dataset partition was developmental, and no optimizer selection was evaluated."
+}

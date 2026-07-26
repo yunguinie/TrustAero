@@ -1,0 +1,23 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_aware_shape_calibration_failed_result_20260722",
+  "status": "FAIL_RETAINED_NO_ADAPTIVE_SELECTION",
+  "input_run": "results/execution_aware_calibration_v2/20260722T112956669678Z",
+  "metrics": {
+    "oracle_3pct_hit_rate": 0.912,
+    "mean_regret_pct": 1.179,
+    "p95_regret_pct": 5.852,
+    "maximum_regret_pct": 59.977,
+    "reported_fallback_rate": 1.0
+  },
+  "decision_audit": {
+    "decision_count": 216,
+    "stable_preference_count": 192,
+    "out_of_support_count": 24,
+    "ensemble_disagreement_count": 0,
+    "model_override_count": 0
+  },
+  "diagnosis": "Separating equivalence groups was insufficient because all physical candidates inside a group still shared one coefficient vector. Every ridge view selected the stable candidate, so the model collapsed to the fixed baseline.",
+  "scientific_decision": "Retain as a negative ablation. Replace the shared within-group formula with one independently calibrated analytic cost formula per physical candidate.",
+  "paper_performance_evidence": false
+}

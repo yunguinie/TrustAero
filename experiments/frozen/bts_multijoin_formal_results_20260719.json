@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "freeze_scope": "bts_full_month_natural_multijoin_development_results",
+  "status": "PASS",
+  "source_commit": "5dcd06d23cf134492fa3824fe4d219d615c1568c",
+  "source_worktree_dirty": false,
+  "paper_performance_evidence": true,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "observed": {
+    "input_rows": 547271,
+    "governed_rows": 106251,
+    "origin_join_rows": 106251,
+    "carrier_join_rows": 106251,
+    "candidate_count": 4,
+    "measured_blocks": 48,
+    "timed_candidate_executions": 192,
+    "fused_median_ms": 61.341,
+    "filter_materialized_median_ms": 83.436,
+    "origin_join_materialized_median_ms": 79.779,
+    "carrier_join_materialized_median_ms": 88.654,
+    "paired_tie_band_oracle_set": ["fused"],
+    "spilled_candidate_count": 0
+  },
+  "immutable_files": [
+    {"path": "results/bts_multijoin_formal_v1/20260719T061237165086Z/acceptance.json", "sha256": "beefa9de9c9d8442cd43699f36f5030b5670e37b9844cb19321e83c0de5b7e75"},
+    {"path": "results/bts_multijoin_formal_v1/20260719T061237165086Z/config.json", "sha256": "d260c7291cdecee98bd73348d605d9d903bcd6f960d75595a65bf6170f6f1aa7"},
+    {"path": "results/bts_multijoin_formal_v1/20260719T061237165086Z/environment.json", "sha256": "497aad0999a54ba30b6e814ee7bb8dda7177e743bbbf088939c630a23ce2dded"},
+    {"path": "results/bts_multijoin_formal_v1/20260719T061237165086Z/measurements.csv", "sha256": "61762d223823a554ae759e45a84436dffe856cb0227826e0aa2a7a19aa2fc5e6"},
+    {"path": "results/bts_multijoin_formal_v1/20260719T061237165086Z/progress.json", "sha256": "a163099062d5d4fdfebec929691c1703c5545d81578d2e0d98ad04160f3c7d5b"},
+    {"path": "results/bts_multijoin_formal_v1/20260719T061237165086Z/report.md", "sha256": "82d006ff175bd5830014f147a3bec7a57ab29831583a2952b50b6db6cd430cae"},
+    {"path": "results/bts_multijoin_formal_v1/20260719T061237165086Z/summary.json", "sha256": "5d6b5c09a5e16b6f333d2369c63811f27ee08ec0d4b067a13e0ab470ce801d5d"}
+  ],
+  "scientific_boundary": "The balanced four-candidate protocol passed on January development data. Fused is the diagnostic Oracle, but no online optimizer selection was evaluated."
+}

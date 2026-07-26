@@ -20,6 +20,8 @@ from trustaero.ir.models import (
     PhysicalOperatorSpec,
     PhysicalStrategySpec,
     Project,
+    Sort,
+    SpatialJoin,
     ValidatedLogicalPlan,
 )
 
@@ -33,10 +35,13 @@ _UNIMPLEMENTED_BY_OPERATOR = {
 _DUCKDB_EXECUTABLE = {
     "ScanSource",
     "Project",
+    "Sort",
+    "Limit",
     "Filter",
     "TemporalFilter",
     "SpatialFilter",
     "Join",
+    "SpatialJoin",
     "Aggregate",
     "Mask",
     "GeneralizeLocation",
@@ -64,6 +69,16 @@ def _operator_spec(
         # still rejected until row-level identities are carried by execution.
         level = getattr(operator, "level", None)
         unimplemented = () if level == LineageLevel.SOURCE else ("record_lineage_capture",)
+        status = "executable" if not unimplemented else "requires_backend"
+    elif isinstance(operator, SpatialJoin):
+        # The logical IR can describe more relations than the current DuckDB
+        # point backend. Physical approval must expose that boundary instead
+        # of marking an unimplemented geometry relation executable.
+        unimplemented = (
+            ()
+            if operator.relation == "distance_within"
+            else (f"duckdb_spatial_join_{operator.relation}",)
+        )
         status = "executable" if not unimplemented else "requires_backend"
     elif operator_type in _DUCKDB_EXECUTABLE:
         unimplemented = ()
@@ -180,8 +195,10 @@ def _placed_mask_specs(
 
     The target must be a Project that explicitly carries every masked field.
     Between that target and the original Mask, only projections retaining the
-    fields and joins on different keys are permitted. This implements the V1
-    rule that masked values may be projected but not reused semantically.
+    fields, joins on different keys, and sorts on different fields are
+    permitted. This implements the V1 rule that masked values may be projected
+    but not reused semantically. Moving a deterministic row-preserving Mask
+    across a Sort on disjoint keys preserves both rows and their ordering.
     """
 
     by_id = {operator.operator_id: operator for operator in plan.operators}
@@ -217,6 +234,10 @@ def _placed_mask_specs(
         elif isinstance(operator, Join):
             if set(moving.fields) & {operator.left_field, operator.right_field}:
                 raise ValueError("Mask cannot move before a Join that uses the masked field")
+        elif isinstance(operator, Sort):
+            sort_fields = {key.field for key in operator.keys}
+            if set(moving.fields) & sort_fields:
+                raise ValueError("Mask cannot move before a Sort that uses the masked field")
         else:
             raise ValueError(
                 "Mask placement cannot cross a semantic operator outside the V1 safe fragment"
@@ -284,8 +305,14 @@ def plan_physical_execution(
     if selected_strategy.execution_mode == "ordered_materialized" and backend != "duckdb":
         raise ValueError("Ordered filter execution is implemented for DuckDB only")
 
-    if selected_strategy.execution_mode == "governance_placed" and backend != "duckdb":
+    placement_modes = {"governance_placed", "governance_placed_materialized"}
+    if selected_strategy.execution_mode in placement_modes and backend != "duckdb":
         raise ValueError("Governance placement is implemented for DuckDB only")
+
+    if selected_strategy.execution_mode == "governance_placed_materialized":
+        target = selected_strategy.materialize_after[0]
+        if target not in logical_ids:
+            raise ValueError(f"Materialization target is not in the logical plan: {target}")
 
     physical_operators = tuple(_operator_spec(operator, backend) for operator in plan.operators)
     physical_output_operator = _physical_operator_id(plan.output_operator)
@@ -295,7 +322,7 @@ def plan_physical_execution(
             physical_operators,
             selected_strategy.filter_order,
         )
-    elif selected_strategy.execution_mode == "governance_placed":
+    elif selected_strategy.execution_mode in placement_modes:
         placement = selected_strategy.placements[0]
         physical_operators, physical_output_operator = _placed_mask_specs(
             plan,

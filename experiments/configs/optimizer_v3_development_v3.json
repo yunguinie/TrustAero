@@ -1,0 +1,94 @@
+{
+  "protocol_name": "phase2n_optimizer_v3_bounded_interaction_consensus_v3",
+  "evaluation_scope": "optimizer_v3_development_not_phase2g",
+  "readiness_audit_path": "results/optimizer_v3_readiness/v1/audit.json",
+  "required_readiness_status": "PASS",
+  "source_run_dirs": [
+    "results/phase2i_fragment_pilot/20260717T120435635390Z",
+    "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z"
+  ],
+  "output_dir": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3",
+  "candidate_fragment": "hash_mask_equality_join_ordered_output",
+  "candidate_placements": [
+    "early_mask",
+    "late_mask"
+  ],
+  "target": "paired_log_early_late_latency_ratio",
+  "model_type": "bounded_interaction_pairwise_ridge_with_unanimous_stability_guard",
+  "base_inputs": [
+    "log1p_join_input_rows_per_100k",
+    "log1p_identifier_width_per_64_bytes",
+    "join_match_rate"
+  ],
+  "fixed_feature_basis": [
+    "rows_log",
+    "width_log",
+    "match_rate",
+    "rows_log_x_width_log",
+    "rows_log_x_match_rate",
+    "width_log_x_match_rate",
+    "rows_log_x_width_log_x_match_rate",
+    "rows_log_squared",
+    "width_log_squared",
+    "match_rate_squared"
+  ],
+  "learned_thresholds_or_knots": false,
+  "tie_threshold_fraction": 0.03,
+  "outer_cross_validation": "leave_one_complete_rows_width_match_family_out",
+  "inner_model_selection": "leave_one_complete_family_out_within_outer_training_fold",
+  "ridge_lambda_grid": [
+    0.001,
+    0.01,
+    0.1,
+    1.0,
+    10.0
+  ],
+  "uncertainty_quantile_grid": [
+    0.5,
+    0.75,
+    0.9
+  ],
+  "stability_guard": {
+    "type": "unanimous_ridge_sign_consensus",
+    "models": "all_ridge_lambda_grid_models_fit_without_outer_family",
+    "required_agreement_fraction": 1.0,
+    "on_disagreement": "fallback_to_frozen_v1"
+  },
+  "uncertainty_rule": "after_consensus_fallback_when_absolute_selected_prediction_is_not_greater_than_inner_absolute_residual_quantile",
+  "out_of_support_rule": "fallback_to_frozen_v1",
+  "governance_rule": "filter_illegal_or_over_exposing_candidates_before_all_model_predictions",
+  "fallback_selector": "frozen_v1",
+  "hyperparameter_selection_objective": [
+    "maximize_within_3_percent_rate",
+    "minimize_p95_regret_percent",
+    "minimize_max_regret_percent",
+    "minimize_mean_regret_percent",
+    "maximize_direct_model_coverage",
+    "prefer_larger_uncertainty_quantile_on_exact_tie",
+    "prefer_larger_ridge_lambda_on_exact_tie"
+  ],
+  "minimum_direct_coverage": 0.25,
+  "require_direct_early_and_late_decisions": true,
+  "baseline": {
+    "name": "v1_frozen_baseline",
+    "family_count": 40,
+    "within_tie_rate": 0.775,
+    "mean_regret_percent": 1.5463027347207954,
+    "p95_regret_percent": 9.559887083390661,
+    "max_regret_percent": 11.463621465547003
+  },
+  "development_gate": {
+    "within_tie_rate_must_strictly_improve_baseline": true,
+    "mean_regret_must_not_exceed_baseline": true,
+    "p95_regret_must_not_exceed_baseline": true,
+    "max_regret_must_not_exceed_baseline": true,
+    "minimum_direct_coverage_must_pass": true,
+    "direct_decisions_must_include_both_placements": true,
+    "all_governance_audits_must_pass": true,
+    "stability_guard_must_match_protocol": true,
+    "feature_basis_must_match_protocol": true
+  },
+  "on_gate_failure": "freeze_negative_result_and_do_not_run_phase2g",
+  "on_gate_pass": "freeze_model_and_protocol_before_any_phase2g_run",
+  "phase2g_authorized": false
+}

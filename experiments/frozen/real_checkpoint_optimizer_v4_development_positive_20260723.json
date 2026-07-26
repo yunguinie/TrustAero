@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_POSITIVE_V4_DEVELOPMENT_RESULT",
+  "calibration_result": "results/real_checkpoint_optimizer_v4_calibration/20260723T071252877097Z/calibration.json",
+  "calibration_sha256": "aa450403a9fcfcc96877a5e01c9e3b4cbdce785abc86bab64712cf48a12f06bd",
+  "model_result": "results/real_checkpoint_optimizer_v4_calibration/20260723T071252877097Z/model.json",
+  "model_sha256": "0e1e3c702fdeffd5fa03810c00a76830204c2b38176af21e30326990359b3f34",
+  "source_commit": "38160364952f24c54d2ba99502a955e50d618158",
+  "outer_validation": "leave_one_complete_dataset_month_out",
+  "source_month_group_count": 10,
+  "scenario_count": 68,
+  "unit_count": 204,
+  "analytic_metrics": {
+    "confidence_family_hit_rate": 1.0,
+    "mean_regret_percent": 0.2878765576922658,
+    "p95_regret_percent": 0.0,
+    "max_regret_percent": 18.28323185024521,
+    "seed_consistent_family_rate": 1.0
+  },
+  "learned_threshold_metrics": {
+    "query_selectivity_threshold": 0.35,
+    "confidence_family_hit_rate": 1.0,
+    "mean_regret_percent": 0.2878765576922658,
+    "p95_regret_percent": 0.0,
+    "max_regret_percent": 18.28323185024521
+  },
+  "fixed_baselines": {
+    "policy_first_family_hit_rate": 0.45588235294117646,
+    "query_first_family_hit_rate": 0.6764705882352942
+  },
+  "strict_policy_illegal_selection_count": 0,
+  "authorized_claim": "Real-calibrated V4 passed grouped development validation and may advance to independent real-month validation.",
+  "validation_claim_authorized": false,
+  "final_holdout_claim_authorized": false,
+  "paper_optimizer_performance_claim_authorized": false
+}

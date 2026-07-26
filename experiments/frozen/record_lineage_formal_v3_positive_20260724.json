@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-record-lineage-formal-v3-positive-20260724",
+  "status": "PASS_RECORD_LINEAGE_FORMAL_SCALABILITY_EVIDENCE",
+  "measurement_commit": "66f7f048b3bb3b9b28bfefc1fe342f37cb2c3249",
+  "evaluator_commit": "794def0fe823253afc6aeb662aa745032fa0f177",
+  "measurement_run": "results/record_lineage_formal_v3/20260724T153703037611Z",
+  "artifacts": [
+    {
+      "path": "results/record_lineage_formal_v3/20260724T153703037611Z/summary.json",
+      "sha256": "edb3d7694e3b44267fc789cd4e9d3cffdd51f5563ee23b605586da0932a66946"
+    },
+    {
+      "path": "results/record_lineage_formal_v3/20260724T153703037611Z/environment.json",
+      "sha256": "902b08982a9b8d8aef4add786f34917875660cacff38b051395b917039807d9f"
+    },
+    {
+      "path": "results/record_lineage_formal_v3/20260724T153703037611Z/measurements.csv",
+      "sha256": "3efdb03279ea03ad988d074b60ad7d3144cafe8d356247917440519b7748281d"
+    },
+    {
+      "path": "results/record_lineage_formal_evaluation_v3/20260724T153703037611Z/evaluation.json",
+      "sha256": "25487d4e6a63485fed50b83702cbdfd003e0016f260ad1c1ee8461e4ff784d0f"
+    }
+  ],
+  "evaluator_erratum": {
+    "path": "experiments/frozen/record_lineage_formal_v3_evaluator_erratum_20260724.json",
+    "sha256": "5acece27b1a25fce85c04fb7d9cee6984231d1236d3122bf89b753c53077f1d6"
+  },
+  "unit_findings": [
+    {
+      "row_count": 100000,
+      "direct_median_ms": 330.32675,
+      "record_median_ms": 1292.897,
+      "capture_median_ms": 1263.3959,
+      "verification_median_ms": 619.16585,
+      "median_record_over_direct_ratio": 3.848895,
+      "paired_ratio_ci_95": [
+        3.644955,
+        4.260321
+      ],
+      "bytes_per_edge": 64.00405
+    },
+    {
+      "row_count": 500000,
+      "direct_median_ms": 1629.82755,
+      "record_median_ms": 8192.69215,
+      "capture_median_ms": 8061.52215,
+      "verification_median_ms": 3050.15685,
+      "median_record_over_direct_ratio": 5.175622,
+      "paired_ratio_ci_95": [
+        4.478796,
+        5.636246
+      ],
+      "bytes_per_edge": 64.00081
+    }
+  ],
+  "authorized_claim": "Within the frozen single-source record fragment, TrustAero generated and independently verified compact record-level lineage at 100K and 500K rows. Storage remained approximately 64 bytes per edge, while median end-to-end latency was 3.85x and 5.18x the equivalent direct query.",
+  "boundary": [
+    "The evidence covers one unique, non-null, unmasked STRING record key.",
+    "Join, Aggregate, SpatialJoin, composite keys, and non-STRING keys remain unsupported.",
+    "The high measured overhead must be reported and cannot be described as low-cost record lineage.",
+    "The evaluator erratum changes no measurement or predeclared numerical threshold."
+  ]
+}

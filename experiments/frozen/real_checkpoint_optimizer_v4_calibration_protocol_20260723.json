@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "frozen_at_utc": "2026-07-23T05:55:00+00:00",
+  "status": "FROZEN_BEFORE_FORMAL_V4_CALIBRATION",
+  "model": "nonnegative additive execution-aware cost model",
+  "direct_winner_classifier_used": false,
+  "source_run_count": 3,
+  "source_month_group_count": 10,
+  "scenario_family_count": 68,
+  "unit_count": 204,
+  "outer_validation": "leave one complete dataset-month out",
+  "seed_leakage_allowed": false,
+  "strong_baselines": [
+    "fixed policy-first",
+    "fixed query-first",
+    "query-selectivity threshold learned inside each training fold"
+  ],
+  "governance_before_cost": true,
+  "illegal_candidate_selection_allowed": false,
+  "development_gates": {
+    "minimum_confidence_family_hit_rate": 0.95,
+    "maximum_mean_regret_percent": 1.0,
+    "maximum_p95_regret_percent": 3.0,
+    "maximum_regret_percent": 20.0,
+    "no_worse_family_hit_than_learned_threshold": true,
+    "no_worse_mean_regret_than_learned_threshold": true,
+    "seed_consistency_required": true
+  },
+  "scientific_boundary": "Passing authorizes a frozen V4 validation experiment on reserved months. It does not authorize a final holdout or paper performance claim."
+}

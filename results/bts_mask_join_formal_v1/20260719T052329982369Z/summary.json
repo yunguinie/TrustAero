@@ -1,0 +1,177 @@
+{
+  "cache_protocol": "hot_same_duckdb_connection",
+  "candidate_count": 2,
+  "candidate_summaries": {
+    "early_mask_before_join": {
+      "actual_cardinalities": [
+        0,
+        106251,
+        106251,
+        106251,
+        106251,
+        106251,
+        334
+      ],
+      "approved_strategy_id": "place-002-mask-after-bts-mp-project",
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "EXPLAIN_ANALYZE",
+        "PROJECTION",
+        "HASH_JOIN",
+        "PROJECTION",
+        "PROJECTION",
+        "READ_PARQUET",
+        "READ_PARQUET"
+      ],
+      "duckdb_plan_fingerprint": "sha256:7e34a2794597aa273d94df5dda2bf9547886c8cc1f9a76b0e1c08ab0b625d9cd",
+      "exposure": {
+        "candidate_id": "early_mask_before_join",
+        "masked_rows_materialized": 0,
+        "raw_rows_exposed_to_join": 0,
+        "raw_rows_materialized": 0
+      },
+      "max_ms": 1211.9907,
+      "median_ms": 761.67205,
+      "min_ms": 519.031,
+      "p95_ms": 1161.0112,
+      "peak_buffer_memory_bytes": 28817560,
+      "peak_temp_directory_bytes": 0,
+      "physical_plan_id": "pp-0fda110023817a9b",
+      "rows_scanned": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2189084,
+        334
+      ],
+      "runs": 30
+    },
+    "late_mask_fused": {
+      "actual_cardinalities": [
+        0,
+        106251,
+        106251,
+        106251,
+        106251,
+        106251,
+        334
+      ],
+      "approved_strategy_id": "fused",
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "EXPLAIN_ANALYZE",
+        "PROJECTION",
+        "PROJECTION",
+        "HASH_JOIN",
+        "PROJECTION",
+        "READ_PARQUET",
+        "READ_PARQUET"
+      ],
+      "duckdb_plan_fingerprint": "sha256:f3e55f70e9a70b249bb9f51cabc545991d28bb4d4fb9be42f0ba1fe33a5e19a2",
+      "exposure": {
+        "candidate_id": "late_mask_fused",
+        "masked_rows_materialized": 0,
+        "raw_rows_exposed_to_join": 106251,
+        "raw_rows_materialized": 0
+      },
+      "max_ms": 1143.1144,
+      "median_ms": 792.3096,
+      "min_ms": 601.9943,
+      "p95_ms": 1082.6348,
+      "peak_buffer_memory_bytes": 28817560,
+      "peak_temp_directory_bytes": 0,
+      "physical_plan_id": "pp-f3d31a47dd9b2c54",
+      "rows_scanned": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2189084,
+        334
+      ],
+      "runs": 30
+    }
+  },
+  "distinct_duckdb_plan_count": 2,
+  "filtered_rows_entering_join": 106251,
+  "full_month": true,
+  "governance_profiles": {
+    "no-raw-sensitive-join": {
+      "decisions": [
+        {
+          "candidate_id": "late_mask_fused",
+          "diagnostics": [
+            {
+              "allowed_rows": 0,
+              "candidate_id": "late_mask_fused",
+              "code": "CANDIDATE_RAW_JOIN_LIMIT_EXCEEDED",
+              "exposure_kind": "raw_join",
+              "observed_rows": 106251
+            }
+          ],
+          "is_feasible": false
+        },
+        {
+          "candidate_id": "early_mask_before_join",
+          "diagnostics": [],
+          "is_feasible": true
+        }
+      ],
+      "feasible_candidate_ids": [
+        "early_mask_before_join"
+      ],
+      "rejected_candidate_ids": [
+        "late_mask_fused"
+      ],
+      "status": "ACCEPT"
+    },
+    "raw-join-permitted": {
+      "decisions": [
+        {
+          "candidate_id": "late_mask_fused",
+          "diagnostics": [],
+          "is_feasible": true
+        },
+        {
+          "candidate_id": "early_mask_before_join",
+          "diagnostics": [],
+          "is_feasible": true
+        }
+      ],
+      "feasible_candidate_ids": [
+        "late_mask_fused",
+        "early_mask_before_join"
+      ],
+      "rejected_candidate_ids": [],
+      "status": "ACCEPT"
+    }
+  },
+  "heldout_optimizer_evidence": false,
+  "measurement_count": 60,
+  "optimizer_selection_evaluated": false,
+  "paper_performance_evidence": true,
+  "run_id": "20260719T052329982369Z",
+  "sample_rows": 547271,
+  "schema_version": 1,
+  "scientific_label": "bts_mask_join_formal_development_partition_v1",
+  "status": "PASS",
+  "verified_execution_artifacts": [
+    {
+      "artifact_id": "bts_on_time_2024_01_full",
+      "byte_size": 9077989,
+      "relative_path": "processed/bts/on_time/2024-01/bts_flights_full.parquet",
+      "row_count": 547271,
+      "sha256": "a9ac11e42c1812ac9fd3ce6885e1fce7713399426f2fd0cec7cbbc5cd1648d53"
+    },
+    {
+      "artifact_id": "bts_on_time_2024_01_airports",
+      "byte_size": 5380,
+      "relative_path": "processed/bts/on_time/2024-01/bts_airports.parquet",
+      "row_count": 334,
+      "sha256": "bccde61193c804f2a11fd4148e58f30187bd0a0461bf4b1b15b771c1b40c4a3c"
+    }
+  ]
+}

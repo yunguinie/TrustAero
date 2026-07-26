@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-record-lineage-ordinal-v4-pilot-positive-20260725",
+  "status": "PASS_RECORD_LINEAGE_ORDINAL_V4_PILOT",
+  "measurement_commit": "304da932f673cec366bd0a4863186073cc040c05",
+  "run_path": "results/record_lineage_ordinal_pilot_v4/20260724T234121825050Z",
+  "artifacts": [
+    {
+      "path": "results/record_lineage_ordinal_pilot_v4/20260724T234121825050Z/summary.json",
+      "sha256": "ca3f29fa3705cf74e0688a8fc870fedae62912cbf80aed058a58de8b6b98d9ed"
+    },
+    {
+      "path": "results/record_lineage_ordinal_pilot_v4/20260724T234121825050Z/environment.json",
+      "sha256": "9d0744810c7c3488100e5e0c62b43cfd02402c12c9b80043d784e1957cd4469d"
+    },
+    {
+      "path": "results/record_lineage_ordinal_pilot_v4/20260724T234121825050Z/measurements.csv",
+      "sha256": "2b3f21cbef803f2e844c1aa2b3ac96a35820616522c6ae4430297ec9c0008a3b"
+    }
+  ],
+  "unit_findings": [
+    {
+      "row_count": 1000,
+      "record_median_ms": 9.2886,
+      "capture_median_ms": 9.0333,
+      "verification_median_ms": 5.2999,
+      "bytes_per_edge": 32.452
+    },
+    {
+      "row_count": 10000,
+      "record_median_ms": 68.36375,
+      "capture_median_ms": 66.41565,
+      "verification_median_ms": 50.89955,
+      "bytes_per_edge": 32.0455
+    },
+    {
+      "row_count": 50000,
+      "record_median_ms": 349.0765,
+      "capture_median_ms": 338.95365,
+      "verification_median_ms": 255.98245,
+      "bytes_per_edge": 32.0091
+    }
+  ],
+  "comparison_to_v3": [
+    {
+      "row_count": 1000,
+      "record_latency_reduction_percent": 47.4,
+      "capture_latency_reduction_percent": 48.109,
+      "verification_latency_reduction_percent": 11.623
+    },
+    {
+      "row_count": 10000,
+      "record_latency_reduction_percent": 73.348,
+      "capture_latency_reduction_percent": 73.607,
+      "verification_latency_reduction_percent": 57.33
+    },
+    {
+      "row_count": 50000,
+      "record_latency_reduction_percent": 46.636,
+      "capture_latency_reduction_percent": 47.118,
+      "verification_latency_reduction_percent": 21.8
+    }
+  ],
+  "admission": {
+    "semantic_integrity_passed": true,
+    "attack_tests_passed": true,
+    "storage_reduction_passed": true,
+    "latency_component_improvement_passed": true,
+    "formal_100k_500k_measurement_admitted": true,
+    "paper_performance_evidence_authorized": false
+  },
+  "boundary": "Development pilot only; V3 remains the immutable formal baseline until a separately frozen V4 formal evaluation passes."
+}

@@ -1,0 +1,31 @@
+{
+  "protocol_id": "governed-pipeline-hierarchical-admission-v2",
+  "frozen_at": "2026-07-24",
+  "config_path": "experiments/configs/governed_pipeline_hierarchical_admission_v2.json",
+  "experiment_role": "mechanism-guided development admission",
+  "design_rationale": [
+    "Hard governance constraints determine the legal candidate set before latency ranking.",
+    "Policy-first remains the conservative legal fallback and need not be a performance winner under permissive raw-Join policy.",
+    "The performance admission requires at least two singleton winners among legal candidates.",
+    "Higher query selectivity and Join match rate probe the predicted query-first versus join-first crossover without using a learned threshold."
+  ],
+  "matrix": {
+    "scenario_count": 16,
+    "unit_count": 48,
+    "measured_paired_blocks": 1440,
+    "timed_candidate_executions": 4320
+  },
+  "carryover_rule": {
+    "local_unit_findings": "reported for diagnosis only",
+    "gate": "six global polluter-target directions",
+    "multiple_testing_correction": "Bonferroni simultaneous confidence",
+    "familywise_confidence": 0.95
+  },
+  "authorization_rule": "Only PASS_GOVERNED_PIPELINE_OPTIMIZER_ADMISSION permits performance-model training.",
+  "scientific_boundary": [
+    "This is a development admission experiment, not a final optimizer evaluation.",
+    "The V1.1 negative result remains frozen and is not reclassified.",
+    "A V2 failure ends this candidate-boundary expansion rather than weakening gates.",
+    "No speedup or unseen-data generalization claim is authorized by V2."
+  ]
+}

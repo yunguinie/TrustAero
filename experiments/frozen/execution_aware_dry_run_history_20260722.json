@@ -1,0 +1,36 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_aware_dry_run_history_20260722",
+  "status": "FROZEN_DEVELOPMENT_EVIDENCE",
+  "publication_use": "Mechanism diagnosis only; not headline performance evidence.",
+  "source_run": "results/execution_flow_audit_formal/20260722T055455911174Z",
+  "source_run_condition": "Concurrent user workload was disclosed, so timing is contaminated.",
+  "dry_runs": [
+    {
+      "id": "pre_expression_split",
+      "artifact_status": "The JSON was overwritten before freezing; values are preserved from console output.",
+      "oracle_3pct_hit_rate": 0.6944444444,
+      "mean_regret_pct": 212.374,
+      "p95_regret_pct": 739.844,
+      "maximum_regret_pct": 7184.645,
+      "diagnosis": "Raw-length and masked-digest aggregate work were incorrectly represented by one feature.",
+      "decision": "Reject the representation and split aggregate execution mode from expression kind."
+    },
+    {
+      "id": "post_expression_split",
+      "artifact_sha256": "18c7b0277c6a50de632132d3ab41dce6836c36f854d80ac2a84021e01c85679c",
+      "oracle_3pct_hit_rate": 0.8333333333,
+      "mean_regret_pct": 5.75,
+      "p95_regret_pct": 24.2588,
+      "maximum_regret_pct": 222.9108,
+      "group_metrics": {
+        "column_pruning": {"oracle_3pct_hit_rate": 0.8333333333, "mean_regret_pct": 1.093, "p95_regret_pct": 7.073, "maximum_regret_pct": 10.195},
+        "mask_aggregate": {"oracle_3pct_hit_rate": 1.0, "mean_regret_pct": 0.0},
+        "mask_output": {"oracle_3pct_hit_rate": 0.6666666667, "mean_regret_pct": 8.825, "p95_regret_pct": 43.697, "maximum_regret_pct": 80.389},
+        "mask_sorted_output": {"oracle_3pct_hit_rate": 0.8333333333, "mean_regret_pct": 13.083, "p95_regret_pct": 222.059, "maximum_regret_pct": 222.911}
+      },
+      "diagnosis": "The semantic split fixed the dominant modeling error. Remaining extreme errors align with known cross-seed timing discontinuities in the contaminated source run.",
+      "decision": "Keep the expression-aware features, do not tune to contaminated outliers, and collect one clean calibration run."
+    }
+  ]
+}

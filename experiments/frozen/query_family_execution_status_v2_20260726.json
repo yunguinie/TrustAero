@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "status_record_id": "query-family-execution-status-v2-20260726",
+  "supersedes_status_only": {
+    "path": "experiments/configs/real_data_query_families_v1.json",
+    "note": "The V1 file remains an immutable historical design snapshot. This record supersedes only its execution-stage labels."
+  },
+  "query_families": [
+    {
+      "template_id": "QF-MULTISOURCE-CERTIFICATE",
+      "previous_stage": "design_only",
+      "current_stage": "executed_verified",
+      "evidence": {
+        "path": "experiments/frozen/multisource_case_study_v2_complete_loop_positive_20260726.json",
+        "sha256": "e1754b7efb0b28e7264e9f80e4807cb5bce6c57c43c98f669beca76884a016ff"
+      },
+      "status": "PASS_MULTISOURCE_CASE_STUDY_V2_COMPLETE_LOOP",
+      "performance_eligible": false,
+      "boundary": "Complete-loop semantic evidence only; certificate PARTIAL does not attest every DuckDB-internal operator output."
+    }
+  ]
+}

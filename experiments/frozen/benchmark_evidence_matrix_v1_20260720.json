@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "record_id": "cross_workload_governed_candidate_evidence_v1_20260720",
+  "status": "PASS",
+  "source_commit": "f6af8d9b34bece0daa9feaf1e5f112c2db39d5d2",
+  "paper_performance_evidence": true,
+  "derived_cross_workload_evidence": true,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "optimizer_v2_rehabilitated": false,
+  "phase2g_authorized": false,
+  "observed": {
+    "workload_count": 4,
+    "candidate_count": 12,
+    "workloads_with_alternative_boundary_in_3_percent_band": 2,
+    "workloads_with_reference_outside_oracle_set": 1,
+    "strict_reversal_workload": "bts-2024-01-governed",
+    "max_pooled_median_reference_regret_percent": 14.692503352447428,
+    "geometric_pooled_median_oracle_opportunity_vs_reference": 1.0348651406281086,
+    "normalization": "ratio of source-reported candidate medians with independent accepted-Oracle-set cross-check"
+  },
+  "immutable_files": [
+    {
+      "path": "results/benchmark_evidence_matrix_v1/candidates.csv",
+      "sha256": "af86c8112e77656d609942652a5e600ab34d31af0399e6d53360c3f776ffd05f"
+    },
+    {
+      "path": "results/benchmark_evidence_matrix_v1/report.md",
+      "sha256": "d28d2d2d24b87237eb58945c5cfb7cc552d8da53f222ff2368cf7cdc10786f13"
+    },
+    {
+      "path": "results/benchmark_evidence_matrix_v1/summary.json",
+      "sha256": "f811057a845fd3e6a2cc81fb4268c07e51d883fbc02149dea9a45938572876bc"
+    }
+  ],
+  "scientific_boundary": "The matrix shows that one fixed legal boundary is not universally optimal. Q1/Q6 are standard-method evidence; BTS/NYC are inspected development partitions. No optimizer was trained or evaluated, and rejected V2 models remain rejected."
+}

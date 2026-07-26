@@ -1,0 +1,15 @@
+{
+  "record_id": "governed-pipeline-semantic-admission-v3-runtime-abort",
+  "recorded_at": "2026-07-24",
+  "status": "ABORTED_BEFORE_MEASUREMENT",
+  "run_id": "20260724T071724343859Z",
+  "source_commit": "dbd9574e12223fac7ab8bb6f9b3a635453305c50",
+  "completed_units": 0,
+  "error": "raw_query_checkpoint already existed when query-first was executed repeatedly",
+  "root_cause": "The admission runner's candidate-independent cleanup list was not updated when the explicit raw query checkpoint was introduced.",
+  "disposition": [
+    "No formal timing unit was completed and no performance result was produced.",
+    "The aborted directory must not be resumed after the cleanup fix because it is bound to the earlier commit.",
+    "A regression test now requires all query-first intermediate tables to be removed between candidate executions."
+  ]
+}

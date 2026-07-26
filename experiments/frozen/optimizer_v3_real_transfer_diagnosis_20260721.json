@@ -1,0 +1,63 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v3_real_transfer_diagnosis_20260721",
+  "status": "ROOT_CAUSE_DIAGNOSED_V3_REMAINS_FROZEN",
+  "source_run_id": "20260721T084854695495Z",
+  "diagnosis_commit": "e0d2bfa",
+  "v3_may_be_modified": false,
+  "february_to_december_remain_unopened_for_v4": true,
+  "findings": {
+    "family_count": 12,
+    "stable_family_count": 11,
+    "final_v3_late_selection_count": 12,
+    "primary_model_late_direction_count": 11,
+    "primary_model_correct_direction_on_stable_families": 4,
+    "decision_reason_counts": {
+      "MASK_INTERACTION_CONFIDENT_COST_RANKING": 8,
+      "MASK_INTERACTION_RIDGE_DISAGREEMENT_FALLBACK": 3,
+      "MASK_INTERACTION_UNCERTAIN_FALLBACK": 1
+    },
+    "all_core_features_within_support": true,
+    "v1_fixed_setup_bytes": 268435456,
+    "v1_required_match_rate_times_width_bytes": 2590.427572446377,
+    "maximum_observed_match_rate_times_width_bytes": 1459.7862043651353,
+    "v1_early_reachable_on_observed_grid": false
+  },
+  "category_assessment": {
+    "feature_distortion": "PARTIALLY_CONFIRMED_SEMANTIC_INSUFFICIENCY_NOT_RANGE_ERROR",
+    "cost_omissions": "CONFIRMED_FOR_PHYSICAL_PIPELINE_COMPONENTS",
+    "decision_boundary_collapse": "CONFIRMED",
+    "estimate_vs_measurement_deviation": "RATIO_CALIBRATION_ERROR_CONFIRMED_CORE_CARDINALITY_ERROR_REJECTED"
+  },
+  "rejected_fixes": [
+    "change only the late/early threshold",
+    "lower the frozen V3 uncertainty threshold after seeing BTS labels",
+    "remove the stability guard to force more direct decisions",
+    "add common policy-filter or source-lineage cost and claim it explains the relative error",
+    "refit the same three-statistic polynomial and reuse February-December as tuning data"
+  ],
+  "authorized_next_step": "Design a pipeline-aware V4 that separately estimates hash-all/hash-matched work, raw/masked bytes through Join, the masked materialization boundary, and downstream projection/sort work. Use January only for development and freeze the complete selector before external evaluation.",
+  "immutable_inputs_and_output": [
+    {
+      "path": "results/real_optimizer_transfer_development/20260721T084854695495Z/v3_root_cause_diagnosis.json",
+      "sha256": "5aa98420fc22b2bb5778c1ca322486bd63c7b67b39951cd7fe89111e004b54ea"
+    },
+    {
+      "path": "experiments/frozen/real_optimizer_v3_transfer_negative_20260721.json",
+      "sha256": "9fa28bc759750963857a2f973b238edd24575e9bd3c921723abf7ccecc8ecaeb"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/interaction_mask_cost_model.json",
+      "sha256": "87ecf84e22accb3d5079a8189bd4f52ee3a62a326adc048515d562e48e8504d0"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/interaction_stability_models.json",
+      "sha256": "94074583813eb6f01667b207dcd0c9bfa901d54463d68daa4da3840e4da52217"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/family_observations.csv",
+      "sha256": "3a88f8464bc59357101a98117e84963724d734479a96a712d9e9e325938459f1"
+    }
+  ],
+  "conclusion": "V3's all-late behavior is caused by synthetic-to-real cost-label shift plus an all-late V1 fallback. It is not caused by out-of-support inputs, incorrect core cardinalities, or DuckDB collapsing the candidate plans. V4 requires decomposed physical work and real operator statistics; governance feasibility remains a hard constraint before ranking."
+}

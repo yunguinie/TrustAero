@@ -1,0 +1,18 @@
+{
+  "frozen_at": "2026-07-23",
+  "status": "FAIL_EA1_CHECKPOINT_UNCERTAINTY_V3_RETAIN",
+  "role": "permanent negative development audit",
+  "analysis_commit_hash": "3469518",
+  "result_path": "results/governed_checkpoint_uncertainty_v3/20260723T030907723381Z/calibration.json",
+  "result_sha256": "38309dc7064e1ab1b0c56a978ee6de62a257ea099583776c89391869b0473a8a",
+  "metrics": {
+    "query_margin_error_upper_ms": 5.2906846716653675,
+    "confidence_family_hit_rate": 1.0,
+    "mean_diagnostic_median_regret_percent": 1.6429807547980326,
+    "p95_diagnostic_median_regret_percent": 7.743313428433196,
+    "maximum_diagnostic_median_regret_percent": 25.492820890714917
+  },
+  "failed_gate": "maximum_regret",
+  "cause": "The unconditional residual pool included policy-action families and over-protected the query-first action.",
+  "boundary": "This failed V3 result remains failed and is superseded only by a separately frozen action-conditional V3.1 development protocol."
+}

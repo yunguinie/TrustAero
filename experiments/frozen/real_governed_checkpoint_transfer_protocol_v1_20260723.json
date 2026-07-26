@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "frozen_at_utc": "2026-07-23T04:00:00+00:00",
+  "status": "FROZEN_BEFORE_REAL_TIMING_RESULTS",
+  "optimizer": "V3.1 action-conditional uncertainty-aware checkpoint optimizer",
+  "optimizer_mutation_allowed": false,
+  "consumed_months_excluded": {
+    "bts": ["2024-01"],
+    "nyc_tlc": ["2024-01"]
+  },
+  "holdout_months": {
+    "bts": ["2024-02", "2024-06", "2024-10"],
+    "nyc_tlc": ["2024-03", "2024-07", "2024-11"]
+  },
+  "row_count_per_unit": 150000,
+  "profile_ids": ["w384-p025-q008", "w640-p035-q030"],
+  "seeds": [8101, 8202, 8303],
+  "candidate_ids": [
+    "policy_first_narrow_checkpoint",
+    "query_first_raw_checkpoint"
+  ],
+  "native_fields": [
+    "event time",
+    "Join key",
+    "dimension relation",
+    "monthly source distribution"
+  ],
+  "controlled_fields": [
+    "deterministic sensitive payload width",
+    "policy selectivity",
+    "query selectivity via native event-time rank"
+  ],
+  "timing": {
+    "cache_mode": "warm same-unit connection",
+    "threads": 1,
+    "memory_limit_mb": 4096,
+    "complete_permutations": true,
+    "repetitions_per_permutation": 15,
+    "paired_blocks_per_unit": 30,
+    "resume_granularity": "complete unit"
+  },
+  "scientific_boundary": "This protocol tests transfer to unseen real monthly distributions at the calibrated 150K-row scale. It does not authorize a full-month scale-transfer claim.",
+  "failure_policy": "Retain every failed result; do not tune V3.1 on these months and relabel them as holdout."
+}

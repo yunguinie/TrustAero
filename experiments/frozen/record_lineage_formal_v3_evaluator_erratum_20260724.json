@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-record-lineage-formal-v3-evaluator-erratum-20260724",
+  "classification": "EVALUATOR_IMPLEMENTATION_BUG",
+  "affected_evaluation": {
+    "path": "results/record_lineage_formal_evaluation_v3/20260724T153703037611Z/evaluation_pre_erratum.json",
+    "sha256": "42482088d405dc21e7390a1bf668f5966ddeae2caceb1bbdba62411d5927c027",
+    "status": "FAIL_RECORD_LINEAGE_FORMAL_SCALABILITY_RETAIN"
+  },
+  "immutable_measurement": {
+    "summary_path": "results/record_lineage_formal_v3/20260724T153703037611Z/summary.json",
+    "summary_sha256": "edb3d7694e3b44267fc789cd4e9d3cffdd51f5563ee23b605586da0932a66946",
+    "measurements_path": "results/record_lineage_formal_v3/20260724T153703037611Z/measurements.csv",
+    "measurements_sha256": "3efdb03279ea03ad988d074b60ad7d3144cafe8d356247917440519b7748281d"
+  },
+  "root_cause": [
+    "The evaluator required exact equality of total artifact file sizes.",
+    "The artifact header contains execution_id, whose textual length changes across block numbers.",
+    "Observed file-size variation was exactly one byte at both 100K and 500K.",
+    "Edge counts and edge digests were stable, and maximum storage remained below the frozen 65-byte-per-edge gate."
+  ],
+  "correction": [
+    "Remove the unregistered exact-total-size gate.",
+    "Retain the predeclared maximum_bytes_per_edge gate unchanged.",
+    "Report total artifact size range as a diagnostic rather than a semantic gate.",
+    "Re-evaluate the same immutable measurement without rerunning timing."
+  ],
+  "scientific_integrity": [
+    "No measurement row is modified or discarded.",
+    "No frozen numerical threshold is changed.",
+    "The original failed evaluation remains permanently retained."
+  ]
+}

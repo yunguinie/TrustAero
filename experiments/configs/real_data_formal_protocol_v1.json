@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "protocol_id": "real-data-formal-development-v1-20260719",
+  "scientific_label": "formal_real_data_development_partition_paper_candidate",
+  "partition_role": "January 2024 development partition; method-level evidence only, not independent optimizer holdout",
+  "frozen_before_measurement": true,
+  "optimizer_selection_evaluated": false,
+  "reporting_rule": "Report every eligible template, legal candidate, tie, regression, stability failure, and policy rejection; never remove a query after observing latency.",
+  "query_family_design": {
+    "path": "experiments/configs/real_data_query_families_v1.json",
+    "sha256": "1f1ac460f346b1f660aef0b98fe9a6d92c45fb9bad14765c542e39ac947e9425"
+  },
+  "components": [
+    {
+      "component_id": "full-month-materialization",
+      "config_path": "experiments/configs/real_data_formal_candidate_v1.json",
+      "config_sha256": "ca80e48086c074243ac47f548cab70ea0e573992da9550f88e947364d8037081",
+      "eligible_template_ids": ["QF-BTS-MASKED-READ", "QF-NYC-ZONE-AGGREGATE"],
+      "expected_candidates_per_template": 3,
+      "measured_blocks": 30
+    },
+    {
+      "component_id": "full-month-mask-placement",
+      "config_path": "experiments/configs/bts_mask_join_formal_v1.json",
+      "config_sha256": "f51b11f393777efbf98941ad20b016884fab14f412c7c2a4ad428169ba368017",
+      "eligible_template_ids": ["QF-BTS-MASK-JOIN-PLACEMENT"],
+      "expected_candidates_per_template": 2,
+      "measured_blocks": 30
+    }
+  ],
+  "deferred_templates": [
+    {
+      "template_id": "QF-BTS-NATURAL-MULTIJOIN",
+      "reason": "The natural multi-Join has a 100K semantic adapter but no frozen full-month paired timing adapter yet."
+    }
+  ]
+}

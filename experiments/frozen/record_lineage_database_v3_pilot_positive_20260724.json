@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-record-lineage-database-v3-pilot-positive-20260724",
+  "status": "PASS_RECORD_LINEAGE_DATABASE_V3_PILOT",
+  "measurement_commit": "5c542ef44a36ebd96a9806cf15181d8e75460146",
+  "run_path": "results/record_lineage_database_pilot_v3/20260724T152438598574Z",
+  "artifacts": [
+    {
+      "path": "results/record_lineage_database_pilot_v3/20260724T152438598574Z/summary.json",
+      "sha256": "245b17bc53c402c6d38b0c38b286037e934f4b1d5cd4bdc2a507a2da934aaabc"
+    },
+    {
+      "path": "results/record_lineage_database_pilot_v3/20260724T152438598574Z/environment.json",
+      "sha256": "827c791e7d4edc47324f1a214748c766b873c3d410e3870d45d21b3c39558696"
+    },
+    {
+      "path": "results/record_lineage_database_pilot_v3/20260724T152438598574Z/measurements.csv",
+      "sha256": "26110fb455f11593e882ae7bcd2b437c525b4571e9993295c97805011f5459ce"
+    }
+  ],
+  "v3_unit_findings": [
+    {
+      "row_count": 1000,
+      "record_median_ms": 17.65885,
+      "capture_median_ms": 17.40825,
+      "verification_median_ms": 5.9969,
+      "bytes_per_edge": 64.398
+    },
+    {
+      "row_count": 10000,
+      "record_median_ms": 256.507,
+      "capture_median_ms": 251.64185,
+      "verification_median_ms": 119.2868,
+      "bytes_per_edge": 64.04
+    },
+    {
+      "row_count": 50000,
+      "record_median_ms": 654.1479,
+      "capture_median_ms": 640.9633,
+      "verification_median_ms": 327.34415,
+      "bytes_per_edge": 64.008
+    }
+  ],
+  "comparison_to_v2_at_50000": {
+    "record_latency_reduction_percent": 20.28,
+    "capture_latency_reduction_percent": 5.822,
+    "verification_latency_reduction_percent": 57.18
+  },
+  "admission": {
+    "semantic_integrity_passed": true,
+    "hidden_columns_removed": true,
+    "compact_storage_gate_passed": true,
+    "formal_100k_500k_measurement_admitted": true,
+    "paper_performance_evidence_authorized": false
+  }
+}

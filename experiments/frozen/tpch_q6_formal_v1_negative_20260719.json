@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch_q6_formal_v1_failed_stability_gate_20260719",
+  "status": "FROZEN_NEGATIVE",
+  "source_commit": "f028b71f621c6cde1b9732ca90c8727277eb17b4",
+  "run_id": "20260719T132257557607Z",
+  "formal_paper_experiment_authorized": false,
+  "failure_reason": "The paired-ratio outlier fraction gate failed although semantic, balance, drift, resource and certificate gates passed.",
+  "observations": {
+    "fused_median_ms": 222.4267,
+    "materialize_after_predicate_median_ms": 253.9631,
+    "materialize_after_time_median_ms": 639.32845,
+    "materialize_after_predicate_over_fused": 1.0907605106990774,
+    "materialize_after_time_over_fused": 2.8671193449293457,
+    "predicate_ratio_outlier_fraction": 0.1,
+    "time_ratio_outlier_fraction": 0.26666666666666666,
+    "position_effect_detected": false,
+    "individual_fused_range_ms": [154.9967, 312.7443]
+  },
+  "immutable_files": [
+    {"path": "results/tpch_q6_formal_v1/20260719T132257557607Z/acceptance.json", "sha256": "1ec3bc96a57c86ff84350de8aee1bfa53cf3f6cbc086eccf4e3eb7e050af596d"},
+    {"path": "results/tpch_q6_formal_v1/20260719T132257557607Z/config.json", "sha256": "face89536bd34bb012fe2734917fbabe3f0475ab6bd67a8503f1af87756762fd"},
+    {"path": "results/tpch_q6_formal_v1/20260719T132257557607Z/environment.json", "sha256": "58cb7566e6c9e0e44a4f54bb38b020b2884753a293ea65e0544af4816e184776"},
+    {"path": "results/tpch_q6_formal_v1/20260719T132257557607Z/measurements.csv", "sha256": "9115d7c871444633513b45754a57aca35c131942a226005584cce47fd76edaa0"},
+    {"path": "results/tpch_q6_formal_v1/20260719T132257557607Z/progress.json", "sha256": "a26a2faeff910986b7fa1e99f4581b0226217a9474761d4f87b7face86c8fb81"},
+    {"path": "results/tpch_q6_formal_v1/20260719T132257557607Z/report.md", "sha256": "ce03c415c19dac74d3c3d040419fffc2a39aa708eed398742e089b41529d7ba7"},
+    {"path": "results/tpch_q6_formal_v1/20260719T132257557607Z/summary.json", "sha256": "6e19ddfa3f5d85dd8430a4c4164b5a9da15d1864c4eef591948fb7065887f1a7"}
+  ],
+  "next_protocol_rule": "A separately frozen V2 may batch repeated executions inside each balanced block and compare block medians. V1 remains failed and cannot be replaced or called formal evidence."
+}

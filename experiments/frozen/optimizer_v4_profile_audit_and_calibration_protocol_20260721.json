@@ -1,0 +1,80 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v4_profile_audit_and_calibration_protocol_20260721",
+  "status": "PROFILE_AUDIT_PASS_CALIBRATION_PROTOCOL_FROZEN",
+  "profile_audit_commit": "d30ef3d",
+  "calibration_runner_commit": "0de01fa",
+  "profile_run_id": "20260721T100730786864Z",
+  "profile_findings": {
+    "family_count": 12,
+    "profile_count": 24,
+    "raw_plan_file_count": 72,
+    "stable_paired_family_count": 11,
+    "profile_direction_agreement_on_stable_count": 9,
+    "profile_direction_disagreement_on_stable_count": 2,
+    "profile_direction_disagreement_family_ids": [
+      "bts-jan-w192-target0.95",
+      "bts-jan-w384-target0.25"
+    ],
+    "operator_cpu_wall_ratio_median": 2.842798091612874,
+    "operator_cpu_wall_ratio_max": 3.59440112851746,
+    "operator_timings_are_additive_causal_costs": false,
+    "profile_direction_is_authoritative_label": false
+  },
+  "calibration_protocol": {
+    "non_overlapping_january_group_count": 4,
+    "family_count": 48,
+    "measured_candidate_execution_count": 1920,
+    "visible_progress_step_count": 2208,
+    "warmup_blocks_per_family": 2,
+    "measured_blocks_per_family": 20,
+    "grouped_cross_validation_unit": "complete_time_window",
+    "model_fitted_by_runner": false,
+    "february_to_december_accessed": false
+  },
+  "hard_constraints": [
+    "paired wall-clock direction remains the authoritative development label",
+    "profile timing may not become an inference feature",
+    "operator timings may not be summed as additive causal cost",
+    "complete time-window groups may not be split across cross-validation folds",
+    "unstable and tied families must remain visible",
+    "governance feasibility precedes cost ranking",
+    "February-December remain unopened until the complete V4 selector is frozen"
+  ],
+  "authorized_next_step": "Run the frozen expanded January calibration protocol exactly once, resuming only technical interruptions. Then audit paired stability before fitting any V4 model.",
+  "immutable_files": [
+    {
+      "path": "results/optimizer_v4_profiles_development/20260721T100730786864Z/summary.json",
+      "sha256": "eae8d3ebb6ac49f44a0cf481acc3c0e2f9897df40d8051fa4ae6b81584221c90"
+    },
+    {
+      "path": "results/optimizer_v4_profiles_development/20260721T100730786864Z/config.json",
+      "sha256": "7153c13162970475c0ba0e5e0e48b59e786111e28d9e3bd6e118036ee95602c6"
+    },
+    {
+      "path": "results/optimizer_v4_profiles_development/20260721T100730786864Z/environment.json",
+      "sha256": "f4405191bb3994b6d123f10ebf1191c09b1dcdbb035260529f3002fd9d60c671"
+    },
+    {
+      "path": "results/optimizer_v4_profiles_development/20260721T100730786864Z/v4_profile_analysis.json",
+      "sha256": "36eb3412c5f34afc26bc785a70a8faf9d8f070fe9d5a7ab0758b7ec8c5b39dc2"
+    },
+    {
+      "path": "results/real_optimizer_transfer_development/20260721T084854695495Z/paired_stability_audit.json",
+      "sha256": "81758bad2f100a98932c7a2f10076b82d16e1ddee20277c4368874d998d38c1d"
+    },
+    {
+      "path": "experiments/configs/optimizer_v4_calibration_development_v1.json",
+      "sha256": "9879cbcc8e93ebf0aa59eb0a7b15b549a1114222f223c4387e813e501c38d774"
+    },
+    {
+      "path": "src/trustaero/experiments/optimizer_v4_calibration.py",
+      "sha256": "c95abfbcbe4f1d67a174b427ff209e7bda1220de852da214dbf41ab55288aa17"
+    },
+    {
+      "path": "scripts/run_optimizer_v4_calibration.py",
+      "sha256": "bf268695da251dd33b431581894991086e2c824301fcdabdaf3f78e66bf6c584"
+    }
+  ],
+  "conclusion": "The real profiles support a non-additive pipeline-aware V4 design but do not supply authoritative labels. The expanded January paired protocol is frozen to collect sufficient grouped development labels without opening external months."
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "protocol_id": "tpch-query-coverage-v2-20260725",
+  "frozen_before_new_query_execution": true,
+  "goal": "Increase exact trusted-IR support from Q1/Q6 to Q1/Q3/Q6/Q10 without raw SQL escape hatches.",
+  "selection_rule": "Add the smallest independently checked relational feature that enables structurally different official queries; do not choose queries because of observed latency.",
+  "new_operator_fragment": {
+    "operator": "Limit",
+    "minimum_row_count": 1,
+    "maximum_row_count": 10000,
+    "semantic_rule": "Limit changes row cardinality but not schema or field capabilities; Top-K adapters must place it after explicit Sort."
+  },
+  "admitted_adapters": [
+    {
+      "query_id": "Q03",
+      "structure": "three-table Join, filters, computed aggregate, aggregate-alias ordering, Top-10",
+      "new_requirement": "bounded Limit"
+    },
+    {
+      "query_id": "Q10",
+      "structure": "four-table Join, temporal and categorical filters, computed aggregate, Top-20",
+      "new_requirement": "bounded Limit"
+    }
+  ],
+  "explicitly_not_admitted": [
+    {
+      "query_id": "Q05",
+      "reason": "Official semantics require a multi-predicate relationship that the single-key Join fragment cannot express without an unsafe approximation."
+    }
+  ],
+  "acceptance_gates": [
+    "strict plan parsing and graph validation pass",
+    "policy evaluation returns REWRITE with pinned snapshots and source lineage",
+    "every governed candidate exactly matches official ordered columns and rows",
+    "candidate DuckDB physical-plan fingerprints remain distinct",
+    "every candidate produces a checked source-lineage certificate",
+    "the run is from a clean committed source tree"
+  ],
+  "scientific_boundary": "This is a semantic-coverage protocol. It contains no latency, optimizer accuracy, speedup, or workload-wide support claim."
+}

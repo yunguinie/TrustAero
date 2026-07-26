@@ -1,0 +1,24 @@
+{
+  "protocol_name": "real_optimizer_transfer_development_v1",
+  "scientific_label": "january_development_transfer_gate_not_paper_holdout",
+  "results_dir": "results/real_optimizer_transfer_development",
+  "identifier_widths": [192, 384, 768, 1536],
+  "target_match_rates": [0.25, 0.70, 0.95],
+  "warmup_blocks": 2,
+  "measured_blocks": 20,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260722,
+  "tie_threshold_fraction": 0.03,
+  "require_clean_git": true,
+  "primary_model_path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/interaction_mask_cost_model.json",
+  "stability_models_path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/interaction_stability_models.json",
+  "frozen_model_record": "experiments/frozen/optimizer_v3_v3_development_positive.json",
+  "gate": {
+    "minimum_within_3_percent_rate": 0.75,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_regret_percent": 10.0,
+    "minimum_direct_model_coverage": 0.25
+  },
+  "scientific_boundary": "This January BTS run is a development-only mechanism-transfer gate. It uses real rows, timestamps, airport keys and frequency skew, plus deterministic controlled sensitive payload widths and dimension subsets. It is not an independent paper holdout and may not authorize statistical superiority. Frozen V3 parameters must not be changed from these results."
+}

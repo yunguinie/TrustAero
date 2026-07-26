@@ -1,0 +1,19 @@
+{
+  "record_id": "governed-pipeline-v2-semantic-retraction",
+  "recorded_at": "2026-07-24",
+  "status": "RETRACTED_CANDIDATE_SEMANTICS_MISMATCH",
+  "affected_admission_run": "results/governed_pipeline_hierarchical_admission_v2/20260724T063406628323Z",
+  "affected_cost_calibration": "results/governed_pipeline_cost_calibration_v1/calibration.json",
+  "physical_audit": {
+    "candidate_id": "query_first_raw_checkpoint",
+    "declared_order": "Query -> raw checkpoint -> Policy -> Mask -> Join",
+    "observed_duckdb_flow": "pipeline_checkpoint scan projected sensitive_value into HASH_JOIN; masked_value was produced by a projection above HASH_JOIN",
+    "violation": "Raw sensitive payload reached Join despite zero declared raw-Join exposure"
+  },
+  "disposition": [
+    "The V2 admission PASS no longer authorizes model training or a paper claim.",
+    "The failed V1 cost calibration is retained as a diagnostic negative result.",
+    "Policy-first versus join-first reversal signals are exploratory only until the corrected three-candidate experiment is rerun.",
+    "V3 inserts an explicit masked checkpoint before the query-first Join and uses new random seeds."
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-system-scalability-bts100-confirmation-v1-negative-20260724",
+  "status": "RETAINED_CONFIRMATION_PROTOCOL_FAILURE",
+  "measurement_summary": {
+    "path": "results/system_scalability_bts100_confirmation_v1/20260724T133338221272Z/summary.json",
+    "sha256": "b639f1065deb3ef29fbd68b39b4a97fc8b925a7207c2d6e088e6fefb8f896fbc"
+  },
+  "raw_measurements": {
+    "path": "results/system_scalability_bts100_confirmation_v1/20260724T133338221272Z/measurements.csv",
+    "sha256": "f1f884ab60a3d4e49ad8ff270a7b362274de0da635525d3295a06f193c5acb0c"
+  },
+  "evaluation": {
+    "path": "results/system_scalability_bts100_confirmation_evaluation_v1/20260724T133338221272Z/evaluation.json",
+    "sha256": "1f59fa34cd5ff57a268ec799d0b052beed1b50f85bad44b9be4da32ee1fdb905"
+  },
+  "observed": {
+    "median_complete_over_direct_ratio": 1.0367367842655186,
+    "paired_bootstrap_ci": [0.9332031816987545, 1.157944848047027],
+    "maximum_position_median_spread_fraction": 0.528994223395957,
+    "first_second_half_ratio_drift_fraction": 0.14745793786425365
+  },
+  "root_cause": [
+    "The schedule included all 24 permutations equally often.",
+    "Permutations were rotated in lexicographic order, clustering identical leading positions in time.",
+    "For the direct layer, position zero occurred in runs of six, confounding position with machine phase."
+  ],
+  "disposition": [
+    "The V1 confirmation is permanently retained and cannot authorize a paper claim.",
+    "The frozen 30% position-spread gate is unchanged.",
+    "V2 changes only temporal interleaving and does not change the workload, layers, or acceptance thresholds."
+  ]
+}

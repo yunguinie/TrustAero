@@ -1,0 +1,51 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_aware_carryover_balanced_failed_result_20260722",
+  "status": "FAIL_RETAINED_MODEL_GATE",
+  "run_id": "20260722T112956669678Z",
+  "commit_hash": "03ac32da33b7083ee7da18349e1fc32e7db86b5e",
+  "collection": {
+    "complete": true,
+    "unit_count": 54,
+    "measurement_count": 7128,
+    "profile_execution_count": 1188,
+    "position_balance_passed": true,
+    "direct_predecessor_balance_passed": true,
+    "order_balance_violation_count": 0
+  },
+  "execution_aware_model": {
+    "oracle_3pct_hit_rate": 0.7916666667,
+    "mean_regret_pct": 2.428,
+    "p95_regret_pct": 18.822,
+    "maximum_regret_pct": 59.977,
+    "gate_status": "FAIL"
+  },
+  "structure_fixed_baseline": {
+    "oracle_3pct_hit_rate": 0.912037037,
+    "mean_regret_pct": 1.178903615,
+    "p95_regret_pct": 5.851778612,
+    "maximum_regret_pct": 59.976931098,
+    "candidate_map": {
+      "column_pruning": "join_key_only_aggregate",
+      "mask_aggregate": "postjoin_raw_materialized_mask_aggregate",
+      "mask_output": "postjoin_mask_fused_output",
+      "mask_sorted_output": "postjoin_mask_fused_sorted_output"
+    },
+    "note": "This is a diagnostic reference computed after observing the development run, not independent holdout evidence."
+  },
+  "group_diagnosis": {
+    "column_pruning": {"oracle_3pct_hit_rate": 0.8704, "mean_regret_pct": 0.913},
+    "mask_aggregate": {"oracle_3pct_hit_rate": 1.0, "mean_regret_pct": 0.0},
+    "mask_output": {"oracle_3pct_hit_rate": 0.4074, "mean_regret_pct": 7.4867, "maximum_regret_pct": 59.9769},
+    "mask_sorted_output": {"oracle_3pct_hit_rate": 0.8889, "mean_regret_pct": 1.3119}
+  },
+  "interpretation": "The carryover-balanced measurement is valid, but one global nonnegative additive rate vector does not generalize across all four execution-shape families. Failure is concentrated in the three-way mask_output choice.",
+  "scientific_decision": "Do not tune weights or thresholds and reuse this matrix as fresh evaluation. Treat it as development evidence for a query-shape-aware model and require a newly frozen scenario matrix for subsequent validation.",
+  "artifact_hashes": {
+    "execution_aware_calibration.json": "8db0f26889c2328c22cf53ec7987e24e8fb987798c3564d34c965f87fa405d77",
+    "measurements.csv": "d7b4a994707c607c24139fdbcf191e0d6fd19af126cdce912deddc786d9b8792",
+    "summary.json": "51ad5ffbf0ecfe7087701fe0d246a8a702116ac4707f97e612ffe710d87cdc22",
+    "variant_summary.csv": "b880b848a5f7684a7b89c8bb7af6df668d4ad945451824a5fd10ea42ef3580c7"
+  },
+  "paper_performance_evidence": false
+}

@@ -1,0 +1,20 @@
+{
+  "results_dir": "results/system_scalability_500k_pilot_v1",
+  "workloads": [
+    {
+      "dataset": "bts",
+      "scales": [500000]
+    },
+    {
+      "dataset": "nyc_tlc",
+      "scales": [500000]
+    }
+  ],
+  "warmup_blocks": 1,
+  "measured_blocks": 3,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260725,
+  "require_clean_git": true,
+  "experiment_role": "system_scalability_governance_pilot"
+}

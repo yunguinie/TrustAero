@@ -1,0 +1,28 @@
+{
+  "results_dir": "results/tpch_multicandidate_scale_confirmation_v2",
+  "scale_factor": 10,
+  "prior_negative_path": "experiments/frozen/tpch_multicandidate_admission_v1_negative_20260725.json",
+  "prior_negative_sha256": "e23d46aeddf0dde17f360064843a9e92237ab3f1805022e42d9b92682cc52cd9",
+  "query_targets": {
+    "q03": [
+      "q03-orderdate-filter",
+      "q03-aggregate"
+    ],
+    "q10": [
+      "q10-order-customer-join",
+      "q10-aggregate"
+    ]
+  },
+  "warmup_rounds": 2,
+  "measured_rounds_per_permutation": 5,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 2026072503,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 5000,
+  "bootstrap_seed": 2026072504,
+  "maximum_paired_ratio_half_drift": 0.20,
+  "minimum_distinct_singleton_winners": 2,
+  "require_clean_git": true
+}

@@ -1,0 +1,71 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v5_hybrid_development_negative_20260722",
+  "status": "FAIL_V5_HYBRID_DEVELOPMENT_GATE_RETAIN",
+  "run_id": "20260722T025055321573Z",
+  "measurement_commit": "1fb03f4f12110f91502ced6c00b352320ff81381",
+  "completed_family_folds": 40,
+  "cross_validation_rows": 120,
+  "external_partition_accessed": false,
+  "v5_model_freeze_authorized": false,
+  "metrics": {
+    "v1": {
+      "within_tie_rate": 0.775,
+      "mean_regret_percent": 1.5463027347207954,
+      "p95_regret_percent": 9.559887083390661,
+      "max_regret_percent": 11.463621465547003
+    },
+    "v5_direct": {
+      "within_tie_rate": 0.775,
+      "mean_regret_percent": 1.7732208428483172,
+      "p95_regret_percent": 9.8068937360837,
+      "max_regret_percent": 13.150973892221508
+    },
+    "v5_guarded": {
+      "within_tie_rate": 0.825,
+      "mean_regret_percent": 1.524533144557861,
+      "p95_regret_percent": 7.569916245286734,
+      "max_regret_percent": 13.150973892221508,
+      "direct_coverage": 0.45
+    }
+  },
+  "passed_gates": [
+    "minimum_direct_coverage",
+    "minimum_within_tie_improvement_over_v1",
+    "maximum_p95_regret_percent"
+  ],
+  "failed_gates": [
+    "maximum_mean_regret_percent",
+    "maximum_max_regret_percent"
+  ],
+  "root_cause": "The mechanism-prior residual improves practical-tie coverage and P95 regret, but its ordinary squared-residual objective does not prioritize severe wrong-plan errors. The fixed early fallback protects some boundaries while causing the 13.15 percent worst-case regret. A diagnostic V1 fallback did not improve the aggregate result and is not an authorized replacement.",
+  "prohibited_fixes": [
+    "raise the frozen maximum-regret gate after observing 13.15 percent",
+    "remove the n50000-w2048-m1000 family",
+    "choose a fallback from this run and report it as predeclared",
+    "reuse the consumed external holdout for V5 tuning"
+  ],
+  "authorized_next_step": "Predeclare a V5.1 nested family-level development method whose inner objective explicitly prioritizes mean, P95, and maximum regret. Hyperparameter selection must occur inside each outer held-out family, and the external partition must remain untouched.",
+  "immutable_files": [
+    {
+      "path": "results/optimizer_v5_hybrid_development/20260722T025055321573Z/config.json",
+      "sha256": "b40fac7f407e9f2e68554c6ecee832140e9dc3376bd28ccd4ef23832e7c2e205"
+    },
+    {
+      "path": "results/optimizer_v5_hybrid_development/20260722T025055321573Z/environment.json",
+      "sha256": "7a3f6ada7e5c1bde52c5754e56248bf57735132da0842998dc0ec2d8c5c79b05"
+    },
+    {
+      "path": "results/optimizer_v5_hybrid_development/20260722T025055321573Z/cross_validation.csv",
+      "sha256": "c4b1e50387f1a0541f9cfca49476ed30013ef4bba5a1ac017a2882c5cfc40358"
+    },
+    {
+      "path": "results/optimizer_v5_hybrid_development/20260722T025055321573Z/summary.json",
+      "sha256": "b39525087874b774deab19f859f11028084d6d68b8bb07235f5329b6c1a7ad1d"
+    },
+    {
+      "path": "results/optimizer_v5_hybrid_development/20260722T025055321573Z/pipeline_v5_hybrid_model.json",
+      "sha256": "989940b03c91eebf98ce8be39e6a949aeac588b406fbf63cc461a670a8ae8990"
+    }
+  ]
+}

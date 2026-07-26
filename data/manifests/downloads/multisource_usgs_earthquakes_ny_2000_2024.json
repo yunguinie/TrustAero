@@ -1,0 +1,16 @@
+{
+  "artifact": {
+    "artifact_id": "multisource_usgs_earthquakes_ny_2000_2024",
+    "dataset_id": "multisource_case_study",
+    "expected_bytes": null,
+    "expected_sha256": null,
+    "relative_path": "raw/multisource/usgs/earthquakes_ny_2000_2024.csv",
+    "stage": "multisource_case_v1",
+    "url": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&starttime=2000-01-01&endtime=2025-01-01&minlatitude=40.4774&maxlatitude=45.0153&minlongitude=-79.7624&maxlongitude=-71.7517&orderby=time-asc"
+  },
+  "byte_size": 187607,
+  "local_path": "data/raw/multisource/usgs/earthquakes_ny_2000_2024.csv",
+  "retrieved_at_utc": "2026-07-25T01:14:15.374088+00:00",
+  "schema_version": 1,
+  "sha256": "40a7ab69a5f3107c4242470ca846f5270d5b375678f5581ec0324926077bec7b"
+}

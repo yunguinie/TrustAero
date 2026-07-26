@@ -16,16 +16,19 @@ User request
   -> obligation normalization and conflict detection
   -> deterministic safe rewrite
   -> ValidatedLogicalPlan
+  -> bounded physical-candidate generation
+  -> governance feasibility and dominance pruning
+  -> authorized cost ranking or conservative fallback
   -> ApprovedPhysicalPlan
+  -> controlled DuckDB execution and lineage capture
   -> GovernedExecutionCertificate
   -> CertificateVerification
 ```
 
 An everyday analogy: the agent writes a request form, TrustAero checks the form,
-adds mandatory safety conditions, freezes an approved work order, and then
-checks whether the execution log matches that work order. The current prototype
-does not yet run a real DBMS query; it verifies the structure and governance
-bindings around the planned execution.
+adds mandatory safety conditions, removes forbidden routes, selects an approved
+work order, executes the supported fragment through DuckDB, and checks whether
+the execution log matches that work order.
 
 ## Stage responsibilities
 
@@ -33,8 +36,9 @@ bindings around the planned execution.
 |---|---|---|---|
 | Agent proposal | `CandidatePlan` | JSON can be parsed as the bounded IR fragment | Agent output is trustworthy |
 | Logical validation | `ValidatedLogicalPlan` | operator graph, catalog references, typed expressions, policy decisions, inferred obligations, safe rewrites | physical execution is already implemented |
-| Physical specification | `ApprovedPhysicalPlan` | logical-plan ID/digest binding, snapshot binding, physical operator skeleton, lineage instrumentation carry-over, pending obligations | executable SQL or DuckDB operators exist |
-| Execution record | `GovernedExecutionCertificate` | certificate binds to the logical and physical plans, required digests/events/evidence are present | certificate can prove database bytes by itself |
+| Physical planning | `ApprovedPhysicalPlan` | candidate legality before cost, bounded materialization/placement strategies, planner-decision digest, logical-plan and snapshot binding | arbitrary SQL or unrestricted Join enumeration |
+| Controlled execution | DuckDB compiled query and lineage artifact | supported operators lower to SQL, results are materialized deterministically, selected candidates preserve result semantics | every DuckDB-internal operator output is independently recomputed |
+| Execution record | `GovernedExecutionCertificate` | certificate binds to logical/physical plans and planner choice; required digests/events/evidence are present | certificate can prove database bytes by itself |
 | Certificate verification | `CertificateVerification` | structural event coverage, physical DAG validity, dependency-respecting event order, lineage evidence consistency | a malicious or buggy DBMS could not lie |
 
 ## Trust boundary
@@ -96,12 +100,15 @@ violations, not legitimate parallelism.
 
 ## Current implementation boundary
 
-The current prototype is still IR-only around execution. It does not yet:
+The current prototype executes a bounded DuckDB fragment and is not a general
+SQL optimizer. It does not:
 
-- emit executable SQL;
-- invoke DuckDB or another DBMS;
-- recompute physical operator outputs;
-- cryptographically prove the result bytes;
+- support arbitrary SQL or all 22 TPC-H queries;
+- optimize arbitrary Join orders or every governance operator placement;
+- provide record-level lineage for Join, SpatialJoin, Aggregate, composite
+  keys, or multiple contributing sources;
+- recompute every physical operator output independently;
+- cryptographically prove result bytes;
 - defend against a malicious database engine.
 
 When those components are not independently recomputed, the verifier reports

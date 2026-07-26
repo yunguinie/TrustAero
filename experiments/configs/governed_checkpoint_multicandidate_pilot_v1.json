@@ -1,0 +1,28 @@
+{
+  "results_dir": "results/governed_checkpoint_multicandidate_pilot_v1",
+  "row_counts": [150000],
+  "identifier_widths": [128, 640],
+  "policy_selectivities": [0.25, 0.45],
+  "query_selectivities": [0.2, 0.35, 0.5],
+  "seeds": [13101, 13202, 13303],
+  "candidate_ids": [
+    "fused_governed_pipeline",
+    "policy_first_narrow_checkpoint",
+    "query_first_raw_checkpoint"
+  ],
+  "warmup_rounds_per_permutation": 1,
+  "measured_rounds_per_permutation": 5,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260724,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 20260724,
+  "minimum_conclusive_scenario_rate": 0.4,
+  "minimum_distinct_singleton_winners": 2,
+  "maximum_dominant_singleton_winner_fraction": 0.8,
+  "require_fused_singleton_winner": true,
+  "require_checkpoint_singleton_winner": true,
+  "require_clean_git": true
+}

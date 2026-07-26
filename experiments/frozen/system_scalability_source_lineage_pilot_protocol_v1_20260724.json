@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-system-scalability-source-lineage-pilot-v1-20260724",
+  "status": "FROZEN_NOT_EXECUTED",
+  "scientific_role": "integrity pilot; not publication performance evidence",
+  "measurement_config": {
+    "path": "experiments/configs/system_scalability_pilot_v1.json",
+    "sha256": "7c60fc5179e4547e646fd3632a8126c76194a712abb48ef6a16613a3a1136cda"
+  },
+  "data_binding": {
+    "month": "2024-01",
+    "manifest_path": "data/manifests/processed/real-data-2024-01.json",
+    "manifest_sha256": "3f822cff0f4d76b8a170c2ceaff88586c8b93c4cc212cd785e1dbeb5c723a716",
+    "datasets": [
+      "BTS Airline On-Time Performance",
+      "NYC TLC Yellow Taxi"
+    ],
+    "scale_rows": 100000
+  },
+  "semantic_bindings": {
+    "catalog": {
+      "path": "examples/real_data/catalog.json",
+      "sha256": "d1624ed88e6381d0bbd79bfdd613aef5c46d2f33de8854019c1f3b671661623b"
+    },
+    "policy": {
+      "path": "examples/real_data/policy.json",
+      "sha256": "0cdc724ec89c3abed107ad796411a0bfd4f5f904169fedf1deda0d99649a5683"
+    },
+    "plans": [
+      {
+        "path": "examples/real_data/plans/bts_governed_read.json",
+        "sha256": "738f7c1cbcf58319ee8f90189a0b68358034034f19183d48718377fab0fd193f"
+      },
+      {
+        "path": "examples/real_data/plans/nyc_governed_aggregate.json",
+        "sha256": "c9ed3fc8ae5f2b7d5be47a0cd9e7412ef31b4508cee932397c2843995eb12059"
+      }
+    ]
+  },
+  "measurement_layers": [
+    "direct_database_equivalent_sql",
+    "trustaero_without_lineage_or_certificate",
+    "trustaero_with_source_lineage",
+    "complete_trustaero_with_certificate"
+  ],
+  "lineage_boundary": [
+    "This pilot measures the implemented source-snapshot lineage fragment.",
+    "It does not claim record-level lineage or record-lineage overhead.",
+    "The lineageless layer is an explicit cost ablation with a pending lineage obligation, not a compliant completed execution."
+  ],
+  "timing_boundary": [
+    "All four layers execute identical compiled policy-compliant SQL.",
+    "EXPLAIN ANALYZE profiling is excluded from primary latency samples.",
+    "The complete layer may verify as PARTIAL because physical DBMS execution is trusted-executor evidence rather than a cryptographic proof.",
+    "A PASS only admits implementation of the formal runner; it is not a paper performance result."
+  ],
+  "acceptance_gates": [
+    "all four layer result digests agree in every paired block",
+    "both lineage-enabled layers have identical source-edge digests",
+    "every complete-layer certificate is PARTIAL with no diagnostics",
+    "balanced layer ordering is deterministic",
+    "all configured source artifacts and manifests pass SHA-256 verification",
+    "optimizer coefficients and support rules are not read, refit, or retuned"
+  ]
+}

@@ -52,6 +52,21 @@
         "function": {
           "$ref": "#/$defs/AggregateFunction"
         },
+        "input_expression": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NumericProductExpression"
+            },
+            {
+              "$ref": "#/$defs/NumericProductFormulaExpression"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Expression"
+        },
         "input_field": {
           "anyOf": [
             {
@@ -178,6 +193,7 @@
         "string",
         "integer",
         "float",
+        "decimal",
         "boolean",
         "datetime"
       ],
@@ -444,6 +460,42 @@
       "title": "Join",
       "type": "object"
     },
+    "Limit": {
+      "additionalProperties": false,
+      "description": "Return at most a reviewed number of rows from an ordered relation.\n\nThe upper bound keeps this operator inside a small, independently\nauditable fragment. Limit never establishes an order itself: benchmark\nadapters must place it after an explicit ``Sort`` for Top-K semantics.",
+      "properties": {
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "Limit",
+          "title": "Operator Type",
+          "type": "string"
+        },
+        "row_count": {
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Row Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "row_count"
+      ],
+      "title": "Limit",
+      "type": "object"
+    },
     "LineageCapture": {
       "additionalProperties": false,
       "properties": {
@@ -653,6 +705,103 @@
       "title": "MinGroupSize",
       "type": "object"
     },
+    "NumericAffineExpression": {
+      "additionalProperties": false,
+      "description": "Add or subtract one raw numeric field from an exact decimal constant.\n\nThis bounded shape is sufficient for benchmark formulas such as\n``1 - discount`` and ``1 + tax``. It deliberately forbids nesting,\ndivision and arbitrary functions, keeping the accepted arithmetic small\nenough to type-check and compile independently.",
+      "properties": {
+        "constant": {
+          "$ref": "#/$defs/LiteralExpression"
+        },
+        "expression_type": {
+          "const": "numeric_affine",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "field": {
+          "$ref": "#/$defs/FieldExpression"
+        },
+        "operator": {
+          "enum": [
+            "add",
+            "subtract"
+          ],
+          "title": "Operator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expression_type",
+        "constant",
+        "operator",
+        "field"
+      ],
+      "title": "NumericAffineExpression",
+      "type": "object"
+    },
+    "NumericProductExpression": {
+      "additionalProperties": false,
+      "description": "Multiply two raw numeric fields inside one aggregate input.\n\nThis deliberately small expression exists for TPC-H Q6 and similarly\nshaped database workloads.  It is *not* a general SQL-expression escape\nhatch: constants, division, nesting and arbitrary functions remain outside\nthe reviewed fragment and therefore fail closed.",
+      "properties": {
+        "expression_type": {
+          "const": "numeric_product",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "left": {
+          "$ref": "#/$defs/FieldExpression"
+        },
+        "right": {
+          "$ref": "#/$defs/FieldExpression"
+        }
+      },
+      "required": [
+        "expression_type",
+        "left",
+        "right"
+      ],
+      "title": "NumericProductExpression",
+      "type": "object"
+    },
+    "NumericProductFormulaExpression": {
+      "additionalProperties": false,
+      "description": "Multiply two or three reviewed numeric factors inside an aggregate.",
+      "properties": {
+        "expression_type": {
+          "const": "numeric_product_formula",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "factors": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "field": "#/$defs/FieldExpression",
+                "numeric_affine": "#/$defs/NumericAffineExpression"
+              },
+              "propertyName": "expression_type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/FieldExpression"
+              },
+              {
+                "$ref": "#/$defs/NumericAffineExpression"
+              }
+            ]
+          },
+          "maxItems": 3,
+          "minItems": 2,
+          "title": "Factors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "expression_type",
+        "factors"
+      ],
+      "title": "NumericProductFormulaExpression",
+      "type": "object"
+    },
     "ObligationType": {
       "enum": [
         "VERSION_PIN",
@@ -792,6 +941,7 @@
         "DUPLICATE_OUTPUT_FIELD",
         "JOIN_KEY_TYPE_MISMATCH",
         "SPATIAL_FIELD_REQUIRED",
+        "SPATIAL_DESCRIPTOR_NOT_FOUND",
         "SPATIAL_CRS_MISMATCH",
         "TEMPORAL_FIELD_TYPE_INVALID",
         "INVALID_TIME_RANGE",
@@ -820,6 +970,8 @@
         "CERTIFICATE_PHYSICAL_PLAN_CYCLIC",
         "CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN",
         "CERTIFICATE_PHYSICAL_OPERATOR_DUPLICATE",
+        "CERTIFICATE_PLANNER_DECISION_MISMATCH",
+        "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH",
         "OBLIGATION_NOT_ENFORCED",
         "OBLIGATION_PARAMETER_INVALID",
         "OBLIGATION_NORMALIZATION_FAILED",
@@ -980,6 +1132,69 @@
       "title": "SnapshotBindings",
       "type": "object"
     },
+    "Sort": {
+      "additionalProperties": false,
+      "description": "Order rows by an explicit, non-empty sequence of validated fields.",
+      "properties": {
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "keys": {
+          "items": {
+            "$ref": "#/$defs/SortKey"
+          },
+          "minItems": 1,
+          "title": "Keys",
+          "type": "array"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "Sort",
+          "title": "Operator Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "keys"
+      ],
+      "title": "Sort",
+      "type": "object"
+    },
+    "SortKey": {
+      "additionalProperties": false,
+      "description": "One deterministic sort key over a field in the current relation.",
+      "properties": {
+        "direction": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "field": {
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field"
+      ],
+      "title": "SortKey",
+      "type": "object"
+    },
     "SpatialFilter": {
       "additionalProperties": false,
       "description": "Select records inside a query area.\n\n``radius_km`` controls which records belong to the result. Governance\nrewrites must not reinterpret it as an output-privacy parameter.",
@@ -1037,6 +1252,7 @@
     },
     "SpatialJoin": {
       "additionalProperties": false,
+      "description": "Join two point relations using explicitly selected coordinate pairs.\n\nA relation may contain several spatial descriptors after an earlier join.\nExplicit latitude/longitude pairs keep every later SpatialJoin\nunambiguous.  The current DuckDB execution fragment implements only\n``distance_within`` over EPSG:4326 points.",
       "properties": {
         "distance_km": {
           "anyOf": [
@@ -1059,6 +1275,20 @@
           "title": "Inputs",
           "type": "array"
         },
+        "left_fields": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Left Fields",
+          "type": "array"
+        },
         "operator_id": {
           "title": "Operator Id",
           "type": "string"
@@ -1076,12 +1306,28 @@
           ],
           "title": "Relation",
           "type": "string"
+        },
+        "right_fields": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Right Fields",
+          "type": "array"
         }
       },
       "required": [
         "operator_id",
         "operator_type",
-        "relation"
+        "relation",
+        "left_fields",
+        "right_fields"
       ],
       "title": "SpatialJoin",
       "type": "object"
@@ -1226,11 +1472,13 @@
                 "Filter": "#/$defs/Filter",
                 "GeneralizeLocation": "#/$defs/GeneralizeLocation",
                 "Join": "#/$defs/Join",
+                "Limit": "#/$defs/Limit",
                 "LineageCapture": "#/$defs/LineageCapture",
                 "Mask": "#/$defs/Mask",
                 "MinGroupSize": "#/$defs/MinGroupSize",
                 "Project": "#/$defs/Project",
                 "ScanSource": "#/$defs/ScanSource",
+                "Sort": "#/$defs/Sort",
                 "SpatialFilter": "#/$defs/SpatialFilter",
                 "SpatialJoin": "#/$defs/SpatialJoin",
                 "TemporalFilter": "#/$defs/TemporalFilter"
@@ -1258,6 +1506,12 @@
               },
               {
                 "$ref": "#/$defs/Project"
+              },
+              {
+                "$ref": "#/$defs/Sort"
+              },
+              {
+                "$ref": "#/$defs/Limit"
               },
               {
                 "$ref": "#/$defs/Aggregate"

@@ -1,0 +1,26 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_aware_candidate_calibration_failed_result_20260722",
+  "status": "FAIL_RETAINED_MECHANISM_DEPLOYMENT_SCOPE_CONFLATION",
+  "input_run": "results/execution_aware_calibration_v2/20260722T112956669678Z",
+  "metrics": {
+    "oracle_3pct_hit_rate": 0.894,
+    "mean_regret_pct": 2.817,
+    "p95_regret_pct": 16.487,
+    "maximum_regret_pct": 80.484,
+    "guard_trigger_rate": 0.139,
+    "model_override_rate": 0.056
+  },
+  "override_audit": {
+    "override_count": 12,
+    "column_pruning_overrides": 6,
+    "column_pruning_oracle_hits": 0,
+    "column_pruning_regret_range_pct": [47.321, 80.484],
+    "mask_output_overrides": 6,
+    "mask_output_oracle_hits": 5,
+    "mask_output_max_regret_pct": 4.822
+  },
+  "code_inspection_finding": "The column_pruning family consists of EA-0 mechanism controls. raw_materialized_aggregate intentionally consumes length(sensitive_value) to force sensitive-column retention and therefore cannot be rejected by a generic no-consumer rule.",
+  "scientific_decision": "Preserve the failure and explicitly separate mechanism-only variants from deployable optimizer candidates. Reanalysis remains development-only and writes a new artifact rather than overwriting this result.",
+  "paper_performance_evidence": false
+}

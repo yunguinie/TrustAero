@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-system-scalability-full-month-formal-v1-20260724",
+  "status": "FROZEN_NOT_EXECUTED",
+  "scientific_role": "publication-facing full-month source-lineage overhead and resource evidence",
+  "pilot_admission": {
+    "path": "experiments/frozen/system_scalability_full_month_pilot_positive_20260724.json",
+    "sha256": "275811432fcece1ba147ab082e3a0151f743d48bc319a5252557b8ab80da1245"
+  },
+  "measurement_config": {
+    "path": "experiments/configs/system_scalability_full_month_formal_v1.json",
+    "sha256": "9a4950ba620bd5bc48f22e5f46255c852f0930ad10e783233b0b0c8c80322d56"
+  },
+  "evaluation_config": {
+    "path": "experiments/configs/system_scalability_full_month_formal_evaluation_v1.json",
+    "sha256": "20c432e259abe77340b5a124ae1a8445ea27dfb5cbdb528c58c5b2959946ee42"
+  },
+  "matrix": {
+    "units": [
+      {
+        "unit_id": "bts-full_month",
+        "input_rows": 547271
+      },
+      {
+        "unit_id": "nyc_tlc-full_month",
+        "input_rows": 2964624
+      }
+    ],
+    "warmup_blocks_per_unit": 8,
+    "measured_blocks_per_unit": 48,
+    "layers_per_block": 4,
+    "formal_measurement_count": 384
+  },
+  "ordering": {
+    "design": "two complete deterministically interleaved cycles of all 24 layer permutations",
+    "position_count_per_layer_position_per_unit": 12,
+    "maximum_identical_position_run": 3
+  },
+  "frozen_gates": {
+    "confidence_interval": "95% paired bootstrap median complete/direct ratio",
+    "bootstrap_repetitions": 5000,
+    "maximum_position_count_imbalance": 1,
+    "maximum_position_median_spread_fraction": 0.3,
+    "maximum_first_second_half_ratio_drift_fraction": 0.2,
+    "maximum_spilled_unit_count": 0,
+    "required_certificate_status": "PARTIAL"
+  },
+  "decision_policy": [
+    "Only a PASS from the separately committed evaluator authorizes full-month performance evidence.",
+    "The thresholds cannot be changed after observing measurements.",
+    "Interrupted or failed runs are retained and may be resumed without recomputing completed units.",
+    "The evidence covers source-snapshot lineage, not record-level lineage.",
+    "The frozen optimizer is outside the timing loop and is not reopened."
+  ]
+}

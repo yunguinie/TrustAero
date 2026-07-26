@@ -1,0 +1,36 @@
+{
+  "protocol_id": "governed-pipeline-cost-calibration-v1",
+  "frozen_at": "2026-07-24",
+  "config_path": "experiments/configs/governed_pipeline_cost_calibration_v1.json",
+  "source_admission_record": "experiments/frozen/governed_pipeline_hierarchical_admission_v2_positive_20260724.json",
+  "model": "nonnegative additive latency over candidate-specific physical work",
+  "features": [
+    "checkpoint payload bytes and rows",
+    "Join probe rows",
+    "Mask input bytes and rows",
+    "policy-hash input bytes and rows",
+    "pipeline-breaker count",
+    "record-lineage rows and edges"
+  ],
+  "validation": "leave-one-complete-scenario-family-out; all seeds remain in the same fold",
+  "baselines": [
+    "fixed policy-first",
+    "fixed query-first",
+    "fixed join-first",
+    "3%-equivalent legal Oracle"
+  ],
+  "predeclared_gates": {
+    "minimum_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_regret_percent": 15.0,
+    "minimum_selected_candidate_count": 2,
+    "must_not_be_worse_than_best_fixed_mean_and_p95": true
+  },
+  "scientific_boundary": [
+    "This is grouped development validation, not an independent holdout.",
+    "The model ranks only candidates already admitted by hard governance checks.",
+    "A failed gate is retained and does not authorize another threshold search.",
+    "A pass authorizes one separately frozen holdout, not a paper performance claim."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "status": "ABORTED_RUNNER_SERIALIZATION_FAILURE",
+  "run_id": "20260726T071837256064Z",
+  "completed_cells_before_abort": 36,
+  "failed_cell": "qwen3.7-max-2026-06-08--nonthinking--RA-017",
+  "cause": "Pydantic validation context contained a ValueError that runner V1 attempted to serialize after receiving the provider response.",
+  "evidence_policy": "The run is retained but excluded from paper metrics because the failed cell response was not persisted and a cell-only retry would violate the frozen no-content-retry rule.",
+  "corrective_actions": [
+    "Remove non-JSON exception context from public validator diagnostics.",
+    "Persist every provider response atomically before processing untrusted content.",
+    "Start a complete new 120-cell run after committing the fix."
+  ],
+  "cherry_picked_outputs": false
+}

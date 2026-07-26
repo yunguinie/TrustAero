@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch_sf10_q1_carryover_method_development_20260720",
+  "status": "DIAGNOSTIC_ONLY",
+  "source_commit": "9937e707449dd232e86b27496591aac8a429c7e1",
+  "run_id": "20260720T065522179359Z",
+  "paper_performance_evidence": false,
+  "formal_paper_experiment_authorized": false,
+  "observed": {
+    "filter_materialization_to_fused_carryover_ratio": 0.8634655248877914,
+    "filter_materialization_to_fused_carryover_ci95": [
+      0.746661995379167,
+      0.9356150016518999
+    ],
+    "filter_materialization_to_aggregate_carryover_ratio": 0.8338132375036501,
+    "filter_materialization_to_aggregate_carryover_ci95": [
+      0.8287347807810326,
+      0.84997293815648
+    ],
+    "pollution_safe_filter_over_fused_ratio": 9.459468075807958,
+    "pollution_safe_filter_over_fused_ci95": [
+      8.139495476544111,
+      10.424899910524712
+    ],
+    "pollution_safe_aggregate_over_fused_ratio": 1.0036710715328316,
+    "pollution_safe_aggregate_over_fused_ci95": [
+      0.9208308686283577,
+      1.0120399705624545
+    ]
+  },
+  "immutable_files": [
+    {
+      "path": "results/tpch_sf10_q1_formal_v1/20260720T065522179359Z/measurements.csv",
+      "sha256": "5c61d7d1e551fdb57c8d1ecd3b1fb07bbd7fe5d71648b9f6840e8c14c0aaf462"
+    },
+    {
+      "path": "experiments/configs/tpch_sf10_q1_paired_ci_v2.json",
+      "sha256": "eff91e544155463ac14afe58b829dc48ed701c5235eaeb6042f60d840658fe96"
+    },
+    {
+      "path": "experiments/configs/tpch_sf10_q6_paired_ci_v2.json",
+      "sha256": "bee64ffb32166a190c315ed128db846b6617aa55942dcb793d433228fb277c0e"
+    }
+  ],
+  "scientific_boundary": "The carryover finding motivated the V2 method after inspecting Q1 V1. It is transparent method-development evidence only and cannot retroactively authorize the V1 run. Only a new run created after the V2 configs and implementation are committed may produce V2-authorized claims."
+}

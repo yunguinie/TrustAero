@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-system-scalability-full-month-pilot-v1-20260724",
+  "status": "FROZEN_NOT_EXECUTED",
+  "scientific_role": "full-month runner integrity and resource-feasibility pilot",
+  "predecessor_evidence": {
+    "path": "experiments/frozen/system_scalability_formal_source_lineage_positive_20260724.json",
+    "sha256": "e4ada10fe39038cc9a0c74a8b156a7a42953f9b18dd6c6238bee3be675a57bde"
+  },
+  "measurement_config": {
+    "path": "experiments/configs/system_scalability_full_month_pilot_v1.json",
+    "sha256": "991c7e7242f682fdf4aaf36dfd7da5361ed64b455a4114ee29c4c33a5b6ac76c"
+  },
+  "data_manifest": {
+    "path": "data/manifests/processed/real-data-2024-01.json",
+    "sha256": "3f822cff0f4d76b8a170c2ceaff88586c8b93c4cc212cd785e1dbeb5c723a716"
+  },
+  "matrix": [
+    {
+      "unit_id": "bts-full_month",
+      "input_rows": 547271
+    },
+    {
+      "unit_id": "nyc_tlc-full_month",
+      "input_rows": 2964624
+    }
+  ],
+  "timing": {
+    "warmup_blocks_per_unit": 2,
+    "measured_blocks_per_unit": 3,
+    "layers_per_block": 4,
+    "measured_query_count": 24,
+    "cache_regime": "warm cache within one DuckDB connection per unit"
+  },
+  "admission_gates": [
+    "all four layers produce one relational result digest per unit",
+    "both lineage-enabled layers produce one source-edge digest per unit",
+    "complete-layer certificates remain PARTIAL without diagnostics",
+    "input row counts and artifact hashes match the frozen manifest",
+    "DuckDB profiling records peak buffer memory and temporary spill bytes",
+    "the measurement uses a clean committed Git snapshot"
+  ],
+  "decision_policy": [
+    "A PASS admits a separately frozen formal full-month timing protocol.",
+    "This three-block pilot cannot itself authorize publication latency claims.",
+    "Any spill is retained and used to size the formal memory protocol; it is not silently deleted.",
+    "The evidence is source-snapshot lineage only, not record-level lineage.",
+    "The frozen optimizer is not refitted, rerun, or reopened."
+  ]
+}

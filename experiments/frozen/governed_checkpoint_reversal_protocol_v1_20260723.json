@@ -1,0 +1,40 @@
+{
+  "frozen_at": "2026-07-23",
+  "status": "FROZEN_BEFORE_EA1_EXECUTION",
+  "purpose": "Discover whether two legal placements of a required pre-Join governance checkpoint have stable bidirectional performance reversals.",
+  "governed_query": "Apply a cheap query predicate and a sensitive-value policy predicate, retain only permitted matching rows, and aggregate after a cross-domain Join.",
+  "candidate_semantics": {
+    "policy_first_narrow_checkpoint": "Evaluate policy on all rows, drop the sensitive value, then materialize a narrow checkpoint before applying the query predicate and Join.",
+    "query_first_raw_checkpoint": "Apply the cheap query predicate first, materialize remaining raw sensitive values, then evaluate policy before Join. This candidate is available only when raw checkpoint materialization is permitted."
+  },
+  "governance_rule": "Candidate feasibility is evaluated before cost. A no-raw-materialization policy rejects query_first_raw_checkpoint regardless of latency.",
+  "matrix": {
+    "row_counts": [150000],
+    "identifier_widths": [128, 1024],
+    "policy_selectivities": [0.1, 0.5],
+    "query_selectivities": [0.05, 0.5],
+    "seeds": [5101, 5202, 5303],
+    "scenario_count": 8,
+    "unit_count": 24,
+    "paired_blocks_per_unit": 30,
+    "formal_query_execution_count": 1440
+  },
+  "inference": {
+    "complete_permutations": true,
+    "confidence_level": 0.95,
+    "bootstrap_draws": 10000,
+    "practical_tie_fraction": 0.03,
+    "seed_is_resampling_cluster": true
+  },
+  "predeclared_outcomes": {
+    "stable_bidirectional_reversal": "At least one scenario confidence-authorizes policy-first and at least one confidence-authorizes query-first.",
+    "one_stable_direction": "Only one candidate ever receives confidence-authorized superiority; do not claim adaptive value.",
+    "no_stable_direction": "No candidate clears the confidence boundary; redesign timing or candidate semantics before model fitting."
+  },
+  "boundaries": [
+    "No optimizer is trained in EA-1.",
+    "No result is deleted as an outlier.",
+    "EA-1 is development discovery, not final holdout evidence.",
+    "Query templates and thresholds are frozen before execution."
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "frozen_at_utc": "2026-07-23T07:25:00+00:00",
+  "status": "FROZEN_BEFORE_V4_VALIDATION_TIMING_RESULTS",
+  "scientific_role": "optimizer_validation_not_final_holdout",
+  "frozen_model": "experiments/frozen/models/real_governed_checkpoint_optimizer_v4_20260723.json",
+  "frozen_query_threshold": 0.35,
+  "validation_sources": {
+    "bts": ["2024-03", "2024-11"],
+    "nyc_tlc": ["2024-04", "2024-10"]
+  },
+  "reserved_final_holdout_sources": {
+    "bts": ["2024-05", "2024-12"],
+    "nyc_tlc": ["2024-06", "2024-12"]
+  },
+  "factorial": {
+    "identifier_widths": [256, 768],
+    "policy_selectivities": [0.20, 0.40],
+    "query_selectivities": [0.25, 0.35, 0.45],
+    "complete_cartesian_product": true,
+    "profile_count_per_source": 12,
+    "seeds": [11101, 11202, 11303],
+    "row_count_per_unit": 150000
+  },
+  "strong_baselines": [
+    "fixed policy-first",
+    "fixed query-first",
+    "frozen development query-selectivity threshold 0.35"
+  ],
+  "validation_gates": {
+    "minimum_analytic_confidence_family_hit_rate": 0.85,
+    "maximum_analytic_mean_regret_percent": 3.0,
+    "maximum_analytic_p95_regret_percent": 10.0,
+    "maximum_analytic_regret_percent": 25.0,
+    "analytic_family_hit_no_worse_than_threshold": true,
+    "analytic_mean_regret_no_worse_than_threshold": true,
+    "seed_consistency_required": true,
+    "out_of_support_fallback_rate_maximum": 0.0,
+    "illegal_selection_count": 0
+  },
+  "failure_policy": "Retain a failed validation and do not relabel validation months as final holdout.",
+  "scientific_boundary": "Passing authorizes freezing a final optimizer for untouched-month holdout. It is not itself the final paper performance claim."
+}

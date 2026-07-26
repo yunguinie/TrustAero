@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-system-scalability-governance-v1-20260724",
+  "status": "FROZEN_NOT_EXECUTED",
+  "frozen_at": "2026-07-24",
+  "purpose": "Measure system scalability and decompose governance overhead without reopening the frozen optimizer holdout.",
+  "research_questions": [
+    "How does governed execution scale with input cardinality on real and standard workloads?",
+    "How much time is attributable to planning, policy validation, database execution, record-lineage capture, and certificate verification?",
+    "Do memory use or DuckDB spill behavior change as scale increases?"
+  ],
+  "workloads": [
+    {
+      "dataset": "BTS Airline On-Time Performance 2024",
+      "scales": [
+        100000,
+        500000,
+        "full_month"
+      ],
+      "role": "domain-real"
+    },
+    {
+      "dataset": "NYC TLC Yellow Taxi 2024",
+      "scales": [
+        100000,
+        500000,
+        1000000,
+        "full_month"
+      ],
+      "role": "independent-real"
+    },
+    {
+      "dataset": "TPC-H",
+      "scales": [
+        "SF1",
+        "SF10"
+      ],
+      "queries": [
+        "Q1",
+        "Q6"
+      ],
+      "role": "standard-benchmark"
+    }
+  ],
+  "measurement_layers": [
+    "equivalent_ungoverned_database_query",
+    "governed_database_query_without_lineage_or_certificate",
+    "governed_query_with_record_lineage",
+    "complete_trustaero_path_with_certificate_verification"
+  ],
+  "required_metrics": [
+    "planner_latency_ms",
+    "policy_validation_latency_ms",
+    "database_execution_latency_ms",
+    "lineage_capture_latency_ms",
+    "certificate_verification_latency_ms",
+    "end_to_end_latency_ms",
+    "peak_memory_bytes",
+    "temporary_spill_bytes",
+    "input_rows",
+    "output_rows",
+    "intermediate_rows",
+    "result_digest",
+    "lineage_digest"
+  ],
+  "timing_protocol": {
+    "cache_regime": "warm-cache primary; cold-cache is optional and reported separately",
+    "warmup_runs": 5,
+    "measured_blocks": 30,
+    "candidate_order": "balanced deterministic rotations",
+    "primary_statistics": [
+      "median",
+      "P95",
+      "paired bootstrap 95% confidence interval"
+    ],
+    "tie_threshold_percent": 3.0,
+    "machine_exclusivity_required": true,
+    "resume_required": true,
+    "visible_progress_and_eta_required": true
+  },
+  "integrity_gates": [
+    "clean committed Git snapshot",
+    "frozen dataset manifests and SHA-256",
+    "identical result digests across equivalent layers",
+    "identical record-lineage digests where lineage is required",
+    "fixed DuckDB version, threads, memory limit, and temporary directory",
+    "no mixed cache regimes",
+    "all failed, interrupted, or spilled runs retained and labeled"
+  ],
+  "optimizer_boundary": [
+    "This experiment does not refit or retune the optimizer.",
+    "The frozen optimizer is evaluated only inside its declared support region.",
+    "Out-of-support large-scale runs measure system overhead using the policy-authorized fixed plan and are not counted as optimizer-selection evidence.",
+    "Illegal candidates are excluded before any cost comparison."
+  ],
+  "execution_status": {
+    "runner_implemented": false,
+    "pilot_completed": false,
+    "formal_measurement_completed": false
+  }
+}

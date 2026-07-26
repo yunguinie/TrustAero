@@ -1,0 +1,12 @@
+{
+  "results_dir": "results/record_lineage_formal_v3",
+  "row_counts": [100000, 500000],
+  "warmup_rounds": 3,
+  "repetitions_per_permutation": 15,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260803,
+  "require_clean_git": true,
+  "experiment_role": "record_lineage_scalability_formal",
+  "artifact_encoding": "duckdb_digest_v3"
+}

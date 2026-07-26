@@ -1,0 +1,13 @@
+workload_id,domain,query_family,evidence_scope,candidate_id,is_reference,is_in_oracle_set,median_ms,p95_ms,pooled_median_over_reference_ratio,pooled_median_regret_vs_oracle_percent,peak_buffer_memory_mib,spill_bytes
+tpch-q01-sf1,standard_benchmark,filter_group_aggregate_sort,standard_method,fused,True,True,740.1365,987.0287,1.0,0.0,121.12109375,0
+tpch-q01-sf1,standard_benchmark,filter_group_aggregate_sort,standard_method,materialize-after-q01-aggregate,False,True,754.0422,975.2399,1.0187880208583147,1.8788020858314658,996.7890625,0
+tpch-q01-sf1,standard_benchmark,filter_group_aggregate_sort,standard_method,materialize-after-q01-filter,False,False,1639.8779,2045.2551,2.215642519994623,121.56425199946229,996.7890625,0
+tpch-q06-sf1,standard_benchmark,filter_aggregate,standard_method,fused,True,True,152.24505,196.6222,1.0,0.0,53.484375,0
+tpch-q06-sf1,standard_benchmark,filter_aggregate,standard_method,materialize-after-q06-predicate,False,False,168.3948,223.545,1.1060773404455515,10.607734044555151,116.4375,0
+tpch-q06-sf1,standard_benchmark,filter_aggregate,standard_method,materialize-after-q06-time,False,False,683.6578,893.1066,4.490509215242137,349.0509215242137,116.4375,0
+bts-2024-01-governed,real_air_transport,filter_mask_aggregate,inspected_development_partition,fused,True,False,731.8711000000001,965.877,1.0,14.692503352447428,11.766742706298828,0
+bts-2024-01-governed,real_air_transport,filter_mask_aggregate,inspected_development_partition,materialize-after-bts-filter,False,False,781.0155,1013.0793,1.0671489829288243,22.393988302125045,21.923337936401367,0
+bts-2024-01-governed,real_air_transport,filter_mask_aggregate,inspected_development_partition,materialize-after-gov-002-mask,False,True,638.1159,866.2816,0.871896567578635,0.0,28.335081100463867,0
+nyc-tlc-2024-01-governed,real_urban_mobility,filter_join_aggregate,inspected_development_partition,fused,True,True,342.01345000000003,433.8938,1.0,0.0,55.77073669433594,0
+nyc-tlc-2024-01-governed,real_urban_mobility,filter_join_aggregate,inspected_development_partition,materialize-after-nyc-filter,False,False,404.6185,565.9731,1.1830485029170634,18.304850291706344,67.61892700195312,0
+nyc-tlc-2024-01-governed,real_urban_mobility,filter_join_aggregate,inspected_development_partition,materialize-after-nyc-zone-join,False,False,460.89459999999997,584.5798,1.3475920318338355,34.75920318338355,113.66165161132812,0

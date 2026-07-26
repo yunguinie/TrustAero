@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "protocol_id": "lineage-checkpoint-cost-model-v1-20260726",
+  "status": "FROZEN_BEFORE_MODEL_FIT",
+  "admission_record": {
+    "path": "experiments/frozen/lineage_checkpoint_admission_v1_positive_20260726.json",
+    "sha256": "af427628cbd0a3105c1d035c88f20ffabe60a352e358fb2c5a00f37d8e94c8eb"
+  },
+  "model_family": "nonnegative analytic candidate-cost model",
+  "allowed_features": [
+    "source.scan_rows",
+    "lineage.hash_rows",
+    "lineage.output_edges",
+    "checkpoint.rows",
+    "checkpoint.payload_bytes",
+    "checkpoint.scan_rows",
+    "pipeline_breaker.count"
+  ],
+  "forbidden_shortcuts": [
+    "scenario_id",
+    "seed",
+    "observed winner label",
+    "hard-coded query-count winner threshold",
+    "post-hoc candidate-specific correction keyed by a frozen scenario"
+  ],
+  "development_validation": {
+    "split": "leave-one-complete-scenario-out",
+    "seed_rule": "All seeds and paired rounds from one scenario stay in the same fold.",
+    "practical_oracle_set_fraction": 0.03,
+    "minimum_oracle_set_hit_rate": 0.833,
+    "must_beat_best_fixed_mean_regret": true,
+    "must_beat_best_fixed_p95_regret": true,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 10.0,
+    "maximum_illegal_selection_rate": 0.0
+  },
+  "required_baselines": [
+    "fixed late_per_query_capture",
+    "fixed policy_lineage_checkpoint",
+    "fixed snapshot_lineage_checkpoint",
+    "simple query-count threshold",
+    "legal Oracle"
+  ],
+  "uncertainty_rule": "If the two lowest predicted costs differ by less than the frozen practical-equivalence margin, select the conservative legal default and report a fallback.",
+  "independent_holdout_rule": "Only after development gates pass may a model be frozen. The holdout must use unseen row counts, batch sizes, policy combinations and seeds, and may be run once.",
+  "failure_rule": "If grouped development fails, retain the negative model result and proceed to paper assembly without changing the admitted workload labels."
+}

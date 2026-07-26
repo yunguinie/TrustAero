@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-system-scalability-formal-partial-negative-20260724",
+  "status": "RETAINED_PARTIAL_FAILURE",
+  "measurement_run": {
+    "path": "results/system_scalability_formal_v1/20260724T131259307826Z/summary.json",
+    "sha256": "7d9ad615a824e1878ad6107afbbf1316528cd051e373c776bd795f8cbc8040a7"
+  },
+  "raw_measurements": {
+    "path": "results/system_scalability_formal_v1/20260724T131259307826Z/measurements.csv",
+    "sha256": "78bf6fe12e35ad520b02cee2ce80061568e739b438a609a38067cef296e8d99a"
+  },
+  "evaluation": {
+    "path": "results/system_scalability_formal_evaluation_v1/20260724T131259307826Z/evaluation.json",
+    "sha256": "74b76f3ea23e5c1cca38853b426f103a48f4b899c2c7d023302e72cc4f070834"
+  },
+  "passed_units": [
+    "bts-500000",
+    "nyc_tlc-100000",
+    "nyc_tlc-500000"
+  ],
+  "inconclusive_units": [
+    "bts-100000"
+  ],
+  "failure_reason": {
+    "gate": "position_stability",
+    "layer": "direct_database_equivalent_sql",
+    "observed_position_median_spread_fraction": 0.42248950795947926,
+    "frozen_maximum_position_median_spread_fraction": 0.3,
+    "first_second_half_ratio_drift_fraction": 0.011908503718230046
+  },
+  "interpretation": [
+    "The 480 measurements passed semantic, lineage, certificate, and spill-integrity checks.",
+    "Three of four dataset-scale units passed every frozen statistical gate.",
+    "BTS-100K is retained as inconclusive and is not converted to a pass by changing a threshold.",
+    "This record does not reopen or weaken the independent optimizer holdout result."
+  ]
+}

@@ -11,6 +11,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import datetime
+from decimal import Decimal
 from typing import Any
 
 from trustaero.catalog.models import Catalog
@@ -22,19 +23,26 @@ from trustaero.ir.enums import (
 )
 from trustaero.ir.models import (
     Aggregate,
+    ApprovedPhysicalPlan,
     BooleanExpression,
     CandidatePlan,
     ComparisonExpression,
     Filter,
     GeneralizeLocation,
     Join,
+    Limit,
     LineageCapture,
     LiteralExpression,
     Mask,
+    NumericAffineExpression,
+    NumericProductExpression,
+    NumericProductFormulaExpression,
     Operator,
     Project,
     ScanSource,
+    Sort,
     SpatialFilter,
+    SpatialJoin,
     TemporalFilter,
     ValidatedLogicalPlan,
 )
@@ -73,6 +81,7 @@ class CompiledQuery:
     output_fields: tuple[str, ...]
     logical_plan_id: str
     logical_plan_digest: str
+    physical_plan_id: str | None = None
 
 
 _COMPARISON_SQL = {
@@ -88,6 +97,9 @@ _DUCKDB_TYPES = {
     DataType.STRING: "VARCHAR",
     DataType.INTEGER: "BIGINT",
     DataType.FLOAT: "DOUBLE",
+    # Logical DECIMAL preserves exact base-10 comparison and arithmetic. Scale
+    # is carried by real values; this wide form is used only for typed NULL.
+    DataType.DECIMAL: "DECIMAL(38,18)",
     DataType.BOOLEAN: "BOOLEAN",
     # IR datetime literals always carry an offset, so DuckDB bindings use an
     # instant-preserving type instead of a session-timezone-dependent TIMESTAMP.
@@ -113,6 +125,8 @@ def _literal_value(expression: LiteralExpression) -> Any:
 
     if expression.data_type == DataType.DATETIME:
         return datetime.fromisoformat(str(expression.value).replace("Z", "+00:00"))
+    if expression.data_type == DataType.DECIMAL:
+        return Decimal(str(expression.value))
     return expression.value
 
 
@@ -167,6 +181,27 @@ def _compile_project(operator: Project, input_fragment: SqlFragment) -> SqlFragm
     )
 
 
+def _compile_sort(operator: Sort, input_fragment: SqlFragment) -> SqlFragment:
+    """Compile validated sort keys without accepting free-form SQL text."""
+
+    keys = ", ".join(
+        f"{_quote_identifier(key.field)} {key.direction.upper()}" for key in operator.keys
+    )
+    return SqlFragment(
+        f"SELECT * FROM ({input_fragment.sql}) AS input_rel ORDER BY {keys}",
+        input_fragment.parameters,
+    )
+
+
+def _compile_limit(operator: Limit, input_fragment: SqlFragment) -> SqlFragment:
+    """Compile a validated bounded Top-K suffix without free-form SQL."""
+
+    return SqlFragment(
+        f"SELECT * FROM ({input_fragment.sql}) AS input_rel LIMIT ?",
+        input_fragment.parameters + (operator.row_count,),
+    )
+
+
 def _compile_filter(operator: Filter, input_fragment: SqlFragment) -> SqlFragment:
     predicate = _compile_filter_expression(operator.expression)
     return SqlFragment(
@@ -198,10 +233,59 @@ def _compile_join(
     return SqlFragment(sql, left_fragment.parameters + right_fragment.parameters)
 
 
+def _compile_spatial_join(
+    operator: SpatialJoin,
+    left_fragment: SqlFragment,
+    right_fragment: SqlFragment,
+) -> SqlFragment:
+    """Compile the reviewed EPSG:4326 point-distance join using Haversine.
+
+    The coordinate pairs were resolved against catalog spatial descriptors by
+    the type checker.  Explicit fields are essential because the left relation
+    may already carry several spatial descriptors after a previous join.
+    ``least(1.0, ...)`` protects ``asin`` from floating-point overshoot.
+    """
+
+    if operator.relation != "distance_within" or operator.distance_km is None:
+        raise ExecutionCompileError(
+            "DuckDB SpatialJoin supports distance_within with distance_km only."
+        )
+    left_latitude, left_longitude = (_quote_identifier(field) for field in operator.left_fields)
+    right_latitude, right_longitude = (_quote_identifier(field) for field in operator.right_fields)
+    haversine_term = (
+        f"power(sin(radians((right_rel.{right_latitude} - "
+        f"left_rel.{left_latitude}) / 2.0)), 2) + "
+        f"cos(radians(left_rel.{left_latitude})) * "
+        f"cos(radians(right_rel.{right_latitude})) * "
+        f"power(sin(radians((right_rel.{right_longitude} - "
+        f"left_rel.{left_longitude}) / 2.0)), 2)"
+    )
+    distance = f"6371.0088 * 2.0 * asin(sqrt(least(1.0, {haversine_term})))"
+    # Latitude difference is a sound necessary condition for a spherical
+    # distance match. DuckDB can push this inexpensive bound before evaluating
+    # the trigonometric predicate, avoiding a large cross product without
+    # changing the accepted result set.
+    latitude_bound = (
+        f"abs(right_rel.{right_latitude} - left_rel.{left_latitude}) <= degrees(? / 6371.0088)"
+    )
+    sql = (
+        f"SELECT left_rel.*, right_rel.* FROM ({left_fragment.sql}) AS left_rel "
+        f"INNER JOIN ({right_fragment.sql}) AS right_rel "
+        f"ON {latitude_bound} AND {distance} <= ?"
+    )
+    return SqlFragment(
+        sql,
+        left_fragment.parameters
+        + right_fragment.parameters
+        + (operator.distance_km, operator.distance_km),
+    )
+
+
 def _compile_aggregate(operator: Aggregate, input_fragment: SqlFragment) -> SqlFragment:
     """Compile grouped SQL aggregates with explicit output aliases."""
 
     select_items = [_quote_identifier(field) for field in operator.group_by]
+    aggregate_parameters: list[Any] = []
     function_sql = {
         AggregateFunction.COUNT: "COUNT",
         AggregateFunction.SUM: "SUM",
@@ -210,11 +294,27 @@ def _compile_aggregate(operator: Aggregate, input_fragment: SqlFragment) -> SqlF
         AggregateFunction.MAX: "MAX",
     }
     for expression in operator.aggregates:
-        argument = (
-            "*"
-            if expression.function == AggregateFunction.COUNT and expression.input_field is None
-            else _quote_identifier(str(expression.input_field))
-        )
+        if expression.function == AggregateFunction.COUNT:
+            argument = "*"
+        elif isinstance(expression.input_expression, NumericProductExpression):
+            argument = (
+                f"({_quote_identifier(expression.input_expression.left.field)} * "
+                f"{_quote_identifier(expression.input_expression.right.field)})"
+            )
+        elif isinstance(expression.input_expression, NumericProductFormulaExpression):
+            compiled_factors: list[str] = []
+            for factor in expression.input_expression.factors:
+                if isinstance(factor, NumericAffineExpression):
+                    arithmetic = "+" if factor.operator == "add" else "-"
+                    compiled_factors.append(
+                        f"(? {arithmetic} {_quote_identifier(factor.field.field)})"
+                    )
+                    aggregate_parameters.append(_literal_value(factor.constant))
+                else:
+                    compiled_factors.append(_quote_identifier(factor.field))
+            argument = "(" + " * ".join(compiled_factors) + ")"
+        else:
+            argument = _quote_identifier(str(expression.input_field))
         select_items.append(
             f"{function_sql[expression.function]}({argument}) "
             f"AS {_quote_identifier(expression.output_field)}"
@@ -226,7 +326,7 @@ def _compile_aggregate(operator: Aggregate, input_fragment: SqlFragment) -> SqlF
         )
     return SqlFragment(
         f"SELECT {', '.join(select_items)} FROM ({input_fragment.sql}) AS input_rel{group_clause}",
-        input_fragment.parameters,
+        tuple(aggregate_parameters) + input_fragment.parameters,
     )
 
 
@@ -371,6 +471,7 @@ def _compile_operator(
     bindings: TableBindings,
     memo: dict[str, SqlFragment],
     schemas: Mapping[str, RelationSchema],
+    materialize_after: str | None = None,
 ) -> SqlFragment:
     if operator_id in memo:
         return memo[operator_id]
@@ -381,17 +482,67 @@ def _compile_operator(
     elif isinstance(operator, Project):
         fragment = _compile_project(
             operator,
-            _compile_operator(operator.inputs[0], operators, catalog, bindings, memo, schemas),
+            _compile_operator(
+                operator.inputs[0],
+                operators,
+                catalog,
+                bindings,
+                memo,
+                schemas,
+                materialize_after,
+            ),
+        )
+    elif isinstance(operator, Sort):
+        fragment = _compile_sort(
+            operator,
+            _compile_operator(
+                operator.inputs[0],
+                operators,
+                catalog,
+                bindings,
+                memo,
+                schemas,
+                materialize_after,
+            ),
+        )
+    elif isinstance(operator, Limit):
+        fragment = _compile_limit(
+            operator,
+            _compile_operator(
+                operator.inputs[0],
+                operators,
+                catalog,
+                bindings,
+                memo,
+                schemas,
+                materialize_after,
+            ),
         )
     elif isinstance(operator, Filter):
         fragment = _compile_filter(
             operator,
-            _compile_operator(operator.inputs[0], operators, catalog, bindings, memo, schemas),
+            _compile_operator(
+                operator.inputs[0],
+                operators,
+                catalog,
+                bindings,
+                memo,
+                schemas,
+                materialize_after,
+            ),
         )
     elif isinstance(operator, TemporalFilter):
         fragment = _compile_temporal_filter(
             operator,
-            _compile_operator(operator.inputs[0], operators, catalog, bindings, memo, schemas),
+            _compile_operator(
+                operator.inputs[0],
+                operators,
+                catalog,
+                bindings,
+                memo,
+                schemas,
+                materialize_after,
+            ),
         )
     elif isinstance(operator, SpatialFilter):
         scan = _single_scan_ancestor(operator.operator_id, operators, {})
@@ -399,33 +550,79 @@ def _compile_operator(
             raise ExecutionCompileError("SpatialFilter execution requires one ScanSource ancestor.")
         fragment = _compile_spatial_filter(
             operator,
-            _compile_operator(operator.inputs[0], operators, catalog, bindings, memo, schemas),
+            _compile_operator(
+                operator.inputs[0],
+                operators,
+                catalog,
+                bindings,
+                memo,
+                schemas,
+                materialize_after,
+            ),
             scan,
             catalog,
         )
     elif isinstance(operator, Join):
         fragment = _compile_join(
             operator,
-            _compile_operator(operator.inputs[0], operators, catalog, bindings, memo, schemas),
-            _compile_operator(operator.inputs[1], operators, catalog, bindings, memo, schemas),
+            _compile_operator(
+                operator.inputs[0], operators, catalog, bindings, memo, schemas, materialize_after
+            ),
+            _compile_operator(
+                operator.inputs[1], operators, catalog, bindings, memo, schemas, materialize_after
+            ),
+        )
+    elif isinstance(operator, SpatialJoin):
+        fragment = _compile_spatial_join(
+            operator,
+            _compile_operator(
+                operator.inputs[0],
+                operators,
+                catalog,
+                bindings,
+                memo,
+                schemas,
+                materialize_after,
+            ),
+            _compile_operator(
+                operator.inputs[1],
+                operators,
+                catalog,
+                bindings,
+                memo,
+                schemas,
+                materialize_after,
+            ),
         )
     elif isinstance(operator, Aggregate):
         fragment = _compile_aggregate(
             operator,
-            _compile_operator(operator.inputs[0], operators, catalog, bindings, memo, schemas),
+            _compile_operator(
+                operator.inputs[0],
+                operators,
+                catalog,
+                bindings,
+                memo,
+                schemas,
+                materialize_after,
+            ),
         )
     elif isinstance(operator, Mask):
         input_id = operator.inputs[0]
         fragment = _compile_mask(
             operator,
-            _compile_operator(input_id, operators, catalog, bindings, memo, schemas),
+            _compile_operator(
+                input_id, operators, catalog, bindings, memo, schemas, materialize_after
+            ),
             schemas[input_id],
         )
     elif isinstance(operator, GeneralizeLocation):
         input_id = operator.inputs[0]
         fragment = _compile_generalize_location(
             operator,
-            _compile_operator(input_id, operators, catalog, bindings, memo, schemas),
+            _compile_operator(
+                input_id, operators, catalog, bindings, memo, schemas, materialize_after
+            ),
             schemas[input_id],
         )
     elif isinstance(operator, LineageCapture):
@@ -436,13 +633,28 @@ def _compile_operator(
         # LineageCapture is a pass-through relational operator. Its evidence is
         # produced separately by the execution instrumentation module.
         fragment = _compile_operator(
-            operator.inputs[0], operators, catalog, bindings, memo, schemas
+            operator.inputs[0],
+            operators,
+            catalog,
+            bindings,
+            memo,
+            schemas,
+            materialize_after,
         )
     else:
         raise ExecutionCompileError(
             f"Operator {operator.operator_type} is not executable in the DuckDB V1 fragment."
         )
 
+    if operator_id == materialize_after:
+        # The target comes from an ApprovedPhysicalPlan, never from agent SQL.
+        # MATERIALIZED is explicit so DuckDB cannot silently inline the
+        # experimental storage boundary.
+        fragment = SqlFragment(
+            "WITH trustaero_boundary AS MATERIALIZED "
+            f"({fragment.sql}) SELECT * FROM trustaero_boundary",
+            fragment.parameters,
+        )
     memo[operator_id] = fragment
     return fragment
 
@@ -497,4 +709,122 @@ def compile_validated_plan(
         output_fields=tuple(field.name for field in plan.output_schema),
         logical_plan_id=plan.logical_plan_id,
         logical_plan_digest=plan.validation.canonical_digest,
+    )
+
+
+def compile_approved_physical_plan(
+    plan: ValidatedLogicalPlan,
+    physical_plan: ApprovedPhysicalPlan,
+    catalog: Catalog,
+    table_bindings: TableBindings,
+) -> CompiledQuery:
+    """Compile one approved DuckDB strategy fail-closed.
+
+    This boundary independently checks that the physical object is bound to the
+    exact validated logical plan and snapshots.  IR v1 realizes fused
+    execution, one storage boundary, one independently re-derived safe Mask
+    placement, or the same safe placement with a boundary immediately after
+    that Mask. Unknown strategy modes remain fail-closed.
+    """
+
+    from trustaero.validator.physical_dag import validate_physical_plan_dag
+
+    if physical_plan.logical_plan_id != plan.logical_plan_id:
+        raise ExecutionCompileError("Physical plan is bound to a different logical plan.")
+    if physical_plan.logical_plan_digest != plan.validation.canonical_digest:
+        raise ExecutionCompileError("Physical plan logical digest does not match validation.")
+    if physical_plan.bindings != plan.bindings:
+        raise ExecutionCompileError("Physical plan snapshot bindings do not match validation.")
+    if physical_plan.pending_obligations != plan.pending_obligations:
+        raise ExecutionCompileError("Physical plan pending obligations do not match validation.")
+    if physical_plan.unimplemented_backend_features:
+        raise ExecutionCompileError("Physical plan contains unimplemented backend features.")
+    dag_diagnostics = validate_physical_plan_dag(physical_plan)
+    if dag_diagnostics:
+        codes = ", ".join(item.code.value for item in dag_diagnostics)
+        raise ExecutionCompileError(f"Approved physical plan DAG is invalid: {codes}")
+
+    strategy = physical_plan.strategy
+    materialize_after: str | None = None
+    placement_modes = {"governance_placed", "governance_placed_materialized"}
+    if strategy.execution_mode == "materialized":
+        materialize_after = strategy.materialize_after[0]
+        logical_ids = {operator.operator_id for operator in plan.operators}
+        if materialize_after not in logical_ids or materialize_after == plan.output_operator:
+            raise ExecutionCompileError("Physical materialization target is invalid.")
+    elif strategy.execution_mode == "governance_placed_materialized":
+        materialize_after = strategy.materialize_after[0]
+        if materialize_after != strategy.placements[0].operator_id:
+            raise ExecutionCompileError(
+                "Placed materialization must target the moved governance operator."
+            )
+    elif strategy.execution_mode not in {"fused", "governance_placed"}:
+        raise ExecutionCompileError(
+            "Generic approved-plan compilation does not support this strategy mode."
+        )
+
+    execution_plan = plan
+    if strategy.execution_mode in placement_modes:
+        # Do not trust the candidate's rewired graph. Re-run the deterministic
+        # planner from the validated logical plan and require an exact match.
+        from trustaero.planner.physical import plan_physical_execution
+
+        expected = plan_physical_execution(plan, backend="duckdb", strategy=strategy)
+        if (
+            physical_plan.physical_plan_id != expected.physical_plan_id
+            or physical_plan.physical_operators != expected.physical_operators
+            or physical_plan.output_operator != expected.output_operator
+        ):
+            raise ExecutionCompileError("Governance placement differs from trusted planning.")
+        logical_by_id = {operator.operator_id: operator for operator in plan.operators}
+        physical_by_id = {
+            operator.physical_operator_id: operator for operator in physical_plan.physical_operators
+        }
+        rewired: list[Operator] = []
+        for physical_operator in physical_plan.physical_operators:
+            logical_operator = logical_by_id.get(physical_operator.logical_operator_id)
+            if logical_operator is None:
+                raise ExecutionCompileError("Physical plan references an unknown logical operator.")
+            try:
+                inputs = tuple(
+                    physical_by_id[input_id].logical_operator_id
+                    for input_id in physical_operator.inputs
+                )
+            except KeyError as exc:
+                raise ExecutionCompileError(
+                    "Physical plan contains an unbound placement input."
+                ) from exc
+            rewired.append(logical_operator.model_copy(update={"inputs": inputs}))
+        output = physical_by_id.get(physical_plan.output_operator)
+        if output is None:
+            raise ExecutionCompileError("Physical placement output is unbound.")
+        execution_plan = plan.model_copy(
+            update={
+                "operators": tuple(rewired),
+                "output_operator": output.logical_operator_id,
+            }
+        )
+    elif strategy.execution_mode != "fused" and strategy.execution_mode != "materialized":
+        raise ExecutionCompileError(
+            "Generic approved-plan compilation does not support this strategy mode."
+        )
+
+    operators = _operators_by_id(execution_plan)
+    schemas = _execution_schemas(execution_plan, catalog)
+    fragment = _compile_operator(
+        execution_plan.output_operator,
+        operators,
+        catalog,
+        table_bindings,
+        {},
+        schemas,
+        materialize_after,
+    )
+    return CompiledQuery(
+        sql=fragment.sql,
+        parameters=fragment.parameters,
+        output_fields=tuple(field.name for field in execution_plan.output_schema),
+        logical_plan_id=plan.logical_plan_id,
+        logical_plan_digest=plan.validation.canonical_digest,
+        physical_plan_id=physical_plan.physical_plan_id,
     )

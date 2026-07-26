@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-record-lineage-compact-v2-pilot-20260724",
+  "status": "FROZEN_NOT_EXECUTED",
+  "scientific_role": "compact record-lineage artifact development comparison",
+  "v1_baseline": {
+    "path": "experiments/frozen/record_lineage_v1_pilot_positive_20260724.json",
+    "sha256": "c8efea6380d5bba4b9fe1151c47856ddad2ce626aea5f8187955482efd3dbdef"
+  },
+  "measurement_config": {
+    "path": "experiments/configs/record_lineage_compact_pilot_v2.json",
+    "sha256": "f184ef83af6bbb89c99170531d6cb952b997e2cf8114f039a6552dabbbc4b159"
+  },
+  "semantic_equivalence": [
+    "the supported operator and identity fragment is unchanged from V1",
+    "each output row still maps to exactly one source record",
+    "source and output identities remain contextual SHA-256 values",
+    "independent verification still recomputes edges from actual output rows"
+  ],
+  "encoding_change": {
+    "v1": "one Python object and repeated JSON source context per edge",
+    "v2": "one shared header plus two fixed 32-byte digests per edge",
+    "raw_key_storage": false,
+    "expected_edge_payload_bytes": 64
+  },
+  "matrix": {
+    "row_counts": [1000, 10000, 50000],
+    "warmup_rounds": 1,
+    "permutation_repetitions": 2
+  },
+  "development_gates": [
+    "all V1 semantic and tamper-detection tests remain passing",
+    "all compact artifacts independently verify",
+    "compact edge bytes equal exactly 64 times the edge count",
+    "serialized bytes per edge are lower than V1 at every row count",
+    "capture and verification medians are reported without hiding regressions"
+  ],
+  "decision_policy": [
+    "This remains development evidence and cannot authorize a paper performance claim.",
+    "Formal scaling is admitted only after reviewing both latency and storage results.",
+    "The V1 baseline remains immutable even if V2 improves it."
+  ]
+}

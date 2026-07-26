@@ -1,0 +1,12 @@
+{
+  "results_dir": "results/real_data_pilot",
+  "workloads": ["bts", "nyc_tlc"],
+  "sample_rows": [100000, 500000],
+  "warmup_runs": 1,
+  "measured_runs": 5,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "unit_order_seed": 20260718,
+  "require_clean_git": false,
+  "scientific_label": "real_data_infrastructure_pilot_not_paper_performance_evidence"
+}

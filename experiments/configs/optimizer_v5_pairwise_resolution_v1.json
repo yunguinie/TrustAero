@@ -1,0 +1,53 @@
+{
+  "protocol_name": "optimizer_v5_connection_isolated_pairwise_resolution_v1",
+  "results_dir": "results/optimizer_v5_pairwise_resolution",
+  "pairs": [
+    {
+      "pair_id": "bts100-fused-vs-filter-boundary",
+      "unit_id": "bts-n100000",
+      "workload": "bts",
+      "sample_rows": 100000,
+      "candidate_id": "materialize-after-bts-filter"
+    },
+    {
+      "pair_id": "bts100-fused-vs-mask-boundary",
+      "unit_id": "bts-n100000",
+      "workload": "bts",
+      "sample_rows": 100000,
+      "candidate_id": "materialize-after-gov-002-mask"
+    },
+    {
+      "pair_id": "bts500-fused-vs-mask-boundary",
+      "unit_id": "bts-n500000",
+      "workload": "bts",
+      "sample_rows": 500000,
+      "candidate_id": "materialize-after-gov-002-mask"
+    },
+    {
+      "pair_id": "nyc500-fused-vs-join-boundary",
+      "unit_id": "nyc_tlc-n500000",
+      "workload": "nyc_tlc",
+      "sample_rows": 500000,
+      "candidate_id": "materialize-after-nyc-zone-join"
+    }
+  ],
+  "warmup_blocks": 6,
+  "measured_blocks": 40,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260729,
+  "confidence_level": 0.95,
+  "bootstrap_repetitions": 20000,
+  "bootstrap_seed": 20260729,
+  "tie_threshold_fraction": 0.03,
+  "minimum_model_eligible_units": 2,
+  "require_clean_git": true,
+  "v2_inference_path": "results/optimizer_v5_real_candidate_calibration_v2/20260721T135804629209Z/v5_inference.json",
+  "v2_inference_sha256": "49a0bc898498dd644a1f4d4c7ffeaa3ec61260e9b0ee65ab26e468b86e95aa6e",
+  "v2_negative_record_path": "experiments/frozen/optimizer_v5_calibration_v2_inference_negative_20260722.json",
+  "v2_negative_record_sha256": "98a10b791be5106010a67fcf4f20580933b16feb951fb19aa69dc2566a977219",
+  "query_family_protocol_path": "experiments/configs/real_data_query_families_v1.json",
+  "query_family_protocol_sha256": "1f1ac460f346b1f660aef0b98fe9a6d92c45fb9bad14765c542e39ac947e9425",
+  "scientific_boundary": "This bounded January development follow-up reruns exactly the four candidate-vs-fused comparisons that were inconclusive under the frozen V5 V2 pollution-safe protocol. Each route owns a separate persistent DuckDB connection; order is balanced across 40 paired blocks. Conclusions require a 95 percent order-stratified bootstrap interval and retain the 3 percent practical tie band. Governance feasibility is applied per policy profile before labels are merged. No point estimate, external partition, or already-conclusive comparison may substitute for this protocol."
+}
+

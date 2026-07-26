@@ -17,6 +17,7 @@ def generate_duckdb_candidates(
     materialization_targets: tuple[str, ...] = (),
     filter_orders: tuple[tuple[str, ...], ...] = (),
     operator_placements: tuple[tuple[str, str], ...] = (),
+    materialized_operator_placements: tuple[tuple[str, str], ...] = (),
 ) -> tuple[ApprovedPhysicalPlan, ...]:
     """Generate fused, one-boundary, and bounded ordered-filter candidates.
 
@@ -52,6 +53,26 @@ def generate_duckdb_candidates(
                     f"{after_operator_id.removeprefix('op-')}"
                 ),
                 execution_mode="governance_placed",
+                placements=(
+                    PhysicalOperatorPlacementSpec(
+                        operator_id=operator_id,
+                        after_operator_id=after_operator_id,
+                    ),
+                ),
+            )
+        )
+    for operator_id, after_operator_id in dict.fromkeys(materialized_operator_placements):
+        # This is not arbitrary "placement plus boundary" composition.  The
+        # strategy model requires the sole boundary to be the moved Mask, and
+        # the physical planner independently proves that moving it is safe.
+        strategies.append(
+            PhysicalStrategySpec(
+                strategy_id=(
+                    f"materialize-place-{operator_id.removeprefix('gov-')}-after-"
+                    f"{after_operator_id.removeprefix('op-')}"
+                ),
+                execution_mode="governance_placed_materialized",
+                materialize_after=(operator_id,),
                 placements=(
                     PhysicalOperatorPlacementSpec(
                         operator_id=operator_id,

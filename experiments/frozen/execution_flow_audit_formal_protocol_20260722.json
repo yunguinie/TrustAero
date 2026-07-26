@@ -1,0 +1,113 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_flow_audit_formal_protocol_20260722",
+  "status": "FROZEN_BEFORE_EA0_FORMAL_AUDIT",
+  "phase": "EA-0 execution-aware physical mechanism confirmation",
+  "pilot_record": {
+    "path": "experiments/frozen/execution_flow_audit_pilot_result_20260722.json",
+    "sha256": "b4503b93d483c3912a5172da2ad9521acc5379c42fba3fa6c32d99a668aa3853",
+    "interpretation": "Structural pilot passed; pilot point timings are development observations and not formal performance claims."
+  },
+  "formal_matrix": {
+    "row_counts": [50000, 150000],
+    "identifier_widths": [256, 512, 2048],
+    "match_rates": [0.1, 1.0],
+    "seeds": [1701, 1802, 1903],
+    "unit_count": 36,
+    "variant_count": 11,
+    "equivalence_group_count": 4,
+    "warmup_runs_per_variant": 2,
+    "measured_runs_per_variant": 11,
+    "profile_runs_per_variant": 2,
+    "measured_execution_count": 4356,
+    "profile_execution_count": 792
+  },
+  "timing_protocol": {
+    "cache_regime": "warm repeated execution in one DuckDB process and connection per run",
+    "candidate_order": "deterministically shuffled Latin rotations",
+    "position_balance": "11 measured rounds cover every order position exactly once per variant and unit",
+    "practical_tie_fraction": 0.03,
+    "primary_latency_statistic": "median paired within-round log latency ratio",
+    "confidence_interval": "95 percent hierarchical bootstrap over complete seeds and within-seed paired rounds",
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 20260801,
+    "point_winner_alone_authorizes_claim": false,
+    "set_valued_rule": "A candidate is practically dominated by another candidate only when the lower 95 percent confidence bound of their paired latency ratio is greater than 1.03. Otherwise both remain in the non-dominated candidate set."
+  },
+  "primary_structural_gates": {
+    "all_36_units_complete": true,
+    "all_result_equivalence_groups_match": true,
+    "all_unused_sensitive_projections_pruned": true,
+    "all_forced_raw_materializations_retain_sensitive_value": true,
+    "all_declared_materialized_and_fused_plan_pairs_distinct": true,
+    "unknown_or_missing_required_operator_evidence_count": 0,
+    "optimizer_trained": false
+  },
+  "mechanism_confirmation_questions": [
+    "Does the key-only plan remain insensitive to the logical wide-column width when sensitive_value is absent from operator metadata?",
+    "Does forcing raw materialization introduce a width- and output-cardinality-dependent cost absent from the pruned plan?",
+    "Does low Join match rate reduce post-Join Mask work in proportion to matched rows rather than input rows?",
+    "At full match, do Mask placement, pipeline breaking, aggregation, and sorting produce different non-dominated candidate sets?",
+    "Can every observed latency component be mapped to candidate-specific scan, Join, Mask, materialization, aggregate, or sort work without using a family-specific exception?"
+  ],
+  "feature_contract_authorization": {
+    "required": [
+      "all primary structural gates pass",
+      "at least one stable cost contrast is attributable to Mask work rows or bytes",
+      "at least one stable cost contrast is attributable to raw or masked materialization work",
+      "at least two downstream task groups produce different non-dominated candidate sets",
+      "no exact engine-internal byte claim is inferred from logical estimates"
+    ],
+    "if_authorized": "Freeze candidate-specific physical-work features before fitting any Execution-Aware cost model.",
+    "if_not_authorized": "Retain the negative mechanism result and do not train the final optimizer."
+  },
+  "byte_and_engine_boundary": {
+    "observed": [
+      "physical operator structure",
+      "operator metadata columns",
+      "actual cardinalities",
+      "rows scanned",
+      "operator timings",
+      "peak buffer memory",
+      "peak temporary-directory size"
+    ],
+    "estimated_not_observed": [
+      "per-operator payload bytes",
+      "Mask input bytes",
+      "materialization bytes",
+      "sort-key bytes"
+    ]
+  },
+  "data_boundary": {
+    "optimizer_training_allowed": false,
+    "phase2g_access_allowed": false,
+    "real_data_label_access_allowed": false,
+    "new_external_holdout_selection_deferred_until_after_existing_month_inventory": true
+  },
+  "rejected_actions": [
+    "change the 3 percent tie band after seeing formal results",
+    "select a point winner when the paired interval does not establish practical dominance",
+    "drop a seed, width, match rate, task group, or legal candidate because it weakens a contrast",
+    "train a residual model on EA-0 before the physical-work feature contract is frozen",
+    "describe logical work-byte estimates as DuckDB-measured payload bytes",
+    "reuse Phase 2G as a holdout"
+  ],
+  "immutable_files": [
+    {
+      "path": "experiments/configs/execution_flow_audit_formal_v1.json",
+      "sha256": "773b53afeff8cc4107fb8f7cc58fb8e81390dc8b805aa5a5837ddfa782efff63"
+    },
+    {
+      "path": "src/trustaero/experiments/execution_flow_audit.py",
+      "sha256": "34037f2166951de6fdb65250302b349fbfd3acf2c2a0e60b2a5519f1fcd1d37d"
+    },
+    {
+      "path": "scripts/run_execution_flow_audit.py",
+      "sha256": "d038ab17dd9a95b2d35ec777ad8c8c8098ce66a77ba74b06f4a3bd4c9bd4e21d"
+    },
+    {
+      "path": "tests/unit/test_execution_flow_audit.py",
+      "sha256": "3cd52c1c210a2035a5875503f67b5024850c5e19cfc9121f24b37d6929e1d2f4"
+    }
+  ]
+}

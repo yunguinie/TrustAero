@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "freeze_scope": "tpch_sf1_q6_formal_protocol_before_measurement",
+  "status": "FROZEN",
+  "query_id": "Q06",
+  "candidate_count": 3,
+  "execution_order_permutation_count": 6,
+  "warmup_blocks": 6,
+  "measured_blocks": 30,
+  "timed_candidate_executions": 90,
+  "paper_performance_evidence_authorized_after_runtime_gates": true,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "immutable_files": [
+    {
+      "path": "experiments/configs/tpch_q6_formal_v1.json",
+      "sha256": "661e399e88fb91e22428c7b2e81bf99399c2d98043a80d68a9698f31c71108b4"
+    },
+    {
+      "path": "results/tpch_q6_semantic_smoke/result.json",
+      "sha256": "d713737e2b60c40ccb6e89c078883b5d2ef3b41f767bf2590e752225cdaf4e86"
+    },
+    {
+      "path": "results/tpch_sf1_support_audit/audit.json",
+      "sha256": "1525f40afd01aa90c6898e130bab3ed73838d1f30c7f2ec31e462eb5df412d57"
+    }
+  ],
+  "scientific_boundary": "SF1 Q6 is standard-benchmark method evidence. The post-hoc diagnostic Oracle is not optimizer selection and the run is not heldout evidence."
+}

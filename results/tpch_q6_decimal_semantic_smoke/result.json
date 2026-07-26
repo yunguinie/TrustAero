@@ -1,0 +1,77 @@
+{
+  "all_official_result_equivalent": true,
+  "artifact_sha256": "64a709fa8f995aeae23ffe6305a47e77c97113c823974a3f6a6933b8d05a0b22",
+  "candidate_count": 3,
+  "candidates": [
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "UNGROUPED_AGGREGATE",
+        "PROJECTION",
+        "SEQ_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:db7d6d805f8d53d7d66d89a53ddb965fff864f2ad384cdf0e865a7ff6f0793e9",
+      "materialize_after": [],
+      "official_result_equivalent": true,
+      "physical_plan_id": "pp-930f0d32b093fd37",
+      "result_digest": "sha256:a1aeb439b6dadb8e1b63b2a6767310d2b8aa89d387266856bc24473812d13e3c",
+      "row_count": 1,
+      "strategy_id": "fused"
+    },
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "UNGROUPED_AGGREGATE",
+        "PROJECTION",
+        "PROJECTION",
+        "CTE",
+        "PROJECTION",
+        "FILTER",
+        "SEQ_SCAN",
+        "FILTER",
+        "CTE_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:b26e775b8c054743305fc3e61ebad26e16bcaab1f3bdf7615fe61d95107fc58f",
+      "materialize_after": [
+        "q06-time"
+      ],
+      "official_result_equivalent": true,
+      "physical_plan_id": "pp-ae5db1b4f88b3eed",
+      "result_digest": "sha256:a1aeb439b6dadb8e1b63b2a6767310d2b8aa89d387266856bc24473812d13e3c",
+      "row_count": 1,
+      "strategy_id": "materialize-after-q06-time"
+    },
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "UNGROUPED_AGGREGATE",
+        "PROJECTION",
+        "CTE",
+        "PROJECTION",
+        "SEQ_SCAN",
+        "CTE_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:d044a781427daf94a6da05f54bbc8254315649e0f1a1bc64b3d300dfabb75bc1",
+      "materialize_after": [
+        "q06-predicate"
+      ],
+      "official_result_equivalent": true,
+      "physical_plan_id": "pp-622ccf76b3f5c661",
+      "result_digest": "sha256:a1aeb439b6dadb8e1b63b2a6767310d2b8aa89d387266856bc24473812d13e3c",
+      "row_count": 1,
+      "strategy_id": "materialize-after-q06-predicate"
+    }
+  ],
+  "distinct_duckdb_plan_count": 3,
+  "official_revenue_decimal": "123141078.2283",
+  "paper_performance_evidence": false,
+  "purpose": "Official TPC-H SF1 Q6 governed semantic smoke; no performance timing",
+  "query_id": "Q06",
+  "raw_sql_bypass_used": false,
+  "schema_version": 1,
+  "semantic_contract": "exact_decimal_v2",
+  "source_commit": "5c434bc47ca208373e0b78df98c875da7bf65c9f",
+  "source_dirty": false,
+  "status": "PASS",
+  "validation_status": "REWRITE"
+}

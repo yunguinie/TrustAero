@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_POSITIVE_REAL_MECHANISM_RESULT",
+  "measurement_run": "results/real_governed_checkpoint_mechanism_development_v2/20260723T051625103173Z",
+  "summary_sha256": "f822f7a75eaeb4128b3a6da43243bc5ad530e1b810c6c7dd597dc21bfb427970",
+  "measurements_sha256": "d729f399b0f241d9e7b799ab1c1d1af34476517ebb0e05d63ceb13df7236ac6a",
+  "measurement_integrity": "PASS_EA1_REAL_MECHANISM_DEVELOPMENT_INTEGRITY",
+  "reversal_discovery": "STABLE_BIDIRECTIONAL_REVERSAL_DISCOVERED",
+  "scenario_count": 32,
+  "unit_count": 96,
+  "paired_block_count": 2880,
+  "candidate_execution_count": 5760,
+  "observed_plan_directions": {
+    "policy_first_stable_families": 16,
+    "query_first_stable_families": 16,
+    "inconclusive_families": 0,
+    "bts_policy_first": 8,
+    "bts_query_first": 8,
+    "nyc_tlc_policy_first": 8,
+    "nyc_tlc_query_first": 8
+  },
+  "frozen_v31_development_diagnostic": {
+    "confidence_family_hit_rate": 1.0,
+    "fixed_policy_first_hit_rate": 0.5,
+    "fixed_query_first_hit_rate": 0.5,
+    "mean_regret_percent": 0.0,
+    "p95_regret_percent": 0.0,
+    "max_regret_percent": 0.0,
+    "seed_consistent": true
+  },
+  "interpretation": "Both governed checkpoint placements are materially optimal on real BTS and NYC distributions. The current points are deliberately extreme and therefore do not yet establish accurate boundary prediction.",
+  "authorized_claim": "Governance-checkpoint placement causes stable bidirectional physical-plan reversals on two real data distributions.",
+  "not_authorized": [
+    "final optimizer holdout performance",
+    "full-month scale transfer",
+    "superiority over a learned simple threshold"
+  ],
+  "paper_optimizer_performance_claim_authorized": false
+}

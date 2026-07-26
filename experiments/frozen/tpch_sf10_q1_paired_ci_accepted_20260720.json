@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch_sf10_q1_paired_ci_accepted_20260720",
+  "status": "PASS",
+  "source_commit": "1fa73e89a88c58b9e5ba54f5987b824e7e534669",
+  "run_id": "20260720T094049562476Z",
+  "paper_performance_evidence": true,
+  "formal_paper_experiment_authorized": true,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "observed": {
+    "scale_factor": 10,
+    "input_rows": 59986052,
+    "qualified_rows": 59142609,
+    "measurement_count": 450,
+    "execution_process_segments": 1,
+    "all_integrity_gates_passed": true,
+    "authorized_claim_count": 1,
+    "total_candidate_claim_count": 2,
+    "filter_materialization_over_fused_ratio": 9.577293536526364,
+    "filter_materialization_over_fused_ci95": [
+      7.371173634986483,
+      10.305918507726949
+    ],
+    "filter_materialization_claim": "MATERIALLY_SLOWER",
+    "aggregate_materialization_over_fused_ratio": 1.0065755562554002,
+    "aggregate_materialization_over_fused_ci95": [
+      0.8773660424632514,
+      1.0525193762571334
+    ],
+    "aggregate_materialization_claim": "INCONCLUSIVE",
+    "carryover_to_fused_assessment": "INCONCLUSIVE",
+    "carryover_to_aggregate_assessment": "INCONCLUSIVE"
+  },
+  "immutable_files": [
+    {
+      "path": "results/tpch_sf10_q1_formal_v2/20260720T094049562476Z/acceptance.json",
+      "sha256": "b14ac06bb4a1ca906fde225c0b4e6ea2920c78a6a87eaeb281d70ce159c5e182"
+    },
+    {
+      "path": "results/tpch_sf10_q1_formal_v2/20260720T094049562476Z/config.json",
+      "sha256": "fe23535523043e7fc13c4c755eb2ba3994b623c886d6d732c70ffec6bf3f4c8f"
+    },
+    {
+      "path": "results/tpch_sf10_q1_formal_v2/20260720T094049562476Z/environment.json",
+      "sha256": "036d0dcce3253c9f1749c8568c9642c15bce8d63929d002cbc07fe9b4d60e60f"
+    },
+    {
+      "path": "results/tpch_sf10_q1_formal_v2/20260720T094049562476Z/measurements.csv",
+      "sha256": "ef23ffbf5bb6c87a4dc387934abaac4d556d1c6d5f4a08257c13437fb8d2c4c2"
+    },
+    {
+      "path": "results/tpch_sf10_q1_formal_v2/20260720T094049562476Z/report.md",
+      "sha256": "43c96c520c73929301c6bc9db07c6cb0e397d945016bc52e175627fce20fe103"
+    },
+    {
+      "path": "results/tpch_sf10_q1_formal_v2/20260720T094049562476Z/summary.json",
+      "sha256": "7705be1292a3ef2440b5bb30e9395b1c65d3c53b8059eaf4acc8b4e0075369af"
+    }
+  ],
+  "scientific_boundary": "This uninterrupted SF10 Q1 V2 run is accepted as standard-benchmark method evidence. Only the predeclared pollution-safe claim that filter materialization is materially slower than fused is authorized. Aggregate materialization versus fused and both carryover assessments remain inconclusive and must not be described as equivalence, superiority, inferiority, or absence of carryover."
+}

@@ -49,4 +49,10 @@ select = ["E", "F", "I", "B", "UP"]
 [tool.mypy]
 python_version = "3.11"
 strict = true
+# Several experiment loaders deliberately retain explicit casts at JSON
+# boundaries to document the expected artifact shape.  They are harmless and
+# make those untyped boundaries easier to review, so do not reject them as
+# redundant during release CI.
+warn_redundant_casts = false
+disable_error_code = ["redundant-cast"]
 packages = ["trustaero"]

@@ -1,0 +1,72 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_aware_calibration_protocol_v3_20260722",
+  "status": "FROZEN_BEFORE_CARRYOVER_BALANCED_RERUN",
+  "supersedes": "experiments/frozen/execution_aware_calibration_protocol_v2_20260722.json",
+  "optimizer_changed_since_failed_run": false,
+  "reason_for_rerun": "The completed V2 run revealed that cyclic Latin rotations balance positions but preserve one fixed immediate predecessor per candidate, leaving direct carryover confounded with candidate latency.",
+  "preserved_negative_result": "experiments/frozen/execution_aware_calibration_v2_failed_result_20260722.json",
+  "order_design": {
+    "name": "even-order Williams direct-carryover design",
+    "real_candidate_count": 11,
+    "neutral_barrier_count": 1,
+    "period_count": 12,
+    "measured_rounds_per_unit": 12,
+    "position_balance": "Every real candidate occupies every one of the 12 periods exactly once.",
+    "predecessor_balance": "Every ordered pair of distinct in-row design symbols occurs exactly once; each real candidate is preceded once by every other real candidate. A uniform neutral barrier also precedes every measured row, preventing an uncontrolled cross-row predecessor.",
+    "barrier_sql": "SELECT 1",
+    "barrier_is_candidate": false
+  },
+  "calibration_matrix": {
+    "config": "experiments/configs/execution_aware_calibration_v2.json",
+    "row_counts": [50000, 150000],
+    "identifier_widths": [128, 512, 2048],
+    "match_rates": [0.1, 0.5, 1.0],
+    "seeds": [3101, 3202, 3303],
+    "unit_count": 54,
+    "candidate_count_per_unit": 11,
+    "timed_execution_count": 7128,
+    "profile_execution_count": 1188
+  },
+  "measurement_controls": {
+    "machine_state": "No concurrent CPU-, memory-, or disk-intensive workload.",
+    "cache_regime": "Warm repeated execution in one DuckDB process and connection.",
+    "duckdb_threads": 4,
+    "duckdb_memory_limit_mb": 4096,
+    "gpu_used": false,
+    "interruption": "Use Ctrl+C and --resume latest; incomplete units never enter final artifacts.",
+    "contamination_rule": "Preserve and label any contaminated run; never silently relabel it as clean."
+  },
+  "model_freeze": {
+    "family": "Nonnegative additive analytic component-cost model",
+    "direct_winner_classifier": false,
+    "outer_group": "Complete row_count + identifier_width + match_rate family",
+    "seed_level_leakage_allowed": false,
+    "practical_tie_fraction": 0.03,
+    "weights_or_thresholds_changed_after_v2_result": false
+  },
+  "predeclared_gates": {
+    "illegal_candidate_selection_count": 0,
+    "minimum_3_percent_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_regret_percent": 15.0,
+    "advantage_must_cover_at_least_two_equivalence_groups": true
+  },
+  "decision_rule": {
+    "pass": "Freeze the analytic model and support envelope, then design new real-data month/query-family validation.",
+    "fail": "Freeze the negative result. Do not tune this calibration matrix or call a reused result independent holdout evidence."
+  },
+  "run_command_after_clean_commit": "python -u scripts/run_execution_flow_audit.py --config experiments/configs/execution_aware_calibration_v2.json --progress",
+  "resume_command": "python -u scripts/run_execution_flow_audit.py --config experiments/configs/execution_aware_calibration_v2.json --resume latest --progress",
+  "immutable_files": [
+    {"path": "src/trustaero/experiments/execution_flow_audit.py", "sha256": "51fe6031edb7cae433ba79829c37326d2b3858f6c2b436565a91894005aaf88d"},
+    {"path": "tests/unit/test_execution_flow_audit.py", "sha256": "4deabb8389b3f5083cab7e8d789a2c86cecaf8a3b211b4bbfba5fef061f82b20"},
+    {"path": "experiments/configs/execution_aware_calibration_v2.json", "sha256": "e015bb8c0d937c4a71dc992e9a4d56ed36b2bb070a7ac0890781f5e5f89c2cd5"},
+    {"path": "src/trustaero/optimizer/execution_aware.py", "sha256": "ee8a5e652c7e69516c07b0590794a3cf2aac3dba3e23121f66a54090b0d343bd"},
+    {"path": "src/trustaero/experiments/execution_flow_features.py", "sha256": "f32599b496a126be31fcb34dd0fbca392d102319aa2f16f545e855ad631b7cc3"},
+    {"path": "src/trustaero/experiments/execution_aware_calibration.py", "sha256": "3ac7a92395f6f5f5d4d0e9e634fb5bfb160ba747420ad348fe41e10d536d8220"},
+    {"path": "scripts/analyze_execution_aware_calibration.py", "sha256": "4657c772f1cfdfa8da82b823a47f0c0145e99aae5a7f2caa09a3c89262df37bb"},
+    {"path": "experiments/frozen/execution_aware_calibration_v2_failed_result_20260722.json", "sha256": "5328af4b037b8da2405bca46d0f750907a07f4ccb103627d451272fa78bccb13"}
+  ]
+}

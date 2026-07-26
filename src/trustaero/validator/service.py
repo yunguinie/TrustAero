@@ -49,7 +49,10 @@ def parse_candidate(raw: dict[str, Any]) -> CandidatePlan | ValidatorResponse:
     try:
         return CandidatePlan.model_validate(raw)
     except ValidationError as exc:
-        errors = exc.errors()
+        # Pydantic may place the original ValueError object in ``ctx.error``.
+        # Public diagnostics and experiment evidence must remain JSON-safe, so
+        # preserve the stable error type/location/message without that object.
+        errors = exc.errors(include_context=False)
         unknown_operator = any(error.get("type") == "union_tag_invalid" for error in errors)
         code = ReasonCode.UNKNOWN_OPERATOR if unknown_operator else ReasonCode.PLAN_PARSE_ERROR
         plan_id = raw.get("plan_id") if isinstance(raw.get("plan_id"), str) else None
@@ -82,6 +85,8 @@ def validate_graph(plan: CandidatePlan) -> tuple[Diagnostic, ...]:
         "Join": 2,
         "SpatialJoin": 2,
         "Project": 1,
+        "Sort": 1,
+        "Limit": 1,
         "Aggregate": 1,
         "Mask": 1,
         "GeneralizeLocation": 1,

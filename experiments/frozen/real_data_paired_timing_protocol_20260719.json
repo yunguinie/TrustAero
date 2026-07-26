@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "run_id": "20260719T021627681202Z",
+  "evaluation_scope": "full_month_paired_timing_protocol_validation_not_paper_evidence",
+  "source_commit": "973fa92c833116943ca2e573ac790e5da63b6533",
+  "source_worktree_dirty": true,
+  "integrity_status": "PASS",
+  "formal_performance_protocol_authorized": true,
+  "protocol": {
+    "cache_mode": "hot_same_duckdb_connection",
+    "candidate_count": 3,
+    "permutations": 6,
+    "repetitions_per_permutation": 5,
+    "paired_measurement_blocks_per_workload": 30,
+    "warmup_blocks": 6,
+    "absolute_half_drift_limit": 0.5,
+    "paired_ratio_half_drift_limit": 0.2,
+    "paired_ratio_outlier_fraction_limit": 0.1,
+    "tie_threshold_fraction": 0.03
+  },
+  "observed_gates": {
+    "bts_absolute_half_drift": 0.07804858732740105,
+    "nyc_absolute_half_drift": 0.12211685956048379,
+    "bts_paired_ratio_half_drift": 0.021869665824643225,
+    "nyc_paired_ratio_half_drift": 0.05461749102334945,
+    "bts_paired_ratio_outlier_fraction": 0.06666666666666667,
+    "nyc_paired_ratio_outlier_fraction": 0.1
+  },
+  "immutable_files": [
+    {
+      "path": "results/real_data_full_month_pilot/20260719T021627681202Z/config.json",
+      "sha256": "8714045a92782bc163832a5813529d9c24ac7e5b516c73da48956634063bd538"
+    },
+    {
+      "path": "results/real_data_full_month_pilot/20260719T021627681202Z/measurements.csv",
+      "sha256": "b9d9056c971b1de844e75a3c10fd87b00d168614e3109322a8268b0df9d24c1d"
+    },
+    {
+      "path": "results/real_data_full_month_pilot/20260719T021627681202Z/summary.json",
+      "sha256": "f9c32fd00a2a50a5aaa366f23978cae31c225a4c911070e753f0eea1bb1470ad"
+    },
+    {
+      "path": "results/real_data_full_month_pilot/20260719T021627681202Z/acceptance.json",
+      "sha256": "124c5bbad48ff16aa552dea60ac27a7f7407fda15b37459b6301d68279a5a61a"
+    },
+    {
+      "path": "results/real_data_full_month_pilot/20260719T021627681202Z/report.md",
+      "sha256": "b50fb924e34195f84b04565a629ea568363b6339cf82c8f84b46e417b5e2bb49"
+    }
+  ],
+  "scientific_boundary": "The protocol is authorized for later frozen query-family experiments. This run itself is not optimizer or paper performance evidence."
+}

@@ -1,0 +1,30 @@
+{
+  "protocol_id": "governed-pipeline-cost-calibration-v2",
+  "frozen_at": "2026-07-24",
+  "config_path": "experiments/configs/governed_pipeline_cost_calibration_v2.json",
+  "source_admission_record": "experiments/frozen/governed_pipeline_semantic_admission_v3_positive_20260724.json",
+  "supersedes": "governed-pipeline-cost-calibration-v1",
+  "change_from_v1": "Only the source run and equivalence-group version changed; model form, lambda grid, baselines, tie band, and stop/go thresholds are unchanged.",
+  "model": "nonnegative additive latency over candidate-specific physical work",
+  "validation": "leave-one-complete-scenario-family-out; all seeds remain in the same fold",
+  "baselines": [
+    "fixed policy-first",
+    "fixed query-first",
+    "fixed join-first",
+    "3%-equivalent legal Oracle"
+  ],
+  "predeclared_gates": {
+    "minimum_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_regret_percent": 15.0,
+    "minimum_selected_candidate_count": 2,
+    "must_not_be_worse_than_best_fixed_mean_and_p95": true
+  },
+  "scientific_boundary": [
+    "This is grouped development validation, not an independent holdout.",
+    "The retracted V2 admission and failed cost-model V1 are not training inputs.",
+    "A failed gate is retained and ends this additive-model attempt.",
+    "A pass authorizes one separately frozen unseen holdout, not a paper performance claim."
+  ]
+}

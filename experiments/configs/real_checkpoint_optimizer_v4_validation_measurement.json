@@ -1,0 +1,64 @@
+{
+  "results_dir": "results/real_checkpoint_optimizer_v4_validation_measurement",
+  "sources": [
+    {
+      "dataset": "bts",
+      "month": "2024-03",
+      "event_path": "data/processed/bts/on_time/2024-03/bts_flights_full.parquet",
+      "dimension_path": "data/processed/bts/on_time/2024-03/bts_airports.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-03.json"
+    },
+    {
+      "dataset": "bts",
+      "month": "2024-11",
+      "event_path": "data/processed/bts/on_time/2024-11/bts_flights_full.parquet",
+      "dimension_path": "data/processed/bts/on_time/2024-11/bts_airports.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-11.json"
+    },
+    {
+      "dataset": "nyc_tlc",
+      "month": "2024-04",
+      "event_path": "data/raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-04.parquet",
+      "dimension_path": "data/processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-04.json"
+    },
+    {
+      "dataset": "nyc_tlc",
+      "month": "2024-10",
+      "event_path": "data/raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-10.parquet",
+      "dimension_path": "data/processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-10.json"
+    }
+  ],
+  "profiles": [
+    {"profile_id": "w256-p020-q025", "identifier_width": 256, "policy_selectivity": 0.20, "query_selectivity": 0.25},
+    {"profile_id": "w256-p020-q035", "identifier_width": 256, "policy_selectivity": 0.20, "query_selectivity": 0.35},
+    {"profile_id": "w256-p020-q045", "identifier_width": 256, "policy_selectivity": 0.20, "query_selectivity": 0.45},
+    {"profile_id": "w256-p040-q025", "identifier_width": 256, "policy_selectivity": 0.40, "query_selectivity": 0.25},
+    {"profile_id": "w256-p040-q035", "identifier_width": 256, "policy_selectivity": 0.40, "query_selectivity": 0.35},
+    {"profile_id": "w256-p040-q045", "identifier_width": 256, "policy_selectivity": 0.40, "query_selectivity": 0.45},
+    {"profile_id": "w768-p020-q025", "identifier_width": 768, "policy_selectivity": 0.20, "query_selectivity": 0.25},
+    {"profile_id": "w768-p020-q035", "identifier_width": 768, "policy_selectivity": 0.20, "query_selectivity": 0.35},
+    {"profile_id": "w768-p020-q045", "identifier_width": 768, "policy_selectivity": 0.20, "query_selectivity": 0.45},
+    {"profile_id": "w768-p040-q025", "identifier_width": 768, "policy_selectivity": 0.40, "query_selectivity": 0.25},
+    {"profile_id": "w768-p040-q035", "identifier_width": 768, "policy_selectivity": 0.40, "query_selectivity": 0.35},
+    {"profile_id": "w768-p040-q045", "identifier_width": 768, "policy_selectivity": 0.40, "query_selectivity": 0.45}
+  ],
+  "row_count": 150000,
+  "seeds": [11101, 11202, 11303],
+  "candidate_ids": [
+    "policy_first_narrow_checkpoint",
+    "query_first_raw_checkpoint"
+  ],
+  "warmup_rounds": 2,
+  "repetitions_per_permutation": 15,
+  "duckdb_threads": 1,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 2026072317,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 2026072318,
+  "require_clean_git": true,
+  "experiment_role": "frozen_real_optimizer_validation"
+}

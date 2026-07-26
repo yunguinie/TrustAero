@@ -14,6 +14,7 @@ from typing import Literal
 
 RAW_JOIN_LIMIT_EXCEEDED = "CANDIDATE_RAW_JOIN_LIMIT_EXCEEDED"
 RAW_MATERIALIZATION_LIMIT_EXCEEDED = "CANDIDATE_RAW_MATERIALIZATION_LIMIT_EXCEEDED"
+REQUIRED_CHECKPOINT_MISSING = "CANDIDATE_REQUIRED_CHECKPOINT_MISSING"
 
 
 @dataclass(frozen=True)
@@ -29,6 +30,9 @@ class CandidateExposure:
     raw_rows_exposed_to_join: int
     raw_rows_materialized: int
     masked_rows_materialized: int = 0
+    # Some policies require a durable governance boundary for audit or
+    # recovery.  This is a hard capability, not a latency feature.
+    provides_governance_checkpoint: bool = True
 
     def __post_init__(self) -> None:
         if not self.candidate_id.strip():
@@ -46,7 +50,7 @@ class CandidateExposure:
 
 @dataclass(frozen=True)
 class GovernanceFeasibilityPolicy:
-    """Small V1 policy fragment for raw-value exposure.
+    """Small V1 policy fragment for exposure and checkpoint requirements.
 
     A limit of ``None`` means unrestricted by this policy fragment. A limit of
     zero forbids the corresponding exposure. Positive limits support bounded
@@ -56,6 +60,7 @@ class GovernanceFeasibilityPolicy:
     policy_id: str
     max_raw_join_rows: int | None
     max_raw_materialized_rows: int | None
+    require_governance_checkpoint: bool = False
 
     def __post_init__(self) -> None:
         if not self.policy_id.strip():
@@ -71,7 +76,11 @@ class CandidateFeasibilityDiagnostic:
 
     code: str
     candidate_id: str
-    exposure_kind: Literal["raw_join", "raw_materialization"]
+    exposure_kind: Literal[
+        "raw_join",
+        "raw_materialization",
+        "missing_governance_checkpoint",
+    ]
     observed_rows: int
     allowed_rows: int
 
@@ -127,6 +136,16 @@ def evaluate_candidate_feasibility(
                 exposure_kind="raw_materialization",
                 observed_rows=exposure.raw_rows_materialized,
                 allowed_rows=policy.max_raw_materialized_rows,
+            )
+        )
+    if policy.require_governance_checkpoint and not exposure.provides_governance_checkpoint:
+        diagnostics.append(
+            CandidateFeasibilityDiagnostic(
+                code=REQUIRED_CHECKPOINT_MISSING,
+                candidate_id=exposure.candidate_id,
+                exposure_kind="missing_governance_checkpoint",
+                observed_rows=0,
+                allowed_rows=1,
             )
         )
     return CandidateFeasibilityDecision(

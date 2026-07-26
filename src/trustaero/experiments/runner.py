@@ -10,7 +10,7 @@ import statistics
 import subprocess
 import sys
 import time
-from dataclasses import asdict
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from importlib import metadata
 from pathlib import Path
@@ -27,6 +27,15 @@ from trustaero.ir.models import (
     PhysicalOperatorSpec,
     ValidatedLogicalPlan,
 )
+from trustaero.optimizer.candidate_feasibility import (
+    CandidateExposure,
+    GovernanceFeasibilityPolicy,
+)
+from trustaero.optimizer.hierarchical_planner import (
+    GovernedCandidateProfile,
+    hierarchical_planning_digest,
+    plan_governed_candidates,
+)
 from trustaero.planner.physical import plan_physical_execution
 from trustaero.validator.certificate import verify_execution_certificate
 from trustaero.validator.service import validate
@@ -40,6 +49,17 @@ EventType = Literal[
     "LineageRecorded",
     "CertificateEmitted",
 ]
+
+
+@dataclass(frozen=True, slots=True)
+class CertificateScenarioInputs:
+    """Certificate inputs plus independently observed planner evidence."""
+
+    physical_plan: ApprovedPhysicalPlan
+    certificate: GovernedExecutionCertificate
+    observed_planner_digest: str | None = None
+    observed_planner_candidate_id: str | None = None
+    planner_latency_ms: float = 0.0
 
 
 def _repo_root() -> Path:
@@ -307,41 +327,139 @@ def _certificate(
     )
 
 
+def _phase0_planner_decision() -> tuple[str, str]:
+    """Build a deterministic real planner decision for fault injection."""
+
+    profiles = (
+        GovernedCandidateProfile(
+            candidate_id="fused",
+            result_equivalence_id="phase0-equivalent-result",
+            exposure=CandidateExposure(
+                "fused",
+                0,
+                0,
+                provides_governance_checkpoint=False,
+            ),
+            work_metrics=(("pipeline_breaker.count", 0.0),),
+        ),
+        GovernedCandidateProfile(
+            candidate_id="materialized",
+            result_equivalence_id="phase0-equivalent-result",
+            exposure=CandidateExposure("materialized", 0, 0),
+            work_metrics=(("pipeline_breaker.count", 1.0),),
+        ),
+    )
+    result = plan_governed_candidates(
+        profiles,
+        GovernanceFeasibilityPolicy("phase0-planner-policy", None, None),
+    )
+    if result.selected_candidate_id is None:
+        raise ValueError("Phase 0 planner baseline must select one candidate")
+    return hierarchical_planning_digest(result), result.selected_candidate_id
+
+
+def _planner_certificate_inputs(
+    plan: ValidatedLogicalPlan,
+    scenario: str,
+) -> CertificateScenarioInputs:
+    """Create valid or deliberately corrupted planner/certificate bindings."""
+
+    started = time.perf_counter()
+    digest, selected = _phase0_planner_decision()
+    planner_latency_ms = (time.perf_counter() - started) * 1000.0
+    base = plan_physical_execution(plan)
+    physical = base.model_copy(
+        update={
+            "planner_decision_digest": digest,
+            "planner_selected_candidate_id": selected,
+        }
+    )
+    certificate = _certificate(plan, physical).model_copy(
+        update={
+            "planner_decision_digest": digest,
+            "planner_selected_candidate_id": selected,
+        }
+    )
+    observed_digest = digest
+    observed_candidate = selected
+
+    if scenario == "planner_binding_valid":
+        pass
+    elif scenario == "planner_digest_mismatch":
+        certificate = certificate.model_copy(update={"planner_decision_digest": "sha256:tampered"})
+    elif scenario == "planner_candidate_mismatch":
+        certificate = certificate.model_copy(
+            update={"planner_selected_candidate_id": "materialized"}
+        )
+    elif scenario == "planner_strategy_mismatch":
+        physical = physical.model_copy(update={"planner_selected_candidate_id": "materialized"})
+        certificate = certificate.model_copy(
+            update={"planner_selected_candidate_id": "materialized"}
+        )
+    elif scenario == "planner_binding_missing":
+        certificate = _certificate(plan, physical)
+    elif scenario == "planner_observation_mismatch":
+        observed_digest = "sha256:independent-tamper"
+    else:
+        raise ValueError(f"Unknown planner certificate scenario: {scenario}")
+    return CertificateScenarioInputs(
+        physical_plan=physical,
+        certificate=certificate,
+        observed_planner_digest=observed_digest,
+        observed_planner_candidate_id=observed_candidate,
+        planner_latency_ms=planner_latency_ms,
+    )
+
+
 def _certificate_inputs(
     plan: ValidatedLogicalPlan,
     scenario: str,
-) -> tuple[ApprovedPhysicalPlan, GovernedExecutionCertificate]:
+) -> CertificateScenarioInputs:
     """Return physical plan and certificate for a deterministic certificate scenario."""
 
+    if scenario.startswith("planner_"):
+        return _planner_certificate_inputs(plan, scenario)
     physical = plan_physical_execution(plan)
     certificate = _certificate(plan, physical)
     if scenario == "baseline":
-        return physical, certificate
+        return CertificateScenarioInputs(physical, certificate)
     if scenario == "weak_lineage":
         evidence = certificate.lineage_evidence
         if evidence is None:
             raise ValueError("weak_lineage scenario requires baseline lineage evidence")
-        return physical, certificate.model_copy(
-            update={
-                "lineage_evidence": evidence.model_copy(
-                    update={"lineage_level": LineageLevel.SOURCE}
-                )
-            }
+        return CertificateScenarioInputs(
+            physical,
+            certificate.model_copy(
+                update={
+                    "lineage_evidence": evidence.model_copy(
+                        update={"lineage_level": LineageLevel.SOURCE}
+                    )
+                }
+            ),
         )
     if scenario == "missing_lineage_event":
-        return physical, certificate.model_copy(
-            update={
-                "events": tuple(
-                    event for event in certificate.events if event.event_type != "LineageRecorded"
-                )
-            }
+        return CertificateScenarioInputs(
+            physical,
+            certificate.model_copy(
+                update={
+                    "events": tuple(
+                        event
+                        for event in certificate.events
+                        if event.event_type != "LineageRecorded"
+                    )
+                }
+            ),
         )
     if scenario == "snapshot_mismatch":
-        return physical, certificate.model_copy(
-            update={"data_snapshots": {"critical_facilities": "v1900"}}
+        return CertificateScenarioInputs(
+            physical,
+            certificate.model_copy(update={"data_snapshots": {"critical_facilities": "v1900"}}),
         )
     if scenario == "missing_result_digest":
-        return physical, certificate.model_copy(update={"result_digest": ""})
+        return CertificateScenarioInputs(
+            physical,
+            certificate.model_copy(update={"result_digest": ""}),
+        )
     if scenario == "event_order_invalid":
         events = tuple(
             event.model_copy(update={"sequence": 1})
@@ -349,14 +467,17 @@ def _certificate_inputs(
             else event
             for event in certificate.events
         )
-        return physical, certificate.model_copy(update={"events": events})
+        return CertificateScenarioInputs(
+            physical,
+            certificate.model_copy(update={"events": events}),
+        )
     if scenario == "unknown_physical_input":
         synthetic = _physical_plan_from_edges(
             plan,
             {"phys-filter": ("phys-missing",)},
             "phys-filter",
         )
-        return synthetic, _certificate(plan, synthetic)
+        return CertificateScenarioInputs(synthetic, _certificate(plan, synthetic))
     if scenario == "cyclic_physical_plan":
         synthetic = _physical_plan_from_edges(
             plan,
@@ -366,7 +487,7 @@ def _certificate_inputs(
             },
             "phys-a",
         )
-        return synthetic, _certificate(plan, synthetic)
+        return CertificateScenarioInputs(synthetic, _certificate(plan, synthetic))
     if scenario == "dependency_violation":
         synthetic = _physical_plan_from_edges(
             plan,
@@ -389,7 +510,10 @@ def _certificate_inputs(
             _event(8, "LineageRecorded", "sha256:lineage"),
             _event(9, "CertificateEmitted", "sha256:certificate"),
         )
-        return synthetic, _certificate(plan, synthetic).model_copy(update={"events": events})
+        return CertificateScenarioInputs(
+            synthetic,
+            _certificate(plan, synthetic).model_copy(update={"events": events}),
+        )
     raise ValueError(f"Unknown certificate scenario: {scenario}")
 
 
@@ -430,11 +554,20 @@ def _case_result(
     if case.case_kind == "certificate":
         if cold_response.status != ValidationStatus.REWRITE or cold_response.validated_plan is None:
             raise ValueError(f"Certificate case {case.case_id} requires a rewrite validated plan")
-        physical, certificate = _certificate_inputs(cold_response.validated_plan, case.scenario)
+        certificate_inputs = _certificate_inputs(
+            cold_response.validated_plan,
+            case.scenario,
+        )
+        physical = certificate_inputs.physical_plan
+        certificate = certificate_inputs.certificate
         verification = verify_execution_certificate(
             cold_response.validated_plan,
             physical,
             certificate,
+            observed_planner_decision_digest=(certificate_inputs.observed_planner_digest),
+            observed_planner_selected_candidate_id=(
+                certificate_inputs.observed_planner_candidate_id
+            ),
         )
         certificate_event_count = len(certificate.events)
     cold_latency_ms = (time.perf_counter() - cold_start) * 1000.0
@@ -444,18 +577,45 @@ def _case_result(
         if case.case_kind == "certificate":
             if response.validated_plan is None:
                 raise ValueError(f"Certificate case {case.case_id} did not rewrite in warmup")
-            physical, certificate = _certificate_inputs(response.validated_plan, case.scenario)
-            verify_execution_certificate(response.validated_plan, physical, certificate)
+            certificate_inputs = _certificate_inputs(
+                response.validated_plan,
+                case.scenario,
+            )
+            verify_execution_certificate(
+                response.validated_plan,
+                certificate_inputs.physical_plan,
+                certificate_inputs.certificate,
+                observed_planner_decision_digest=(certificate_inputs.observed_planner_digest),
+                observed_planner_selected_candidate_id=(
+                    certificate_inputs.observed_planner_candidate_id
+                ),
+            )
 
     measurements: list[float] = []
+    planner_measurements: list[float] = []
+    certificate_measurements: list[float] = []
     for _ in range(measured_runs):
         started = time.perf_counter()
         response = validate(raw_plan, policy, catalog)
         if case.case_kind == "certificate":
             if response.validated_plan is None:
                 raise ValueError(f"Certificate case {case.case_id} did not rewrite")
-            physical, certificate = _certificate_inputs(response.validated_plan, case.scenario)
-            verify_execution_certificate(response.validated_plan, physical, certificate)
+            certificate_inputs = _certificate_inputs(
+                response.validated_plan,
+                case.scenario,
+            )
+            planner_measurements.append(certificate_inputs.planner_latency_ms)
+            verification_started = time.perf_counter()
+            verify_execution_certificate(
+                response.validated_plan,
+                certificate_inputs.physical_plan,
+                certificate_inputs.certificate,
+                observed_planner_decision_digest=(certificate_inputs.observed_planner_digest),
+                observed_planner_selected_candidate_id=(
+                    certificate_inputs.observed_planner_candidate_id
+                ),
+            )
+            certificate_measurements.append((time.perf_counter() - verification_started) * 1000.0)
         measurements.append((time.perf_counter() - started) * 1000.0)
 
     if case.case_kind == "certificate":
@@ -514,6 +674,12 @@ def _case_result(
         pending_obligation_count=pending_obligation_count,
         verified_obligation_count=verified_obligation_count,
         certificate_event_count=certificate_event_count,
+        planner_median_latency_ms=(
+            statistics.median(planner_measurements) if planner_measurements else 0.0
+        ),
+        certificate_verification_median_latency_ms=(
+            statistics.median(certificate_measurements) if certificate_measurements else 0.0
+        ),
         plan_digest=plan_digest,
     )
     failure_payload = None
@@ -587,6 +753,16 @@ def _summary(results: tuple[CaseResult, ...]) -> dict[str, object]:
         if not result.status_correct or not result.reason_code_correct
     ]
     medians = [result.median_latency_ms for result in results]
+    planner_medians = [
+        result.planner_median_latency_ms
+        for result in results
+        if result.planner_median_latency_ms > 0.0
+    ]
+    certificate_medians = [
+        result.certificate_verification_median_latency_ms
+        for result in results
+        if result.certificate_verification_median_latency_ms > 0.0
+    ]
     return {
         "case_count": total,
         "status_correct": status_correct,
@@ -595,10 +771,16 @@ def _summary(results: tuple[CaseResult, ...]) -> dict[str, object]:
         "failed_cases": failed,
         "median_of_case_medians_ms": statistics.median(medians) if medians else 0.0,
         "max_case_p95_ms": max((result.p95_latency_ms for result in results), default=0.0),
+        "median_planner_latency_ms": (
+            statistics.median(planner_medians) if planner_medians else 0.0
+        ),
+        "median_certificate_verification_latency_ms": (
+            statistics.median(certificate_medians) if certificate_medians else 0.0
+        ),
     }
 
 
-def run_phase0(config: Phase0Config) -> Path:
+def run_phase0(config: Phase0Config, *, progress: bool = False) -> Path:
     """Run Phase 0 and return the created result directory."""
 
     root = _repo_root()
@@ -608,17 +790,28 @@ def run_phase0(config: Phase0Config) -> Path:
     output_dir = root / config.results_dir / run_id
     output_dir.mkdir(parents=True, exist_ok=False)
 
-    case_outputs = tuple(
-        _case_result(
-            root=root,
-            run_id=run_id,
-            commit_hash=commit_hash,
-            case=case,
-            warmup_runs=config.warmup_runs,
-            measured_runs=config.measured_runs,
+    started = time.perf_counter()
+    case_output_list: list[tuple[CaseResult, dict[str, Any] | None]] = []
+    for index, case in enumerate(cases, start=1):
+        case_output_list.append(
+            _case_result(
+                root=root,
+                run_id=run_id,
+                commit_hash=commit_hash,
+                case=case,
+                warmup_runs=config.warmup_runs,
+                measured_runs=config.measured_runs,
+            )
         )
-        for case in cases
-    )
+        if progress:
+            elapsed = time.perf_counter() - started
+            eta = elapsed / index * (len(cases) - index)
+            print(
+                f"[Phase0 {index:02d}/{len(cases):02d}] {case.case_id} "
+                f"{case.scenario} elapsed={elapsed:.1f}s eta={eta:.1f}s",
+                flush=True,
+            )
+    case_outputs = tuple(case_output_list)
     results = tuple(result for result, _ in case_outputs)
     failures = {result.case_id: failure for result, failure in case_outputs if failure is not None}
 

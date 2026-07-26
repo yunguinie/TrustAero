@@ -1,0 +1,19 @@
+{
+  "results_dir": "results/system_scalability_formal_evaluation_v1",
+  "measurement_results_dir": "results/system_scalability_formal_v1",
+  "measurement_config_path": "experiments/configs/system_scalability_formal_v1.json",
+  "expected_unit_ids": [
+    "bts-100000",
+    "bts-500000",
+    "nyc_tlc-100000",
+    "nyc_tlc-500000"
+  ],
+  "expected_blocks_per_unit": 30,
+  "confidence_level": 0.95,
+  "bootstrap_repetitions": 5000,
+  "bootstrap_seed": 20260726,
+  "maximum_position_median_spread_fraction": 0.3,
+  "maximum_half_ratio_drift_fraction": 0.2,
+  "maximum_spilled_unit_count": 0,
+  "required_certificate_status": "PARTIAL"
+}

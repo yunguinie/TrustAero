@@ -1,0 +1,55 @@
+{
+  "output_dir": "results/benchmark_evidence_matrix_v1",
+  "tie_threshold_fraction": 0.03,
+  "require_clean_git": true,
+  "sources": [
+    {
+      "workload_id": "tpch-q01-sf1",
+      "domain": "standard_benchmark",
+      "query_family": "filter_group_aggregate_sort",
+      "evidence_scope": "standard_method",
+      "reference_candidate_id": "fused",
+      "accepted_oracle_set": ["fused", "materialize-after-q01-aggregate"],
+      "summary_path": "results/tpch_q1_utc_batched_v1/20260720T001101507660Z/summary.json",
+      "summary_sha256": "edaec5ead5b0c857d01a3e2642131b66c881925aed78621dcc714b0ee78e0288",
+      "acceptance_path": "results/tpch_q1_utc_batched_v1/20260720T001101507660Z/acceptance.json",
+      "acceptance_sha256": "e307b599f2397a5ea3261591578c3f14b15a6f156b069dfc23b22aa7492becfd"
+    },
+    {
+      "workload_id": "tpch-q06-sf1",
+      "domain": "standard_benchmark",
+      "query_family": "filter_aggregate",
+      "evidence_scope": "standard_method",
+      "reference_candidate_id": "fused",
+      "accepted_oracle_set": ["fused"],
+      "summary_path": "results/tpch_q6_utc_batched_v3/20260719T135554438475Z/summary.json",
+      "summary_sha256": "2f4ec78850d24293e9aee4c5e068ec82e052b1aa3980a62009563822d9fd77d9",
+      "acceptance_path": "results/tpch_q6_utc_batched_v3/20260719T135554438475Z/acceptance.json",
+      "acceptance_sha256": "97b5d62c565f2af83a8be90e6f3fddd26bbd55a2bab0012c68e8c4575d607c2f"
+    },
+    {
+      "workload_id": "bts-2024-01-governed",
+      "domain": "real_air_transport",
+      "query_family": "filter_mask_aggregate",
+      "evidence_scope": "inspected_development_partition",
+      "reference_candidate_id": "fused",
+      "accepted_oracle_set": ["materialize-after-gov-002-mask"],
+      "summary_path": "results/real_data_formal_candidate_v1/20260719T051929196252Z/units/bts-full-2024-01.json",
+      "summary_sha256": "4d82ddc4b1001c14231d8c1dd079260af0f1224ba9515a8126abbc5c77c33b5f",
+      "acceptance_path": "results/real_data_formal_candidate_v1/20260719T051929196252Z/acceptance.json",
+      "acceptance_sha256": "8414ddce30dd8648451c2403f42c5d3886637e35e4ed45243d84ba69fd4b699c"
+    },
+    {
+      "workload_id": "nyc-tlc-2024-01-governed",
+      "domain": "real_urban_mobility",
+      "query_family": "filter_join_aggregate",
+      "evidence_scope": "inspected_development_partition",
+      "reference_candidate_id": "fused",
+      "accepted_oracle_set": ["fused"],
+      "summary_path": "results/real_data_formal_candidate_v1/20260719T051929196252Z/units/nyc_tlc-full-2024-01.json",
+      "summary_sha256": "ce66a8bf22b8eeec116372a55ee93e1eef8740b1ac036050b8808500cb263e73",
+      "acceptance_path": "results/real_data_formal_candidate_v1/20260719T051929196252Z/acceptance.json",
+      "acceptance_sha256": "8414ddce30dd8648451c2403f42c5d3886637e35e4ed45243d84ba69fd4b699c"
+    }
+  ]
+}

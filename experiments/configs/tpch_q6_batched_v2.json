@@ -1,0 +1,21 @@
+{
+  "results_dir": "results/tpch_q6_batched_v2",
+  "warmup_blocks": 6,
+  "measured_blocks": 30,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260731,
+  "absolute_half_drift_limit": 0.5,
+  "paired_ratio_half_drift_limit": 0.2,
+  "paired_ratio_outlier_fraction_limit": 0.1,
+  "tie_threshold_fraction": 0.03,
+  "artifact_sha256": "64a709fa8f995aeae23ffe6305a47e77c97113c823974a3f6a6933b8d05a0b22",
+  "semantic_smoke_sha256": "d713737e2b60c40ccb6e89c078883b5d2ef3b41f767bf2590e752225cdaf4e86",
+  "support_audit_sha256": "1525f40afd01aa90c6898e130bab3ed73838d1f30c7f2ec31e462eb5df412d57",
+  "require_clean_git": true,
+  "scientific_label": "tpch_sf1_q6_batched_median_development_v2",
+  "paper_performance_evidence": true,
+  "heldout_optimizer_evidence": false,
+  "timing_protocol": "batched_median_v2",
+  "timed_repeats_per_position": 5
+}

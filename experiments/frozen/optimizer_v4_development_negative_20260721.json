@@ -1,0 +1,85 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v4_development_negative_20260721",
+  "status": "V4_DEVELOPMENT_GATE_FAILED_AND_ROOT_CAUSE_DIAGNOSED",
+  "model_implementation_commit": "5f8f45b",
+  "diagnosis_commit": "a636acf",
+  "source_run_id": "20260721T120615014628Z",
+  "v4_may_be_frozen_as_final_selector": false,
+  "february_to_december_accessed": false,
+  "metrics_on_44_stable_families": {
+    "top1_selection_rate": 0.7272727272727273,
+    "within_3_percent_rate": 0.7272727272727273,
+    "mean_regret_percent": 6.120257724577453,
+    "p95_regret_percent": 23.540801100010576,
+    "max_regret_percent": 77.64027781340333,
+    "direct_coverage": 0.4090909090909091,
+    "illegal_selection_count": 0
+  },
+  "diagnosis": {
+    "direct_stable_decision_count": 18,
+    "direct_stable_correct_count": 18,
+    "counterfactual_prediction_sign_correct_count": 43,
+    "counterfactual_prediction_sign_accuracy": 0.9772727272727273,
+    "stable_fallback_count": 26,
+    "stable_fallback_wrong_count": 12,
+    "uncertainty_threshold_min": 0.12341910344711965,
+    "uncertainty_threshold_max": 4.245960329889082,
+    "match_rate_baseline_top1_selection_rate": 1.0,
+    "match_rate_baseline_mean_regret_percent": 0.0
+  },
+  "failure_categories": {
+    "physical_work_direction_failure": "MOSTLY_REJECTED_43_OF_44_SIGNS_CORRECT",
+    "residual_uncertainty_calibration_failure": "CONFIRMED",
+    "conservative_early_fallback_performance_failure": "CONFIRMED",
+    "simple_baseline_dominance": "CONFIRMED_ON_CURRENT_FRAGMENT",
+    "governance_violation": "REJECTED_ZERO_ILLEGAL_SELECTIONS"
+  },
+  "rejected_fixes": [
+    "lower the frozen residual quantile after seeing this result",
+    "remove uncertainty and relabel the same run as passed",
+    "hide the perfect match-rate baseline inside a fallback",
+    "exclude stable low-match families harmed by early fallback",
+    "open external months to tune the guard"
+  ],
+  "authorized_next_step": "Predeclare and evaluate group-sign stability separately from cost-gap uncertainty. Preserve the match-rate baseline and report direct-model and fallback contributions independently. Do not open February-December.",
+  "immutable_files": [
+    {
+      "path": "results/optimizer_v4_model_development/20260721T120615014628Z/cross_validation.json",
+      "sha256": "e31a620a47f6111f5e77248c7f4113ab72da9d634fa480574d6574b6e2bac2d7"
+    },
+    {
+      "path": "results/optimizer_v4_model_development/20260721T120615014628Z/failure_diagnosis.json",
+      "sha256": "4f53655bd787e6c375ee058fae7e4bba36af30e1dc4e9e49748c1c99f2daa69b"
+    },
+    {
+      "path": "results/optimizer_v4_model_development/20260721T120615014628Z/pipeline_v4_model.json",
+      "sha256": "3dd4be8ad826385b046b9d466cea711887ac62fecbfd2ae9ea2e2bb2e371aa40"
+    },
+    {
+      "path": "results/optimizer_v4_model_development/20260721T120615014628Z/config.json",
+      "sha256": "dbef415bb3d9483a6d0e881150889c668b81c61a6831a94bb1765207562d2556"
+    },
+    {
+      "path": "results/optimizer_v4_calibration_development/20260721T184427124750+0800/paired_stability_audit.json",
+      "sha256": "bff08a26ecb296fe6d3facb5eea557540cc6f37b6f1c2a88f1e16f0a246767d3"
+    },
+    {
+      "path": "experiments/configs/optimizer_v4_model_development_v1.json",
+      "sha256": "218142fc888a396f7e7fb67e18e415e0462117802f931f7ed248e18109f85375"
+    },
+    {
+      "path": "src/trustaero/optimizer/mask_pipeline_v4_model.py",
+      "sha256": "36d5f9b705a2cf7331448ba52c03a4f6e6c37065ddda0240df3eed7304ea9152"
+    },
+    {
+      "path": "src/trustaero/experiments/optimizer_v4_model_development.py",
+      "sha256": "9a3261ddc33cbe8d5df060124712aac985668757ea05a9ae6824701cebf4250f"
+    },
+    {
+      "path": "src/trustaero/experiments/optimizer_v4_model_diagnosis.py",
+      "sha256": "6c4be0d2f4b8bc39996d22009c0a362d2d0efc395027400bccd6bc472e8c89c0"
+    }
+  ],
+  "conclusion": "Pipeline-work ranking signs transfer across held-out January windows, but the residual-magnitude uncertainty gate and conservative early fallback make the deployed V4 fail. The perfect simple baseline prevents a pipeline-superiority claim on this fragment."
+}

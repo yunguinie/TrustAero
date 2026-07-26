@@ -1,0 +1,17 @@
+{
+  "development_run_dir": "results/governed_checkpoint_reversal_v1/20260723T012103266124Z",
+  "v2_calibration_path": "results/governed_checkpoint_optimizer_v2/20260723T020104628457Z/calibration.json",
+  "frozen_base_model_path": "experiments/frozen/models/governed_checkpoint_optimizer_v2_20260723.json",
+  "results_dir": "results/governed_checkpoint_uncertainty_v3",
+  "expected_development_summary_sha256": "17f8a77d9094780fa42484bfa383c49793046ea1903defa393e734f0b99c7574",
+  "expected_development_measurements_sha256": "94dae8758c9b0ff32de365b02fa4085c82c199507b299ca4b256369ed1c78a6a",
+  "expected_v2_calibration_sha256": "24630b5795d9db28fd93368ab1abbaa8311767c2be70c92219b9837ede8582cd",
+  "expected_base_model_sha256": "1826240d96cf2b539da6f43634296a419b032785111fe854675d8db7edf35cf3",
+  "coverage": 0.9,
+  "expected_family_count": 8,
+  "minimum_confidence_family_hit_rate": 1.0,
+  "maximum_mean_regret_percent": 5.0,
+  "maximum_regret_percent": 15.0,
+  "require_seed_consistency": true,
+  "require_clean_git": true
+}

@@ -1,0 +1,19 @@
+{
+  "protocol_id": "governed-pipeline-admission-v1",
+  "frozen_at": "2026-07-24",
+  "config_path": "experiments/configs/governed_pipeline_admission_v1.json",
+  "experiment_role": "development winner-diversity admission",
+  "matrix": {
+    "scenario_count": 24,
+    "unit_count": 72,
+    "measured_paired_blocks": 2160,
+    "timed_candidate_executions": 6480
+  },
+  "authorization_rule": "Only PASS_GOVERNED_PIPELINE_OPTIMIZER_ADMISSION permits training a new performance model.",
+  "scientific_boundary": [
+    "This run is a development admission test, not an optimizer evaluation.",
+    "All candidates must remain result- and record-lineage-equivalent with distinct DuckDB physical plans.",
+    "A failure is retained and its gates are not weakened after observing results.",
+    "No optimizer speedup or unseen-data generalization claim is authorized by this experiment."
+  ]
+}

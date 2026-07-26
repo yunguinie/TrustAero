@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-system-scalability-500k-source-lineage-pilot-v1-20260724",
+  "status": "FROZEN_NOT_EXECUTED",
+  "scientific_role": "500K scale integrity pilot; not publication performance evidence",
+  "measurement_config": {
+    "path": "experiments/configs/system_scalability_500k_pilot_v1.json",
+    "sha256": "da2e52988a7133889d2b3aa25dc784c35f08fc5978feb5b4e3408c8cdc1e4b44"
+  },
+  "admission_result": {
+    "path": "experiments/frozen/system_scalability_source_lineage_pilot_positive_20260724.json",
+    "sha256": "6da0b1da87dd7d246e8b525a54f6894669f69d859422467562f890752f07124c"
+  },
+  "data_binding": {
+    "month": "2024-01",
+    "manifest_path": "data/manifests/processed/real-data-2024-01.json",
+    "manifest_sha256": "3f822cff0f4d76b8a170c2ceaff88586c8b93c4cc212cd785e1dbeb5c723a716",
+    "datasets": [
+      "BTS Airline On-Time Performance",
+      "NYC TLC Yellow Taxi"
+    ],
+    "scale_rows": 500000
+  },
+  "fixed_controls": {
+    "warmup_blocks": 1,
+    "measured_blocks": 3,
+    "duckdb_threads": 4,
+    "duckdb_memory_limit_mb": 4096,
+    "cache_regime": "warm_same_unit_connection",
+    "order_seed": 20260725
+  },
+  "acceptance_gates": [
+    "both configured 500K artifacts pass their frozen manifest checks",
+    "all four layer result digests agree in every paired block",
+    "both lineage-enabled layers have identical source-edge digests",
+    "every complete-layer certificate is PARTIAL with no diagnostics",
+    "DuckDB peak buffer memory and temporary spill are recorded outside primary latency",
+    "the run is bound to one clean Git commit",
+    "optimizer coefficients and support rules are not read, refit, or retuned"
+  ],
+  "boundaries": [
+    "Three measured blocks test scale integrity but do not authorize latency claims.",
+    "The pilot measures source-snapshot lineage only.",
+    "A successful pilot admits a separately frozen formal paired-timing protocol."
+  ]
+}

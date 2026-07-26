@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-system-scalability-formal-source-lineage-v1-20260724",
+  "status": "FROZEN_NOT_EXECUTED",
+  "scientific_role": "formal paired real-data scaling and source-lineage overhead evidence",
+  "measurement_config": {
+    "path": "experiments/configs/system_scalability_formal_v1.json",
+    "sha256": "7780b9aa30fdf2da6235ab8623a623ef4f1b12872a75d7cfd92ce39dde7445e1"
+  },
+  "evaluation_config": {
+    "path": "experiments/configs/system_scalability_formal_evaluation_v1.json",
+    "sha256": "f02411410c8d58f65094ef884221fe720c095bfe8ebc6c2c7c92d8f1e6e1624b"
+  },
+  "admission_results": [
+    {
+      "path": "experiments/frozen/system_scalability_source_lineage_pilot_positive_20260724.json",
+      "sha256": "6da0b1da87dd7d246e8b525a54f6894669f69d859422467562f890752f07124c"
+    },
+    {
+      "path": "experiments/frozen/system_scalability_500k_source_lineage_pilot_positive_20260724.json",
+      "sha256": "87b23ef6bf816b3ff5b7b303532b7749e8c4bc229c641ed86e929682f36b0e71"
+    }
+  ],
+  "matrix": {
+    "datasets": [
+      "BTS Airline On-Time Performance 2024-01",
+      "NYC TLC Yellow Taxi 2024-01"
+    ],
+    "scales": [100000, 500000],
+    "unit_count": 4,
+    "warmup_blocks_per_unit": 5,
+    "measured_blocks_per_unit": 30,
+    "layers_per_block": 4,
+    "formal_measurement_count": 480
+  },
+  "stability_gates": {
+    "confidence_interval": "95% paired bootstrap median complete/direct ratio",
+    "bootstrap_repetitions": 5000,
+    "maximum_position_count_imbalance": 1,
+    "maximum_position_median_spread_fraction": 0.3,
+    "maximum_first_second_half_ratio_drift_fraction": 0.2,
+    "maximum_spilled_unit_count": 0
+  },
+  "semantic_gates": [
+    "each block contains all four layers exactly once",
+    "all four layers share one relational result digest per unit",
+    "both lineage-enabled layers share one source-edge digest per unit",
+    "every complete-layer certificate has status PARTIAL without diagnostics",
+    "the measurement run uses one clean Git commit and the frozen config"
+  ],
+  "claim_policy": [
+    "A PASS authorizes reporting the observed overhead even if it is large.",
+    "The direct layer runs identical policy-compliant SQL and isolates TrustAero control-path overhead.",
+    "The evidence covers source-snapshot lineage and cannot be relabeled as record-lineage evidence.",
+    "This stage covers January real-data slices at 100K and 500K; full-month and TPC-H scaling remain separate stages.",
+    "The frozen optimizer result is not reopened, refit, or retuned."
+  ]
+}

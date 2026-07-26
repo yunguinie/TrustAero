@@ -1,0 +1,22 @@
+{
+  "results_dir": "results/mask_output_tail_confirmation_v1",
+  "row_count": 150000,
+  "identifier_width": 128,
+  "match_rate": 1.0,
+  "seeds": [4101, 4202, 4303],
+  "candidate_ids": [
+    "prejoin_mask_materialized_output",
+    "postjoin_mask_fused_output",
+    "postjoin_raw_materialized_mask_output"
+  ],
+  "warmup_rounds": 3,
+  "repetitions_per_permutation": 5,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260805,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 20260805,
+  "require_clean_git": true
+}

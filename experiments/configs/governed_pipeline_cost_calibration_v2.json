@@ -1,0 +1,16 @@
+{
+  "results_dir": "results/governed_pipeline_cost_calibration_v2",
+  "source_run_dir": "results/governed_pipeline_semantic_admission_v3/20260724T072055085971Z",
+  "source_summary_sha256": "81dbe915e9f4f2254bd1883845aee776ca520f77e8f060060bc3f8acf765b774",
+  "lambda_grid": [10.0, 100.0, 1000.0],
+  "stable_preference_candidate_id": "policy_first_masked_checkpoint",
+  "practical_tie_fraction": 0.03,
+  "minimum_oracle_set_hit_rate": 0.8,
+  "maximum_mean_regret_percent": 3.0,
+  "maximum_p95_regret_percent": 8.0,
+  "maximum_regret_percent": 15.0,
+  "minimum_selected_candidate_count": 2,
+  "require_not_worse_than_best_fixed_mean": true,
+  "require_not_worse_than_best_fixed_p95": true,
+  "require_clean_git": true
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-record-lineage-v1-pilot-20260724",
+  "status": "FROZEN_NOT_EXECUTED",
+  "scientific_role": "record-lineage fragment integrity and overhead pilot",
+  "measurement_config": {
+    "path": "experiments/configs/record_lineage_pilot_v1.json",
+    "sha256": "dbcd889d708ec214ac13ba3bd0e795900428b1dd51aa8ef56be8dd2520754c0d"
+  },
+  "supported_fragment": {
+    "source_count": 1,
+    "operators": [
+      "ScanSource",
+      "Filter",
+      "SpatialFilter",
+      "TemporalFilter",
+      "Project",
+      "Sort",
+      "Mask on non-identity fields",
+      "GeneralizeLocation on non-identity fields"
+    ],
+    "identity_contract": [
+      "every output row retains one non-null source key",
+      "the source key is unique across output rows",
+      "the source key is not masked",
+      "raw source keys are hashed and never stored in the lineage artifact"
+    ]
+  },
+  "unsupported_fail_closed": [
+    "Join",
+    "Aggregate",
+    "SpatialJoin",
+    "multiple source scans",
+    "missing, NULL, duplicate, or masked identity keys"
+  ],
+  "matrix": {
+    "row_counts": [1000, 10000, 50000],
+    "warmup_rounds": 1,
+    "permutation_repetitions": 2,
+    "measured_blocks_per_unit": 4,
+    "variants": ["direct_query", "record_lineage"]
+  },
+  "required_measurements": [
+    "paired result digest",
+    "end-to-end latency",
+    "record capture latency",
+    "independent verification latency",
+    "edge count",
+    "serialized artifact bytes"
+  ],
+  "integrity_gates": [
+    "direct and record variants produce identical result digests",
+    "every record edge is recomputed from actual output rows",
+    "every artifact passes independent verification",
+    "edge count equals output row count",
+    "the run uses a clean committed Git snapshot"
+  ],
+  "decision_policy": [
+    "This pilot cannot authorize publication performance claims.",
+    "A PASS admits a separately frozen formal record-lineage experiment.",
+    "A FAIL retains the narrow fragment and triggers diagnosis before any scale increase.",
+    "No Join or Aggregate result may be relabeled as covered by this protocol."
+  ]
+}

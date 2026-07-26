@@ -1,0 +1,78 @@
+{
+  "record_schema_version": 1,
+  "record_id": "real_optimizer_v3_transfer_negative_20260721",
+  "evaluation_scope": "january_bts_real_pipeline_transfer_development",
+  "status": "CONFIRMED_NEGATIVE_TRANSFER_WITH_ISOLATED_INSTABILITY",
+  "run_id": "20260721T084854695495Z",
+  "execution_commit": "3fc8662668cadee4db4c525935994e95e0d873c9",
+  "analysis_commit": "5080286",
+  "paper_holdout_evidence": false,
+  "statistical_superiority_authorized": false,
+  "result_must_be_retained": true,
+  "observed": {
+    "family_count": 12,
+    "measurement_count": 480,
+    "all_semantic_results_equivalent": true,
+    "all_physical_plans_distinct": true,
+    "all_features_within_frozen_training_support": true,
+    "all_strict_governance_checks_passed": true,
+    "spilled_family_count": 0,
+    "stable_family_count": 11,
+    "unstable_family_count": 1,
+    "stable_early_preferred_count": 6,
+    "stable_late_preferred_count": 5,
+    "unstable_family_ids": [
+      "bts-jan-w192-target0.70"
+    ]
+  },
+  "optimizer_v3": {
+    "selected_late_for_all_families": true,
+    "direct_model_coverage": 0.6666666666666666,
+    "within_3_percent_rate": 0.5,
+    "mean_regret_percent": 24.66537748809823,
+    "p95_regret_percent_nearest_rank_corrected": 66.65338324122396,
+    "max_regret_percent": 66.65338324122396
+  },
+  "optimizer_v1": {
+    "selected_late_for_all_families": true,
+    "within_3_percent_rate": 0.5,
+    "mean_regret_percent": 24.66537748809823,
+    "max_regret_percent": 66.65338324122396
+  },
+  "aggregation_correction": {
+    "original_generated_p95_regret_percent": 54.7559644345877,
+    "corrected_p95_regret_percent": 66.65338324122396,
+    "reason": "For 12 observations, nearest-rank P95 uses ceil(0.95 * 12) = 12, not the eleventh order statistic.",
+    "original_summary_preserved": true,
+    "raw_measurements_changed": false
+  },
+  "claim_authorization": {
+    "real_pipeline_contains_stable_plan_performance_reversals": true,
+    "frozen_v3_transfers_successfully_to_real_pipeline": false,
+    "frozen_v3_outperforms_frozen_v1": false,
+    "one_fixed_mask_placement_is_always_best": false,
+    "february_to_december_may_be_used_to_tune_v3": false
+  },
+  "next_action": "Retain V3 unchanged as a baseline. Use January only to develop a pipeline-transfer-aware successor, freeze it and its gates, then evaluate once on unopened February-December BTS partitions. Do not relabel this development run as an independent holdout.",
+  "immutable_files": [
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/checkpoint.json", "sha256": "7a659f0bf4ba25ac5198af85327ee088a907565a1997c4412c1dcf0ae1d2f50a"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/config.json", "sha256": "2a05ba6256fe9ce8e8133ee3b6a85d8aa628961179e8e367715171e67a30db16"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/environment.json", "sha256": "3c03adb4848d674441aefe8732fb1cf3c32ccb6a671aa73908fb7b02d72d4ed9"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w1536-target0.25.json", "sha256": "d7435c31c0d6f6a6897605f318266621ebb31bc611156c85c961545f5f441ddf"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w1536-target0.70.json", "sha256": "415fe341ad90ba343984a2dc71db79e9310bf918789c6673d0a7f402d7522965"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w1536-target0.95.json", "sha256": "4b1689f8a368433021a0c629329584094891e602bbeb1a1c713c2af128d1c98a"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w192-target0.25.json", "sha256": "02bed92314b99d8a9f4fd1b88864c67eeaa998699fdadd0866c756baee2cdb27"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w192-target0.70.json", "sha256": "11a57d56af6f246d7c4647b568fcf88964ee4b4a5dbf02646551277a2aeed988"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w192-target0.95.json", "sha256": "b1eaacc3d8cd311a3a9b6e8817e8b415f9808affd2f49030c4e0bb156180346a"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w384-target0.25.json", "sha256": "6a95dfb9c19a072cb6968bd88a5ab604b97676e7da2382f6ef3b43afa9b0fbe0"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w384-target0.70.json", "sha256": "5cdec975664e752f4054b69741b47194b9d7e1d5c3ec42ff7dacf3b85f039b6f"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w384-target0.95.json", "sha256": "3cd95ef6e3b0b4da3457d7e70da2677c203c6a094390c063716d24bc9590e043"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w768-target0.25.json", "sha256": "6422e01f61cf44434bfd6a8e3d65b46ad72515095935014a660739f71447d697"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w768-target0.70.json", "sha256": "072fc98df44b25edc46b5ef1718753b3569542d50ac00d851960a53ebcb907bf"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/families/bts-jan-w768-target0.95.json", "sha256": "06ba584b98e9c558f5607f0919059b4a469fd22971564d9760645ad8847e9104"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/measurements.csv", "sha256": "fa522832ebb521a184a29cb8610a9568943a6290886b3b79002f0d1414061a43"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/paired_stability_audit.json", "sha256": "81758bad2f100a98932c7a2f10076b82d16e1ddee20277c4368874d998d38c1d"},
+    {"path": "results/real_optimizer_transfer_development/20260721T084854695495Z/summary.json", "sha256": "d5999ad27012c115c7c06e5233b975cacd6a25cd8a721c6e8d37299b1a53f1e9"}
+  ],
+  "interpretation": "This completed run is a valid negative development result, not a failed execution. It shows that synthetic-fragment V3 does not transfer automatically to the real governed BTS pipeline, while the 11 stable families independently demonstrate that both early and late Mask can be optimal. The result motivates a pipeline-transfer-aware optimizer but does not authorize tuning on February-December or any V3 superiority claim."
+}

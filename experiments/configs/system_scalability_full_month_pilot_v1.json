@@ -1,0 +1,21 @@
+{
+  "results_dir": "results/system_scalability_full_month_pilot_v1",
+  "workloads": [
+    {
+      "dataset": "bts",
+      "scales": ["full_month"]
+    },
+    {
+      "dataset": "nyc_tlc",
+      "scales": ["full_month"]
+    }
+  ],
+  "warmup_blocks": 2,
+  "measured_blocks": 3,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260729,
+  "require_clean_git": true,
+  "experiment_role": "system_scalability_governance_pilot",
+  "ordering_design": "greedy_position_balance"
+}

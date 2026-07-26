@@ -1,0 +1,105 @@
+{
+  "contract_schema_version": 1,
+  "contract_id": "execution_aware_physical_work_feature_contract_v1_20260722",
+  "status": "FROZEN_BEFORE_EXECUTION_AWARE_OPTIMIZER_IMPLEMENTATION",
+  "authorization_record": "experiments/frozen/execution_flow_audit_formal_result_20260722.json",
+  "planning_scope": "Rank only policy-legal physical candidates for the currently supported TrustAero IR and DuckDB backend fragment.",
+  "hard_legality_boundary": {
+    "policy_validation_precedes_cost_ranking": true,
+    "illegal_candidate_cost": "infinity",
+    "masked_field_semantic_reuse_requires_explicit_compatibility_rule": true,
+    "governance_constraints_can_never_be_overridden_by predicted_speed": true
+  },
+  "candidate_work_features": [
+    {
+      "name": "scan_rows_by_pipeline",
+      "kind": "estimated_cardinality",
+      "meaning": "Rows scanned by each physical pipeline rather than total logical-table rows."
+    },
+    {
+      "name": "active_columns_by_operator",
+      "kind": "plan_observed_schema_plus_catalog_width",
+      "meaning": "Columns actually required by an operator; unused logical columns must not contribute payload cost."
+    },
+    {
+      "name": "join_build_probe_output_rows",
+      "kind": "estimated_cardinality",
+      "meaning": "Separate build, probe, and output cardinalities for each Join."
+    },
+    {
+      "name": "join_key_bytes",
+      "kind": "estimated_bytes",
+      "meaning": "Key width multiplied by the relevant Join-side cardinality."
+    },
+    {
+      "name": "mask_rows_and_value_bytes",
+      "kind": "estimated_work",
+      "meaning": "Rows and source-value bytes that reach Mask at its actual placement."
+    },
+    {
+      "name": "raw_materialization_rows_and_bytes",
+      "kind": "estimated_work",
+      "meaning": "Active raw columns written and reread at an explicit pipeline boundary."
+    },
+    {
+      "name": "masked_materialization_rows_and_bytes",
+      "kind": "estimated_work",
+      "meaning": "Masked schema written and reread at an explicit pipeline boundary."
+    },
+    {
+      "name": "aggregate_input_rows_and_state",
+      "kind": "estimated_work",
+      "meaning": "Rows reaching aggregation and an operator-specific state descriptor."
+    },
+    {
+      "name": "sort_rows_and_key_bytes",
+      "kind": "estimated_work",
+      "meaning": "Rows and active key bytes reaching Sort after prior reductions."
+    },
+    {
+      "name": "result_rows_and_payload_bytes",
+      "kind": "estimated_work",
+      "meaning": "Rows and active columns emitted by the candidate."
+    },
+    {
+      "name": "lineage_rows_edges_and_payload",
+      "kind": "estimated_governance_work",
+      "meaning": "Rows, dependency edges, and evidence payload required by the physical lineage instrumentation."
+    },
+    {
+      "name": "pipeline_breaker_count_and_kind",
+      "kind": "physical_plan_structure",
+      "meaning": "Explicit materialization, blocking aggregate, or Sort boundaries; their effects are operator- and downstream-task-specific."
+    }
+  ],
+  "analytic_cost_components": [
+    "scan",
+    "join_build",
+    "join_probe",
+    "active_payload_flow",
+    "mask",
+    "materialization_write",
+    "materialization_read",
+    "aggregate",
+    "sort",
+    "lineage",
+    "pipeline_boundary_fixed_cost"
+  ],
+  "calibration_rule": "Calibrate component throughput and fixed costs with isolated operator microbenchmarks. The analytic layer estimates every legal candidate in the same units before ranking.",
+  "residual_rule": "A lightweight residual model may be added only after the analytic implementation and calibration protocol are frozen. It predicts remaining analytic error, never legality and never the winner directly.",
+  "uncertainty_rule": {
+    "out_of_calibration_range": "fall back to the frozen conservative legal candidate",
+    "top_two_cost_gap_within_practical_tie": "treat candidates as performance-equivalent and use the frozen stable legal preference",
+    "clear_in_range_cost_gap": "select the lowest estimated-cost legal candidate"
+  },
+  "prohibited_shortcuts": [
+    "use full logical row width as Join payload width",
+    "use one global row-width feature for every pipeline",
+    "train an early-versus-late winner classifier",
+    "add a family-specific exception after seeing a result",
+    "describe logical byte estimates as DuckDB telemetry",
+    "rank or execute a policy-illegal candidate",
+    "reuse consumed Phase 2G as an independent holdout"
+  ],
+  "required_next_artifact": "A reviewed feature extractor with unit tests proving column pruning, candidate-specific Mask rows, materialization work, downstream operator work, and fail-closed legality behavior."
+}

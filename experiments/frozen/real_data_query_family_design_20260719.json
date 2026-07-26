@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "protocol_id": "real-data-query-families-v1-20260719",
+  "freeze_scope": "query_selection_design_not_performance_authorization",
+  "source_commit": "973fa92c833116943ca2e573ac790e5da63b6533",
+  "source_worktree_dirty": true,
+  "protocol_status": "PASS",
+  "semantic_ready_templates": [
+    "QF-BTS-MASKED-READ",
+    "QF-NYC-ZONE-AGGREGATE",
+    "QF-BTS-NATURAL-MULTIJOIN",
+    "QF-BTS-MASK-JOIN-PLACEMENT"
+  ],
+  "design_only_templates": [
+    "QF-TPCH-SUPPORTED-GOVERNANCE",
+    "QF-MULTISOURCE-CERTIFICATE"
+  ],
+  "performance_ready": false,
+  "immutable_files": [
+    {
+      "path": "experiments/configs/real_data_query_families_v1.json",
+      "sha256": "1f1ac460f346b1f660aef0b98fe9a6d92c45fb9bad14765c542e39ac947e9425"
+    },
+    {
+      "path": "results/query_family_protocol/validation.json",
+      "sha256": "d69f0e03bf9f11f7b177a784d7c7c095f086b4f1f0e1524791da201184ff25c5"
+    },
+    {
+      "path": "data/manifests/processed/bts-multijoin-semantic-smoke.json",
+      "sha256": "e01857191eef039f9c0f609f2e31e30a2d708efb369146ce62591d095077c7db"
+    },
+    {
+      "path": "data/manifests/processed/bts-mask-join-semantic-smoke.json",
+      "sha256": "392fa01b3d3fd1f2956332831edbcb367fedf3bb06ad5e19d2e20f9dadcacd4e"
+    }
+  ],
+  "scientific_boundary": "The query families were selected for governance coverage before future performance measurements. Design-only entries prevent post-hoc omission but cannot be timed or reported as implemented. A clean source commit, executable plan, semantic-equivalence smoke, and separate measurement freeze are still required."
+}

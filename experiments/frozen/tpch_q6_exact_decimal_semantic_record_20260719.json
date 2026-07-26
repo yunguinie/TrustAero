@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch_q6_exact_decimal_semantic_and_support_audit_20260719",
+  "status": "PASS",
+  "source_commit": "5c434bc47ca208373e0b78df98c875da7bf65c9f",
+  "source_dirty": false,
+  "artifact_sha256": "64a709fa8f995aeae23ffe6305a47e77c97113c823974a3f6a6933b8d05a0b22",
+  "semantic_smoke": {
+    "path": "results/tpch_q6_decimal_semantic_smoke/result.json",
+    "sha256": "2e180f88c46f8eded56c24b91725a1fb6e15e386d8084278537eb99e1a0e26bb",
+    "semantic_contract": "exact_decimal_v2",
+    "candidate_count": 3,
+    "distinct_duckdb_plans": 3,
+    "official_result_equivalent": true,
+    "official_revenue_decimal": "123141078.2283",
+    "certificate_status": "PARTIAL"
+  },
+  "support_audit": {
+    "audit_path": "results/tpch_sf1_support_audit_decimal_v2/audit.json",
+    "audit_sha256": "cafbe45d1057101be0ef113fa744860bfbe48eacc6b28f3941c0c80ce93a762a",
+    "report_path": "results/tpch_sf1_support_audit_decimal_v2/report.md",
+    "report_sha256": "3317a5fd613196ec859b140a8a87a76d44ba9c54dac8778958320bfdd5663d8b",
+    "official_queries_executed": 22,
+    "duckdb_passed": 22,
+    "exact_ir_supported": ["Q06"],
+    "unsupported_queries_retained_in_denominator": true
+  },
+  "scientific_boundary": "This record re-establishes exact Q6 semantics under explicit UTC and DECIMAL contracts. It contains no timing and does not rehabilitate either invalid prior timing run.",
+  "next_gate": "Freeze a new UTC-recorded timing protocol bound to this exact-decimal semantic record before collecting any Q6 latency."
+}

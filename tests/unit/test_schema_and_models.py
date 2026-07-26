@@ -8,7 +8,11 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from trustaero.ir.models import CandidatePlan
+from trustaero.ir.models import (
+    CandidatePlan,
+    PhysicalOperatorPlacementSpec,
+    PhysicalStrategySpec,
+)
 
 
 def test_candidate_round_trip_is_stable(accept_plan: dict[str, Any]) -> None:
@@ -28,3 +32,27 @@ def test_negative_radius_is_rejected(rewrite_plan: dict[str, Any]) -> None:
     raw["operators"][1]["radius_km"] = -1
     with pytest.raises(ValidationError):
         CandidatePlan.model_validate(raw)
+
+
+def test_combined_mask_strategy_can_only_materialize_the_moved_operator() -> None:
+    """The combined mode is a tiny reviewed fragment, not arbitrary composition."""
+
+    placement = PhysicalOperatorPlacementSpec(
+        operator_id="mask-sensitive-id",
+        after_operator_id="project-sensitive-id",
+    )
+    strategy = PhysicalStrategySpec(
+        strategy_id="early-mask-boundary",
+        execution_mode="governance_placed_materialized",
+        materialize_after=("mask-sensitive-id",),
+        placements=(placement,),
+    )
+    assert strategy.materialize_after == (placement.operator_id,)
+
+    with pytest.raises(ValidationError, match="moved operator"):
+        PhysicalStrategySpec(
+            strategy_id="unsafe-composition",
+            execution_mode="governance_placed_materialized",
+            materialize_after=("some-other-operator",),
+            placements=(placement,),
+        )

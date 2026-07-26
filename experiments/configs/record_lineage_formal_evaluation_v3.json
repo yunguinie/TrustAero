@@ -1,0 +1,13 @@
+{
+  "results_dir": "results/record_lineage_formal_evaluation_v3",
+  "measurement_results_dir": "results/record_lineage_formal_v3",
+  "measurement_config_path": "experiments/configs/record_lineage_formal_v3.json",
+  "expected_row_counts": [100000, 500000],
+  "expected_blocks_per_unit": 30,
+  "confidence_level": 0.95,
+  "bootstrap_repetitions": 5000,
+  "bootstrap_seed": 20260803,
+  "maximum_position_median_spread_fraction": 0.3,
+  "maximum_half_ratio_drift_fraction": 0.2,
+  "maximum_bytes_per_edge": 65.0
+}

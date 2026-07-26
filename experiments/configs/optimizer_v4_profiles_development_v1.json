@@ -1,0 +1,13 @@
+{
+  "protocol_name": "optimizer_v4_profiles_development_v1",
+  "results_dir": "results/optimizer_v4_profiles_development",
+  "identifier_widths": [192, 384, 768, 1536],
+  "target_match_rates": [0.25, 0.70, 0.95],
+  "profile_runs": 3,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "require_clean_git": true,
+  "statistics_path": "results/optimizer_v4_statistics_development/20260721T095310817400Z/families.json",
+  "statistics_sha256": "77fd5f78a8b848ed10b029409f82a62356dc724c44ba7cd392b5039d19f3e60d",
+  "scientific_boundary": "These January operator profiles are descriptive V4 development evidence. Operator timings and actual cardinalities are forbidden inference features, are not assumed additive or causal, and are not external holdout or paper performance results. February-December remain unopened."
+}

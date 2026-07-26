@@ -1,0 +1,24 @@
+{
+  "record_id": "governed-pipeline-admission-v1.1-negative",
+  "recorded_at": "2026-07-24",
+  "status": "FAIL_GOVERNED_PIPELINE_OPTIMIZER_ADMISSION_RETAIN",
+  "run_id": "20260724T062337569594Z",
+  "summary_path": "results/governed_pipeline_admission_v1_1/20260724T062337569594Z/summary.json",
+  "summary_sha256": "97bb2174444b72d930a0ab50ab2ab7394fb727d57f6cf934ea9187df6879c068",
+  "observed": {
+    "scenario_count": 16,
+    "conclusive_scenario_rate": 0.75,
+    "singleton_winner_counts": {
+      "join_first_masked_checkpoint": 12
+    },
+    "dominant_singleton_winner_fraction": 1.0,
+    "local_material_carryover_findings": 4,
+    "local_carryover_tests": 288
+  },
+  "interpretation": [
+    "The tested permissive-policy grid did not cross a multi-winner performance boundary.",
+    "Policy-first is a conservative route for stricter legal candidate spaces and is not required to win under permissive raw-Join policy.",
+    "An any-local-test carryover gate is invalid across 288 uncorrected comparisons; this does not change the frozen FAIL status.",
+    "The result authorizes no optimizer training and no paper performance claim."
+  ]
+}

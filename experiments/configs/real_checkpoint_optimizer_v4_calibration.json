@@ -1,0 +1,35 @@
+{
+  "results_dir": "results/real_checkpoint_optimizer_v4_calibration",
+  "sources": [
+    {
+      "run_dir": "results/real_governed_checkpoint_transfer_v1/20260723T044919074934Z",
+      "expected_status": "PASS_EA1_REAL_TRANSFER_MEASUREMENT_INTEGRITY",
+      "expected_summary_sha256": "db024e40e6d4a1779acea12db1748374ab24ac91c99e2f74e714e98e96c68c1b",
+      "expected_measurements_sha256": "6a2e9ce7cad9cd32901e7d52ccbd29660386b2ecaafa43a0949c572083e2e865"
+    },
+    {
+      "run_dir": "results/real_governed_checkpoint_mechanism_development_v2/20260723T051625103173Z",
+      "expected_status": "PASS_EA1_REAL_MECHANISM_DEVELOPMENT_INTEGRITY",
+      "expected_summary_sha256": "f822f7a75eaeb4128b3a6da43243bc5ad530e1b810c6c7dd597dc21bfb427970",
+      "expected_measurements_sha256": "d729f399b0f241d9e7b799ab1c1d1af34476517ebb0e05d63ceb13df7236ac6a"
+    },
+    {
+      "run_dir": "results/real_governed_checkpoint_boundary_development_v2_1/20260723T053949407935Z",
+      "expected_status": "PASS_EA1_REAL_MECHANISM_DEVELOPMENT_INTEGRITY",
+      "expected_summary_sha256": "bf03ae421cbe2a66217b060b9f74b76615204eda8a149ba1cea4230f934d6efd",
+      "expected_measurements_sha256": "ec6600dd2430c8f4102778b9732057eef1128dbae5ef0d77f9ca65f3a0075322"
+    }
+  ],
+  "lambda_grid": [0.0, 0.001, 0.01, 0.1, 1.0],
+  "threshold_grid": [0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50],
+  "practical_tie_fraction": 0.03,
+  "support_relative_margin": 0.10,
+  "minimum_confidence_family_hit_rate": 0.95,
+  "maximum_mean_regret_percent": 1.0,
+  "maximum_p95_regret_percent": 3.0,
+  "maximum_regret_percent": 20.0,
+  "require_no_worse_family_hit_than_threshold": true,
+  "require_no_worse_mean_regret_than_threshold": true,
+  "require_seed_consistency": true,
+  "require_clean_git": true
+}

@@ -1,0 +1,15 @@
+{
+  "source_run_dir": "results/governed_checkpoint_reversal_v1/20260723T012103266124Z",
+  "results_dir": "results/governed_checkpoint_optimizer_v1",
+  "lambda_grid": [0.000001, 0.0001, 0.01, 1.0],
+  "practical_tie_fraction": 0.03,
+  "expected_summary_sha256": "17f8a77d9094780fa42484bfa383c49793046ea1903defa393e734f0b99c7574",
+  "expected_measurements_sha256": "94dae8758c9b0ff32de365b02fa4085c82c199507b299ca4b256369ed1c78a6a",
+  "require_clean_git": true,
+  "minimum_confidence_family_hit_rate": 1.0,
+  "maximum_mean_diagnostic_regret_percent": 5.0,
+  "maximum_diagnostic_regret_percent": 15.0,
+  "require_better_than_both_fixed": true,
+  "require_seed_consistent_selection": true,
+  "support_relative_margin": 0.0
+}

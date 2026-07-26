@@ -1,0 +1,113 @@
+{
+  "results_dir": "results/real_governed_pipeline_transfer_v1",
+  "sources": [
+    {
+      "dataset": "bts",
+      "month": "2024-02",
+      "event_path": "data/processed/bts/on_time/2024-02/bts_flights_full.parquet",
+      "dimension_path": "data/processed/bts/on_time/2024-02/bts_airports.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-02.json"
+    },
+    {
+      "dataset": "bts",
+      "month": "2024-05",
+      "event_path": "data/processed/bts/on_time/2024-05/bts_flights_full.parquet",
+      "dimension_path": "data/processed/bts/on_time/2024-05/bts_airports.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-05.json"
+    },
+    {
+      "dataset": "bts",
+      "month": "2024-08",
+      "event_path": "data/processed/bts/on_time/2024-08/bts_flights_full.parquet",
+      "dimension_path": "data/processed/bts/on_time/2024-08/bts_airports.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-08.json"
+    },
+    {
+      "dataset": "bts",
+      "month": "2024-11",
+      "event_path": "data/processed/bts/on_time/2024-11/bts_flights_full.parquet",
+      "dimension_path": "data/processed/bts/on_time/2024-11/bts_airports.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-11.json"
+    },
+    {
+      "dataset": "nyc_tlc",
+      "month": "2024-02",
+      "event_path": "data/raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-02.parquet",
+      "dimension_path": "data/processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-02.json"
+    },
+    {
+      "dataset": "nyc_tlc",
+      "month": "2024-05",
+      "event_path": "data/raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-05.parquet",
+      "dimension_path": "data/processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-05.json"
+    },
+    {
+      "dataset": "nyc_tlc",
+      "month": "2024-08",
+      "event_path": "data/raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-08.parquet",
+      "dimension_path": "data/processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-08.json"
+    },
+    {
+      "dataset": "nyc_tlc",
+      "month": "2024-11",
+      "event_path": "data/raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-11.parquet",
+      "dimension_path": "data/processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-11.json"
+    }
+  ],
+  "profiles": [
+    {
+      "profile_id": "w256-p020-q065-j065",
+      "identifier_width": 256,
+      "policy_selectivity": 0.2,
+      "query_selectivity": 0.65,
+      "dimension_coverage": 0.65
+    },
+    {
+      "profile_id": "w256-p070-q080-j080",
+      "identifier_width": 256,
+      "policy_selectivity": 0.7,
+      "query_selectivity": 0.8,
+      "dimension_coverage": 0.8
+    },
+    {
+      "profile_id": "w768-p020-q080-j065",
+      "identifier_width": 768,
+      "policy_selectivity": 0.2,
+      "query_selectivity": 0.8,
+      "dimension_coverage": 0.65
+    },
+    {
+      "profile_id": "w768-p070-q065-j080",
+      "identifier_width": 768,
+      "policy_selectivity": 0.7,
+      "query_selectivity": 0.65,
+      "dimension_coverage": 0.8
+    }
+  ],
+  "row_count": 120000,
+  "seeds": [19101, 19202, 19303],
+  "candidate_ids": [
+    "policy_first_masked_checkpoint",
+    "query_first_raw_checkpoint",
+    "join_first_masked_checkpoint"
+  ],
+  "warmup_rounds_per_permutation": 1,
+  "measured_rounds_per_permutation": 5,
+  "duckdb_threads": 1,
+  "duckdb_memory_limit_mb": 1024,
+  "order_seed": 24072441,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 24072442,
+  "minimum_conclusive_scenario_rate": 0.0,
+  "minimum_distinct_singleton_winners": 1,
+  "maximum_dominant_singleton_winner_fraction": 1.0,
+  "require_no_material_carryover": true,
+  "require_clean_git": true,
+  "experiment_role": "frozen_real_pipeline_optimizer_transfer"
+}

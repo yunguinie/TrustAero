@@ -1,0 +1,33 @@
+{
+  "bundle_id": "20260719T052542420236Z",
+  "components": {
+    "full-month-mask-placement": {
+      "acceptance_sha256": "5f965d1cf349bebd3a809e4e73888e0b2374b0f4125380dc0feaf92bc2290db8",
+      "heldout_optimizer_evidence": false,
+      "measurements_sha256": "24d74e9f35b20f4faf623de65cf283172808f4c180eb854afd909b4925a4f1d7",
+      "paper_performance_evidence": true,
+      "run_directory": "E:\\ProjectAll\\codex\\PVLDB\\results\\bts_mask_join_formal_v1\\20260719T052329982369Z",
+      "status": "PASS",
+      "summary_sha256": "fb3c4545c20f0a582671242b0a4eec175c57fdc73cde68d5b6082b35d70fc260"
+    },
+    "full-month-materialization": {
+      "acceptance_sha256": "8414ddce30dd8648451c2403f42c5d3886637e35e4ed45243d84ba69fd4b699c",
+      "heldout_optimizer_evidence": false,
+      "measurements_sha256": "1e8415277c7379fb67711578c805e65e9f608a3bbae01b28da693f94f901e81e",
+      "paper_performance_evidence": true,
+      "run_directory": "E:\\ProjectAll\\codex\\PVLDB\\results\\real_data_formal_candidate_v1\\20260719T051929196252Z",
+      "status": "PASS",
+      "summary_sha256": "5d425a688e5bb1fb6ad332653e1ff62e56e82d9f7ae64cc4b789f083d2a7080e"
+    }
+  },
+  "formal_protocol_id": "real-data-formal-development-v1-20260719",
+  "formal_protocol_sha256": "489eec3daf1099b37a99397161d6af9155509d9c1cfe2fa4c7a8b6f02dd1c204",
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "paper_performance_evidence": true,
+  "schema_version": 1,
+  "scientific_boundary": "The protocol authorizes reproducible method-level measurements on the January development partition. It is not independent Optimizer V1/V2 holdout evidence.",
+  "source_commit": "dc87ac9aad801fa08556d60ff329a3bec25207cc",
+  "source_freeze_status": "READY",
+  "status": "PASS"
+}

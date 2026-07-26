@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-system-scalability-bts100-confirmation-v2-20260724",
+  "status": "FROZEN_NOT_EXECUTED",
+  "scientific_role": "corrected targeted confirmation of the inconclusive BTS-100K unit",
+  "predecessors": [
+    "experiments/frozen/system_scalability_formal_partial_negative_20260724.json",
+    "experiments/frozen/system_scalability_bts100_confirmation_v1_negative_20260724.json"
+  ],
+  "measurement_config": {
+    "path": "experiments/configs/system_scalability_bts100_confirmation_v2.json",
+    "sha256": "2ce0d499b3ff6d822cdf1f07d2319fe1793d3d7ab81782582f1a1f0db5046131"
+  },
+  "evaluation_config": {
+    "path": "experiments/configs/system_scalability_bts100_confirmation_evaluation_v2.json",
+    "sha256": "5734eea691fe6aa84c25783606b87310088dd502341aac2559baeb908c6dba2e"
+  },
+  "design": {
+    "dataset_scale": "bts-100000",
+    "warmup_blocks": 8,
+    "measured_blocks": 48,
+    "measurement_count": 192,
+    "ordering": "two complete, deterministically shuffled 24-permutation cycles",
+    "position_balance": "each layer appears exactly 12 times in every position",
+    "temporal_interleaving": "no layer repeats one position more than three consecutive blocks"
+  },
+  "unchanged_gates": {
+    "confidence_interval": "95% paired bootstrap median complete/direct ratio",
+    "bootstrap_repetitions": 5000,
+    "maximum_position_count_imbalance": 1,
+    "maximum_position_median_spread_fraction": 0.3,
+    "maximum_first_second_half_ratio_drift_fraction": 0.2,
+    "maximum_spilled_unit_count": 0
+  },
+  "decision_policy": [
+    "A PASS authorizes only the previously inconclusive BTS-100K unit.",
+    "A FAIL ends BTS-100K confirmation; no third timing redesign is authorized.",
+    "Both earlier failures remain visible and immutable.",
+    "The optimizer remains frozen and outside this experiment."
+  ]
+}

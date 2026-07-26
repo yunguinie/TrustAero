@@ -1,0 +1,110 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_flow_audit_pilot_result_20260722",
+  "status": "PASS_EA0_STRUCTURAL_PILOT_TIMING_NOT_AUTHORIZED",
+  "run_id": "20260722T053946380270Z",
+  "measurement_commit": "77b21d548dc2d46e1cf3dcf8648a106c104c963e",
+  "protocol": {
+    "path": "experiments/frozen/execution_flow_audit_pilot_protocol_20260722.json",
+    "sha256": "8348127f715ca081d60c4d27dc6f28dd3d1abbf36fdce7806cd24d23b8e483a3"
+  },
+  "completion": {
+    "unit_count": 8,
+    "variant_count": 11,
+    "equivalence_group_count": 4,
+    "measured_execution_count": 440,
+    "profile_execution_count": 176,
+    "failure_count": 0,
+    "all_units_validated": true
+  },
+  "structural_findings": {
+    "result_equivalence_passed_for_all_groups": true,
+    "unused_sensitive_projection_pruned_in_all_units": true,
+    "forced_raw_materialization_retained_sensitive_column_in_all_units": true,
+    "declared_materialized_and_fused_plan_pairs_distinct": true,
+    "active_column_contract_stable_across_all_8_units": true,
+    "spilled_variant_count": 0,
+    "maximum_peak_temp_directory_bytes": 0,
+    "minimum_observed_peak_buffer_memory_mib": 20.14,
+    "maximum_observed_peak_buffer_memory_mib": 85.64
+  },
+  "mechanism_findings": [
+    "The key-only aggregate and dead raw projection plans both omit sensitive_value, confirming DuckDB column pruning rather than logical-SQL width as the relevant scan boundary.",
+    "Forcing a raw MATERIALIZED CTE retains sensitive_value and adds cost that grows materially for the 2048-byte, full-match case.",
+    "At 10 percent match rate, post-Join Mask variants dominate pre-Join materialized Mask variants because only matched rows are hashed.",
+    "For the full-match mask-output task, pre-Join Mask is faster at 256 bytes while post-Join fused Mask is faster at 2048 bytes, reproducing a width-dependent plan reversal.",
+    "Changing the downstream task from row output to aggregate or sorted output changes the winning legal candidate, so an early-versus-late label is not a query-independent cost representation.",
+    "A raw materialization boundary can outperform both fused and pre-Join alternatives for the full-match aggregate task, demonstrating that a pipeline breaker is not uniformly harmful."
+  ],
+  "illustrative_seed_aggregated_medians_ms": {
+    "match_0.1_width_2048_mask_output": {
+      "prejoin_mask_materialized": 183.435,
+      "postjoin_mask_fused": 18.556,
+      "postjoin_raw_materialized": 20.076
+    },
+    "match_1.0_width_256_mask_output": {
+      "prejoin_mask_materialized": 35.802,
+      "postjoin_mask_fused": 47.154,
+      "postjoin_raw_materialized": 56.133
+    },
+    "match_1.0_width_2048_mask_output": {
+      "prejoin_mask_materialized": 137.457,
+      "postjoin_mask_fused": 123.369,
+      "postjoin_raw_materialized": 134.213
+    },
+    "match_1.0_width_2048_mask_aggregate": {
+      "prejoin_mask_materialized": 135.824,
+      "postjoin_mask_fused": 125.180,
+      "postjoin_raw_materialized": 65.772
+    }
+  },
+  "timing_boundary": {
+    "point_winner_seed_agreement_groups": 9,
+    "point_winner_total_scenario_groups": 16,
+    "maximum_observed_p95_over_median_ratio": 2.806,
+    "formal_performance_ranking_authorized": false,
+    "reason": "Five pilot repetitions and two seeds expose the mechanism but are insufficient for stable point ranking; several disagreements are likely practical ties and require set-valued paired analysis."
+  },
+  "byte_evidence_boundary": {
+    "duckdb_reports_exact_per_operator_payload_bytes": false,
+    "logical_work_bytes_are_estimates": true,
+    "paper_may_claim_exact_internal_byte_movement": false
+  },
+  "optimizer_boundary": {
+    "optimizer_trained": false,
+    "optimizer_performance_claim_authorized": false,
+    "phase2g_reused": false,
+    "phase2g_may_be_reused_later": false
+  },
+  "authorized_next_step": "Freeze and run the larger EA-0 formal mechanism audit using 11 position-balanced measured rounds and three seeds. Analyze paired within-round ratios and 3 percent set-valued candidate equivalence before freezing the Execution-Aware physical-work feature contract.",
+  "immutable_files": [
+    {
+      "path": "results/execution_flow_audit_pilot/20260722T053946380270Z/config.json",
+      "sha256": "1e2abf4ad41357875dc0e634705f8073b10519554c8b257f68d5fd499c8e6461"
+    },
+    {
+      "path": "results/execution_flow_audit_pilot/20260722T053946380270Z/environment.json",
+      "sha256": "ddc640388e1f959cafc4529b7235a0c1f62be0d4f1c5ab71e0cb68cb3348cdea"
+    },
+    {
+      "path": "results/execution_flow_audit_pilot/20260722T053946380270Z/checkpoint.json",
+      "sha256": "907645c9853ec12eaa634608d7be19e2417bbc0c572c1b1f3b74d38f203e48a9"
+    },
+    {
+      "path": "results/execution_flow_audit_pilot/20260722T053946380270Z/summary.json",
+      "sha256": "852c0830a0ed9b88cef5c8eba29d3a8a5a1f87c81a2d8f5c7b31e7631c88c6f4"
+    },
+    {
+      "path": "results/execution_flow_audit_pilot/20260722T053946380270Z/measurements.csv",
+      "sha256": "32a39939d6ae57c0eadd95f4b435b02ec13391ed18e4e5c7e0a0e394f3799307"
+    },
+    {
+      "path": "results/execution_flow_audit_pilot/20260722T053946380270Z/variant_summary.csv",
+      "sha256": "787231d36b2a49b1e6a6fc36ae1a04ec5eafefdc649e9845905b939a9b63985b"
+    },
+    {
+      "path": "results/execution_flow_audit_pilot/20260722T053946380270Z/operator_summary.csv",
+      "sha256": "73301a418268b8b092ab1792e9ebdd9102c1f7c669303f434cfd5f69b00dcd4a"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "record_schema_version": 1,
+  "record_id": "phase2g_optimizer_v3_holdout_result_20260721",
+  "evaluation_scope": "phase2g_optimizer_v3_independent_holdout",
+  "status": "PASS_HOLDOUT_CONSUMED",
+  "source_commit": "62c7305c0fc869aa17b8d4e78c03ba7c618ce560",
+  "run_id": "20260721T041940567073Z",
+  "holdout_consumed": true,
+  "holdout_gate_passes": true,
+  "paper_optimizer_evidence": true,
+  "statistically_authorized_superiority_over_v1": false,
+  "observed": {
+    "family_count": 36,
+    "unit_count": 180,
+    "measurement_count": 5400,
+    "profile_execution_count": 1080,
+    "all_validations_passed": true,
+    "all_results_equivalent": true,
+    "all_physical_plans_distinct": true,
+    "all_governance_audits_passed": true,
+    "spilled_unit_count": 0
+  },
+  "optimizer_v3_metrics": {
+    "exact_top1_rate": 0.9444444444444444,
+    "within_3_percent_rate": 1.0,
+    "mean_regret_percent": 0.07141379585649224,
+    "p95_regret_percent": 1.1094461204918415,
+    "max_regret_percent": 1.461450530341879,
+    "direct_model_coverage": 0.7777777777777778,
+    "direct_early_decision_count": 1,
+    "direct_late_decision_count": 27
+  },
+  "optimizer_v1_metrics": {
+    "exact_top1_rate": 0.9166666666666666,
+    "within_3_percent_rate": 0.9722222222222222,
+    "mean_regret_percent": 0.1933058071481006,
+    "p95_regret_percent": 1.461450530341879,
+    "max_regret_percent": 4.388112406497902
+  },
+  "paired_claim_authorization": {
+    "within_3_percent_point_improvement": 0.02777777777777779,
+    "within_3_percent_improvement_ci95": [
+      0.0,
+      0.08333333333333333
+    ],
+    "within_3_percent_superiority_authorized": false,
+    "mean_regret_point_difference_percent": -0.12189201129160837,
+    "mean_regret_difference_ci95_percent": [
+      -0.3656760338748251,
+      0.0
+    ],
+    "mean_regret_superiority_authorized": false
+  },
+  "immutable_files": [
+    {
+      "path": "results/phase2g_optimizer_holdout/one_shot_manifest.json",
+      "sha256": "c6e1fb7f6a019a52e2ee6ddf2af6b9efa2f8ef4483e3ffa4e31a6f36504bc63a"
+    },
+    {
+      "path": "results/phase2g_optimizer_holdout/20260721T041940567073Z/checkpoint.json",
+      "sha256": "b0d62f7d5ed99429ffff79b7795a51680a0e096441811280e2bec3252e43a035"
+    },
+    {
+      "path": "results/phase2g_optimizer_holdout/20260721T041940567073Z/config.json",
+      "sha256": "948e4e8dcf03a4ccf904c579d1031133b63a2166d90d6c6ae5461471dca27c41"
+    },
+    {
+      "path": "results/phase2g_optimizer_holdout/20260721T041940567073Z/environment.json",
+      "sha256": "4c5c456ea55c81af9c2c2ce1d9ad1d9b415d8a8b5f66a689b92ec8bc4679416b"
+    },
+    {
+      "path": "results/phase2g_optimizer_holdout/20260721T041940567073Z/summary.json",
+      "sha256": "3b8b767834502e2fb05ab7224ff37a5bf8f88743180a2f9e05d99f950eacbe82"
+    },
+    {
+      "path": "results/phase2g_optimizer_holdout/20260721T041940567073Z/raw_measurements.csv",
+      "sha256": "7b29ecb558a3e00fa3204a17b3faaf0a920173f3d817ec82ac5ca6405e4281b3"
+    },
+    {
+      "path": "results/phase2g_optimizer_holdout/20260721T041940567073Z/paired_costs.csv",
+      "sha256": "bd97d8291052500f6b51ec9e0da2bdc49ed5d1e58d0dce86b087d36c7a743340"
+    },
+    {
+      "path": "results/phase2g_optimizer_holdout/20260721T041940567073Z/component_summary.csv",
+      "sha256": "c68ab44ad2cf0c497e005dfd737ae64f1a50748e79a965f8ae63e2efab88e2b3"
+    },
+    {
+      "path": "results/phase2g_optimizer_holdout/20260721T041940567073Z/operator_summary.csv",
+      "sha256": "864ff256ba519c08bcabd336f6ae6f8e1ffae3f81284bb70f6db21a24c274c90"
+    },
+    {
+      "path": "results/phase2g_optimizer_holdout/20260721T041940567073Z/optimizer_v3_holdout_evaluation/summary.json",
+      "sha256": "862690e1f11124af793fc018399278d60f0f29300769b356b7b75786dbf15ac4"
+    },
+    {
+      "path": "results/phase2g_optimizer_holdout/20260721T041940567073Z/optimizer_v3_holdout_evaluation/paired_differences.json",
+      "sha256": "fcd7d3ad154524d3fd30f0e0759daaac8246a2f89af8a7b4d64e02ede2ca8792"
+    },
+    {
+      "path": "results/phase2g_optimizer_holdout/20260721T041940567073Z/optimizer_v3_holdout_evaluation/family_predictions.csv",
+      "sha256": "02015b6a8469380685fc0aa6f99ca7aae5fe594632686a2f60f8cea09a16389a"
+    }
+  ],
+  "scientific_boundary": "The frozen V3 passed the predeclared one-shot independent holdout gate and all 36 families were within 3% of the experimental Oracle. The observed point metrics improve V1, including a maximum-regret reduction from 4.388% to 1.461%, but both predeclared paired 95% confidence intervals include zero. Therefore this record authorizes holdout generalization and no-observed-regression claims, not statistical-superiority claims. Phase 2G is permanently consumed and must never be used to tune V3 or relabeled as an independent holdout for a modified model. V3 is a Mask-placement optimizer for its frozen fragment, not a general Join-order or materialization optimizer."
+}

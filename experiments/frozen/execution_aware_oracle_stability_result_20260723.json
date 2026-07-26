@@ -1,0 +1,20 @@
+{
+  "recorded_at": "2026-07-23",
+  "source_commit": "9ba38b3",
+  "source_result": "results/execution_aware_oracle_stability_v1/20260723T010411808899Z/oracle_stability_audit.json",
+  "source_result_sha256": "a4bdd36683e4e85275b14fa7b35031c7fde05b813a99f3ec398d5c58608ef775",
+  "status": "PASS_EXECUTION_AWARE_ORACLE_STABILITY_AUDIT",
+  "family_count": 54,
+  "pairwise_comparison_count": 126,
+  "families_with_seed_oracle_disagreement": 17,
+  "singleton_confidence_winner_count": 33,
+  "multi_candidate_confidence_set_count": 21,
+  "model_confidence_set_hit_rate": 1.0,
+  "fixed_confidence_set_hit_rate": 1.0,
+  "model_confidence_authorized_miss_count": 0,
+  "fixed_confidence_authorized_miss_count": 0,
+  "model_differs_from_fixed_family_count": 2,
+  "confidence_authorized_model_advantage_over_fixed_count": 0,
+  "interpretation": "The unchanged model has no confidence-authorized miss, but it also has no confidence-authorized advantage over the strong per-query-family fixed baseline. The current mask-only matrix therefore cannot support an adaptive-optimizer benefit claim.",
+  "paper_optimizer_performance_claim_authorized": false
+}

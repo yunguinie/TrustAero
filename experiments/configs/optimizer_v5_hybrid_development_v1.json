@@ -1,0 +1,42 @@
+{
+  "protocol_name": "optimizer_v5_mechanism_prior_pipeline_residual_v1",
+  "results_dir": "results/optimizer_v5_hybrid_development",
+  "source_run_dirs": [
+    "results/phase2i_fragment_pilot/20260717T120435635390Z",
+    "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z"
+  ],
+  "source_bindings": [
+    {
+      "path": "results/phase2i_fragment_pilot/20260717T120435635390Z/summary.json",
+      "sha256": "4b2b3de48fa68a3f2da6348fa60443d16c6fdcc723532e14566986da995ac42c"
+    },
+    {
+      "path": "results/phase2i_fragment_pilot/20260717T120435635390Z/component_summary.csv",
+      "sha256": "c1373f2abe9d32a08dedac3693b1721b12cd6b250dca399aeca8a0fd5f2fd5e1"
+    },
+    {
+      "path": "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z/summary.json",
+      "sha256": "686f53d2e49d7481cee3d3aa199b904090e4dd1b0bd1cb761bd799b4dbe52faf"
+    },
+    {
+      "path": "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z/component_summary.csv",
+      "sha256": "0a1064a9e04f253cb8e0cf9abaa88c6b20077d647c9ebc4d0a4807cf5c7bce93"
+    }
+  ],
+  "mechanism_model_path": "results/mechanism_optimizer_development/fixed_formula_v1/mechanism_mask_cost_model.json",
+  "mechanism_model_sha256": "5567838265cba60c3632a9fb4ab8a8ebdddc6002f679a879b838ff0de02cd481",
+  "training_readiness_record_path": "experiments/frozen/optimizer_v5_training_readiness_negative_20260722.json",
+  "training_readiness_record_sha256": "c0fc273a66d25e3fbc080a2b155049816ba3ff715a4476bf8efadd27bf4d4a2e",
+  "ridge_lambda": 0.1,
+  "uncertainty_multiplier": 1.0,
+  "tie_threshold_fraction": 0.03,
+  "require_clean_git": true,
+  "gates": {
+    "minimum_direct_coverage": 0.25,
+    "minimum_within_tie_improvement_over_v1": 0.025,
+    "maximum_mean_regret_percent": 1.5,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_max_regret_percent": 12.0
+  },
+  "scientific_boundary": "V5 development fits a residual over a frozen mechanism prior using 40 complete synthetic workload families and 162 aggregated seeds. Every fold removes the complete rows-width-match family. The previously consumed holdout and all real-data labels are excluded from fitting. Passing this development gate may freeze a candidate model but does not authorize an external or paper-level optimizer claim."
+}

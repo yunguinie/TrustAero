@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "freeze_scope": "tpch_sf1_q6_batched_median_v2_before_measurement",
+  "status": "FROZEN",
+  "query_id": "Q06",
+  "candidate_count": 3,
+  "execution_order_permutation_count": 6,
+  "warmup_blocks": 6,
+  "measured_blocks": 30,
+  "timed_repeats_per_candidate_position": 5,
+  "timed_candidate_executions": 450,
+  "paired_block_statistic": "median_of_5",
+  "thresholds_changed_from_v1": false,
+  "paper_performance_evidence_authorized_after_runtime_gates": true,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "immutable_files": [
+    {
+      "path": "experiments/configs/tpch_q6_batched_v2.json",
+      "sha256": "fc1c41dd4f8e2be353980db78673f9dc978354a0ddf45f9eecdb86b0325f7d40"
+    },
+    {
+      "path": "experiments/frozen/tpch_q6_formal_v1_negative_20260719.json",
+      "sha256": "701db5896fe0c6c29b6d63c4ea8f589ddedaaa3fe1713925154f10af72cc2802"
+    },
+    {
+      "path": "results/tpch_q6_semantic_smoke/result.json",
+      "sha256": "d713737e2b60c40ccb6e89c078883b5d2ef3b41f767bf2590e752225cdaf4e86"
+    },
+    {
+      "path": "results/tpch_sf1_support_audit/audit.json",
+      "sha256": "1525f40afd01aa90c6898e130bab3ed73838d1f30c7f2ec31e462eb5df412d57"
+    }
+  ],
+  "scientific_boundary": "V2 was motivated by V1 single-query variance. It preserves all V1 thresholds and outer permutation balance, changes only the predeclared paired statistic to a median of five equal-cost repeated executions, and is not optimizer holdout evidence."
+}

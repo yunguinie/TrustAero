@@ -1,0 +1,78 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v51_nested_development_protocol_20260722",
+  "status": "FROZEN_BEFORE_DEVELOPMENT_RUN",
+  "protocol_commit": "2841275691cf570c694b4e0ffea14e7209fee9bd",
+  "predecessor_negative_record": {
+    "path": "experiments/frozen/optimizer_v5_hybrid_development_negative_20260722.json",
+    "sha256": "8ffaae4e4d7df16431d697df3eaf66488170c5e4f33540251d533afc20408d71"
+  },
+  "method_change": "Select a complete-family severity-weight exponent for the frozen V5 residual objective by nested validation.",
+  "unchanged_from_v5": [
+    "mechanism prior",
+    "residual feature basis",
+    "governance legality checks",
+    "uncertainty multiplier",
+    "early-mask conservative fallback",
+    "development acceptance gates",
+    "real-label and consumed-holdout exclusion"
+  ],
+  "development_families": 40,
+  "aggregated_seed_replicates": 162,
+  "outer_validation": "leave one complete rows-width-match family out",
+  "inner_validation": {
+    "fold_count": 5,
+    "partition_unit": "complete rows-width-match family",
+    "partition_seed": 20260730,
+    "same_family_seed_split_allowed": false
+  },
+  "predeclared_parameter_grid": {
+    "severity_exponents": [0.0, 1.0, 2.0],
+    "severity_weight_cap": 16.0,
+    "ridge_lambda": 0.1,
+    "uncertainty_multiplier": 1.0,
+    "practical_tie_fraction": 0.03
+  },
+  "severity_weight_definition": "min(16, max(1, abs(observed_log_early_late_ratio) / log1p(0.03)) ** exponent)",
+  "fitting_solver": "deterministic direct solution of the 7-by-7 weighted ridge normal equation with an unpenalized intercept",
+  "inner_selection_objective_order": [
+    "coverage failure",
+    "maximum regret",
+    "P95 regret",
+    "mean regret",
+    "negative within-3-percent rate",
+    "negative direct coverage",
+    "smaller exponent tie break"
+  ],
+  "predeclared_gates": {
+    "minimum_direct_coverage": 0.25,
+    "minimum_within_tie_improvement_over_v1": 0.025,
+    "maximum_mean_regret_percent": 1.5,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_max_regret_percent": 12.0
+  },
+  "governance_before_ranking": true,
+  "uncertain_fallback": "early_mask",
+  "external_partition_accessed": false,
+  "real_data_labels_used_for_fitting": false,
+  "failed_run_retention_required": true,
+  "scientific_boundary": "V5.1 is a nested development experiment over the same previously frozen synthetic complete-fragment families used by V5. The exponent zero candidate is the unweighted V5 objective. The untouched outer family never influences severity-exponent selection. Passing authorizes freezing a V5.1 candidate for separately predeclared evaluation; failure must be retained and cannot be repaired by changing gates after observing the outer result.",
+  "immutable_files": [
+    {
+      "path": "experiments/configs/optimizer_v51_nested_development_v1.json",
+      "sha256": "cb6fa86ad6633515091de25a6186a7b962595735c680a20fa19003b753bc5bc7"
+    },
+    {
+      "path": "src/trustaero/experiments/optimizer_v51_nested_development.py",
+      "sha256": "94fb7db2ff00da4ff2adc6b2983712094afd574310ce0db9b432a024905e9b52"
+    },
+    {
+      "path": "scripts/run_optimizer_v51_nested_development.py",
+      "sha256": "4e54ee7cadc41b00cd88c2c54e30aa86135b3aed01835b1d8ed48e0634bb2d15"
+    },
+    {
+      "path": "tests/unit/test_optimizer_v51_nested_development.py",
+      "sha256": "2161d799bb8f499458722a9e1594ff5fdec241ff1beb36fab1c99c257850f126"
+    }
+  ]
+}

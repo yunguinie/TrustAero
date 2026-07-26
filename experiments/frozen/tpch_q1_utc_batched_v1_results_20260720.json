@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch_q1_exact_decimal_utc_batched_v1_results_20260720",
+  "status": "PASS",
+  "source_commit": "9f1c9beecce316f3f532dc2a847f65c34af3db2f",
+  "run_id": "20260720T001101507660Z",
+  "formal_paper_experiment_authorized": true,
+  "paper_performance_evidence": true,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "semantic_preflight": {
+    "official_schema_and_result_equivalent": true,
+    "official_row_count": 4,
+    "official_column_count": 10,
+    "input_rows": 6001215,
+    "qualified_rows": 5916591,
+    "qualified_selectivity": 0.9858988554817649,
+    "candidate_count": 3,
+    "distinct_duckdb_plans": 3,
+    "duckdb_timezone": "UTC"
+  },
+  "paired_results": {
+    "fused_median_ms": 740.1365,
+    "fused_p95_ms": 987.0287,
+    "materialize_after_aggregate_median_ms": 754.0422,
+    "materialize_after_aggregate_over_fused": 1.0158310230567533,
+    "materialize_after_filter_median_ms": 1639.8779,
+    "materialize_after_filter_over_fused": 2.2111883386580757,
+    "diagnostic_oracle_set_within_3_percent": [
+      "fused",
+      "materialize-after-q01-aggregate"
+    ]
+  },
+  "resource_results": {
+    "fused_peak_buffer_memory_mib": 121.12109375,
+    "materialized_peak_buffer_memory_mib": 996.7890625,
+    "disk_spill_bytes": 0
+  },
+  "gates": {
+    "integrity_all_passed": true,
+    "absolute_half_drift_passed": true,
+    "paired_ratio_half_drift_passed": true,
+    "paired_ratio_outlier_fraction_passed": true,
+    "all_six_permutations_balanced": true,
+    "all_positions_balanced": true,
+    "measurement_count": 450
+  },
+  "immutable_files": [
+    {
+      "path": "results/tpch_q1_utc_batched_v1/20260720T001101507660Z/acceptance.json",
+      "sha256": "e307b599f2397a5ea3261591578c3f14b15a6f156b069dfc23b22aa7492becfd"
+    },
+    {
+      "path": "results/tpch_q1_utc_batched_v1/20260720T001101507660Z/config.json",
+      "sha256": "0c8219ef2132d55da9cc416a712cbc798b4919d557653a17edc24980304d4c63"
+    },
+    {
+      "path": "results/tpch_q1_utc_batched_v1/20260720T001101507660Z/environment.json",
+      "sha256": "61b2620bb0238ce99279d254039216d2041b04aa62cbbcef57a15de8f2226310"
+    },
+    {
+      "path": "results/tpch_q1_utc_batched_v1/20260720T001101507660Z/measurements.csv",
+      "sha256": "0dff369a2ddf13768bf066110e9dbf183f87e1ad9588c12c483e3974d392c8fe"
+    },
+    {
+      "path": "results/tpch_q1_utc_batched_v1/20260720T001101507660Z/progress.json",
+      "sha256": "a961d8d47af5ac6c4e7221f24173876c97858aa36f8c0e5a2bb437a5853f65fb"
+    },
+    {
+      "path": "results/tpch_q1_utc_batched_v1/20260720T001101507660Z/report.md",
+      "sha256": "f9047dc484538c80b4d0606b0ac87dab669bddd6f1330a25dd6b1739d3fe271f"
+    },
+    {
+      "path": "results/tpch_q1_utc_batched_v1/20260720T001101507660Z/summary.json",
+      "sha256": "edaec5ead5b0c857d01a3e2642131b66c881925aed78621dcc714b0ee78e0288"
+    }
+  ],
+  "scientific_boundary": "This is stable standard-benchmark method evidence for one supported TPC-H query. Fused and aggregate-boundary materialization are tied within the predeclared 3% band. No optimizer was evaluated, and the Oracle is post-hoc."
+}

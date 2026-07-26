@@ -1,0 +1,116 @@
+{
+  "governed_cases": [
+    {
+      "case_id": "REAL-BTS-100K",
+      "certificate_status": "PARTIAL",
+      "compiled_sql_digest": "sha256:4ed5b151dab16c59783199a477f8c1bc9b29163f630b2cde34d77023377a1633",
+      "data_snapshots": {
+        "bts_on_time_2024_01": "v2024-01-fe089b45523f"
+      },
+      "lineage_source_count": 1,
+      "masked_non_null_count": 19447,
+      "policy_snapshot": "policy-real-smoke-2026-07-18",
+      "raw_sensitive_exposure_rows": 0,
+      "reason_codes": [
+        "MASK_REQUIRED",
+        "LINEAGE_REQUIRED"
+      ],
+      "result_digest": "sha256:eab052a902cfe5c3c718f9fd6fe5757d83dae10672ba7bae363fe7d98c4c7289",
+      "row_count": 19447,
+      "validation_status": "REWRITE",
+      "verified_obligations": [
+        "VERSION_PIN",
+        "MASK",
+        "LINEAGE_CAPTURE"
+      ]
+    },
+    {
+      "case_id": "REAL-NYC-100K",
+      "certificate_status": "PARTIAL",
+      "compiled_sql_digest": "sha256:babfe5ae762b2368c7affbcb83d16f65ecbfd2e9ee41173a405ab72f7a6defda",
+      "data_snapshots": {
+        "nyc_tlc_taxi_zones": "v2024-lookup-1a99e1050922",
+        "nyc_tlc_yellow_2024_01": "v2024-01-c4d59da7bbc8"
+      },
+      "lineage_source_count": 2,
+      "masked_non_null_count": 0,
+      "policy_snapshot": "policy-real-smoke-2026-07-18",
+      "raw_sensitive_exposure_rows": 0,
+      "reason_codes": [
+        "LINEAGE_REQUIRED"
+      ],
+      "result_digest": "sha256:d8a722c6d795663214424c260536c869c0a85991b690b26003e2f71a2180681c",
+      "row_count": 9,
+      "validation_status": "REWRITE",
+      "verified_obligations": [
+        "VERSION_PIN",
+        "LINEAGE_CAPTURE"
+      ]
+    }
+  ],
+  "negative_cases": [
+    {
+      "actual_reason_codes": [
+        "MASKED_FIELD_USED_SEMANTICALLY"
+      ],
+      "actual_status": "REJECT",
+      "case_id": "REAL-NEG-MASK-REUSE",
+      "expected_reason_code": "MASKED_FIELD_USED_SEMANTICALLY",
+      "expected_status": "REJECT"
+    },
+    {
+      "actual_reason_codes": [
+        "PURPOSE_MISSING"
+      ],
+      "actual_status": "CLARIFY",
+      "case_id": "REAL-NEG-PURPOSE-MISSING",
+      "expected_reason_code": "PURPOSE_MISSING",
+      "expected_status": "CLARIFY"
+    },
+    {
+      "actual_reason_codes": [
+        "VERSION_UNRESOLVED"
+      ],
+      "actual_status": "REJECT",
+      "case_id": "REAL-NEG-SNAPSHOT",
+      "expected_reason_code": "VERSION_UNRESOLVED",
+      "expected_status": "REJECT"
+    },
+    {
+      "actual_reason_codes": [
+        "POLICY_DENIED"
+      ],
+      "actual_status": "REJECT",
+      "case_id": "REAL-NEG-PUBLIC-DENY",
+      "expected_reason_code": "POLICY_DENIED",
+      "expected_status": "REJECT"
+    }
+  ],
+  "purpose": "100K governed semantic smoke; no paper performance timings",
+  "run_at_utc": "2026-07-18T16:26:03.143559+00:00",
+  "schema_version": 1,
+  "status": "PASS",
+  "verified_execution_artifacts": [
+    {
+      "artifact_id": "bts_on_time_2024_01_100000",
+      "byte_size": 2374449,
+      "relative_path": "processed/bts/on_time/2024-01/bts_flights_100000.parquet",
+      "row_count": 100000,
+      "sha256": "29c47a4a8f0f344bc810e469c4ae32987f781b2a213bb0984090d3e45b0bde8d"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_01_100000",
+      "byte_size": 1693589,
+      "relative_path": "processed/nyc_tlc/yellow/2024-01/yellow_taxi_100000.parquet",
+      "row_count": 100000,
+      "sha256": "cdd15308900400fabf8e0250072248690c6c960ea0575aadee74485301377de9"
+    },
+    {
+      "artifact_id": "nyc_tlc_taxi_zones",
+      "byte_size": 3887,
+      "relative_path": "processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+      "row_count": 265,
+      "sha256": "f29ce7251c147d9e0af7d4d2deca855d2ff618b8aef46cee9d1455df665d4988"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "record_id": "governed-pipeline-admission-v1-preflight-negative",
+  "recorded_at": "2026-07-24",
+  "status": "ABORTED_PROTOCOL_DESIGN_ERROR_RETAINED",
+  "run_id": "20260724T061218846749Z",
+  "completed_units": 6,
+  "failed_unit": "n50000-w128-p0.1-q0.1-j1.0-s15101",
+  "reason": "At join_match_rate=1.0, query-first mechanically dominates join-first because the Join removes no rows.",
+  "scientific_disposition": [
+    "No j=1.0 timing result was produced or inspected.",
+    "The partial run is not an optimizer evaluation and authorizes no performance claim.",
+    "Protocol V1.1 removes the structurally invalid three-candidate comparison point and restarts in a new results directory."
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": 2,
+  "frozen_at_utc": "2026-07-23T05:10:00+00:00",
+  "status": "FROZEN_BEFORE_DEVELOPMENT_TIMING_RESULTS",
+  "scientific_role": "real_mechanism_development",
+  "optimizer_performance_claim_authorized": false,
+  "motivation": "V3.1 real-transfer holdout contained no stable policy-first family, so it could not test bidirectional plan selection. This development matrix uses a complete low/high factorial rather than selecting individual favorable profiles.",
+  "consumed_sources_excluded": {
+    "bts": ["2024-01", "2024-02", "2024-06", "2024-10"],
+    "nyc_tlc": ["2024-01", "2024-03", "2024-07", "2024-11"]
+  },
+  "development_sources": {
+    "bts": ["2024-04", "2024-08"],
+    "nyc_tlc": ["2024-05", "2024-09"]
+  },
+  "reserved_validation_sources": {
+    "bts": ["2024-03", "2024-11"],
+    "nyc_tlc": ["2024-04", "2024-10"]
+  },
+  "reserved_final_holdout_sources": {
+    "bts": ["2024-05", "2024-12"],
+    "nyc_tlc": ["2024-06", "2024-12"]
+  },
+  "factorial": {
+    "identifier_widths": [384, 640],
+    "policy_selectivities": [0.10, 0.50],
+    "query_selectivities": [0.05, 0.50],
+    "complete_cartesian_product": true,
+    "profile_count_per_source": 8,
+    "seeds": [9101, 9202, 9303],
+    "row_count_per_unit": 150000
+  },
+  "timing": {
+    "paired_blocks_per_unit": 30,
+    "complete_candidate_permutations": true,
+    "threads": 1,
+    "memory_limit_mb": 4096,
+    "resume_granularity": "complete unit"
+  },
+  "development_acceptance": {
+    "measurement_integrity_required": true,
+    "minimum_stable_policy_first_families": 2,
+    "minimum_stable_query_first_families": 2,
+    "both_datasets_must_show_at_least_one_stable_direction": true,
+    "illegal_candidate_selection_allowed": false
+  },
+  "failure_policy": "Retain the complete matrix even if no bidirectional reversal appears. Do not relabel development months as validation or holdout."
+}

@@ -1,0 +1,28 @@
+{
+  "results_dir": "results/governed_pipeline_admission_v1_1",
+  "row_count": 50000,
+  "identifier_widths": [128, 1024],
+  "policy_selectivities": [0.1, 0.5],
+  "query_selectivities": [0.1, 0.5],
+  "join_match_rates": [0.1, 0.5],
+  "seeds": [15101, 15202, 15303],
+  "candidate_ids": [
+    "policy_first_masked_checkpoint",
+    "query_first_raw_checkpoint",
+    "join_first_masked_checkpoint"
+  ],
+  "warmup_rounds_per_permutation": 1,
+  "measured_rounds_per_permutation": 5,
+  "duckdb_threads": 1,
+  "duckdb_memory_limit_mb": 512,
+  "order_seed": 24072401,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 2000,
+  "bootstrap_seed": 24072402,
+  "minimum_conclusive_scenario_rate": 0.5,
+  "minimum_distinct_singleton_winners": 3,
+  "maximum_dominant_singleton_winner_fraction": 0.75,
+  "require_no_material_carryover": true,
+  "require_clean_git": true
+}

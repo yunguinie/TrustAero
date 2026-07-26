@@ -1,0 +1,33 @@
+{
+  "protocol_id": "real-checkpoint-optimizer-v41-final-holdout-20260723",
+  "optimizer_version": "V41",
+  "frozen_change_from_v4": "When all candidates are governance-legal and inside calibration support, a practical performance tie retains the minimum analytic-cost candidate instead of replacing it with policy-first.",
+  "unchanged_components": [
+    "governance feasibility before costing",
+    "out-of-support policy-first fallback",
+    "V4 analytic feature representation",
+    "V4 fitted rates and support bounds",
+    "3 percent measured confidence-oracle tie band"
+  ],
+  "development_record": "experiments/frozen/real_checkpoint_optimizer_v4_validation_negative_20260723.json",
+  "final_holdout_sources": [
+    "bts:2024-05",
+    "bts:2024-12",
+    "nyc_tlc:2024-06",
+    "nyc_tlc:2024-12"
+  ],
+  "holdout_rule": "No final holdout timing or winner may be inspected before this protocol, code, model, configuration, hashes, and acceptance gates are committed.",
+  "acceptance_gates": {
+    "minimum_confidence_family_hit_rate": 0.85,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 10.0,
+    "maximum_regret_percent": 25.0,
+    "minimum_family_hit_improvement_over_threshold": 0.05,
+    "minimum_mean_regret_reduction_vs_threshold_percent": 0.5,
+    "seed_consistency_required": true,
+    "out_of_support_fallback_rate_maximum": 0.0,
+    "illegal_selection_count": 0
+  },
+  "failure_policy": "Retain and report a failed final holdout. Do not tune V4.1 on final holdout answers or rerun a changed optimizer under the same final-holdout label.",
+  "paper_scope": "A pass supports only the governed two-candidate checkpoint placement claim for the frozen 150K-row DuckDB real-month workload. It does not authorize broader optimizer, scale, or engine claims."
+}

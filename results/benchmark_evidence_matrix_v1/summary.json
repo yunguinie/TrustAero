@@ -1,0 +1,156 @@
+{
+  "candidate_count": 12,
+  "cross_workload_normalization": "ratio_of_source_reported_candidate_medians; accepted source-specific Oracle sets are independently cross-checked",
+  "derived_cross_workload_evidence": true,
+  "geometric_pooled_median_oracle_opportunity_vs_reference": 1.0348651406281086,
+  "heldout_optimizer_evidence": false,
+  "max_pooled_median_reference_regret_percent": 14.692503352447428,
+  "optimizer_selection_evaluated": false,
+  "paper_performance_evidence": true,
+  "reference_within_tie_band_rate": 0.75,
+  "schema_version": 1,
+  "scientific_boundary": "This matrix normalizes accepted measurements. It demonstrates that the best legal boundary can vary, but it neither trains nor evaluates an optimizer.",
+  "source_bindings": [
+    {
+      "acceptance_path": "results/tpch_q1_utc_batched_v1/20260720T001101507660Z/acceptance.json",
+      "acceptance_sha256": "e307b599f2397a5ea3261591578c3f14b15a6f156b069dfc23b22aa7492becfd",
+      "accepted_oracle_set": [
+        "fused",
+        "materialize-after-q01-aggregate"
+      ],
+      "domain": "standard_benchmark",
+      "evidence_scope": "standard_method",
+      "query_family": "filter_group_aggregate_sort",
+      "reference_candidate_id": "fused",
+      "summary_path": "results/tpch_q1_utc_batched_v1/20260720T001101507660Z/summary.json",
+      "summary_sha256": "edaec5ead5b0c857d01a3e2642131b66c881925aed78621dcc714b0ee78e0288",
+      "workload_id": "tpch-q01-sf1"
+    },
+    {
+      "acceptance_path": "results/tpch_q6_utc_batched_v3/20260719T135554438475Z/acceptance.json",
+      "acceptance_sha256": "97b5d62c565f2af83a8be90e6f3fddd26bbd55a2bab0012c68e8c4575d607c2f",
+      "accepted_oracle_set": [
+        "fused"
+      ],
+      "domain": "standard_benchmark",
+      "evidence_scope": "standard_method",
+      "query_family": "filter_aggregate",
+      "reference_candidate_id": "fused",
+      "summary_path": "results/tpch_q6_utc_batched_v3/20260719T135554438475Z/summary.json",
+      "summary_sha256": "2f4ec78850d24293e9aee4c5e068ec82e052b1aa3980a62009563822d9fd77d9",
+      "workload_id": "tpch-q06-sf1"
+    },
+    {
+      "acceptance_path": "results/real_data_formal_candidate_v1/20260719T051929196252Z/acceptance.json",
+      "acceptance_sha256": "8414ddce30dd8648451c2403f42c5d3886637e35e4ed45243d84ba69fd4b699c",
+      "accepted_oracle_set": [
+        "materialize-after-gov-002-mask"
+      ],
+      "domain": "real_air_transport",
+      "evidence_scope": "inspected_development_partition",
+      "query_family": "filter_mask_aggregate",
+      "reference_candidate_id": "fused",
+      "summary_path": "results/real_data_formal_candidate_v1/20260719T051929196252Z/units/bts-full-2024-01.json",
+      "summary_sha256": "4d82ddc4b1001c14231d8c1dd079260af0f1224ba9515a8126abbc5c77c33b5f",
+      "workload_id": "bts-2024-01-governed"
+    },
+    {
+      "acceptance_path": "results/real_data_formal_candidate_v1/20260719T051929196252Z/acceptance.json",
+      "acceptance_sha256": "8414ddce30dd8648451c2403f42c5d3886637e35e4ed45243d84ba69fd4b699c",
+      "accepted_oracle_set": [
+        "fused"
+      ],
+      "domain": "real_urban_mobility",
+      "evidence_scope": "inspected_development_partition",
+      "query_family": "filter_join_aggregate",
+      "reference_candidate_id": "fused",
+      "summary_path": "results/real_data_formal_candidate_v1/20260719T051929196252Z/units/nyc_tlc-full-2024-01.json",
+      "summary_sha256": "ce66a8bf22b8eeec116372a55ee93e1eef8740b1ac036050b8808500cb263e73",
+      "workload_id": "nyc-tlc-2024-01-governed"
+    }
+  ],
+  "source_commit": "f6af8d9b34bece0daa9feaf1e5f112c2db39d5d2",
+  "status": "PASS",
+  "tie_threshold_fraction": 0.03,
+  "workload_count": 4,
+  "workloads": [
+    {
+      "alternative_boundary_within_tie_band": true,
+      "candidate_count": 3,
+      "domain": "standard_benchmark",
+      "evidence_scope": "standard_method",
+      "oracle_median_ms": 740.1365,
+      "oracle_set_within_tie_band": [
+        "fused",
+        "materialize-after-q01-aggregate"
+      ],
+      "pooled_median_oracle_opportunity_vs_reference": 1.0,
+      "pooled_median_reference_regret_percent": 0.0,
+      "query_family": "filter_group_aggregate_sort",
+      "reference_candidate_id": "fused",
+      "reference_median_ms": 740.1365,
+      "reference_outside_oracle_set": false,
+      "workload_id": "tpch-q01-sf1"
+    },
+    {
+      "alternative_boundary_within_tie_band": false,
+      "candidate_count": 3,
+      "domain": "standard_benchmark",
+      "evidence_scope": "standard_method",
+      "oracle_median_ms": 152.24505,
+      "oracle_set_within_tie_band": [
+        "fused"
+      ],
+      "pooled_median_oracle_opportunity_vs_reference": 1.0,
+      "pooled_median_reference_regret_percent": 0.0,
+      "query_family": "filter_aggregate",
+      "reference_candidate_id": "fused",
+      "reference_median_ms": 152.24505,
+      "reference_outside_oracle_set": false,
+      "workload_id": "tpch-q06-sf1"
+    },
+    {
+      "alternative_boundary_within_tie_band": true,
+      "candidate_count": 3,
+      "domain": "real_air_transport",
+      "evidence_scope": "inspected_development_partition",
+      "oracle_median_ms": 638.1159,
+      "oracle_set_within_tie_band": [
+        "materialize-after-gov-002-mask"
+      ],
+      "pooled_median_oracle_opportunity_vs_reference": 1.1469250335244743,
+      "pooled_median_reference_regret_percent": 14.692503352447428,
+      "query_family": "filter_mask_aggregate",
+      "reference_candidate_id": "fused",
+      "reference_median_ms": 731.8711000000001,
+      "reference_outside_oracle_set": true,
+      "workload_id": "bts-2024-01-governed"
+    },
+    {
+      "alternative_boundary_within_tie_band": false,
+      "candidate_count": 3,
+      "domain": "real_urban_mobility",
+      "evidence_scope": "inspected_development_partition",
+      "oracle_median_ms": 342.01345000000003,
+      "oracle_set_within_tie_band": [
+        "fused"
+      ],
+      "pooled_median_oracle_opportunity_vs_reference": 1.0,
+      "pooled_median_reference_regret_percent": 0.0,
+      "query_family": "filter_join_aggregate",
+      "reference_candidate_id": "fused",
+      "reference_median_ms": 342.01345000000003,
+      "reference_outside_oracle_set": false,
+      "workload_id": "nyc-tlc-2024-01-governed"
+    }
+  ],
+  "workloads_with_alternative_boundary_in_tie_band": [
+    "tpch-q01-sf1",
+    "bts-2024-01-governed"
+  ],
+  "workloads_with_alternative_boundary_in_tie_band_count": 2,
+  "workloads_with_reference_outside_oracle_set": [
+    "bts-2024-01-governed"
+  ],
+  "workloads_with_reference_outside_oracle_set_count": 1
+}

@@ -1,0 +1,53 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v5_training_readiness_negative_20260722",
+  "status": "FAIL_REAL_LABEL_DIVERSITY_RETAIN",
+  "run_id": "20260722T021518196019Z",
+  "audit_commit": "cc625d9920843406dc811b5faf44a5a712b6b5dc",
+  "optimizer_v5_training_authorized": false,
+  "performance_unit_count": 4,
+  "workload_families": [
+    "bts_mask_join",
+    "bts_multijoin",
+    "nyc_tlc"
+  ],
+  "label_class_counts": {
+    "BASELINE_ONLY": 3,
+    "PRACTICAL_TIE_INCLUDING_BASELINE": 1
+  },
+  "dominant_label_fraction": 0.75,
+  "baseline_winner_count": 3,
+  "unrestricted_nonbaseline_winner_count": 0,
+  "governance_forced_nonbaseline_count": 1,
+  "failed_gate": "minimum_unrestricted_nonbaseline_winner_count",
+  "scientific_interpretation": "The accepted real-data development evidence is structurally broad enough to expose the remaining problem: all confidence-authorized multi-candidate performance labels either select the baseline or include it in a practical tie. The strict Mask-before-Join policy correctly forces a non-baseline plan, but a single legal candidate tests governance feasibility rather than optimizer cost-selection skill.",
+  "prohibited_next_steps": [
+    "train Optimizer V5 on the three baseline-only labels and call the result adaptive",
+    "count a governance-forced single candidate as a performance winner",
+    "promote the inconclusive BTS 500K point estimate to a label",
+    "access the external holdout before freezing a new development method"
+  ],
+  "authorized_next_step": "Use the already frozen governance-driven query families and existing operator microbenchmarks to predeclare a component-cost calibration method. Any additional real-data development grid must report every frozen stratum and require an independent confidence-authorized non-baseline winner before V5 training.",
+  "immutable_files": [
+    {
+      "path": "results/optimizer_v5_training_readiness/20260722T021518196019Z/audit.json",
+      "sha256": "6bb49c45a16f00a2ebd7a84144dc5885358033b2d8d125e89335a766e8c78f08"
+    },
+    {
+      "path": "results/optimizer_v5_training_readiness/20260722T021518196019Z/config.json",
+      "sha256": "7c79b3aeceef702e58713bf32d5a5046864cf3077394423ab13db9b7d29b844e"
+    },
+    {
+      "path": "results/optimizer_v5_training_readiness/20260722T021518196019Z/environment.json",
+      "sha256": "9a4e95ca2d1fb529863bc9750506c09c3727f52e3a6f6494423aad275a84e7b3"
+    },
+    {
+      "path": "experiments/configs/optimizer_v5_training_readiness_v1.json",
+      "sha256": "0a5196fe542d016056438a04b239a2ef7879bbcf4c63110ee426c840f5e18beb"
+    },
+    {
+      "path": "src/trustaero/experiments/optimizer_v5_training_readiness.py",
+      "sha256": "47b137049becd0c52c6bc5b0e95adb2623dd8a3607533de24a8baa6e86b31c0e"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "frozen_at": "2026-07-23",
+  "status": "FROZEN_BEFORE_EA1_OPTIMIZER_INTERPOLATION_HOLDOUT",
+  "development_result": "results/governed_checkpoint_optimizer_v2/20260723T020104628457Z/calibration.json",
+  "development_result_sha256": "24630b5795d9db28fd93368ab1abbaa8311767c2be70c92219b9837ede8582cd",
+  "frozen_model": "experiments/frozen/models/governed_checkpoint_optimizer_v2_20260723.json",
+  "source_model_artifact_sha256": "7760fdd6dc45e1ac0205e03229784d1c1a55838c8efb5cf26d56f9d7b44676a7",
+  "frozen_model_sha256": "1826240d96cf2b539da6f43634296a419b032785111fe854675d8db7edf35cf3",
+  "scientific_question": "Can the frozen execution-aware optimizer generalize to unseen interior combinations without retraining?",
+  "holdout_design": {
+    "row_counts": [150000],
+    "identifier_widths": [256, 768],
+    "policy_selectivities": [0.2, 0.4],
+    "query_selectivities": [0.1, 0.2, 0.35],
+    "seeds": [6101, 6202, 6303],
+    "scenario_count": 12,
+    "unit_count": 36,
+    "paired_blocks_per_unit": 30,
+    "candidate_executions": 2160
+  },
+  "non_overlap": {
+    "development_identifier_widths": [128, 1024],
+    "development_policy_selectivities": [0.1, 0.5],
+    "development_query_selectivities": [0.05, 0.5],
+    "development_seeds": [5101, 5202, 5303]
+  },
+  "frozen_gates": {
+    "minimum_confidence_family_hit_rate": 0.9,
+    "maximum_mean_diagnostic_regret_percent": 5.0,
+    "maximum_p95_diagnostic_regret_percent": 15.0,
+    "maximum_diagnostic_regret_percent": 25.0,
+    "minimum_singleton_confidence_families": 4,
+    "minimum_policy_first_singleton_families": 1,
+    "minimum_query_first_singleton_families": 1,
+    "maximum_out_of_support_fallback_rate": 0.0,
+    "must_beat_both_fixed_candidates": true,
+    "seed_consistent_selection_rate": 1.0,
+    "illegal_candidate_selection_count": 0
+  },
+  "boundaries": [
+    "The model is loaded by SHA-256 and is never refitted during evaluation.",
+    "Widths, policy selectivities, query selectivities, and seeds are unseen in development.",
+    "The holdout is run once after this protocol is committed.",
+    "A failed holdout remains a failed holdout and cannot be renamed after tuning.",
+    "Passing authorizes an independent controlled synthetic claim, not a full real-data paper claim."
+  ]
+}

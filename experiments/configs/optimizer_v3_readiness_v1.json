@@ -1,0 +1,120 @@
+{
+  "expected_python_environment": "TrustAero_env",
+  "source_run_dirs": [
+    "results/phase2i_fragment_pilot/20260717T120435635390Z",
+    "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z"
+  ],
+  "phase2k_summary_path": "results/phase2k_pipeline_optimizer_development/fixed_formula_v1/summary.json",
+  "tie_threshold_fraction": 0.03,
+  "expected_family_count": 40,
+  "minimum_replicates_per_family": 3,
+  "cross_validation": "leave_one_complete_family_out",
+  "allowed_inputs": [
+    "join_input_rows",
+    "identifier_width_bytes",
+    "join_match_rate",
+    "candidate_legality",
+    "raw_exposure_limit"
+  ],
+  "forbidden_input_tokens": [
+    "latency",
+    "runtime",
+    "observed",
+    "result",
+    "winner",
+    "regret",
+    "actual"
+  ],
+  "position_effect_tolerance_fraction": 0.1,
+  "confidence_level": 0.95,
+  "bootstrap_repetitions": 20000,
+  "bootstrap_seed": 20260727,
+  "forbidden_phase2g_paths": [
+    "results/phase2g_optimizer_holdout",
+    "experiments/frozen/phase2g_optimizer_holdout.json"
+  ],
+  "required_artifacts": [
+    {
+      "path": "results/phase2i_fragment_pilot/20260717T120435635390Z/raw_measurements.csv",
+      "sha256": "777e53dbf2f04e8048d688cb26d511b7fe5b1b524660db4ba88a60fef541b39b"
+    },
+    {
+      "path": "results/phase2i_fragment_pilot/20260717T120435635390Z/summary.json",
+      "sha256": "4b2b3de48fa68a3f2da6348fa60443d16c6fdcc723532e14566986da995ac42c"
+    },
+    {
+      "path": "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z/raw_measurements.csv",
+      "sha256": "1e44c546e932cfd6c443316a0928efdddd2e1f8f90e71c1934f596fd8f7cd9c1"
+    },
+    {
+      "path": "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z/summary.json",
+      "sha256": "686f53d2e49d7481cee3d3aa199b904090e4dd1b0bd1cb761bd799b4dbe52faf"
+    },
+    {
+      "path": "results/phase2k_pipeline_optimizer_development/fixed_formula_v1/summary.json",
+      "sha256": "23d0e55d9be6658bbc5eeec0be91e7bcd8375a6a85d6fbda79c39a0eba00168d"
+    },
+    {
+      "path": "results/phase2k_pipeline_optimizer_development/fixed_formula_v1/pipeline_mask_cost_model.json",
+      "sha256": "d9cf1605ccdb9e3359fc0d73b7145e3f29c88632f52b3c93b68424017a7c94c4"
+    },
+    {
+      "path": "results/phase2l_pipeline_attribution/frozen_analysis_v1/summary.json",
+      "sha256": "9ad1cde6e13067562d0bdbbc56df07254a3c5e05ee86b058e5874b8d8185cc24"
+    },
+    {
+      "path": "results/phase2m_pipeline_ablation_compact/20260718T024708217922Z/summary.json",
+      "sha256": "51377ab469d086efd548ac06c3fa98015ceb485fe4ad83a590c5d7e3cc649a60"
+    },
+    {
+      "path": "results/phase2m_pipeline_ablation_analysis/20260718T024708217922Z/summary.json",
+      "sha256": "420ae37b96039369c0c5a7c2f9a3254447349fbeaab0fdbca2369ce606cd3606"
+    }
+  ],
+  "required_frozen_records": [
+    {
+      "path": "experiments/frozen/phase2i_fragment_pilot_record.json",
+      "required_fields": {
+        "status": "complete",
+        "phase2g_authorized": false,
+        "stable_reversal_observed": true
+      }
+    },
+    {
+      "path": "experiments/frozen/phase2j_boundary_confirmation_record.json",
+      "required_fields": {
+        "status": "complete",
+        "phase2g_authorized": false,
+        "optimizer_design_gate_passes": true
+      }
+    },
+    {
+      "path": "experiments/frozen/phase2k_pipeline_optimizer_negative.json",
+      "required_fields": {
+        "status": "development_only_rejected_by_predeclared_gate",
+        "phase2g_authorized": false,
+        "development_gate_passes": false
+      }
+    },
+    {
+      "path": "experiments/frozen/phase2l_operator_attribution_negative.json",
+      "required_fields": {
+        "status": "no_single_operator_role_passes_predeclared_attribution_gate",
+        "phase2g_authorized": false,
+        "eligible_pipeline_interaction_roles": []
+      }
+    },
+    {
+      "path": "experiments/frozen/phase2m_compact_policy_ablation_negative.json",
+      "required_fields": {
+        "status": "v2_1_hypothesis_gate_failed",
+        "phase2g_authorized": false,
+        "all_validations_passed": true,
+        "result_equivalent_scenario_count": 15,
+        "distinct_plan_scenario_count": 15,
+        "boundary_validated_scenario_count": 15,
+        "spilled_scenario_count": 0
+      }
+    }
+  ]
+}

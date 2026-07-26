@@ -1,0 +1,67 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_aware_shape_calibration_protocol_v1_20260722",
+  "status": "FROZEN_BEFORE_SHAPE_AWARE_DEVELOPMENT_ANALYSIS",
+  "input_run": "results/execution_aware_calibration_v2/20260722T112956669678Z",
+  "input_role": "consumed development matrix; never independent holdout evidence",
+  "motivation": "The global additive model failed because one coefficient vector was shared across four physically different result shapes. Failure was concentrated in the three-way mask_output family.",
+  "model": {
+    "family": "query-shape-specific nonnegative analytic ensemble",
+    "direct_winner_classifier": false,
+    "equivalence_groups": [
+      "column_pruning",
+      "mask_output",
+      "mask_aggregate",
+      "mask_sorted_output"
+    ],
+    "ridge_lambda_views": [0.000001, 0.0001, 0.01, 1.0],
+    "maximum_iterations_per_view": 10000,
+    "relative_objective_tolerance": 0.000001,
+    "convergence_rule": "Every ridge view must converge; nonconverged views cannot be silently dropped.",
+    "practical_tie_fraction": 0.03,
+    "override_rule": "Override the stable legal fallback only when every ridge view selects the same candidate outside the practical tie band.",
+    "support_rule": "If any candidate feature leaves its per-candidate training minimum/maximum envelope, fail closed to the stable legal fallback.",
+    "governance_before_cost": true
+  },
+  "stable_legal_fallbacks": {
+    "column_pruning": "join_key_only_aggregate",
+    "mask_output": "postjoin_mask_fused_output",
+    "mask_aggregate": "postjoin_raw_materialized_mask_aggregate",
+    "mask_sorted_output": "postjoin_mask_fused_sorted_output"
+  },
+  "validation": {
+    "outer_group": "complete row_count + identifier_width + match_rate family",
+    "seed_level_leakage_allowed": false,
+    "outer_fold_count": 18,
+    "candidate_legality": "Only result-equivalent legal candidates from the completed audit may be ranked.",
+    "reported_metrics": [
+      "3-percent Oracle-set hit rate",
+      "mean regret",
+      "P95 regret",
+      "maximum regret",
+      "fallback rate",
+      "per-equivalence-group metrics",
+      "fixed-fallback comparison"
+    ]
+  },
+  "predeclared_gates": {
+    "minimum_3_percent_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_regret_percent": 15.0,
+    "mean_regret_not_worse_than_fixed_fallback": true,
+    "p95_regret_not_worse_than_fixed_fallback": true,
+    "all_outer_families_reported": true
+  },
+  "decision_rule": {
+    "pass": "Freeze the shape-aware model design, then create a new unseen scenario matrix before any paper claim.",
+    "fail": "Retain the complete negative result and do not tune this consumed matrix into a fresh evaluation."
+  },
+  "not_authorized": [
+    "paper headline performance claims",
+    "independent holdout claims",
+    "changing fallbacks or thresholds after reading this result",
+    "selecting illegal candidates for performance"
+  ],
+  "analysis_command": "python -u scripts/analyze_execution_aware_shape_calibration.py results/execution_aware_calibration_v2/20260722T112956669678Z"
+}

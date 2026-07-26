@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "protocol_id": "governed-aggregate-admission-v1-20260726",
+  "status": "FROZEN_BEFORE_MEASUREMENT",
+  "query_family": "governed_join_aggregate_v1",
+  "purpose": "Decide whether a second, structurally different optimizer family merits cost-model and independent-holdout work.",
+  "candidate_semantics": {
+    "common_prefix": "Policy and query filtering followed by a masked governance checkpoint.",
+    "join_then_aggregate": "Join every governed row to the dimension, then aggregate by marker.",
+    "partial_aggregate_then_join": "Aggregate governed rows by join key, join partial counts to the dimension, then aggregate by marker."
+  },
+  "hard_requirements": [
+    "Both candidates are legal under the frozen no-raw-join policy.",
+    "All candidate outputs are exactly equal in every warmup and measured block.",
+    "DuckDB physical phase fingerprints are distinct.",
+    "Candidate order is balanced and randomized inside paired blocks.",
+    "Scenarios and seeds are analyzed as complete groups."
+  ],
+  "premeasurement_feasibility_note": "A key-domain fraction of 1.0 was removed during smoke because safe dominance correctly pruned partial aggregation when it reduced no Join rows. The frozen formal grid uses only scenarios in which both candidates remain nondominated before timing.",
+  "go_gate": {
+    "minimum_distinct_singleton_winners": 2,
+    "minimum_conclusive_scenario_rate": 0.5,
+    "practical_tie_fraction": 0.03,
+    "confidence_level": 0.95
+  },
+  "stop_rule": "If the go gate fails, retain the negative result and do not fit an optimizer or run an independent holdout for this query family.",
+  "next_if_pass": "Freeze a cost model, a real Agent-plan instance, and an untouched independent holdout.",
+  "next_if_fail": "Report the supported boundary and proceed to external comparison and paper assembly without manufacturing another reversal."
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_POSITIVE_RESULT",
+  "source_result": "results/governed_checkpoint_uncertainty_holdout_evaluation_v1/20260723T033103001759Z/evaluation.json",
+  "source_result_sha256": "8db769e85654668497af7507284e5c5ee422cb7eed0e108be6934769f6d5b506",
+  "measurement_run": "results/governed_checkpoint_uncertainty_holdout_v1/20260723T032749127328Z",
+  "git_commit": "a25404b84411643a3edcdd2a7fa09c8186c70d5e",
+  "metrics": {
+    "optimizer_confidence_family_hit_rate": 1.0,
+    "best_fixed_confidence_family_hit_rate": 0.6666666666666666,
+    "mean_regret_percent": 0.557908,
+    "p95_regret_percent": 3.228747,
+    "max_regret_percent": 15.984743,
+    "strict_policy_illegal_selection_count": 0
+  },
+  "authorized_claim": "The frozen V3.1 optimizer passed an independent controlled synthetic interpolation holdout.",
+  "not_authorized": [
+    "real-data transfer",
+    "full-month scale transfer",
+    "final PVLDB performance claim"
+  ]
+}

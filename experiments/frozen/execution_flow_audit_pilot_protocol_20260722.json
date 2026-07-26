@@ -1,0 +1,70 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_flow_audit_pilot_protocol_20260722",
+  "status": "FROZEN_BEFORE_EA0_PILOT",
+  "implementation_commit_short": "d2be0a8",
+  "phase": "EA-0 execution-flow mechanism audit",
+  "optimizer_training_allowed": false,
+  "scientific_question": "At which DuckDB operator stage does a wide sensitive value actually become observable work when it is pruned, hashed, materialized, aggregated, or sorted around the same Join?",
+  "pilot_config": "experiments/configs/execution_flow_audit_pilot_v1.json",
+  "pilot_matrix": {
+    "row_counts": [10000],
+    "identifier_widths": [256, 2048],
+    "match_rates": [0.1, 1.0],
+    "seeds": [1701, 1802],
+    "unit_count": 8,
+    "variant_count": 11,
+    "equivalence_group_count": 4,
+    "warmup_runs_per_variant": 1,
+    "measured_runs_per_variant": 5,
+    "profile_runs_per_variant": 2
+  },
+  "mechanisms": [
+    "unused wide-column pruning",
+    "forced raw payload materialization",
+    "Mask before Join with a materialized boundary",
+    "Mask after Join in a fused pipeline",
+    "raw payload materialization before post-Join Mask",
+    "Mask with immediate aggregation",
+    "Mask with output sorting"
+  ],
+  "required_evidence": [
+    "result digest equivalence within every semantic group",
+    "distinct physical-plan fingerprints for declared materialized and fused pairs",
+    "operator names, actual cardinalities, rows scanned, and operator timings",
+    "columns explicitly exposed by DuckDB operator metadata",
+    "peak buffer memory and peak temporary-directory size",
+    "separately labelled logical work-byte estimates",
+    "candidate-specific Mask rows, Mask input bytes, and materialization-byte estimates"
+  ],
+  "pilot_acceptance": {
+    "all_8_units_complete": true,
+    "all_4_equivalence_groups_match": true,
+    "unused_sensitive_projection_is_pruned": true,
+    "forced_raw_materialization_retains_sensitive_column": true,
+    "declared_physical_plan_pairs_are_distinct": true,
+    "optimizer_is_not_trained": true
+  },
+  "measurement_boundary": "DuckDB does not expose exact per-operator payload bytes through the current JSON profile. Active-column metadata, cardinalities, time, memory, and spill metrics are observed; all byte-work vectors are explicitly marked as estimates.",
+  "consumed_data_boundary": {
+    "phase2g_is_permanently_consumed_by_optimizer_v3": true,
+    "phase2g_may_be_used_for_execution_aware_tuning": false,
+    "existing_january_q1_q6_phase2j_phase2m_and_v5_results": "development_and_mechanism_evidence_only",
+    "new_external_evaluation_partition_selected": false
+  },
+  "rejected_actions": [
+    "train or tune an optimizer on the EA-0 pilot timings",
+    "claim exact engine-internal byte movement from logical byte estimates",
+    "change the 11-variant matrix after observing which plan is fastest and still call the rerun the same pilot",
+    "reuse Phase 2G as an independent holdout",
+    "special-case the n50000-w2048-m1000 family"
+  ],
+  "authorization_if_passed": "A passing pilot authorizes freezing the larger EA-0 formal mechanism audit and designing a candidate physical-work feature contract. It does not authorize training or claiming performance for the final Execution-Aware Optimizer.",
+  "implementation_files_bound_by_git_commit": [
+    "src/trustaero/experiments/execution_flow_audit.py",
+    "scripts/run_execution_flow_audit.py",
+    "experiments/configs/execution_flow_audit_pilot_v1.json",
+    "experiments/configs/execution_flow_audit_formal_v1.json",
+    "tests/unit/test_execution_flow_audit.py"
+  ]
+}

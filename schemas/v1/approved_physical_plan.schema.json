@@ -135,7 +135,7 @@
     },
     "PhysicalStrategySpec": {
       "additionalProperties": false,
-      "description": "Explicit backend strategy decisions that may change physical execution.\n\nMaterialization is a storage boundary, not a logical rewrite: it preserves\nrows and field semantics while changing pipelining and intermediate cost.\nIR v1 permits either one ordinary materialization boundary or one bounded\nordered-filter fragment. The latter materializes each pure filter stage so\na backend cannot silently flatten the requested experimental order.",
+      "description": "Explicit backend strategy decisions that may change physical execution.\n\nMaterialization is a storage boundary, not a logical rewrite: it preserves\nrows and field semantics while changing pipelining and intermediate cost.\nIR v1 permits one ordinary materialization boundary, one bounded\nordered-filter fragment, or one independently checked Mask placement.  The\ncombined placement/materialization mode is deliberately narrower still:\nit may materialize only the Mask that was moved.  This exact shape lets the\noptimizer compare an early masked boundary with a late Mask without\nopening a general-purpose reordering API.",
       "properties": {
         "execution_mode": {
           "default": "fused",
@@ -143,7 +143,8 @@
             "fused",
             "materialized",
             "ordered_materialized",
-            "governance_placed"
+            "governance_placed",
+            "governance_placed_materialized"
           ],
           "title": "Execution Mode",
           "type": "string"
@@ -254,6 +255,18 @@
       "title": "Physical Plan Id",
       "type": "string"
     },
+    "planner_decision_digest": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Planner Decision Digest"
+    },
     "planner_notes": {
       "default": [],
       "items": {
@@ -261,6 +274,18 @@
       },
       "title": "Planner Notes",
       "type": "array"
+    },
+    "planner_selected_candidate_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Planner Selected Candidate Id"
     },
     "schema_version": {
       "const": "1.0",

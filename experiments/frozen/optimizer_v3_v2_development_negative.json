@@ -1,0 +1,69 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "optimizer_v3_v2_nested_development_not_phase2g",
+  "protocol_commit": "dffb76c",
+  "implementation_commit": "bd7ac6b",
+  "status": "development_only_rejected_by_predeclared_gate",
+  "phase2g_authorized": false,
+  "family_count": 40,
+  "replicate_count": 162,
+  "development_gate_passes": false,
+  "failed_gate_checks": [
+    "max_regret_does_not_worsen_v1"
+  ],
+  "v3_metrics": {
+    "within_tie_rate": 0.825,
+    "mean_regret_percent": 1.213793351184097,
+    "p95_regret_percent": 5.5152222849710775,
+    "max_regret_percent": 13.150973892221508,
+    "direct_model_coverage": 0.65
+  },
+  "worst_family": {
+    "family_id": "n50000-w2048-m1000",
+    "observed_log_early_late_ratio": 0.12355279314430824,
+    "predicted_log_early_late_ratio": -0.06699766672039409,
+    "selected_placement": "early_mask",
+    "oracle_placement": "late_mask",
+    "regret_percent": 13.150973892221508,
+    "ridge_signs_disagree": true
+  },
+  "immutable_files": [
+    {
+      "path": "experiments/configs/optimizer_v3_development_v2.json",
+      "sha256": "f3b3ee1622082435ef5d5791231dc11a9d6a3ddc1ed17a23400867b551694464"
+    },
+    {
+      "path": "docs/optimizer-v3-development-v2-protocol.md",
+      "sha256": "4bdc53e9c32ec467f23ab572bbd363f43c6365c5b173da60b0f1683657575867"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_v2/family_observations.csv",
+      "sha256": "3a88f8464bc59357101a98117e84963724d734479a96a712d9e9e325938459f1"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_v2/full_inner_candidates.csv",
+      "sha256": "7e2ffdd4ef5888aa8d9d495bd71b023d519de0e9fdd8c4c0ade8360aeab4a8ec"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_v2/interaction_mask_cost_model.json",
+      "sha256": "87ecf84e22accb3d5079a8189bd4f52ee3a62a326adc048515d562e48e8504d0"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_v2/outer_hyperparameter_selections.csv",
+      "sha256": "874f8799e5218b20132b7c177b804138cd3634c24e7c7b0e82205bfa86487aa5"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_v2/outer_predictions.csv",
+      "sha256": "115e12ddf578fca11f41550006744f3dc09629decef1eb490994ddf85051efe9"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_v2/report.md",
+      "sha256": "f7a623f0ea65429e83eb2239deab715993bbb36e7f49633ca6d9d9acbca76f32"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_v2/summary.json",
+      "sha256": "9467043e35cd18f66987ac409d5424ed20d5a3b23f231f8711690d12ac207967"
+    }
+  ],
+  "interpretation": "V3-v2 improves within-3%, mean, and P95 regret, but one direct decision exceeds the frozen V1 maximum regret. The result is rejected and frozen; Phase 2G remains untouched."
+}

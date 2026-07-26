@@ -1,0 +1,467 @@
+{
+  "schema_version": 1,
+  "registry_id": "trustaero-paper-results-v1-20260724",
+  "updated_at": "2026-07-26",
+  "scope": "Selected claim-authorizing evidence and scientifically important retained negatives. This is not a list of every development run.",
+  "entries": [
+    {
+      "entry_id": "semantic-correctness-phase0",
+      "evidence_role": "semantic_correctness",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/phase0_planner_fault_result_20260724.json",
+        "sha256": "00b8e2a0ac69bc717fe29bf74990aea8cfed7b1b3032dce977c4a58e5cd4008b"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/phase0/20260724T034540Z/phase0_evaluation.json",
+          "sha256": "3465147d46a66d4c74d7d4dd64881bb18bdf2d433a5b700cd8e7f5d40b9c3e7f"
+        }
+      ],
+      "authorized_claim": "All 26 frozen semantic and planner fault cases returned the expected status and stable reason codes; injected violations were detected with no false rejection in this matrix.",
+      "boundary": "The micro-latency observations are provisional because background load was not controlled."
+    },
+    {
+      "entry_id": "standard-benchmark-tpch-q1",
+      "evidence_role": "standard_benchmark",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/tpch_sf10_q1_paired_ci_accepted_20260720.json",
+        "sha256": "e27f37b6a26df19d5bebaa01c2c1f04d84e3fa260bb4ed19b599428209912a3a"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/tpch_sf10_q1_formal_v2/20260720T094049562476Z/acceptance.json",
+          "sha256": "b14ac06bb4a1ca906fde225c0b4e6ea2920c78a6a87eaeb281d70ce159c5e182"
+        }
+      ],
+      "authorized_claim": "The frozen TPC-H SF10 Q1 protocol produced accepted paired, pollution-safe standard-benchmark evidence.",
+      "boundary": "Q1 alone is not a workload-wide optimizer evaluation."
+    },
+    {
+      "entry_id": "standard-benchmark-tpch-q6",
+      "evidence_role": "standard_benchmark",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/tpch_sf10_q6_paired_ci_accepted_20260721.json",
+        "sha256": "06d498bbbafff8ba27e59bba623e844367512bc394d160593fa08b8581d5bda0"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/tpch_sf10_q6_formal_v2/20260721T012711938759Z/acceptance.json",
+          "sha256": "1b3bdc8122ab1146e1f3f25d93d4f74b0c47ec89ad220193c40183e8c664ee7f"
+        }
+      ],
+      "authorized_claim": "The frozen TPC-H SF10 Q6 protocol produced accepted paired, pollution-safe standard-benchmark evidence.",
+      "boundary": "Q6 alone is not a workload-wide optimizer evaluation."
+    },
+    {
+      "entry_id": "governed-candidate-reversal",
+      "evidence_role": "optimizer_motivation",
+      "outcome": "positive_development",
+      "frozen_record": {
+        "path": "experiments/frozen/governed_pipeline_semantic_admission_v3_positive_20260724.json",
+        "sha256": "f286512a8d55dba20642e7890d8fd9ca9fc9809a88e3858c078d7102af5e92fb"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/governed_pipeline_semantic_admission_v3/20260724T072055085971Z/summary.json",
+          "sha256": "81dbe915e9f4f2254bd1883845aee776ca520f77e8f060060bc3f8acf765b774"
+        }
+      ],
+      "authorized_claim": "Two legal governed physical pipelines each win in controlled scenarios while preserving results and record lineage.",
+      "boundary": "This development experiment motivates optimization but is not unseen-data evidence."
+    },
+    {
+      "entry_id": "pipeline-cost-model-development",
+      "evidence_role": "optimizer_development",
+      "outcome": "positive_development",
+      "frozen_record": {
+        "path": "experiments/frozen/governed_pipeline_cost_calibration_v2_positive_20260724.json",
+        "sha256": "dc853bacb8955c47992413b380d442082df2f1766853e39cd8487004a65fc6e1"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/governed_pipeline_cost_calibration_v2/calibration.json",
+          "sha256": "a59dfb321366d7bbd6f4431ac228a25a90a5dcaf7ade4b519e95a095ce616450"
+        }
+      ],
+      "authorized_claim": "Grouped development validation admitted the execution-aware cost model for independent testing.",
+      "boundary": "Development cross-validation cannot by itself authorize a paper generalization claim."
+    },
+    {
+      "entry_id": "pipeline-cost-model-synthetic-holdout",
+      "evidence_role": "optimizer_independent_holdout",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/governed_pipeline_cost_holdout_v1_positive_20260724.json",
+        "sha256": "8dbe8b6924b81f7f1bdc04d149dfb0de43bf34aba1159f0a9b00f684dc015538"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/governed_pipeline_cost_holdout_evaluation_v1/20260724T074335102248Z/evaluation.json",
+          "sha256": "38d81e37b5c280f32c2c555cddde18d234bf69edc8c7c0cc16b8cf3512a64057"
+        }
+      ],
+      "authorized_claim": "The frozen model achieved 100% 3%-Oracle-set hit, 0.088% mean regret, and 2.120% maximum regret on the independent controlled holdout.",
+      "boundary": "This is controlled synthetic holdout evidence, not real-distribution transfer."
+    },
+    {
+      "entry_id": "permissive-real-transfer",
+      "evidence_role": "retained_negative",
+      "outcome": "negative",
+      "frozen_record": {
+        "path": "experiments/frozen/real_governed_pipeline_transfer_negative_20260724.json",
+        "sha256": "7ef6fae0831e67bfbea7b6a628d167bcccea4efe67014357fe837c6f65e3ca05"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/real_governed_pipeline_transfer_evaluation_v1/20260724T084101389237Z/evaluation.json",
+          "sha256": "0f1e5a873c86c9de97120b6d86ee2433125b26ed10263530777627664504266e"
+        }
+      ],
+      "authorized_claim": "The permissive real-data fragment was correctly measured but provided no adaptive advantage over fixed join-first.",
+      "boundary": "This result must remain visible as negative evidence."
+    },
+    {
+      "entry_id": "policy-stratified-v1",
+      "evidence_role": "retained_negative",
+      "outcome": "negative",
+      "frozen_record": {
+        "path": "experiments/frozen/policy_stratified_pipeline_holdout_negative_20260724.json",
+        "sha256": "29bf6491e1ad41b04843ff33a4412044f1d822e038185ee511affc906a46473a"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/policy_stratified_pipeline_holdout_evaluation_v1/20260724T094318843802Z/evaluation.json",
+          "sha256": "26d4ff4659763a95963a220d856097f7d20b5633f922f60b0ac23db93b4d2d6c"
+        }
+      ],
+      "authorized_claim": "The first policy holdout failed because an exact support boundary caused 22 false conservative fallbacks.",
+      "boundary": "The failure is not reclassified after the support-check correction."
+    },
+    {
+      "entry_id": "policy-stratified-v2-final",
+      "evidence_role": "optimizer_real_independent_holdout",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/policy_stratified_pipeline_holdout_v2_positive_20260724.json",
+        "sha256": "d1579e4795f2cf6696bce58397debe9bc25f923ce18ddd52b8a0e07fd60495f3"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/policy_stratified_pipeline_holdout_evaluation_v2/20260724T104015738465Z/evaluation.json",
+          "sha256": "00f9666892bca1fb45b5c8de430e933ddc0560c0ecf662b6662103e7c8a889ab"
+        }
+      ],
+      "authorized_claim": "Across unseen BTS and NYC months, policy changes the legal plan space; under no-raw-join the frozen optimizer used both legal plans, hit the 3%-Oracle set in every decision, and reduced mean regret by 95.77% versus the strongest legal fixed baseline.",
+      "boundary": "The claim is limited to the frozen policy, candidate fragment, DuckDB backend, scale, and workload profiles."
+    },
+    {
+      "entry_id": "system-scalability-source-lineage-pilot",
+      "evidence_role": "runner_integrity_admission",
+      "outcome": "positive_pilot",
+      "frozen_record": {
+        "path": "experiments/frozen/system_scalability_source_lineage_pilot_positive_20260724.json",
+        "sha256": "6da0b1da87dd7d246e8b525a54f6894669f69d859422467562f890752f07124c"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/system_scalability_pilot_v1/20260724T125106341085Z/summary.json",
+          "sha256": "5414641eff527249885df7d2672253b2fb77b396bc0e7417e6c4eedeed3968f2"
+        },
+        {
+          "path": "results/system_scalability_pilot_v1/20260724T125106341085Z/environment.json",
+          "sha256": "6b42f4c61869afa905ffa05cd1862f967af2dfd86d39eedf2b75125dc2bbe58a"
+        },
+        {
+          "path": "results/system_scalability_pilot_v1/20260724T125106341085Z/measurements.csv",
+          "sha256": "5141a6483bcfebd79ad9ccec6d5ee65cf153871a832062c58d2c6648c02e7867"
+        }
+      ],
+      "authorized_claim": "The four-layer 100K BTS/NYC runner preserved result and source-lineage semantics, verified all certificates within the current PARTIAL boundary, and recorded zero DuckDB spill.",
+      "boundary": "This three-block source-lineage pilot admits 500K integrity testing but is not publication latency evidence."
+    },
+    {
+      "entry_id": "system-scalability-500k-source-lineage-pilot",
+      "evidence_role": "scale_runner_integrity_admission",
+      "outcome": "positive_pilot",
+      "frozen_record": {
+        "path": "experiments/frozen/system_scalability_500k_source_lineage_pilot_positive_20260724.json",
+        "sha256": "87b23ef6bf816b3ff5b7b303532b7749e8c4bc229c641ed86e929682f36b0e71"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/system_scalability_500k_pilot_v1/20260724T130111069920Z/summary.json",
+          "sha256": "10b769ea15b7ec741f5117668eb4e3c01ca98bd47c350964ab3dc4586148fc58"
+        },
+        {
+          "path": "results/system_scalability_500k_pilot_v1/20260724T130111069920Z/environment.json",
+          "sha256": "10c21253ec82fa2e4521881314815e784b16542c37492ac0c16615526b383c70"
+        },
+        {
+          "path": "results/system_scalability_500k_pilot_v1/20260724T130111069920Z/measurements.csv",
+          "sha256": "29fab1b717f7c21a1d6cc389227a14a87f8e7b29a6fa6dd7dbb9b5b271b81ec6"
+        }
+      ],
+      "authorized_claim": "The four-layer runner preserved result, source-lineage, and certificate integrity at 500K rows on BTS and NYC with zero DuckDB spill.",
+      "boundary": "This three-block scale pilot admits a separately frozen 30-block formal stage but is not itself latency evidence."
+    },
+    {
+      "entry_id": "system-scalability-formal-source-lineage",
+      "evidence_role": "formal_system_overhead_and_scalability",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/system_scalability_formal_source_lineage_positive_20260724.json",
+        "sha256": "e4ada10fe39038cc9a0c74a8b156a7a42953f9b18dd6c6238bee3be675a57bde"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/system_scalability_formal_evaluation_v1/20260724T131259307826Z/evaluation.json",
+          "sha256": "74b76f3ea23e5c1cca38853b426f103a48f4b899c2c7d023302e72cc4f070834"
+        },
+        {
+          "path": "results/system_scalability_bts100_confirmation_evaluation_v2/20260724T134455569180Z/evaluation.json",
+          "sha256": "2265a4699c8dcfe02b221176ae8a2aba1c27fa5a7ee5a7072273f89f04104410"
+        }
+      ],
+      "authorized_claim": "Across BTS and NYC at 100K and 500K rows, complete TrustAero execution preserved results and source-lineage evidence with zero spill; median control-path overhead ranged from 3.56% to 14.63%.",
+      "boundary": "This combines three units from the original formal run with the preregistered corrected BTS-100K confirmation; it covers source-snapshot lineage and PARTIAL certificates, not record lineage."
+    },
+    {
+      "entry_id": "system-scalability-full-month-formal",
+      "evidence_role": "formal_full_month_system_overhead",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/system_scalability_full_month_formal_positive_20260724.json",
+        "sha256": "0599ca78c6ec51888589187e0654e9544a76df91ba703b161c3f98520979a5a8"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/system_scalability_full_month_formal_evaluation_v1/20260724T141132808592Z/evaluation.json",
+          "sha256": "d606f26d69ba4034a8e57ba2832237d4f1fb06489fa96f7af5cd3b18d2d7e3f9"
+        },
+        {
+          "path": "results/system_scalability_full_month_formal_v1/20260724T141132808592Z/measurements.csv",
+          "sha256": "0f2362bd87880b1fa932507ab5e02722ada6cd22757fbc7f85d66b27c480f60d"
+        }
+      ],
+      "authorized_claim": "On full-month BTS (547271 rows) and NYC TLC (2964624 rows), complete TrustAero execution preserved results and source-lineage evidence, used no spill, and was statistically indistinguishable from equivalent direct SQL under paired 95% intervals.",
+      "boundary": "The evidence covers January 2024 source-snapshot lineage and PARTIAL certificates on DuckDB; it does not establish record-lineage overhead."
+    },
+    {
+      "entry_id": "record-lineage-formal-v3",
+      "evidence_role": "formal_record_lineage_scalability",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/record_lineage_formal_v3_positive_20260724.json",
+        "sha256": "0e68077bc536a821a67e13012a23177333841a77f46dc8884aadd1cff9e54713"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/record_lineage_formal_evaluation_v3/20260724T153703037611Z/evaluation.json",
+          "sha256": "25487d4e6a63485fed50b83702cbdfd003e0016f260ad1c1ee8461e4ff784d0f"
+        },
+        {
+          "path": "results/record_lineage_formal_v3/20260724T153703037611Z/measurements.csv",
+          "sha256": "3efdb03279ea03ad988d074b60ad7d3144cafe8d356247917440519b7748281d"
+        }
+      ],
+      "authorized_claim": "At 100K and 500K rows, compact record-level lineage was generated and independently verified with approximately 64 bytes per edge; median end-to-end latency was 3.85x and 5.18x the equivalent direct query.",
+      "boundary": "Single source and one unique, non-null, unmasked STRING key only; the high overhead must be reported, and Join/Aggregate/composite-key record lineage is not covered."
+    },
+    {
+      "entry_id": "record-lineage-ordinal-formal-v4",
+      "evidence_role": "formal_record_lineage_optimization",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/record_lineage_ordinal_v4_formal_positive_20260725.json",
+        "sha256": "9ef8b32ffb399e7d956486aec1e78ae99a6ff5ba8dc73701e494306eab5e3aa3"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/record_lineage_ordinal_formal_evaluation_v4/20260725T001744356217Z/evaluation.json",
+          "sha256": "97105b9a03682e958f8962f998a6e4f42c06635f3326472c5b42846b7b996733"
+        },
+        {
+          "path": "results/record_lineage_ordinal_formal_v4/20260725T001744356217Z/measurements.csv",
+          "sha256": "4bb0e625d02aabc58531d2d2cbc39f8f21d96fa508c38a891a1b24c29910df25"
+        }
+      ],
+      "authorized_claim": "Ordinal-bound output identities reduced record-lineage storage to approximately 32 bytes per edge and reduced end-to-end latency by 49.5% at 100K and 62.8% at 500K relative to the immutable V3 baseline.",
+      "boundary": "Single-source identity-preserving fragment only; V4 still incurred 111.7% and 93.5% median overhead relative to direct querying."
+    },
+    {
+      "entry_id": "multisource-case-study-end-to-end",
+      "evidence_role": "end_to_end_semantic_case_study",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/multisource_case_study_end_to_end_positive_20260725.json",
+        "sha256": "db9f3a232f30fba743fa6f77aa87fc5c59831c9326cabc35bbfaa4a32bd217ed"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/multisource_case_study_v1/20260725T015936505848Z/summary.json",
+          "sha256": "dc60a796a690e66a3c6010f6a88b2cfce466c39e2d5217e0acb4f928a89164a5"
+        },
+        {
+          "path": "results/multisource_case_study_v1/20260725T015936505848Z/certificate.json",
+          "sha256": "934a8f3117cd07b9959818d042d4bed7b7ef4f4b221f94d6857c81e61c13fb0a"
+        }
+      ],
+      "authorized_claim": "TrustAero completed one deterministic governed spatial-temporal query over four audited public sources, inserted the required Mask and source lineage, exposed no raw controlled sensitive values, and rejected every frozen certificate fault.",
+      "boundary": "This is end-to-end semantic evidence rather than performance evidence; the PARTIAL certificate does not attest internal DuckDB operator outputs, and governance labels are controlled experimental attributes."
+    },
+    {
+      "entry_id": "standard-benchmark-tpch-query-coverage-v2",
+      "evidence_role": "standard_benchmark_semantic_coverage",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/tpch_query_coverage_v2_semantic_positive_20260725.json",
+        "sha256": "0fa4c333e5744969c1b26d1c961a2e092e0d4269942889087ce7302519a8af66"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/tpch_query_coverage_v2/result.json",
+          "sha256": "d2c7d1bdc3bcd1dee7420b9b3d8521d27a7b0f97d9ead1cb2d20560681a5834b"
+        }
+      ],
+      "authorized_claim": "The bounded trusted IR exactly represents Q1, Q3, Q6, and Q10. For the new Q3/Q10 adapters, every legal candidate matched the official ordered result and retained a distinct observed DuckDB physical plan.",
+      "boundary": "This is exact semantic support for 4 of 22 official queries, not latency, optimizer accuracy, or support for the remaining queries."
+    },
+    {
+      "entry_id": "tpch-q3-q10-multicandidate-scale-boundary",
+      "evidence_role": "retained_negative",
+      "outcome": "negative",
+      "frozen_record": {
+        "path": "experiments/frozen/tpch_multicandidate_scale_confirmation_v2_negative_20260725.json",
+        "sha256": "5c52a55d1dce2bfeabd6e383b8a4701a70d9c3debe8218a203d60fb4a3209750"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/tpch_multicandidate_scale_confirmation_v2/20260725T054805978518Z/summary.json",
+          "sha256": "4bc9bb4f3caa4c08af7cb7ddd71df2fa3c41217d5b41f787938c02dbb96d7e20"
+        },
+        {
+          "path": "results/tpch_multicandidate_scale_confirmation_v2/20260725T054805978518Z/measurements.csv",
+          "sha256": "1ec8429ab865f3ce8f53bbdb0011c832f46a68cbc447e4079704e20bc3c2d274"
+        }
+      ],
+      "authorized_claim": "At TPC-H SF10, Q3 and Q10 each retained three exact, distinct and stable physical candidates, but neither query produced a confidence-authorized singleton winner under the frozen 3% materiality rule.",
+      "boundary": "This is negative boundary evidence. It permanently stops the post-SF1 Q3/Q10 optimizer-expansion branch; thresholds, data and candidates must not be changed to manufacture winner labels."
+    },
+    {
+      "entry_id": "multisource-case-study-v2-complete-loop",
+      "evidence_role": "complete_end_to_end_semantic_case_study",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/multisource_case_study_v2_complete_loop_positive_20260726.json",
+        "sha256": "e1754b7efb0b28e7264e9f80e4807cb5bce6c57c43c98f669beca76884a016ff"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/multisource_case_study_v2/20260726T002619896907Z/summary.json",
+          "sha256": "6e64df529ed486ee8330d68f5323f084c1ae5e43aab335e90deba5abbddc7580"
+        },
+        {
+          "path": "results/multisource_case_study_v2/20260726T002619896907Z/candidate_planning.json",
+          "sha256": "03a35da4a5e5e43e54b71a8212bf2084aa8cff532bce77a91268bb647eaa2578"
+        },
+        {
+          "path": "results/multisource_case_study_v2/20260726T002619896907Z/certificate.json",
+          "sha256": "227eee396bb76f433c9d972baf533adee2713cb9673091c68703df1427558d5b"
+        }
+      ],
+      "authorized_claim": "TrustAero accepted and safely rewrote one Agent candidate, rejected a policy-inapplicable request, generated four physical candidates, pruned three governance-incompatible candidates before ranking, bound the selected legal Pp into its certificate, executed a deterministic four-source query, and rejected all six frozen faults.",
+      "boundary": "This is complete-loop semantic evidence rather than optimizer latency evidence. Selection is governance-determined after only one candidate remains legal; source lineage is used because ordinal record Lineage V4 does not support this multi-source spatial Join."
+    },
+    {
+      "entry_id": "governed-aggregate-admission-boundary",
+      "evidence_role": "retained_negative",
+      "outcome": "negative",
+      "frozen_record": {
+        "path": "experiments/frozen/governed_aggregate_admission_v1_negative_20260726.json",
+        "sha256": "6ff278c258b59d49b154a6d17075378bb426dc34e0a41da9336831080a424d60"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/governed_aggregate_admission_v1/20260726T014138059131Z/summary.json",
+          "sha256": "44d0eeb6b13fe8bee12d19592b5586b2d959df879edbd3853b7dd43842010f09"
+        },
+        {
+          "path": "results/governed_aggregate_admission_v1/20260726T014138059131Z/measurements.csv",
+          "sha256": "047fa96a3fb702e624a9b865b5e70cfddd49468f2091305ccd9fcb00dba7433c"
+        }
+      ],
+      "authorized_claim": "In the frozen governed Join-Aggregate admission, Join-then-Aggregate was the only confidence-authorized winner across 16 scenarios; partial aggregation never won even when it reduced governed rows to about 2% as many Join keys.",
+      "boundary": "This is retained negative boundary evidence. It stops cost-model and holdout work for this query family and must not be presented as a workload-wide optimizer failure."
+    },
+    {
+      "entry_id": "lineage-checkpoint-winner-diversity",
+      "evidence_role": "optimizer_motivation",
+      "outcome": "positive_development",
+      "frozen_record": {
+        "path": "experiments/frozen/lineage_checkpoint_admission_v1_positive_20260726.json",
+        "sha256": "af427628cbd0a3105c1d035c88f20ffabe60a352e358fb2c5a00f37d8e94c8eb"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/lineage_checkpoint_admission_v1/20260726T021127337754Z/summary.json",
+          "sha256": "91e3676929506d8551ce0a912072ea1a92e813c80a248a7692e7d46ac88c320b"
+        },
+        {
+          "path": "results/lineage_checkpoint_admission_v1/20260726T021127337754Z/measurements.csv",
+          "sha256": "a1689a30af001cd211eabaa903313fa639ff91ab0eb4a73e0dc8049f55a30c66"
+        }
+      ],
+      "authorized_claim": "Across six frozen record-lineage checkpoint scenarios, per-query capture, policy checkpoint reuse and snapshot checkpoint reuse each became the confidence-authorized winner in two scenarios while preserving identical results and record-level evidence.",
+      "boundary": "This is winner-diversity admission and optimizer motivation, not an automatic-selection or unseen-workload result."
+    },
+    {
+      "entry_id": "lineage-checkpoint-independent-holdout",
+      "evidence_role": "optimizer_independent_holdout",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/lineage_checkpoint_holdout_v1_positive_20260726.json",
+        "sha256": "8747c21a15ae15ceda1ad0511ba3ae209db827988ad736cd33009885102df3e7"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/lineage_checkpoint_holdout_v1/20260726T024634020779Z/summary.json",
+          "sha256": "51d4c896c1664f079eb69c3a29a163ddd46a5c81933d12debc7314ed3f23fa4a"
+        },
+        {
+          "path": "results/lineage_checkpoint_holdout_v1/20260726T024634020779Z/measurements.csv",
+          "sha256": "167ff61e83eb3b54bf2e5b76c953d543b72b2ed0c2dec90317d50c85c041d615"
+        },
+        {
+          "path": "results/lineage_checkpoint_holdout_evaluation_v1/20260726T030912568464Z/evaluation.json",
+          "sha256": "1f007bc062f5a2b84f201d6bfe905eb8228ab4a324b6056de4b7b5343a1e181a"
+        }
+      ],
+      "authorized_claim": "On 18 decisions from an untouched Lineage-checkpoint holdout with unseen row count, query counts, policy combinations and seeds, the frozen analytic model achieved 100% 3%-Oracle-set hit rate and zero diagnostic regret, versus 83.3% hit and 2.126% mean regret for the frozen threshold baseline.",
+      "boundary": "This one-shot result covers the frozen DuckDB record-lineage checkpoint family only; it does not imply zero regret for arbitrary backends, schemas or query families."
+    },
+    {
+      "entry_id": "real-agent-plan-coverage",
+      "evidence_role": "real_agent_fail_closed_coverage",
+      "outcome": "positive",
+      "frozen_record": {
+        "path": "experiments/frozen/real_agent_plan_coverage_v1_positive_20260726.json",
+        "sha256": "aa0bccc025bc22bfae9b676cf319923995af3f5ff66c5460b701347981002897"
+      },
+      "primary_artifacts": [
+        {
+          "path": "results/real_agent_plan_coverage_v1/20260726T074616813482Z/summary.json",
+          "sha256": "fb83d04ae618fa0426dc889dc2a4d1f0c7b1b01a7e9f81d08cbe6828688e9afb"
+        },
+        {
+          "path": "results/real_agent_plan_coverage_v1/20260726T074616813482Z/paper_analysis.json",
+          "sha256": "478f196cecf989701137f3f8c31816331103d11f3d9d0be068ccf56a1c39c0a7"
+        }
+      ],
+      "authorized_claim": "Across 120 frozen responses from three Agent models, two reasoning modes and 20 governed four-source tasks, TrustAero handled every response without validator exceptions, deterministically revalidated every outcome, and allowed zero unauthorized plans across the trust boundary.",
+      "boundary": "This is bounded compatibility and fail-closed evidence, not general LLM-quality evidence. The one Markdown-fenced response remains a strict parse failure."
+    }
+  ]
+}

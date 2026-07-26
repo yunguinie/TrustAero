@@ -1,0 +1,23 @@
+{
+  "results_dir": "results/governed_checkpoint_optimizer_holdout_v1",
+  "row_counts": [150000],
+  "identifier_widths": [256, 768],
+  "policy_selectivities": [0.2, 0.4],
+  "query_selectivities": [0.1, 0.2, 0.35],
+  "seeds": [6101, 6202, 6303],
+  "candidate_ids": [
+    "policy_first_narrow_checkpoint",
+    "query_first_raw_checkpoint"
+  ],
+  "warmup_rounds": 2,
+  "repetitions_per_permutation": 15,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260901,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 20260901,
+  "require_clean_git": true,
+  "experiment_role": "frozen_optimizer_holdout"
+}

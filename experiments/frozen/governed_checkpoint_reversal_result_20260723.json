@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-07-23",
+  "source_commit": "71e7ae0ddbdfc0566493351811e7a295bed854f5",
+  "source_result": "results/governed_checkpoint_reversal_v1/20260723T012103266124Z/summary.json",
+  "source_result_sha256": "17f8a77d9094780fa42484bfa383c49793046ea1903defa393e734f0b99c7574",
+  "source_measurements_sha256": "94dae8758c9b0ff32de365b02fa4085c82c199507b299ca4b256369ed1c78a6a",
+  "status": "PASS_EA1_GOVERNED_CHECKPOINT_PILOT_INTEGRITY",
+  "reversal_discovery": "STABLE_BIDIRECTIONAL_REVERSAL_DISCOVERED",
+  "scenario_count": 8,
+  "policy_first_winner_count": 4,
+  "query_first_winner_count": 3,
+  "inconclusive_count": 1,
+  "unit_count": 24,
+  "measurement_count": 1440,
+  "all_results_equivalent": true,
+  "all_physical_plans_distinct": true,
+  "all_strict_policies_reject_raw_checkpoint": true,
+  "disk_spill_observed": false,
+  "interpretation": "Different controlled selectivities and sensitive widths cause both legal checkpoint placements to win with paired confidence. A fixed plan can be more than twice as slow, establishing a real adaptive optimization problem under governance constraints.",
+  "paper_optimizer_performance_claim_authorized": false
+}

@@ -10,6 +10,7 @@ import hashlib
 import importlib
 import json
 from dataclasses import dataclass
+from decimal import Decimal
 from typing import Any, Protocol
 
 from trustaero.execution.compiler import CompiledQuery
@@ -39,6 +40,10 @@ class QueryExecutionResult:
 def _jsonable(value: Any) -> Any:
     """Convert DB values into stable JSON-compatible values for hashing."""
 
+    if isinstance(value, Decimal):
+        # Keep the fixed-point representation exact; converting currency to a
+        # float would reintroduce the digest instability this boundary avoids.
+        return str(value)
     if hasattr(value, "isoformat"):
         return value.isoformat()
     return value
@@ -53,6 +58,22 @@ def _result_digest(columns: tuple[str, ...], rows: tuple[tuple[Any, ...], ...]) 
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
 
 
+def materialize_query_result(
+    columns: tuple[str, ...],
+    rows: tuple[tuple[Any, ...], ...],
+) -> QueryExecutionResult:
+    """Build the canonical trusted result object from already fetched rows."""
+
+    if any(len(row) != len(columns) for row in rows):
+        raise ValueError("Materialized row width does not match output columns")
+    return QueryExecutionResult(
+        columns=columns,
+        rows=rows,
+        row_count=len(rows),
+        result_digest=_result_digest(columns, rows),
+    )
+
+
 def execute_with_connection(
     query: CompiledQuery,
     connection: DuckDBLikeConnection,
@@ -61,12 +82,7 @@ def execute_with_connection(
 
     cursor = connection.execute(query.sql, query.parameters)
     rows = tuple(tuple(row) for row in cursor.fetchall())
-    return QueryExecutionResult(
-        columns=query.output_fields,
-        rows=rows,
-        row_count=len(rows),
-        result_digest=_result_digest(query.output_fields, rows),
-    )
+    return materialize_query_result(query.output_fields, rows)
 
 
 def execute_with_duckdb(query: CompiledQuery, database: str = ":memory:") -> QueryExecutionResult:

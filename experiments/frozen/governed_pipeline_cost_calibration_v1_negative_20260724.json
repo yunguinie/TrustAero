@@ -1,0 +1,23 @@
+{
+  "record_id": "governed-pipeline-cost-calibration-v1-negative",
+  "recorded_at": "2026-07-24",
+  "status": "FAIL_GOVERNED_PIPELINE_COST_MODEL_DEVELOPMENT_RETAIN",
+  "result_path": "results/governed_pipeline_cost_calibration_v1/calibration.json",
+  "result_sha256": "70e8d17fce7dbdde61fb93a2481a5216849d1817ad5a261bb036bbd4845861b6",
+  "metrics": {
+    "oracle_set_hit_rate": 0.7291666666666666,
+    "mean_regret_percent": 2.679,
+    "p95_regret_percent": 12.688,
+    "maximum_regret_percent": 17.830
+  },
+  "failed_gates": [
+    "minimum_oracle_set_hit_rate",
+    "maximum_p95_regret_percent",
+    "maximum_regret_percent"
+  ],
+  "root_cause_audit": "The largest errors selected query-first; physical-plan inspection then exposed a mismatch between its declared Mask-before-Join semantics and actual DuckDB column flow.",
+  "authorization": {
+    "independent_holdout": false,
+    "paper_performance_claim": false
+  }
+}

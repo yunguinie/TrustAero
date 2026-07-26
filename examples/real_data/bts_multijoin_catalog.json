@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "datasets": [
+    {
+      "dataset_id": "bts_on_time_2024_01_multijoin",
+      "versions": ["v2024-01-a9ac11e42c18"],
+      "default_version": "v2024-01-a9ac11e42c18",
+      "fields": [
+        {"name": "FlightDate", "data_type": "datetime", "roles": ["temporal"]},
+        {"name": "OriginAirportID", "data_type": "integer", "roles": ["identifier"]},
+        {"name": "DOT_ID_Reporting_Airline", "data_type": "integer", "roles": ["identifier"]},
+        {"name": "Distance", "data_type": "float", "roles": []},
+        {"name": "Cancelled", "data_type": "boolean", "roles": []}
+      ],
+      "spatial": null,
+      "temporal_field": "FlightDate"
+    },
+    {
+      "dataset_id": "bts_airports_2024_01",
+      "versions": ["v2024-01-bccde61193c8"],
+      "default_version": "v2024-01-bccde61193c8",
+      "fields": [
+        {"name": "airport_id", "data_type": "integer", "roles": ["identifier"]},
+        {"name": "airport_code", "data_type": "string", "roles": []},
+        {"name": "city_name", "data_type": "string", "roles": []},
+        {"name": "state_code", "data_type": "string", "roles": []}
+      ],
+      "spatial": null,
+      "temporal_field": null
+    },
+    {
+      "dataset_id": "bts_carriers_2024_01",
+      "versions": ["v2024-01-d9179009629b"],
+      "default_version": "v2024-01-d9179009629b",
+      "fields": [
+        {"name": "carrier_id", "data_type": "integer", "roles": ["identifier"]},
+        {"name": "carrier_code", "data_type": "string", "roles": []}
+      ],
+      "spatial": null,
+      "temporal_field": null
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "record_id": "governed-pipeline-cost-calibration-v2-positive",
+  "recorded_at": "2026-07-24",
+  "status": "PASS_GOVERNED_PIPELINE_COST_MODEL_DEVELOPMENT",
+  "calibration_path": "results/governed_pipeline_cost_calibration_v2/calibration.json",
+  "calibration_sha256": "a59dfb321366d7bbd6f4431ac228a25a90a5dcaf7ade4b519e95a095ce616450",
+  "model_path": "experiments/frozen/models/governed_pipeline_cost_model_v2_20260724.json",
+  "source_model_sha256": "4ca5629f15c32a022eaa422eaeba41b04853251f8d06c0e40b025e7a618fc0a8",
+  "frozen_model_sha256": "56399a09a3dccd2b02793eca97145fc17c68b9da8574edfef013925457f0fd6f",
+  "grouped_validation": {
+    "scenario_count": 16,
+    "oracle_set_hit_rate": 0.9583333333333334,
+    "mean_regret_percent": 0.3388,
+    "p95_regret_percent": 2.3092,
+    "maximum_regret_percent": 6.688,
+    "selected_candidate_counts": {
+      "join_first_masked_checkpoint": 30,
+      "policy_first_masked_checkpoint": 18
+    },
+    "all_gate_checks_passed": true
+  },
+  "best_fixed_baseline": {
+    "candidate_id": "join_first_masked_checkpoint",
+    "oracle_set_hit_rate": 0.6458333333333334,
+    "mean_regret_percent": 11.361,
+    "p95_regret_percent": 66.09,
+    "maximum_regret_percent": 69.371
+  },
+  "authorization": {
+    "one_independent_holdout": true,
+    "model_refit_after_holdout": false,
+    "paper_performance_claim": false
+  }
+}

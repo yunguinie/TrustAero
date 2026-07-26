@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "record_id": "rq2-optimizer-closure-20260726",
+  "status": "RQ2_CLOSED",
+  "model_and_holdout_freeze_commit": "e6a35844d7d93e100006fdf5d828c83fe310629c",
+  "final_holdout_evidence_commit": "e350ab4",
+  "core_evidence": [
+    {
+      "entry_id": "pipeline-cost-model-synthetic-holdout",
+      "path": "experiments/frozen/governed_pipeline_cost_holdout_v1_positive_20260724.json",
+      "sha256": "8dbe8b6924b81f7f1bdc04d149dfb0de43bf34aba1159f0a9b00f684dc015538"
+    },
+    {
+      "entry_id": "policy-stratified-v2-final",
+      "path": "experiments/frozen/policy_stratified_pipeline_holdout_v2_positive_20260724.json",
+      "sha256": "d1579e4795f2cf6696bce58397debe9bc25f923ce18ddd52b8a0e07fd60495f3"
+    },
+    {
+      "entry_id": "governed-aggregate-admission-boundary",
+      "path": "experiments/frozen/governed_aggregate_admission_v1_negative_20260726.json",
+      "sha256": "6ff278c258b59d49b154a6d17075378bb426dc34e0a41da9336831080a424d60"
+    },
+    {
+      "entry_id": "lineage-checkpoint-independent-holdout",
+      "path": "experiments/frozen/lineage_checkpoint_holdout_v1_positive_20260726.json",
+      "sha256": "8747c21a15ae15ceda1ad0511ba3ae209db827988ad736cd33009885102df3e7"
+    }
+  ],
+  "closed_claim": "Within the frozen DuckDB fragments, governance obligations change the legal candidate space and the best physical plan; interpretable cost models select near-Oracle governed pipeline and record-lineage checkpoint plans on independent holdouts.",
+  "boundaries": [
+    "No claim is made for arbitrary SQL, DBMS backends or governance languages.",
+    "The Join-Aggregate family is a retained negative boundary, not omitted evidence.",
+    "TPC-H Q3/Q10 did not admit a useful multicandidate optimizer branch.",
+    "The Lineage checkpoint zero-regret result is one controlled, one-shot holdout."
+  ],
+  "prohibited_follow_up": [
+    "Do not refit frozen RQ2 models.",
+    "Do not rerun replacement holdouts.",
+    "Do not add optimizer query families.",
+    "Do not relax materiality or confidence gates."
+  ],
+  "next_workstream": "RQ1/RQ3 integration evidence, real Agent-plan coverage, external comparison and paper assembly."
+}

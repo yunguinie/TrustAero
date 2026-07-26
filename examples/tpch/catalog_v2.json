@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "datasets": [
+    {
+      "dataset_id": "tpch_sf1_customer",
+      "versions": ["sf1-64a709fa8f99"],
+      "default_version": "sf1-64a709fa8f99",
+      "fields": [
+        {"name": "c_custkey", "data_type": "integer", "roles": ["identifier"]},
+        {"name": "c_name", "data_type": "string", "roles": []},
+        {"name": "c_address", "data_type": "string", "roles": []},
+        {"name": "c_nationkey", "data_type": "integer", "roles": ["identifier"]},
+        {"name": "c_phone", "data_type": "string", "roles": []},
+        {"name": "c_acctbal", "data_type": "decimal", "roles": []},
+        {"name": "c_mktsegment", "data_type": "string", "roles": []},
+        {"name": "c_comment", "data_type": "string", "roles": []}
+      ],
+      "spatial": null,
+      "temporal_field": null
+    },
+    {
+      "dataset_id": "tpch_sf1_orders",
+      "versions": ["sf1-64a709fa8f99"],
+      "default_version": "sf1-64a709fa8f99",
+      "fields": [
+        {"name": "o_orderkey", "data_type": "integer", "roles": ["identifier"]},
+        {"name": "o_custkey", "data_type": "integer", "roles": ["identifier"]},
+        {"name": "o_orderdate", "data_type": "datetime", "roles": ["temporal"]},
+        {"name": "o_shippriority", "data_type": "integer", "roles": []}
+      ],
+      "spatial": null,
+      "temporal_field": "o_orderdate"
+    },
+    {
+      "dataset_id": "tpch_sf1_lineitem_v2",
+      "versions": ["sf1-64a709fa8f99"],
+      "default_version": "sf1-64a709fa8f99",
+      "fields": [
+        {"name": "l_orderkey", "data_type": "integer", "roles": ["identifier"]},
+        {"name": "l_extendedprice", "data_type": "decimal", "roles": [], "sensitive": true},
+        {"name": "l_discount", "data_type": "decimal", "roles": []},
+        {"name": "l_shipdate", "data_type": "datetime", "roles": ["temporal"]},
+        {"name": "l_returnflag", "data_type": "string", "roles": []}
+      ],
+      "spatial": null,
+      "temporal_field": "l_shipdate"
+    },
+    {
+      "dataset_id": "tpch_sf1_nation",
+      "versions": ["sf1-64a709fa8f99"],
+      "default_version": "sf1-64a709fa8f99",
+      "fields": [
+        {"name": "n_nationkey", "data_type": "integer", "roles": ["identifier"]},
+        {"name": "n_name", "data_type": "string", "roles": []}
+      ],
+      "spatial": null,
+      "temporal_field": null
+    }
+  ]
+}

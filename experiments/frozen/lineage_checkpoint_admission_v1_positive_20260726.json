@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "record_id": "lineage-checkpoint-admission-v1-positive-20260726",
+  "status": "PASS_LINEAGE_CHECKPOINT_OPTIMIZER_ADMISSION",
+  "source_commit": "71a4bcaf4481bf347c183a9cffa7de96deea2932",
+  "protocol": {
+    "path": "experiments/frozen/lineage_checkpoint_admission_protocol_v1_20260726.json",
+    "sha256": "5d0c0c57338ae0cb086b38dadaa1d273cb575a179f168d5aa9f7c2b632f81369"
+  },
+  "config": {
+    "path": "experiments/configs/lineage_checkpoint_admission_v1.json",
+    "sha256": "9e809b54732b4244a4caa63766e0c44d775b81717bc93bbbf4f1c1edc793377a"
+  },
+  "artifacts": [
+    {
+      "path": "results/lineage_checkpoint_admission_v1/20260726T021127337754Z/summary.json",
+      "sha256": "91e3676929506d8551ce0a912072ea1a92e813c80a248a7692e7d46ac88c320b"
+    },
+    {
+      "path": "results/lineage_checkpoint_admission_v1/20260726T021127337754Z/measurements.csv",
+      "sha256": "a1689a30af001cd211eabaa903313fa639ff91ab0eb4a73e0dc8049f55a30c66"
+    }
+  ],
+  "observations": {
+    "paired_block_count": 540,
+    "candidate_execution_count": 1620,
+    "conclusive_scenario_rate": 1.0,
+    "singleton_winner_counts": {
+      "late_per_query_capture": 2,
+      "policy_lineage_checkpoint": 2,
+      "snapshot_lineage_checkpoint": 2
+    },
+    "all_semantic_evidence_equal": true,
+    "all_candidate_plans_distinct": true,
+    "single_query_winner": "late_per_query_capture",
+    "moderate_reuse_winner": "policy_lineage_checkpoint",
+    "high_reuse_winner": "snapshot_lineage_checkpoint"
+  },
+  "diagnosis": "Record-lineage checkpoint placement has a stable three-regime performance boundary. Per-query capture avoids checkpoint construction for isolated queries; policy checkpoints amortize identity work when a small set of policies is reused; a snapshot checkpoint wins when many policies and queries share one data snapshot.",
+  "decision": "Admit this query family to grouped cost-model development. Do not use these development scenarios as an independent optimizer holdout.",
+  "retained_value": "The result supplies a structurally distinct optimizer motivation tied directly to Lineage V4 work: hash rows, evidence edges, checkpoint bytes, policy diversity and reuse count.",
+  "scientific_boundary": "This admission result establishes candidate diversity and stable reversals, not optimizer generalization. A frozen model and untouched holdout are still required before claiming automatic selection."
+}

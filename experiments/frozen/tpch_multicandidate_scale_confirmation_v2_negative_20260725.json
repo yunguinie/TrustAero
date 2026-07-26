@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch-multicandidate-scale-confirmation-v2-negative-20260725",
+  "status": "FAIL_TPCH_SF10_MULTICANDIDATE_SCALE_CONFIRMATION_STOP",
+  "source_commit": "7c73fc2c84867ece4a92f06d30b654aa7ac6240c",
+  "protocol": {
+    "path": "experiments/frozen/tpch_multicandidate_scale_confirmation_protocol_v2_20260725.json",
+    "sha256": "8d4f89033f494398e492df39fc35b36edbe2cf33316e5bc385a3d44d783a1329"
+  },
+  "config": {
+    "path": "experiments/configs/tpch_multicandidate_scale_confirmation_v2.json",
+    "sha256": "62ec3ac50bad2779467e6302fd8c5a8357ffdafc800f75a31eda5c42355c45d7"
+  },
+  "artifacts": [
+    {
+      "path": "results/tpch_multicandidate_scale_confirmation_v2/20260725T054805978518Z/summary.json",
+      "sha256": "4bc9bb4f3caa4c08af7cb7ddd71df2fa3c41217d5b41f787938c02dbb96d7e20"
+    },
+    {
+      "path": "results/tpch_multicandidate_scale_confirmation_v2/20260725T054805978518Z/measurements.csv",
+      "sha256": "1ec8429ab865f3ce8f53bbdb0011c832f46a68cbc447e4079704e20bc3c2d274"
+    },
+    {
+      "path": "results/tpch_multicandidate_scale_confirmation_v2/20260725T054805978518Z/bound_inputs.json",
+      "sha256": "a214b88f56f75f9a6034cf431643aa18c780a54e77e9f07d6b68c56262a68600"
+    }
+  ],
+  "observations": {
+    "measurement_count": 180,
+    "elapsed_seconds": 322.02905680000094,
+    "all_results_match_official": true,
+    "all_physical_plans_distinct": true,
+    "all_queries_stable": true,
+    "no_spill": true,
+    "q03": {
+      "diagnostic_fastest": "materialize-after-q03-aggregate",
+      "fastest_median_ms": 1069.612899999811,
+      "fused_median_ms": 1084.5534499994756,
+      "fused_ratio": 1.0139681841904369,
+      "fused_paired_ratio_ci": [
+        1.0083058712966984,
+        1.0401433204239399
+      ],
+      "singleton_winner": null
+    },
+    "q10": {
+      "diagnostic_fastest": "fused",
+      "fastest_median_ms": 1782.842649999111,
+      "aggregate_materialized_median_ms": 1810.2027000004455,
+      "aggregate_materialized_ratio": 1.0153463066420068,
+      "aggregate_materialized_paired_ratio_ci": [
+        0.9985063599134043,
+        1.0299094642692963
+      ],
+      "singleton_winner": null
+    },
+    "distinct_confidence_authorized_winners": 0
+  },
+  "diagnosis": "Scaling from SF1 to SF10 increased absolute runtimes but did not produce two confidence-authorized, query-dependent winners. Q3 aggregate materialization was only 1.397% faster than fused, while Q10 fused led the aggregate-materialized candidate by only 1.535%. These differences remain below the preregistered 3% materiality boundary or are not separated by the paired 95% confidence interval.",
+  "decision": "Permanently stop the TPC-H Q3/Q10 multicandidate optimizer-expansion branch. Do not relax the 3% threshold, alter the data, add post-hoc candidates, or rerun the same protocol to manufacture winner labels.",
+  "retained_value": "The run positively confirms exact official-result equivalence, three distinct physical plans per query, stable paired timing, and spill-free SF10 execution. It is retained as negative boundary evidence, not optimizer-performance evidence.",
+  "scientific_boundary": "This negative result does not invalidate exact TPC-H Q1/Q3/Q6/Q10 semantic coverage, accepted Q1/Q6 evidence, the successful governed-pipeline independent holdout, the successful policy-stratified BTS/NYC optimizer holdout, lineage scalability, or the multisource end-to-end case study."
+}

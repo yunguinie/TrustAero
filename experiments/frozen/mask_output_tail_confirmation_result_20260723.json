@@ -1,0 +1,17 @@
+{
+  "recorded_at": "2026-07-23",
+  "source_commit": "599810421cbceac7720fa4784a3d282cc459c320",
+  "source_result": "results/mask_output_tail_confirmation_v1/20260722T235829850542Z/tail_confirmation.json",
+  "source_result_sha256": "375b0a9bb815a42f847bf80c4420f8710c2422fcec28cd05b0ca65a7f6b71f63",
+  "status": "PASS_MASK_OUTPUT_TAIL_CONFIRMATION_INTEGRITY",
+  "scientific_conclusion": "CONFIRMED_FUSED_ADVANTAGE",
+  "fused_over_raw_materialized": {
+    "median_paired_ratio": 0.8454346190263735,
+    "confidence_interval_95": [0.802121134129799, 0.9232603939599486],
+    "first_second_half_ratio_drift": 0.005304912620889945,
+    "paired_block_count": 90
+  },
+  "interpretation": "The unchanged optimizer selected fused at the old maximum-regret case. The isolated confirmation supports fused, so the old 59.977% regret was caused by an unstable seed-level Oracle label rather than a confirmed optimizer miss.",
+  "optimizer_retrained": false,
+  "paper_optimizer_performance_claim_authorized": false
+}

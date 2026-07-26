@@ -1,0 +1,139 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_aware_calibration_protocol_v1_20260722",
+  "status": "FROZEN_BEFORE_EXECUTION_AWARE_CALIBRATION_RUN",
+  "phase": "EA-1 analytic component-cost calibration development",
+  "scientific_question": "Can candidate-specific active-column, cardinality, operator-mode, materialization, and governance work explain and rank legal DuckDB physical candidates without a direct winner classifier?",
+  "authorization": {
+    "feature_contract": "experiments/frozen/execution_aware_physical_work_feature_contract_v1_20260722.json",
+    "ea0_result": "experiments/frozen/execution_flow_audit_formal_result_20260722.json",
+    "ea0_feature_gate_passed": true,
+    "optimizer_training_allowed_before_this_run": false
+  },
+  "calibration_matrix": {
+    "row_counts": [50000, 150000],
+    "identifier_widths": [128, 512, 2048],
+    "match_rates": [0.1, 0.5, 1.0],
+    "seeds": [3101, 3202, 3303],
+    "unit_count": 54,
+    "candidate_count_per_unit": 11,
+    "equivalence_group_count": 4,
+    "warmup_runs_per_candidate": 2,
+    "measured_runs_per_candidate": 11,
+    "profile_runs_per_candidate": 2,
+    "timed_execution_count": 6534,
+    "profile_execution_count": 1188
+  },
+  "measurement_protocol": {
+    "machine_state": "No concurrent CPU-, memory-, or disk-intensive user workload. Ordinary terminal display is allowed.",
+    "cache_regime": "Warm repeated execution in one DuckDB process and connection.",
+    "candidate_order": "Deterministically shuffled Latin rotations; every candidate occupies every order position exactly once per unit.",
+    "resource_controls": {
+      "duckdb_threads": 4,
+      "duckdb_memory_limit_mb": 4096,
+      "gpu_used": false
+    },
+    "interruption": "Stop with Ctrl+C and resume the same run with --resume latest; partial units never enter final artifacts.",
+    "background_load_violation": "Preserve the run as a contaminated development artifact and start a newly identified clean run. Never overwrite or silently relabel it."
+  },
+  "feature_and_label_boundary": {
+    "optimizer_inputs": "Only label-free ExecutionAwareWorkVector values derived before candidate execution.",
+    "target": "Warm-cache median candidate latency in milliseconds within a complete seed unit.",
+    "result_equivalence": "Candidates are compared only within their declared equivalence group.",
+    "governance": "Policy legality is a hard pre-cost gate; illegal candidates are neither fitted nor ranked.",
+    "byte_claim": "Feature bytes are logical active-column estimates, not DuckDB internal copy telemetry.",
+    "current_ea0_timing_use": "The 20260722T055455911174Z run may validate mechanisms and the feature schema but must not fit calibration parameters because concurrent user workload was disclosed."
+  },
+  "analytic_model_protocol": {
+    "model_family": "Nonnegative additive component-cost model plus one nonnegative query intercept.",
+    "direct_winner_classifier": false,
+    "feature_scaling": "Use the frozen physical units already emitted by ExecutionAwareWorkVector; scaling parameters are fitted inside each training fold only.",
+    "coefficient_constraint": "Every component rate and intercept is greater than or equal to zero.",
+    "ridge_lambda_grid": [0.000001, 0.0001, 0.01, 1.0],
+    "lambda_selection": "Select inside the training portion of each outer fold by mean candidate log-latency error; never use the outer family.",
+    "identifiability_gate": "Report feature rank and collinearity. Components that cannot be separately identified must be merged by a documented physical meaning before a new protocol; arbitrary coefficients are rejected.",
+    "residual_model_allowed": false,
+    "missing_positive_feature_rate": "fail closed",
+    "out_of_support_behavior": "choose the frozen stable legal fallback",
+    "practical_tie_fraction": 0.03
+  },
+  "validation_protocol": {
+    "outer_group": "Complete row_count + identifier_width + match_rate scenario family, including all three data seeds and all legal candidates.",
+    "outer_fold_count": 18,
+    "seed_level_leakage_allowed": false,
+    "reported_metrics": [
+      "legal-candidate selection rate",
+      "3-percent Oracle-set hit rate",
+      "mean regret",
+      "P95 regret",
+      "maximum regret",
+      "fallback rate",
+      "per-equivalence-group metrics",
+      "component-rate stability across folds"
+    ],
+    "baselines": [
+      "fixed stable legal candidate per equivalence group",
+      "fixed fused candidate where present",
+      "fixed pre-Join Mask candidate where present",
+      "fixed post-Join Mask candidate where present",
+      "Legal Oracle"
+    ]
+  },
+  "predeclared_development_gates": {
+    "illegal_candidate_selection_count": 0,
+    "minimum_3_percent_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_regret_percent": 15.0,
+    "advantage_must_cover_at_least_two_equivalence_groups": true,
+    "all_rates_nonnegative": true,
+    "all_outer_families_reported": true
+  },
+  "decision_rule": {
+    "pass": "Freeze the analytic model and its support envelope, then design an entirely new real-data month/query-family validation protocol before any residual correction.",
+    "fail": "Retain the complete negative result. Diagnose missing physical work or non-identifiability, but do not change weights, thresholds, folds, or candidate membership and reuse this run as a fresh evaluation."
+  },
+  "not_authorized_by_this_phase": [
+    "a paper headline performance table",
+    "a claim of optimizer superiority on real data",
+    "a residual or black-box winner model",
+    "reuse of consumed Phase 2G as a holdout",
+    "exact DuckDB per-operator payload-byte claims"
+  ],
+  "run_command_after_clean_commit": "python -u scripts/run_execution_flow_audit.py --config experiments/configs/execution_aware_calibration_v1.json --progress",
+  "resume_command": "python -u scripts/run_execution_flow_audit.py --config experiments/configs/execution_aware_calibration_v1.json --resume latest --progress",
+  "immutable_files": [
+    {
+      "path": "src/trustaero/optimizer/execution_aware.py",
+      "sha256": "03be4ae94ff6b89a3ea631d5ede4bbffc8e59b6ae4fd28f062cddde02aec3c06"
+    },
+    {
+      "path": "src/trustaero/experiments/execution_flow_features.py",
+      "sha256": "8d799ee5b79b91b0740ab5eabefebb549ce67b0a0ab0637ea6b34cb05c1eeba7"
+    },
+    {
+      "path": "scripts/export_execution_flow_features.py",
+      "sha256": "bcf84e03b85f029298936537d3c3313c73607bc874a5253e2a391d145c2a8604"
+    },
+    {
+      "path": "tests/unit/test_execution_aware_optimizer.py",
+      "sha256": "9b96c60de549ea428aebf0295cfb6da12cd77f26866a458f378de911dee52ffc"
+    },
+    {
+      "path": "tests/unit/test_execution_flow_features.py",
+      "sha256": "61476a3de39fca9d810a9d213f9b72d971bdf954db8cf295deb52db274c83e4f"
+    },
+    {
+      "path": "experiments/configs/execution_aware_calibration_v1.json",
+      "sha256": "7a8251b1307f9725369963a2da5be635bd4a0a6b9839c4fce1fbbe7e401c69a2"
+    },
+    {
+      "path": "experiments/frozen/execution_aware_physical_work_feature_contract_v1_20260722.json",
+      "sha256": "d6032cd1971e6241675ec562210a18930bcdc6c151568940aa4bc9157e3222e1"
+    },
+    {
+      "path": "experiments/frozen/execution_flow_audit_formal_result_20260722.json",
+      "sha256": "ba5736e2679924e7b7b5916bab58b48022fe1eada80dc03292bffb3cb749d621"
+    }
+  ]
+}

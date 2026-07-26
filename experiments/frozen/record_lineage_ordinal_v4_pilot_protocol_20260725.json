@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-record-lineage-ordinal-v4-pilot-20260725",
+  "phase": "ordinal_bound_record_lineage_development",
+  "formal_v3_baseline": {
+    "path": "experiments/frozen/record_lineage_formal_v3_positive_20260724.json",
+    "sha256": "0e68077bc536a821a67e13012a23177333841a77f46dc8884aadd1cff9e54713"
+  },
+  "measurement_config": {
+    "path": "experiments/configs/record_lineage_ordinal_pilot_v4.json",
+    "sha256": "85759bed72dc64b8e159463dd4c6c6168125ec6c6d066c61c6310847b3464a6a"
+  },
+  "encoding": {
+    "name": "ordinal_bound_v4",
+    "output_identity": [
+      "visible result digest",
+      "zero-based result-row ordinal"
+    ],
+    "source_identity_bytes_per_edge": 32,
+    "raw_key_storage": false
+  },
+  "soundness_argument": [
+    "The visible result digest commits to column names, every visible value, and row order.",
+    "Source identities are stored in exactly the same order as visible result rows.",
+    "Therefore source identity i is bound to output identity (result_digest, i).",
+    "Independent verification recomputes both the visible result digest and every ordered source identity."
+  ],
+  "required_attack_tests": [
+    "row_reordering",
+    "row_deletion",
+    "row_insertion",
+    "source_identity_reordering",
+    "source_identity_byte_tampering",
+    "result_digest_forgery"
+  ],
+  "pilot_gates": [
+    "All direct and V4 result digests agree.",
+    "All V4 artifacts pass independent verification.",
+    "Every required attack test is rejected.",
+    "Artifact storage approaches 32 bytes per edge.",
+    "No hidden instrumentation column appears in the visible result."
+  ],
+  "decision_policy": [
+    "V3 remains the immutable formal baseline and is never overwritten.",
+    "V4 pilot measurements are development evidence, not paper performance evidence.",
+    "A formal V4 scale experiment is admitted only after semantic gates pass and the pilot shows a material implementation benefit.",
+    "If V4 does not materially improve storage and at least one major latency component, retain the result and stop record-lineage tuning."
+  ],
+  "scope": {
+    "source_count": 1,
+    "key_column_count": 1,
+    "key_type": "STRING",
+    "unsupported": [
+      "Join",
+      "Aggregate",
+      "SpatialJoin",
+      "composite keys",
+      "non-STRING keys"
+    ]
+  }
+}

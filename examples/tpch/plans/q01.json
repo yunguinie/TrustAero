@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "tpch-sf1-q01-governed",
+  "request_context": {
+    "subject": {"subject_id": "researcher-001", "role": "researcher", "attributes": {}},
+    "purpose": "benchmark-research",
+    "action": "aggregate",
+    "query_time_window": null
+  },
+  "requested_output": {
+    "fields": [
+      "l_returnflag", "l_linestatus", "sum_qty", "sum_base_price",
+      "sum_disc_price", "sum_charge", "avg_qty", "avg_price",
+      "avg_disc", "count_order"
+    ],
+    "export": {"requested": false, "destination": null, "format": null},
+    "lineage_level": "source"
+  },
+  "operators": [
+    {
+      "operator_type": "ScanSource",
+      "operator_id": "q01-scan",
+      "inputs": [],
+      "dataset": "tpch_sf1_lineitem",
+      "snapshot": "sf1-64a709fa8f99"
+    },
+    {
+      "operator_type": "Filter",
+      "operator_id": "q01-filter",
+      "inputs": ["q01-scan"],
+      "expression": {
+        "expression_type": "comparison",
+        "operator": "le",
+        "left": {"expression_type": "field", "field": "l_shipdate"},
+        "right": {
+          "expression_type": "literal",
+          "data_type": "datetime",
+          "value": "1998-09-02T00:00:00+00:00"
+        },
+        "negated": false
+      }
+    },
+    {
+      "operator_type": "Aggregate",
+      "operator_id": "q01-aggregate",
+      "inputs": ["q01-filter"],
+      "group_by": ["l_returnflag", "l_linestatus"],
+      "aggregates": [
+        {"function": "sum", "input_field": "l_quantity", "output_field": "sum_qty"},
+        {
+          "function": "sum",
+          "input_field": "l_extendedprice",
+          "output_field": "sum_base_price"
+        },
+        {
+          "function": "sum",
+          "input_expression": {
+            "expression_type": "numeric_product_formula",
+            "factors": [
+              {"expression_type": "field", "field": "l_extendedprice"},
+              {
+                "expression_type": "numeric_affine",
+                "constant": {
+                  "expression_type": "literal",
+                  "data_type": "decimal",
+                  "value": "1"
+                },
+                "operator": "subtract",
+                "field": {"expression_type": "field", "field": "l_discount"}
+              }
+            ]
+          },
+          "output_field": "sum_disc_price"
+        },
+        {
+          "function": "sum",
+          "input_expression": {
+            "expression_type": "numeric_product_formula",
+            "factors": [
+              {"expression_type": "field", "field": "l_extendedprice"},
+              {
+                "expression_type": "numeric_affine",
+                "constant": {
+                  "expression_type": "literal",
+                  "data_type": "decimal",
+                  "value": "1"
+                },
+                "operator": "subtract",
+                "field": {"expression_type": "field", "field": "l_discount"}
+              },
+              {
+                "expression_type": "numeric_affine",
+                "constant": {
+                  "expression_type": "literal",
+                  "data_type": "decimal",
+                  "value": "1"
+                },
+                "operator": "add",
+                "field": {"expression_type": "field", "field": "l_tax"}
+              }
+            ]
+          },
+          "output_field": "sum_charge"
+        },
+        {"function": "avg", "input_field": "l_quantity", "output_field": "avg_qty"},
+        {
+          "function": "avg",
+          "input_field": "l_extendedprice",
+          "output_field": "avg_price"
+        },
+        {"function": "avg", "input_field": "l_discount", "output_field": "avg_disc"},
+        {"function": "count", "output_field": "count_order"}
+      ]
+    },
+    {
+      "operator_type": "Sort",
+      "operator_id": "q01-output",
+      "inputs": ["q01-aggregate"],
+      "keys": [
+        {"field": "l_returnflag", "direction": "asc"},
+        {"field": "l_linestatus", "direction": "asc"}
+      ]
+    }
+  ],
+  "output_operator": "q01-output"
+}

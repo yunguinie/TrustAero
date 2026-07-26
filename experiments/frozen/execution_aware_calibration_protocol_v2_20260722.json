@@ -1,0 +1,70 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_aware_calibration_protocol_v2_20260722",
+  "status": "FROZEN_BEFORE_CLEAN_CALIBRATION",
+  "supersedes": "experiments/frozen/execution_aware_calibration_protocol_v1_20260722.json",
+  "reason_for_revision": "Development-only analysis exposed a semantic conflation between aggregate execution mode and aggregate expression work. No clean calibration labels were observed.",
+  "scientific_question": "Can candidate-specific physical work rank legal DuckDB candidates across complete held-out scenario families?",
+  "calibration_matrix": {
+    "config": "experiments/configs/execution_aware_calibration_v1.json",
+    "row_counts": [50000, 150000],
+    "identifier_widths": [128, 512, 2048],
+    "match_rates": [0.1, 0.5, 1.0],
+    "seeds": [3101, 3202, 3303],
+    "unit_count": 54,
+    "candidate_count_per_unit": 11,
+    "measured_runs_per_candidate": 11,
+    "profile_runs_per_candidate": 2,
+    "timed_execution_count": 6534,
+    "profile_execution_count": 1188
+  },
+  "measurement_protocol": {
+    "machine_state": "No concurrent CPU-, memory-, or disk-intensive workload.",
+    "cache_regime": "Warm repeated execution in one DuckDB process and connection.",
+    "candidate_order": "Deterministically shuffled Latin rotations.",
+    "duckdb_threads": 4,
+    "duckdb_memory_limit_mb": 4096,
+    "gpu_used": false,
+    "interruption": "Use Ctrl+C and resume with --resume latest; incomplete units never enter final artifacts.",
+    "contamination_rule": "Preserve and label a contaminated run; never silently reuse it as clean evidence."
+  },
+  "feature_contract_revision": {
+    "aggregate_axes": ["execution_mode", "expression_kind"],
+    "aggregate_expression_kinds": ["none", "simple", "raw_length", "masked_digest"],
+    "join_build_payload_rate": "Fixed to zero because it is exactly collinear in the frozen matrix.",
+    "materialization": "Write and reread work are represented as one physical round-trip component.",
+    "governance": "Legality is a hard pre-cost gate; illegal candidates cannot be ranked.",
+    "label_boundary": "Only label-free work vectors may enter the optimizer."
+  },
+  "model_and_validation": {
+    "model": "Nonnegative additive analytic component-cost model with a nonnegative query intercept.",
+    "direct_winner_classifier": false,
+    "outer_group": "Complete row_count + identifier_width + match_rate family, including every seed and legal candidate.",
+    "seed_level_leakage_allowed": false,
+    "ridge_lambda_grid": [0.000001, 0.0001, 0.01, 1.0],
+    "practical_tie_fraction": 0.03,
+    "residual_model_allowed": false
+  },
+  "predeclared_gates": {
+    "illegal_candidate_selection_count": 0,
+    "minimum_3_percent_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_regret_percent": 15.0,
+    "advantage_must_cover_at_least_two_equivalence_groups": true
+  },
+  "decision_rule": {
+    "pass": "Freeze the model and support envelope, then design a new real-data month/query-family validation.",
+    "fail": "Freeze the negative result. Permit at most one bounded diagnosis of missing physical work or non-identifiability; do not tune thresholds or reuse the run as fresh evaluation."
+  },
+  "run_command_after_clean_commit": "python -u scripts/run_execution_flow_audit.py --config experiments/configs/execution_aware_calibration_v1.json --progress",
+  "resume_command": "python -u scripts/run_execution_flow_audit.py --config experiments/configs/execution_aware_calibration_v1.json --resume latest --progress",
+  "immutable_files": [
+    {"path": "src/trustaero/optimizer/execution_aware.py", "sha256": "ee8a5e652c7e69516c07b0590794a3cf2aac3dba3e23121f66a54090b0d343bd"},
+    {"path": "src/trustaero/experiments/execution_flow_features.py", "sha256": "f32599b496a126be31fcb34dd0fbca392d102319aa2f16f545e855ad631b7cc3"},
+    {"path": "src/trustaero/experiments/execution_aware_calibration.py", "sha256": "3ac7a92395f6f5f5d4d0e9e634fb5bfb160ba747420ad348fe41e10d536d8220"},
+    {"path": "scripts/analyze_execution_aware_calibration.py", "sha256": "4657c772f1cfdfa8da82b823a47f0c0145e99aae5a7f2caa09a3c89262df37bb"},
+    {"path": "tests/unit/test_execution_aware_calibration.py", "sha256": "e4c3892b3cb48f2e3efcf5b90b7905183ce0ce48fa3452cc8b2c69020aefea53"},
+    {"path": "experiments/configs/execution_aware_calibration_v1.json", "sha256": "7a8251b1307f9725369963a2da5be635bd4a0a6b9839c4fce1fbbe7e401c69a2"}
+  ]
+}

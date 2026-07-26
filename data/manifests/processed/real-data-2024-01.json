@@ -1,0 +1,55 @@
+{
+  "inputs": [
+    {
+      "artifact_id": "bts_on_time_2024_01",
+      "byte_size": 27573265,
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_1.zip",
+      "sha256": "fe089b45523f9d4ac0ccd0e176a543d274e914ee5ae5bd384dbaafc7dc06ebfd"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_01",
+      "byte_size": 49961641,
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-01.parquet",
+      "row_count": 2964624,
+      "sha256": "c4d59da7bbc8abaeeeb1727947ee93d9891a71acb42854bd80db1571b2030510"
+    }
+  ],
+  "legacy_manifest_path": "manifests/processed/real-data-smoke.json",
+  "legacy_manifest_sha256": "42a83189bd3391326adb390f206c81858783e254e3e0dd2af652024b5e68fb61",
+  "month": 1,
+  "nyc_row_count": 2964624,
+  "outputs": [
+    {
+      "artifact_id": "bts_on_time_2024_01_full",
+      "byte_size": 9077989,
+      "relative_path": "processed/bts/on_time/2024-01/bts_flights_full.parquet",
+      "row_count": 547271,
+      "sha256": "a9ac11e42c1812ac9fd3ce6885e1fce7713399426f2fd0cec7cbbc5cd1648d53"
+    },
+    {
+      "artifact_id": "bts_on_time_2024_01_airports",
+      "byte_size": 5380,
+      "relative_path": "processed/bts/on_time/2024-01/bts_airports.parquet",
+      "row_count": 334,
+      "sha256": "bccde61193c804f2a11fd4148e58f30187bd0a0461bf4b1b15b771c1b40c4a3c"
+    },
+    {
+      "artifact_id": "nyc_tlc_taxi_zones",
+      "byte_size": 3887,
+      "relative_path": "processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+      "row_count": 265,
+      "sha256": "f29ce7251c147d9e0af7d4d2deca855d2ff618b8aef46cee9d1455df665d4988"
+    }
+  ],
+  "prepared_at_utc": "2026-07-24T09:37:00+00:00",
+  "purpose": "normalized January source provenance; no optimizer performance result",
+  "schema_version": 1,
+  "scientific_boundary": "This manifest normalizes the legacy January preparation record. It reuses immutable files and verified hashes; it does not regenerate data or authorize an optimizer claim.",
+  "status": "PASS",
+  "verification": {
+    "all_declared_byte_sizes_match": true,
+    "all_declared_sha256_match": true,
+    "all_declared_row_counts_match": true
+  },
+  "year": 2024
+}

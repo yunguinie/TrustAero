@@ -589,3 +589,234 @@ so the frozen V2.1 gate failed. The tie band and seed-agreement threshold were
 not changed after observing the result; Phase 2G remains unauthorized. See
 `docs/phase2m-compact-ablation-results.md` and
 `experiments/frozen/phase2m_compact_policy_ablation_negative.json`.
+
+## Formal real-data development-partition suite
+
+The first formal measurement protocol freezes three semantic-ready query
+families before their clean-source run: BTS governed masked read, NYC zone
+aggregate, and BTS early/late Mask placement. The BTS natural multi-Join remains
+explicitly deferred because its current timing adapter covers only the 100K
+semantic slice.
+
+```powershell
+python scripts/validate_real_data_formal_protocol.py
+python -u scripts/run_real_data_formal_v1.py --progress
+```
+
+The runner refuses a dirty worktree, rechecks all protocol and semantic-smoke
+SHA-256 bindings, rotates candidate order, displays progress, records CPU,
+memory, spill, lineage, certificate, and exposure evidence, and applies the
+predeclared stability gates. January 2024 is a development partition already
+used by integration pilots: it can support method-level paper analysis after
+all gates pass, but is not independent Optimizer V1/V2 holdout evidence.
+
+The first clean-source execution completed with all integrity and stability
+gates passing. BTS selected post-Mask materialization (1.147x opportunity over
+fused), NYC selected fused execution, and BTS early/late Mask placement was a
+paired 3% tie while strict policy permitted only early Mask. The exact result
+boundary and non-claims are recorded in
+`docs/formal-real-data-development-results.md` and the raw artifacts are bound
+by `experiments/frozen/real_data_formal_development_results_20260719.json`.
+
+The previously deferred BTS natural multi-Join now has a separate full-month
+protocol. Four candidates imply 24 possible execution orders, so the protocol
+uses 48 paired blocks—two complete permutation cycles and 192 timed candidate
+executions:
+
+```powershell
+python -u scripts/run_bts_multijoin_formal.py --progress
+```
+
+This remains January development evidence and computes only a diagnostic
+Oracle. It does not claim that an online optimizer selected the fastest route.
+
+## Real-data infrastructure pilot
+
+The BTS and NYC TLC integration pilot exercises the canonical validated plan at
+100K and 500K rows. It records real selectivities, intermediate cardinalities,
+DuckDB's observed physical plan, memory/spill metrics, client-materialization
+latency, Mask exposure, source lineage, and certificate status. Atomic units can
+be resumed safely and the terminal displays elapsed time plus ETA.
+
+```powershell
+python -u scripts/run_real_data_pilot.py --progress
+python scripts/summarize_real_data_pilot.py
+```
+
+The configuration permanently labels this run as infrastructure development,
+not optimizer comparison and not paper performance evidence. It contains one
+canonical candidate per unit; multi-candidate claims remain prohibited until
+each alternative is represented by an approved physical plan and its observed
+DuckDB structure is confirmed.
+
+The subsequent semantic gate now constructs three `ApprovedPhysicalPlan`
+objects for each BTS/NYC workload: fused execution plus two reviewed storage
+boundaries. The generic execution compiler independently rechecks logical-plan
+digest, snapshots, pending obligations, backend support, and the physical DAG
+before realizing an explicit DuckDB `MATERIALIZED` CTE. All six candidates have
+equal results, distinct observed DuckDB fingerprints, source lineage, and
+candidate-specific `PARTIAL` certificates.
+
+Under the permissive output-Mask profile all BTS candidates are legal. Under
+the no-raw-sensitive-materialization profile, the candidate that stores 19,447
+raw filtered tail numbers is rejected before timing, while fused execution and
+post-Mask materialization remain legal. This is semantic evidence that policy
+changes the feasible physical-plan space; it is still not a speedup result.
+
+The balanced multi-candidate performance pilot then runs 84 visible steps over
+100K/500K BTS and NYC slices. Each candidate is preflighted with result,
+lineage, certificate, `EXPLAIN ANALYZE`, memory, and spill checks before timed
+rounds. Candidate order rotates across repetitions. The second, resource-
+complete run passes every integrity gate with zero spill and authorizes a
+full-month pre-experiment. With the frozen 3% tie band it does **not** show a
+stable policy-dependent Oracle or scale reversal, so the noisier first pilot is
+not promoted as evidence. See the latest report under
+`results/real_data_candidate_pilot/<run_id>/report.md`.
+
+The first full-month pre-experiment binds all 547,271 BTS rows and all
+2,964,624 official NYC TLC January rows, uses two warmups and ten measured
+rounds, and completes 78/78 steps without spill or result disagreement. Its
+semantic/resource integrity gates pass, but a post-pilot timing diagnostic finds
+46% and 90% maximum first-half/second-half median drift for BTS and NYC. The run
+is therefore retained as useful diagnostic evidence while formal performance
+reporting remains unauthorized. The next measurement protocol must balance all
+six candidate permutations and use more paired repetitions; no latency winner
+from this run may be promoted to a paper table.
+
+The corrected paired protocol covers all six candidate permutations five times
+(30 paired blocks and 90 timed candidate executions per workload) under one hot
+DuckDB connection. It records UTC start time, process CPU time, block ID,
+permutation, and position. The full-month validation passes absolute drift,
+paired-ratio drift, and paired outlier gates. This authorizes the protocol for
+future frozen governance-driven query families, but the validation run itself
+remains non-paper evidence. See
+`experiments/frozen/real_data_paired_timing_protocol_20260719.json`.
+
+### Frozen governance-driven real-data query families
+
+The paired timing protocol is only a measurement method; it does not authorize
+choosing queries after observing which candidate wins.  The versioned study
+design is therefore stored in
+`experiments/configs/real_data_query_families_v1.json` and checked with:
+
+```powershell
+python scripts/validate_real_data_query_families.py
+```
+
+The check is deliberately data-free and performs no timing.  It confirms that
+four executable templates still validate to the expected logical mechanisms:
+the BTS masked read, NYC zone aggregate, BTS natural multi-Join, and BTS
+Mask/Join placement. The two BTS placement-related semantic smokes are:
+
+```powershell
+python scripts/run_bts_multijoin_smoke.py
+python scripts/run_bts_mask_join_smoke.py
+```
+
+The multi-Join smoke checks four result-equivalent candidates and four distinct
+observed DuckDB plans. The Mask/Join smoke checks early versus late SHA-256
+placement over the native `OriginAirportID` Join. Its strict profile rejects
+the late route before cost comparison because raw `Tail_Number` values would
+enter the Join; the permissive profile keeps both routes. Both smokes verify
+source lineage and candidate-specific certificates without recording latency.
+The historical V1 query-family file still records TPC-H and the multisource
+certificate case as `design_only`.  Do not edit that hash-bound snapshot.
+`experiments/frozen/query_family_execution_status_v2_20260726.json` upgrades
+`QF-MULTISOURCE-CERTIFICATE` to `executed_verified` using the complete V2
+four-source evidence.  It remains semantic rather than performance evidence.
+TPC-H support and performance boundaries are tracked by their later frozen
+coverage and retained-negative records.
+
+The BTS Mask/Join query also has a non-paper paired timing-protocol validator:
+
+```powershell
+python -u scripts/run_bts_mask_join_pilot.py --progress
+```
+
+It runs both orders (`late -> early` and `early -> late`) equally often in 30
+hot-cache paired blocks, records process CPU time and DuckDB memory/spill, and
+gates absolute drift, paired-ratio drift, and ratio outliers. The 100K protocol
+validation run `20260719T040615396550Z` passed. Its early-Mask median was about
+241 ms versus 254 ms for late Mask, with a median paired ratio of 0.958 and no
+spill. These numbers are integration diagnostics only: the worktree was dirty,
+the query used the 100K development slice, and no optimizer was evaluated.
+
+The same runner accepts the frozen full-January configuration:
+
+```powershell
+python -u scripts/run_bts_mask_join_pilot.py `
+  --config experiments/configs/bts_mask_join_full_month_pilot.json `
+  --progress
+```
+
+The non-paper full-month confirmation `20260719T042845123244Z` processed
+547,271 flights, of which 106,251 reached the Join. It completed 60 timed
+candidate executions in about 154 seconds with no spill and passed all paired
+stability gates. Separate medians were 875 ms (early) and 907 ms (late), but
+the primary paired median ratio was 0.987. Therefore the predeclared 3% paired
+rule classifies the candidates as tied; reporting the separate-median gap as a
+win would be methodologically incorrect. The strict policy still admits only
+early Mask because late Mask sends 106,251 raw sensitive rows into the Join.
+
+## TPC-H support audit and governed Q6
+
+The TPC-H stage retains all 22 official queries in its support denominator.
+`scripts/audit_tpch_sf1.py` executes every query and records explicit IR
+blockers. `scripts/run_tpch_q6_smoke.py` runs the first supported official query
+through validation, three physical candidates, exact result comparison, source
+lineage and certificate verification. Neither command records performance
+timing; see `docs/tpch-support-audit.md` for the scientific boundary.
+
+### TPC-H SF10 formal timing boundary
+
+TPC-H SF10 generation, Q1/Q6 semantic gates, and content-addressed timing
+configs are available through the commands documented in the project README.
+Every complete measured block is persisted atomically. `--resume-run-id` can
+finish an interrupted diagnostic run without repeating complete blocks, but a
+multi-process result fails the final `single_execution_process` integrity gate
+because it no longer satisfies the frozen single-connection cache protocol.
+
+The first complete SF10 Q1 run (`20260720T043902336493Z`) is retained as
+negative diagnostic evidence. All 450 measurements, result-equivalence checks,
+candidate-space checks, and permutation-balance checks completed. Fused and
+post-aggregate materialization were inside the 3% tie band, while post-filter
+materialization was about 6.64x slower because 98.6% of 59,986,052 input rows
+crossed the materialization boundary. The run is not authorized for a final
+paper table: the paired-ratio outlier gate failed and the run crossed two
+process sessions. The immutable boundary is recorded in
+`experiments/frozen/tpch_sf10_q1_resumed_diagnostic_negative_20260720.json`.
+
+The next uninterrupted Q1 run (`20260720T065522179359Z`) also remains frozen
+as diagnostic evidence. It passed all integrity gates, but the post-filter
+materialization route had 39.9% paired half drift and a 13.3% outlier fraction,
+so the V1 all-candidates stability gate rejected it. More importantly, mirrored
+middle-position orders showed that running this heavy route first made the
+following post-aggregate route about 16.6% faster. This establishes a real
+carryover hazard rather than justifying a relaxed threshold.
+
+The predeclared V2 configs therefore add two protections. First, mirrored
+orders test each possible heavy route for carryover into its immediate
+successor. Second, candidate claims use only pollution-safe blocks and require
+a deterministic 95% permutation-stratified paired-bootstrap interval. The
+interval must lie wholly below the 3% material-speedup boundary, wholly above
+the 3% material-slowdown boundary, or wholly inside the 3% equivalence band;
+otherwise the conclusion is `INCONCLUSIVE`. The old V1 artifacts are never
+reanalyzed as accepted V2 evidence.
+
+The first uninterrupted V2 Q1 run (`20260720T094049562476Z`) passed all
+integrity gates and completed 450 measurements. Its pollution-safe 95% paired
+interval authorizes one claim: post-filter materialization is materially slower
+than fused (median ratio 9.577, interval `[7.371, 10.306]`). Post-aggregate
+materialization versus fused remains inconclusive (`[0.877, 1.053]`), as do
+both carryover checks. The latter findings must not be described as ties or as
+proof that carryover is absent. The immutable accepted boundary is recorded in
+`experiments/frozen/tpch_sf10_q1_paired_ci_accepted_20260720.json`.
+
+The first uninterrupted V2 Q6 run (`20260721T012711938759Z`) also passed all
+integrity gates and completed 900 measurements. All four predeclared carryover
+intervals stayed inside the 10% materiality band. Its pollution-safe 95% paired
+interval authorizes one claim: materializing after the temporal predicate is
+materially slower than fused (median ratio 5.358, interval `[4.934, 5.741]`).
+Materializing after all Q6 predicates remains inconclusive (`[0.992, 1.165]`).
+The immutable boundary is recorded in
+`experiments/frozen/tpch_sf10_q6_paired_ci_accepted_20260721.json`.

@@ -1,0 +1,35 @@
+{
+  "record_id": "governed-pipeline-hierarchical-admission-v2-positive",
+  "recorded_at": "2026-07-24",
+  "status": "PASS_GOVERNED_PIPELINE_OPTIMIZER_ADMISSION",
+  "run_id": "20260724T063406628323Z",
+  "source_commit": "71f654b5b567126bc5626b17121aa608f3f74a43",
+  "summary_path": "results/governed_pipeline_hierarchical_admission_v2/20260724T063406628323Z/summary.json",
+  "summary_sha256": "4d5b357662f74e8f2123909a4690416d67db759093ba330e6cc7559efb1d269f",
+  "measurements_sha256": "0a2ffbade2e1927beb39a314d17ed35f278931a9a524afd65b303c40a811fb5d",
+  "integrity": {
+    "unit_count": 48,
+    "measurement_rows": 4320,
+    "paired_blocks": 1440,
+    "result_equivalence_passed": true,
+    "record_lineage_equivalence_passed": true,
+    "distinct_physical_plans_per_unit": 3,
+    "git_dirty_at_measurement": false
+  },
+  "admission": {
+    "scenario_count": 16,
+    "conclusive_scenario_rate": 0.5625,
+    "singleton_winner_counts": {
+      "join_first_masked_checkpoint": 4,
+      "policy_first_masked_checkpoint": 5
+    },
+    "dominant_singleton_winner_fraction": 0.5555555555555556,
+    "all_gate_checks_passed": true,
+    "systematic_material_carryover_detected": false
+  },
+  "authorization": {
+    "development_cost_model_training": true,
+    "paper_optimizer_performance_claim": false,
+    "unseen_data_generalization_claim": false
+  }
+}

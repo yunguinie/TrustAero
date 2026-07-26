@@ -1,0 +1,44 @@
+{
+  "frozen_at": "2026-07-23",
+  "status": "FROZEN_BEFORE_EA1_V31_INDEPENDENT_HOLDOUT",
+  "development_calibration": "results/governed_checkpoint_uncertainty_v3_1/20260723T031806298299Z/calibration.json",
+  "development_calibration_sha256": "df813650db4647f41042b57d45613011e41a70b4c96668da19ab15f4a26428f3",
+  "guard_artifact": "experiments/frozen/models/governed_checkpoint_uncertainty_v3_1_20260723.json",
+  "guard_sha256": "c3a709330f063db030addd803b42c406bcfaccd8b92910b0d03ea89a9b81c476",
+  "scientific_question": "Does the frozen V3.1 guard generalize to values absent from both development and the failed V2 holdout?",
+  "holdout_design": {
+    "row_counts": [150000],
+    "identifier_widths": [384, 640],
+    "policy_selectivities": [0.25, 0.35],
+    "query_selectivities": [0.08, 0.15, 0.3],
+    "seeds": [7101, 7202, 7303],
+    "scenario_count": 12,
+    "unit_count": 36,
+    "paired_blocks_per_unit": 30,
+    "candidate_executions": 2160
+  },
+  "consumed_values_excluded": {
+    "identifier_widths": [128, 256, 768, 1024],
+    "policy_selectivities": [0.1, 0.2, 0.4, 0.5],
+    "query_selectivities": [0.05, 0.1, 0.2, 0.35, 0.5],
+    "seeds": [5101, 5202, 5303, 6101, 6202, 6303]
+  },
+  "frozen_gates": {
+    "minimum_confidence_family_hit_rate": 0.9,
+    "maximum_mean_regret_percent": 5.0,
+    "maximum_p95_regret_percent": 15.0,
+    "maximum_regret_percent": 25.0,
+    "minimum_singleton_families": 4,
+    "bidirectional_singleton_evidence": true,
+    "maximum_out_of_support_fallback_rate": 0.0,
+    "must_beat_both_fixed_candidates": true,
+    "seed_consistent_selection_rate": 1.0,
+    "illegal_candidate_selection_count": 0
+  },
+  "boundaries": [
+    "The V3.1 guard is loaded by SHA-256 and is never recalibrated during evaluation.",
+    "The holdout is run once after this protocol and guard are committed.",
+    "A failure remains a failure and cannot be renamed after tuning.",
+    "Passing authorizes a controlled independent synthetic claim, not a complete real-data paper claim."
+  ]
+}

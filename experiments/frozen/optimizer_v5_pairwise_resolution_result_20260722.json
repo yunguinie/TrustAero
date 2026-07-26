@@ -1,0 +1,74 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v5_pairwise_resolution_result_20260722",
+  "status": "PASS_PAIRWISE_PROTOCOL_PARTIAL_SCIENTIFIC_RESOLUTION",
+  "run_id": "20260722T012001854443Z",
+  "measurement_commit": "dd71f1fd1e8444aa828dbe4552369856cd697e7a",
+  "completed_pairs": 4,
+  "measured_candidate_executions": 320,
+  "pair_order_balance": "20 blocks in each order for every pair",
+  "semantic_result_consistency": true,
+  "external_partition_accessed": false,
+  "pair_conclusions": {
+    "bts100-fused-vs-filter-boundary": "INCONCLUSIVE",
+    "bts100-fused-vs-mask-boundary": "INCONCLUSIVE",
+    "bts500-fused-vs-mask-boundary": "INCONCLUSIVE",
+    "nyc500-fused-vs-join-boundary": "MATERIALIZATION_MATERIALLY_SLOWER"
+  },
+  "model_eligible_unit_ids": [
+    "nyc_tlc-n100000",
+    "nyc_tlc-n500000"
+  ],
+  "pairwise_label_gate_passed": true,
+  "optimizer_training_authorized": false,
+  "scientific_interpretation": "The frozen pairwise protocol completed correctly and resolved the NYC 500K comparison, making both NYC scales eligible with fused-only labels. The BTS 500K mask route has a favorable point estimate but its confidence interval does not satisfy the predeclared 3 percent material-winner rule. The two eligible units share one workload and one label direction, so passing the minimum-count gate does not by itself justify training a pipeline-aware optimizer.",
+  "required_next_step": "Run a model-free cross-workload label-diversity audit over all accepted real-data development evidence before authorizing Optimizer V5 training.",
+  "prohibited_interpretations": [
+    "treat the BTS 500K point estimate as an authorized winner",
+    "describe this development run as held-out optimizer evidence",
+    "claim that the optimizer was evaluated by this protocol",
+    "train a selector solely because the minimum two-unit count gate passed"
+  ],
+  "immutable_files": [
+    {
+      "path": "results/optimizer_v5_pairwise_resolution/20260722T012001854443Z/config.json",
+      "sha256": "623a3c3aff01d6923592185f10bac3c71355aec9519cb553aa45e2e39db308f6"
+    },
+    {
+      "path": "results/optimizer_v5_pairwise_resolution/20260722T012001854443Z/environment.json",
+      "sha256": "314114195f659853c40b75e974796025a67820bf14bcba70e2c22f61ecf9ab48"
+    },
+    {
+      "path": "results/optimizer_v5_pairwise_resolution/20260722T012001854443Z/measurements.csv",
+      "sha256": "b69a8b5d55b379feca12312c581f2146d64aad5b9bc6f6efe3b575d51cd5438c"
+    },
+    {
+      "path": "results/optimizer_v5_pairwise_resolution/20260722T012001854443Z/merged_inference.json",
+      "sha256": "c64e493d04c0f2d2bcfa65f1d79e048d002f8ad90e2381c08acbc01cb182f943"
+    },
+    {
+      "path": "results/optimizer_v5_pairwise_resolution/20260722T012001854443Z/progress.json",
+      "sha256": "10e06ef536c4b50858635d3d1875a4fa237e141692a46a70e3d1182e193d887d"
+    },
+    {
+      "path": "results/optimizer_v5_pairwise_resolution/20260722T012001854443Z/summary.json",
+      "sha256": "741cdabcc3ef08057afc2777fbc2fcaa20df4cb66a973e3306a5b1c74df5ef91"
+    },
+    {
+      "path": "results/optimizer_v5_pairwise_resolution/20260722T012001854443Z/pairs/bts100-fused-vs-filter-boundary.json",
+      "sha256": "cb21510c21340427a29c94261d3a6bc430c732eecc5b589992dbe2a87970eaf9"
+    },
+    {
+      "path": "results/optimizer_v5_pairwise_resolution/20260722T012001854443Z/pairs/bts100-fused-vs-mask-boundary.json",
+      "sha256": "6fb5ad21f6fffa95ff1ec4c205a828dca8ff11f5e935904414c16715ecc5e142"
+    },
+    {
+      "path": "results/optimizer_v5_pairwise_resolution/20260722T012001854443Z/pairs/bts500-fused-vs-mask-boundary.json",
+      "sha256": "a6b6fe9954fbdaf362bb1e56265b27b4cea03ddf7d5c3989e481de2af0e7fd58"
+    },
+    {
+      "path": "results/optimizer_v5_pairwise_resolution/20260722T012001854443Z/pairs/nyc500-fused-vs-join-boundary.json",
+      "sha256": "aed81533de5597a60b668f21e41390589baf666a564397dd30abcbddca05d534"
+    }
+  ]
+}

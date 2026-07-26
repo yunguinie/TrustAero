@@ -1,0 +1,19 @@
+{
+  "absolute_half_drift_limit": 0.5,
+  "artifact_sha256": "64a709fa8f995aeae23ffe6305a47e77c97113c823974a3f6a6933b8d05a0b22",
+  "duckdb_memory_limit_mb": 4096,
+  "duckdb_threads": 4,
+  "heldout_optimizer_evidence": false,
+  "measured_blocks": 30,
+  "order_seed": 20260729,
+  "paired_ratio_half_drift_limit": 0.2,
+  "paired_ratio_outlier_fraction_limit": 0.1,
+  "paper_performance_evidence": true,
+  "require_clean_git": true,
+  "results_dir": "results/tpch_q6_formal_v1",
+  "scientific_label": "tpch_sf1_q6_formal_development_v1",
+  "semantic_smoke_sha256": "d713737e2b60c40ccb6e89c078883b5d2ef3b41f767bf2590e752225cdaf4e86",
+  "support_audit_sha256": "1525f40afd01aa90c6898e130bab3ed73838d1f30c7f2ec31e462eb5df412d57",
+  "tie_threshold_fraction": 0.03,
+  "warmup_blocks": 6
+}

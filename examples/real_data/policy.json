@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "policy_set_id": "real-data-smoke-policy",
+  "policy_snapshot": "policy-real-smoke-2026-07-18",
+  "rules": [
+    {
+      "policy_id": "P-BTS-RESEARCH-READ",
+      "policy_version": "1",
+      "subject_roles": ["researcher"],
+      "purposes": ["research"],
+      "actions": ["read"],
+      "resources": ["bts_on_time_2024_01"],
+      "decision": "PERMIT",
+      "obligations": [
+        {
+          "obligation_type": "VERSION_PIN",
+          "parameters": {}
+        },
+        {
+          "obligation_type": "MASK",
+          "parameters": {"fields": ["Tail_Number"], "method": "hash"}
+        },
+        {
+          "obligation_type": "LINEAGE_CAPTURE",
+          "parameters": {"level": "source"}
+        }
+      ],
+      "reason": "Research output may expose only hashed aircraft identifiers with source lineage."
+    },
+    {
+      "policy_id": "P-NYC-RESEARCH-AGGREGATE",
+      "policy_version": "1",
+      "subject_roles": ["researcher"],
+      "purposes": ["research"],
+      "actions": ["aggregate"],
+      "resources": ["nyc_tlc_yellow_2024_01", "nyc_tlc_taxi_zones"],
+      "decision": "PERMIT",
+      "obligations": [
+        {
+          "obligation_type": "VERSION_PIN",
+          "parameters": {}
+        },
+        {
+          "obligation_type": "LINEAGE_CAPTURE",
+          "parameters": {"level": "source"}
+        }
+      ],
+      "reason": "Research aggregation is permitted when evidence binds both public sources."
+    },
+    {
+      "policy_id": "P-PUBLIC-DENY-REAL-DATA",
+      "policy_version": "1",
+      "subject_roles": ["public"],
+      "purposes": ["research"],
+      "actions": ["read", "aggregate"],
+      "resources": [
+        "bts_on_time_2024_01",
+        "nyc_tlc_yellow_2024_01",
+        "nyc_tlc_taxi_zones"
+      ],
+      "decision": "DENY",
+      "obligations": [],
+      "reason": "The real-data smoke policy is restricted to the research role."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "results_dir": "results/bts_mask_join_full_month_pilot",
+  "sample_rows": 547271,
+  "full_month": true,
+  "warmup_blocks": 4,
+  "measured_blocks": 30,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260720,
+  "absolute_half_drift_limit": 0.50,
+  "paired_ratio_half_drift_limit": 0.20,
+  "paired_ratio_outlier_fraction_limit": 0.10,
+  "tie_threshold_fraction": 0.03,
+  "query_family_protocol_sha256": "1f1ac460f346b1f660aef0b98fe9a6d92c45fb9bad14765c542e39ac947e9425",
+  "semantic_smoke_sha256": "392fa01b3d3fd1f2956332831edbcb367fedf3bb06ad5e19d2e20f9dadcacd4e",
+  "require_clean_git": false,
+  "scientific_label": "bts_mask_join_paired_protocol_validation_not_paper_evidence"
+}

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-system-scalability-full-month-pilot-positive-20260724",
+  "status": "PASS_FULL_MONTH_SCALABILITY_PILOT_INTEGRITY",
+  "run_path": "results/system_scalability_full_month_pilot_v1/20260724T140010512732Z",
+  "measurement_commit": "98e30bcd85e5656f6932b52a597419e84175a923",
+  "artifacts": [
+    {
+      "path": "results/system_scalability_full_month_pilot_v1/20260724T140010512732Z/summary.json",
+      "sha256": "7423047397760b0f6cb8bdc87cfdac7303c188599d6dbb53957d35242e9ca586"
+    },
+    {
+      "path": "results/system_scalability_full_month_pilot_v1/20260724T140010512732Z/environment.json",
+      "sha256": "143809845ae78f0c2b490dd0d1f3365b0ba2a33f2a6f7d56fc724d9d83871504"
+    },
+    {
+      "path": "results/system_scalability_full_month_pilot_v1/20260724T140010512732Z/measurements.csv",
+      "sha256": "b99d2906d927fd10f22d1debf4a568488630b89aeb299486ec52e36f5bb5703a"
+    },
+    {
+      "path": "results/system_scalability_full_month_pilot_v1/20260724T140010512732Z/units/bts-full_month.json",
+      "sha256": "846223f359d3516f219435ee4bc0150b730f511cbcb8ff236bd6a3140ded0850"
+    },
+    {
+      "path": "results/system_scalability_full_month_pilot_v1/20260724T140010512732Z/units/nyc_tlc-full_month.json",
+      "sha256": "b0fa4796d0b70c39dd84eee0665aebddb70063677276c0ae19263e94d14c88c1"
+    }
+  ],
+  "unit_findings": [
+    {
+      "unit_id": "bts-full_month",
+      "input_rows": 547271,
+      "output_rows": 106251,
+      "max_intermediate_rows": 113697,
+      "peak_memory_bytes": 12347028,
+      "temporary_spill_bytes": 0
+    },
+    {
+      "unit_id": "nyc_tlc-full_month",
+      "input_rows": 2964624,
+      "output_rows": 10,
+      "max_intermediate_rows": 550766,
+      "peak_memory_bytes": 56526496,
+      "temporary_spill_bytes": 0
+    }
+  ],
+  "admission": {
+    "formal_full_month_timing_admitted": true,
+    "paper_latency_claim_authorized": false,
+    "record_lineage_claim_authorized": false,
+    "optimizer_reopened": false
+  },
+  "scientific_boundary": [
+    "All layers preserved relational results and both lineage-enabled layers agreed.",
+    "The evidence covers source-snapshot lineage and PARTIAL certificates.",
+    "Three measured blocks establish runner integrity and resource feasibility only.",
+    "Publication-facing latency requires the separately frozen formal protocol."
+  ]
+}

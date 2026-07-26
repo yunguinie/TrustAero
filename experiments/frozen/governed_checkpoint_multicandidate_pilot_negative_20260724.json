@@ -1,0 +1,32 @@
+{
+  "status": "FAIL_MULTICANDIDATE_LABEL_DIVERSITY_RETAIN",
+  "run_id": "20260724T020146050785Z",
+  "source_commit": "a425bd6498c15af5bbf6a9069e7eafdf19cb4703",
+  "summary_path": "results/governed_checkpoint_multicandidate_pilot_v1/20260724T020146050785Z/summary.json",
+  "summary_sha256": "7968b8cdc8662e593a06e42f6b5143b314feed4b7453a9aedb68dc01f0639bd8",
+  "measurements_path": "results/governed_checkpoint_multicandidate_pilot_v1/20260724T020146050785Z/measurements.csv",
+  "measurements_sha256": "7e942abf25cc6922f72364074340ed1b43c94870ea7780a3e2a3e7a1692d1a8f",
+  "config_path": "results/governed_checkpoint_multicandidate_pilot_v1/20260724T020146050785Z/config.json",
+  "config_sha256": "1697c1185ab5b442a42c81225a61f82d599f65e589a9200c0b6509322bf63d5a",
+  "observed": {
+    "scenario_count": 12,
+    "unit_count": 36,
+    "measured_block_count": 1080,
+    "conclusive_scenario_rate": 1.0,
+    "singleton_winner_counts": {
+      "fused_governed_pipeline": 12
+    },
+    "fused_over_policy_first_ratio_range": [0.424, 0.654],
+    "fused_over_query_first_ratio_range": [0.305, 0.424],
+    "policy_first_over_query_first_ratio_range": [0.469, 0.895]
+  },
+  "interpretation": [
+    "When a durable checkpoint is optional, the fused governed pipeline materially dominates both checkpoint candidates throughout the frozen matrix.",
+    "The result does not invalidate checkpoint ordering under a policy that requires a checkpoint, because fused is then governance-infeasible.",
+    "Within this q=0.20 through q=0.50 matrix, policy-first also materially dominates query-first.",
+    "Earlier frozen q=0.05 development evidence still shows query-first winners, locating a policy-conditioned crossover below q=0.20."
+  ],
+  "decision": "Stop the optional-checkpoint three-candidate optimizer branch. Do not alter its frozen grid or gates. If optimizer work continues, treat fused selection as a governance-feasibility rule and characterize the separate policy-required checkpoint crossover without claiming this failed branch passed.",
+  "optimizer_training_authorized": false,
+  "paper_optimizer_performance_claim_authorized": false
+}

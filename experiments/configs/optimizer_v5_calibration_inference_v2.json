@@ -1,0 +1,26 @@
+{
+  "protocol_name": "optimizer_v5_pollution_safe_calibration_inference_v2",
+  "measurement_config_path": "experiments/configs/optimizer_v5_real_candidate_calibration_v2.json",
+  "measurement_config_sha256": "25da0a7f5410e698cb96e3cb2236fe2e20c8854a8f105b973e1d3e187eee7c7b",
+  "source_negative_record_path": "experiments/frozen/optimizer_v5_calibration_v1_inference_negative_20260721.json",
+  "source_negative_record_sha256": "9013147db8a59a601c2e90a46ece228a5063cf4e8c673e154a68f58f1152bd93",
+  "confidence_level": 0.95,
+  "bootstrap_repetitions": 20000,
+  "bootstrap_seed": 20260728,
+  "carryover_tolerance_fraction": 0.10,
+  "minimum_carryover_pairs": 10,
+  "minimum_claim_blocks": 10,
+  "tie_threshold_fraction": 0.03,
+  "minimum_model_eligible_units": 2,
+  "carryover_candidates_by_workload": {
+    "bts": [
+      "materialize-after-bts-filter",
+      "materialize-after-gov-002-mask"
+    ],
+    "nyc_tlc": [
+      "materialize-after-nyc-filter",
+      "materialize-after-nyc-zone-join"
+    ]
+  },
+  "scientific_boundary": "V2 is January development calibration, not paper holdout evidence. Both materialized routes are predeclared possible carryover sources. Legacy drift and outlier metrics remain visible diagnostics, but model labels are authorized only by 95 percent permutation-stratified pollution-safe paired bootstrap intervals with at least 10 safe blocks and the unchanged 3 percent practical tie band. Inconclusive units remain unlabelled."
+}

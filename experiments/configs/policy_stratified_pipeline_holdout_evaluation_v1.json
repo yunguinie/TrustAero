@@ -1,0 +1,65 @@
+{
+  "results_dir": "results/policy_stratified_pipeline_holdout_evaluation_v1",
+  "measurement_results_dir": "results/policy_stratified_pipeline_holdout_measurement_v1",
+  "model_path": "experiments/frozen/models/governed_pipeline_cost_model_v2_20260724.json",
+  "model_sha256": "56399a09a3dccd2b02793eca97145fc17c68b9da8574edfef013925457f0fd6f",
+  "development_calibration_path": "results/governed_pipeline_cost_calibration_v2/calibration.json",
+  "development_calibration_sha256": "a59dfb321366d7bbd6f4431ac228a25a90a5dcaf7ade4b519e95a095ce616450",
+  "development_real_summary_path": "results/real_governed_pipeline_transfer_v1/20260724T084101389237Z/summary.json",
+  "development_real_summary_sha256": "bbb816ec47b51d7726e4a29ffd3e25dd00d088acba5e935047e7867dabc4564d",
+  "development_real_evaluation_path": "results/real_governed_pipeline_transfer_evaluation_v1/20260724T084101389237Z/evaluation.json",
+  "development_real_evaluation_sha256": "0f1e5a873c86c9de97120b6d86ee2433125b26ed10263530777627664504266e",
+  "expected_sources": [
+    "bts-2024-01",
+    "bts-2024-04",
+    "bts-2024-07",
+    "bts-2024-10",
+    "nyc_tlc-2024-01",
+    "nyc_tlc-2024-04",
+    "nyc_tlc-2024-07",
+    "nyc_tlc-2024-10"
+  ],
+  "expected_profiles": [
+    "w256-p020-q065-j065",
+    "w256-p070-q080-j080",
+    "w768-p020-q080-j065",
+    "w768-p070-q065-j080"
+  ],
+  "expected_row_count": 120000,
+  "expected_seeds": [20101, 20202, 20303],
+  "policy_regimes": [
+    {
+      "policy_id": "permissive",
+      "max_raw_join_rows": null,
+      "max_raw_materialized_rows": null,
+      "require_governance_checkpoint": true,
+      "expected_legal_candidate_count": 3,
+      "adaptive_performance_claim": false
+    },
+    {
+      "policy_id": "no_raw_join",
+      "max_raw_join_rows": 0,
+      "max_raw_materialized_rows": null,
+      "require_governance_checkpoint": true,
+      "expected_legal_candidate_count": 2,
+      "adaptive_performance_claim": true
+    },
+    {
+      "policy_id": "strict",
+      "max_raw_join_rows": 0,
+      "max_raw_materialized_rows": 0,
+      "require_governance_checkpoint": true,
+      "expected_legal_candidate_count": 1,
+      "adaptive_performance_claim": false
+    }
+  ],
+  "primary_adaptive_policy_id": "no_raw_join",
+  "minimum_oracle_set_hit_rate": 0.8,
+  "maximum_mean_regret_percent": 3.0,
+  "maximum_p95_regret_percent": 8.0,
+  "maximum_regret_percent": 15.0,
+  "minimum_selected_candidate_count": 2,
+  "require_better_than_best_fixed_mean": true,
+  "require_better_than_best_fixed_p95": true,
+  "require_no_material_carryover": true
+}

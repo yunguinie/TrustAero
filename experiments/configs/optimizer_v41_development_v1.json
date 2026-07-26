@@ -1,0 +1,20 @@
+{
+  "protocol_name": "optimizer_v41_group_sign_development_v1",
+  "results_dir": "results/optimizer_v41_development",
+  "v4_development_config_path": "experiments/configs/optimizer_v4_model_development_v1.json",
+  "negative_diagnosis_path": "results/optimizer_v4_model_development/20260721T120615014628Z/failure_diagnosis.json",
+  "negative_diagnosis_sha256": "4f53655bd787e6c375ee058fae7e4bba36af30e1dc4e9e49748c1c99f2daa69b",
+  "require_clean_git": true,
+  "gates": {
+    "minimum_direct_precision": 0.95,
+    "minimum_direct_coverage": 0.75,
+    "minimum_direct_early_count": 8,
+    "minimum_direct_late_count": 4,
+    "maximum_direct_regret_percent": 20.0,
+    "minimum_unstable_uncertainty_capture": 0.50,
+    "maximum_conservative_mean_regret_percent": 5.0,
+    "maximum_conservative_p95_regret_percent": 20.0,
+    "maximum_conservative_regret_percent": 80.0
+  },
+  "scientific_boundary": "V4.1 replaces the failed residual-magnitude uncertainty gate with unanimous prediction sign across the primary model and complete-training-group deletion models. No magnitude threshold or hyperparameter is retuned. Direct-selector precision and coverage are the primary claim. Conservative-early and learned-match-rate fallback deployments are reported separately and cannot be credited to the pipeline selector. February-December remain unopened."
+}

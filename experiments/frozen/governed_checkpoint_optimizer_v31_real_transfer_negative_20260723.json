@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_NEGATIVE_REAL_TRANSFER_RESULT",
+  "measurement_run": "results/real_governed_checkpoint_transfer_v1/20260723T044919074934Z",
+  "measurement_summary_sha256": "db024e40e6d4a1779acea12db1748374ab24ac91c99e2f74e714e98e96c68c1b",
+  "evaluation_result": "results/real_governed_checkpoint_transfer_evaluation_v1/20260723T045154211553Z/evaluation.json",
+  "evaluation_sha256": "9960b90cbc695044ae221fc900089301578d69a1817f44a730a3da666a5de5a4",
+  "git_commit": "de94dd90e182664998b6fc92e9ee39feaf5f7be4",
+  "measurement_integrity": "PASS_EA1_REAL_TRANSFER_MEASUREMENT_INTEGRITY",
+  "evaluation_status": "FAIL_EA1_V31_REAL_DISTRIBUTION_TRANSFER_RETAIN",
+  "observed_plan_directions": {
+    "policy_first_stable_families": 0,
+    "query_first_stable_families": 11,
+    "inconclusive_families": 1
+  },
+  "metrics": {
+    "optimizer_confidence_family_hit_rate": 0.5454545454545454,
+    "best_fixed_confidence_family_hit_rate": 1.0,
+    "mean_regret_percent": 6.6906575032846405,
+    "p95_regret_percent": 23.167577014678308,
+    "max_regret_percent": 24.66856971834379,
+    "strict_policy_illegal_selection_count": 0
+  },
+  "diagnosis": {
+    "low_query_profile": "The model correctly selected query-first.",
+    "high_profile_predicted_query_minus_policy_ms": 9.83,
+    "high_profile_observed_direction": "Query-first was materially faster in five families; one BTS family was inconclusive.",
+    "primary_failure": "Synthetic analytic physical-cost rates did not transfer to the real string/checkpoint workload.",
+    "workload_limitation": "The frozen real-transfer matrix contained no stable policy-first family, so a fixed query-first baseline dominated."
+  },
+  "consumption_rule": "All six source months and their measured profiles are consumed. They may be used for diagnosis but never again as independent optimizer holdout evidence.",
+  "authorized_claim": "V3.1 preserved governance legality but failed real-distribution performance transfer.",
+  "paper_optimizer_performance_claim_authorized": false
+}

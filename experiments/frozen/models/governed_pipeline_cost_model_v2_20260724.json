@@ -1,0 +1,22 @@
+{
+  "coefficients": {
+    "checkpoint.payload_bytes": 4.1031312709901724e-07,
+    "checkpoint.rows": 5.835310546936961e-05,
+    "join.probe_rows": 1.109682487216192e-05,
+    "lineage.edges": 6.201459724261212e-05,
+    "lineage.rows": 0.00012403015894954107,
+    "mask.input_bytes": 1.5589501373503492e-06,
+    "mask.rows": 0.00027573685050074546,
+    "pipeline_breaker.count": 0.13436383280507083,
+    "policy_hash.input_bytes": 2.7402514899245675e-07,
+    "policy_hash.rows": 1.7936376180504608e-07
+  },
+  "development_status": "AUTHORIZED_FOR_INDEPENDENT_HOLDOUT",
+  "equivalence_group": "governed-pipeline-checkpoint-v3",
+  "intercept_ms": 4.682810210532519,
+  "model_type": "nonnegative-additive-physical-work-v1",
+  "practical_tie_fraction": 0.03,
+  "ridge_lambda": 10.0,
+  "source_summary_sha256": "81dbe915e9f4f2254bd1883845aee776ca520f77e8f060060bc3f8acf765b774",
+  "stable_preference_candidate_id": "policy_first_masked_checkpoint"
+}

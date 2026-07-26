@@ -1,0 +1,254 @@
+{
+  "schema_version": 1,
+  "frozen_on": "2026-07-18",
+  "workloads": [
+    {
+      "dataset_id": "controlled_synthetic",
+      "role": "controlled_workload",
+      "status": "existing",
+      "purpose": "Control row count, field width, join match rate, skew, policy strength, and legal Mask placement."
+    },
+    {
+      "dataset_id": "bts_on_time_2024",
+      "role": "primary_real_domain",
+      "status": "approved",
+      "purpose": "Evaluate governed temporal queries and natural airport/carrier joins on official aviation data."
+    },
+    {
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "role": "independent_real_domain",
+      "status": "approved",
+      "purpose": "Evaluate cross-domain generality, temporal predicates, zone joins, skew, and larger real scans."
+    },
+    {
+      "dataset_id": "tpch_sf1_sf10",
+      "role": "standard_database_benchmark",
+      "status": "approved",
+      "purpose": "Evaluate supported multi-table joins and aggregates on a reproducible database benchmark."
+    },
+    {
+      "dataset_id": "multisource_case_study",
+      "role": "end_to_end_case_study",
+      "status": "end_to_end_semantic_validated",
+      "purpose": "Demonstrate policy, rewrite, lineage, snapshots, and execution certificates across earthquake, well, airport, and city sources."
+    }
+  ],
+  "artifacts": [
+    {
+      "artifact_id": "bts_on_time_2024_01",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "smoke",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_1.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_1.zip",
+      "expected_bytes": 27573265
+    },
+    {
+      "artifact_id": "bts_on_time_2024_02",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "main_2024",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_2.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_2.zip",
+      "expected_bytes": 25086854
+    },
+    {
+      "artifact_id": "bts_on_time_2024_03",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "main_2024",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_3.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_3.zip",
+      "expected_bytes": 29313663
+    },
+    {
+      "artifact_id": "bts_on_time_2024_04",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "main_2024",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_4.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_4.zip",
+      "expected_bytes": 28540589
+    },
+    {
+      "artifact_id": "bts_on_time_2024_05",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "main_2024",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_5.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_5.zip",
+      "expected_bytes": 31139902
+    },
+    {
+      "artifact_id": "bts_on_time_2024_06",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "main_2024",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_6.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_6.zip",
+      "expected_bytes": 31226761
+    },
+    {
+      "artifact_id": "bts_on_time_2024_07",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "main_2024",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_7.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_7.zip",
+      "expected_bytes": 34427174
+    },
+    {
+      "artifact_id": "bts_on_time_2024_08",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "main_2024",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_8.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_8.zip",
+      "expected_bytes": 30854511
+    },
+    {
+      "artifact_id": "bts_on_time_2024_09",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "main_2024",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_9.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_9.zip",
+      "expected_bytes": 28433978
+    },
+    {
+      "artifact_id": "bts_on_time_2024_10",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "main_2024",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_10.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_10.zip",
+      "expected_bytes": 29418453
+    },
+    {
+      "artifact_id": "bts_on_time_2024_11",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "main_2024",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_11.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_11.zip",
+      "expected_bytes": 28149354
+    },
+    {
+      "artifact_id": "bts_on_time_2024_12",
+      "dataset_id": "bts_on_time_2024",
+      "stage": "main_2024",
+      "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_12.zip",
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_12.zip",
+      "expected_bytes": 30150370
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_01",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "smoke",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-01.parquet",
+      "expected_bytes": 49961641
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_02",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "main_2024",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-02.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-02.parquet"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_03",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "main_2024",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-03.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-03.parquet"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_04",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "main_2024",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-04.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-04.parquet"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_05",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "main_2024",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-05.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-05.parquet"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_06",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "main_2024",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-06.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-06.parquet"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_07",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "main_2024",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-07.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-07.parquet"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_08",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "main_2024",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-08.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-08.parquet"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_09",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "main_2024",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-09.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-09.parquet"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_10",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "main_2024",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-10.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-10.parquet"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_11",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "main_2024",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-11.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-11.parquet"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_12",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "main_2024",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-12.parquet",
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-12.parquet"
+    },
+    {
+      "artifact_id": "nyc_tlc_taxi_zone_lookup",
+      "dataset_id": "nyc_tlc_yellow_2024",
+      "stage": "smoke",
+      "url": "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv",
+      "relative_path": "raw/nyc_tlc/lookup/taxi_zone_lookup.csv"
+    },
+    {
+      "artifact_id": "multisource_usgs_earthquakes_ny_2000_2024",
+      "dataset_id": "multisource_case_study",
+      "stage": "multisource_case_v1",
+      "url": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&starttime=2000-01-01&endtime=2025-01-01&minlatitude=40.4774&maxlatitude=45.0153&minlongitude=-79.7624&maxlongitude=-71.7517&orderby=time-asc",
+      "relative_path": "raw/multisource/usgs/earthquakes_ny_2000_2024.csv"
+    },
+    {
+      "artifact_id": "multisource_nysdec_regulated_wells_20260724",
+      "dataset_id": "multisource_case_study",
+      "stage": "multisource_case_v1",
+      "url": "https://data.ny.gov/resource/szye-wmt3.csv?$limit=50000&$order=api_well_number",
+      "relative_path": "raw/multisource/nysdec/regulated_wells_20260724.csv"
+    },
+    {
+      "artifact_id": "multisource_faa_airports_20241128",
+      "dataset_id": "multisource_case_study",
+      "stage": "multisource_case_v1",
+      "url": "https://nfdc.faa.gov/webContent/28DaySub/extra/28_Nov_2024_APT_CSV.zip",
+      "relative_path": "raw/multisource/faa/28_Nov_2024_APT_CSV.zip"
+    },
+    {
+      "artifact_id": "multisource_census_places_2024",
+      "dataset_id": "multisource_case_study",
+      "stage": "multisource_case_v1",
+      "url": "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2024_Gazetteer/2024_Gaz_place_national.zip",
+      "relative_path": "raw/multisource/census/2024_Gaz_place_national.zip"
+    }
+  ]
+}

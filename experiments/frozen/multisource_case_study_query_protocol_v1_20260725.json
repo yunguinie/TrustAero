@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "protocol_id": "multisource-case-study-query-v1",
+  "frozen_on": "2026-07-25",
+  "status": "QUERY_SEMANTICS_FROZEN_SMOKE_PENDING",
+  "purpose": "Demonstrate one complete governed multi-source execution; this protocol is not a performance benchmark.",
+  "catalog_path": "examples/multisource/catalog.json",
+  "policy_path": "examples/multisource/policy.json",
+  "plan_path": "examples/multisource/plan.json",
+  "prepared_manifest_path": "data/manifests/processed/multisource-case-v1.json",
+  "query_semantics": {
+    "event_window": ["2024-01-01T00:00:00Z", "2025-01-01T00:00:00Z"],
+    "minimum_magnitude": 2.5,
+    "well_distance_km": 25.0,
+    "airport_distance_km": 50.0,
+    "city_distance_km": 25.0,
+    "spatial_metric": "Haversine over explicitly bound EPSG:4326 point pairs"
+  },
+  "controlled_governance_augmentation": {
+    "sensitive_field": "api_well_number",
+    "required_mask_method": "hash",
+    "required_lineage_level": "source",
+    "statement": "The sensitivity label and policy are deterministic experimental governance attributes; they are not claimed to originate in the public NYSDEC dataset."
+  },
+  "required_validation_status": "REWRITE",
+  "required_operator_types_after_validation": [
+    "ScanSource",
+    "TemporalFilter",
+    "Filter",
+    "SpatialJoin",
+    "Project",
+    "Sort",
+    "Mask",
+    "LineageCapture"
+  ],
+  "smoke_gates": [
+    "all four raw downloads match their SHA-256 audits",
+    "all four prepared Parquet files match the processed manifest",
+    "policy validation rewrites exactly one hash Mask and source LineageCapture",
+    "DuckDB physical plan has no unimplemented feature",
+    "execution returns a non-empty deterministic result digest",
+    "raw API well numbers are absent from governed output",
+    "source lineage covers every contributing scan",
+    "certificate independently verifies plan, snapshots, events, result, and lineage",
+    "tampered result, snapshot, lineage, or event ordering is rejected"
+  ],
+  "scientific_boundaries": [
+    "This is one end-to-end case study, not an optimizer performance result.",
+    "Record-level lineage is not claimed for SpatialJoin.",
+    "The current backend implements distance_within only; intersects and within remain fail-closed.",
+    "No query radius or predicate may be changed after the smoke result merely to improve latency."
+  ]
+}

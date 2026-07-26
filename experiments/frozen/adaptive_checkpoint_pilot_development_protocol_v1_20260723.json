@@ -1,0 +1,36 @@
+{
+  "protocol_id": "adaptive-checkpoint-pilot-development-v1-20260723",
+  "status": "FROZEN_BEFORE_PILOT_TIMINGS",
+  "motivation": "Static V4 and V4.1 generalized poorly across real months even though all governance and absolute-regret gates passed. The next method measures a bounded sample of legal candidates instead of retuning another static boundary.",
+  "source_status": "The retained V4.1 final holdout is now exposed development data and can never again authorize an independent holdout claim.",
+  "governance_rules": [
+    "Candidate feasibility is evaluated before any pilot execution.",
+    "A candidate rejected by the active policy cannot be piloted.",
+    "The pilot result cache must bind data snapshot, policy snapshot, query template, engine version, and optimizer version.",
+    "Pilot execution cost is reported and is never treated as free."
+  ],
+  "pilot_budget": {
+    "rows": 15000,
+    "fraction_of_full_input": 0.1,
+    "warmup_rounds_per_permutation": 1,
+    "measured_rounds_per_permutation": 5,
+    "paired_blocks_per_unit": 10,
+    "confidence_level": 0.95,
+    "bootstrap_draws": 2000,
+    "practical_tie_fraction": 0.03
+  },
+  "inconclusive_rule": "Use the frozen 35 percent query-selectivity threshold; do not tune a new fallback from pilot answers.",
+  "development_gates": {
+    "minimum_confidence_family_hit_improvement_over_threshold": 0.03,
+    "minimum_mean_regret_reduction_percent": 0.25,
+    "maximum_mean_regret_percent": 1.0,
+    "maximum_p95_regret_percent": 5.0,
+    "maximum_regret_percent": 12.0,
+    "minimum_conclusive_pilot_rate": 0.3,
+    "minimum_amortized_speedup_at_20_reuses": 1.0,
+    "seed_consistency_required": true,
+    "illegal_pilot_or_selection_count": 0
+  },
+  "failure_policy": "Retain a failed result and stop this pilot design. Do not weaken the gates or alter the sample after opening pilot timings.",
+  "paper_claim_authorized": false
+}

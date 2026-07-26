@@ -1,0 +1,72 @@
+{
+  "protocol_name": "phase2g_optimizer_v3_independent_holdout_v1",
+  "holdout_status": "frozen_unopened",
+  "one_shot_holdout": true,
+  "results_dir": "results/phase2g_optimizer_holdout",
+  "benchmarks": [
+    "mask_fragment"
+  ],
+  "row_counts": [
+    75000,
+    125000,
+    175000
+  ],
+  "identifier_widths": [
+    192,
+    384,
+    768,
+    1536
+  ],
+  "match_rates": [
+    0.25,
+    0.7,
+    0.95
+  ],
+  "seeds": [
+    2111,
+    2222,
+    2333,
+    2444,
+    2555
+  ],
+  "expected_family_count": 36,
+  "expected_unit_count": 180,
+  "warmup_runs": 2,
+  "measured_runs": 15,
+  "profile_runs": 3,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260801,
+  "require_clean_git": true,
+  "frozen_model_record": "experiments/frozen/optimizer_v3_v3_development_positive.json",
+  "primary_model_path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/interaction_mask_cost_model.json",
+  "stability_models_path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/interaction_stability_models.json",
+  "tie_threshold_fraction": 0.03,
+  "minimum_direct_coverage": 0.25,
+  "paired_bootstrap": {
+    "confidence_level": 0.95,
+    "repetitions": 20000,
+    "seed": 20260802,
+    "stratification": "join_input_rows",
+    "resampling_unit": "complete_rows_width_match_family"
+  },
+  "claim_authorization": {
+    "within_3_percent_improvement": "paired_ci_lower_bound_strictly_above_zero",
+    "mean_regret_reduction": "paired_ci_upper_bound_strictly_below_zero",
+    "tail_non_worsening": "observed_p95_and_max_not_above_frozen_v1"
+  },
+  "holdout_gate": {
+    "all_validations_must_pass": true,
+    "all_family_results_must_be_equivalent": true,
+    "all_family_physical_plans_must_be_distinct": true,
+    "no_spill_is_required": true,
+    "within_tie_rate_must_strictly_improve_v1": true,
+    "mean_regret_must_not_exceed_v1": true,
+    "p95_regret_must_not_exceed_v1": true,
+    "max_regret_must_not_exceed_v1": true,
+    "minimum_direct_coverage_must_pass": true,
+    "direct_decisions_must_include_both_placements": true,
+    "all_governance_audits_must_pass": true
+  },
+  "scientific_boundary": "This is the one-shot independent synthetic holdout for the already frozen Optimizer V3-v3. Results may not be used to modify V3 and then be reported as the same holdout."
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-system-scalability-formal-source-lineage-positive-20260724",
+  "status": "PASS_COMBINED_FORMAL_SOURCE_LINEAGE_EVIDENCE",
+  "evidence_composition": {
+    "original_formal_evaluation": {
+      "path": "results/system_scalability_formal_evaluation_v1/20260724T131259307826Z/evaluation.json",
+      "sha256": "74b76f3ea23e5c1cca38853b426f103a48f4b899c2c7d023302e72cc4f070834",
+      "authorized_units": [
+        "bts-500000",
+        "nyc_tlc-100000",
+        "nyc_tlc-500000"
+      ]
+    },
+    "bts100_confirmation_evaluation": {
+      "path": "results/system_scalability_bts100_confirmation_evaluation_v2/20260724T134455569180Z/evaluation.json",
+      "sha256": "2265a4699c8dcfe02b221176ae8a2aba1c27fa5a7ee5a7072273f89f04104410",
+      "authorized_units": [
+        "bts-100000"
+      ]
+    },
+    "bts100_confirmation_summary": {
+      "path": "results/system_scalability_bts100_confirmation_v2/20260724T134455569180Z/summary.json",
+      "sha256": "20b53e98e5eae1ff632130c7c30935bf0c4499ea422c865592ec3b271ccb1a8c"
+    },
+    "bts100_confirmation_measurements": {
+      "path": "results/system_scalability_bts100_confirmation_v2/20260724T134455569180Z/measurements.csv",
+      "sha256": "fe7bb67b648f3b40817c91477a2f2134e116af7da9bc033f469e92f541e3b1bc"
+    }
+  },
+  "unit_findings": [
+    {
+      "unit_id": "bts-100000",
+      "median_overhead_percent": 4.115286,
+      "paired_ratio_ci95": [0.964302, 1.100768],
+      "temporary_spill_bytes": 0,
+      "source": "corrected confirmation V2"
+    },
+    {
+      "unit_id": "bts-500000",
+      "median_overhead_percent": 3.560343,
+      "paired_ratio_ci95": [0.954901, 1.108408],
+      "temporary_spill_bytes": 0,
+      "source": "original formal run"
+    },
+    {
+      "unit_id": "nyc_tlc-100000",
+      "median_overhead_percent": 14.626715,
+      "paired_ratio_ci95": [1.029201, 1.200021],
+      "temporary_spill_bytes": 0,
+      "source": "original formal run"
+    },
+    {
+      "unit_id": "nyc_tlc-500000",
+      "median_overhead_percent": 9.303884,
+      "paired_ratio_ci95": [1.053758, 1.144501],
+      "temporary_spill_bytes": 0,
+      "source": "original formal run"
+    }
+  ],
+  "authorized_claims": [
+    "All four BTS/NYC dataset-scale units preserved relational results and source-lineage evidence across equivalent execution layers.",
+    "All four units passed frozen position, half-drift, certificate, and zero-spill gates.",
+    "Median complete-TrustAero overhead ranged from 3.56% to 14.63% across the four units.",
+    "BTS confidence intervals included parity, while both NYC confidence intervals were above parity."
+  ],
+  "scientific_boundaries": [
+    "The evidence covers source-snapshot lineage, not record-level lineage.",
+    "Certificate verification remains PARTIAL by design.",
+    "The original formal partial failure and V1 confirmation protocol failure remain separately retained.",
+    "The result covers January BTS/NYC slices at 100K and 500K on DuckDB.",
+    "This evidence does not reopen or refit the frozen optimizer."
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_aware_deployment_candidate_protocol_v2_20260722",
+  "status": "FROZEN_BEFORE_DEPLOYMENT_SCOPED_REANALYSIS",
+  "supersedes": "experiments/frozen/execution_aware_candidate_calibration_protocol_v1_20260722.json",
+  "input_run": "results/execution_aware_calibration_v2/20260722T112956669678Z",
+  "input_role": "consumed development matrix; never independent holdout evidence",
+  "scope_correction": {
+    "mechanism_only_equivalence_groups": ["column_pruning"],
+    "deployable_equivalence_groups": [
+      "mask_output",
+      "mask_aggregate",
+      "mask_sorted_output"
+    ],
+    "reason": "Column-pruning SQL variants are EA-0 engine-mechanism controls, not alternative physical implementations emitted for one governed logical query.",
+    "performance_result_used_to_define_individual_candidate_rules": false
+  },
+  "unchanged_model": {
+    "family": "one nonnegative analytic cost formula per deployable physical candidate",
+    "ridge_lambda_views": [0.000001, 0.0001, 0.01, 1.0],
+    "maximum_iterations_per_view": 10000,
+    "relative_objective_tolerance": 0.000001,
+    "practical_tie_fraction": 0.03,
+    "governance_before_cost": true
+  },
+  "predeclared_gates": {
+    "minimum_3_percent_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_regret_percent": 15.0,
+    "mean_regret_not_worse_than_fixed_fallback": true,
+    "p95_regret_not_worse_than_fixed_fallback": true,
+    "all_18_outer_families_reported": true
+  },
+  "decision_rule": {
+    "pass_except_tail": "Perform one bounded paired audit of the maximum-regret seed before adding any online probe.",
+    "full_pass": "Freeze the deployment-scoped static model and construct a new unseen scenario matrix.",
+    "fail": "Stop static-model iteration and move to policy-safe sampling only if the bounded audit shows a stable unmodeled effect."
+  },
+  "analysis_command": "python -u scripts/analyze_execution_aware_candidate_calibration.py results/execution_aware_calibration_v2/20260722T112956669678Z",
+  "paper_performance_evidence": false
+}

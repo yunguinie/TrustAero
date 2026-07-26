@@ -1,0 +1,42 @@
+{
+  "frozen_at": "2026-07-23",
+  "status": "FROZEN_BEFORE_EA1_OPTIMIZER_CALIBRATION",
+  "source_run": "results/governed_checkpoint_reversal_v1/20260723T012103266124Z",
+  "source_role": "consumed development reversal-discovery matrix",
+  "source_summary_sha256": "17f8a77d9094780fa42484bfa383c49793046ea1903defa393e734f0b99c7574",
+  "source_measurements_sha256": "94dae8758c9b0ff32de365b02fa4085c82c199507b299ca4b256369ed1c78a6a",
+  "model": {
+    "type": "nonnegative additive physical-work cost model",
+    "direct_winner_classifier": false,
+    "features": [
+      "policy hash input GiB",
+      "narrow checkpoint write GiB",
+      "raw checkpoint write GiB",
+      "post-checkpoint rows in millions",
+      "Join result rows in millions"
+    ],
+    "lambda_grid": [0.000001, 0.0001, 0.01, 1.0],
+    "practical_tie_fraction": 0.03,
+    "tie_and_out_of_support_fallback": "policy_first_narrow_checkpoint"
+  },
+  "validation": {
+    "outer_split": "leave one complete rows-width-policy-query scenario out",
+    "seed_split_prohibited": true,
+    "primary_oracle": "paired 95% confidence-undominated family set",
+    "per-seed median regret": "diagnostic only"
+  },
+  "predeclared_gates": {
+    "minimum_confidence_family_hit_rate": 1.0,
+    "must_beat_both_fixed_candidates": true,
+    "seed_consistent_selection_rate": 1.0,
+    "maximum_mean_diagnostic_regret_percent": 5.0,
+    "maximum_diagnostic_regret_percent": 15.0,
+    "illegal_candidate_selection_count": 0
+  },
+  "boundaries": [
+    "Governance feasibility runs before cost estimation.",
+    "Strict no-raw-materialization policy must always select policy-first.",
+    "A passing development result only authorizes model freezing for a new holdout.",
+    "The EA-1 discovery matrix cannot be reported as independent optimizer evidence."
+  ]
+}

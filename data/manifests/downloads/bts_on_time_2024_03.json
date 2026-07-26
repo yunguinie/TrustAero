@@ -1,0 +1,16 @@
+{
+  "artifact": {
+    "artifact_id": "bts_on_time_2024_03",
+    "dataset_id": "bts_on_time_2024",
+    "expected_bytes": 29313663,
+    "expected_sha256": null,
+    "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_3.zip",
+    "stage": "main_2024",
+    "url": "https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_3.zip"
+  },
+  "byte_size": 29313663,
+  "local_path": "data/raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_3.zip",
+  "retrieved_at_utc": "2026-07-21T06:27:30.308274+00:00",
+  "schema_version": 1,
+  "sha256": "e2c5021406f480e813a52a2ed795c251eb1169613da6a416daf88236db8c9013"
+}

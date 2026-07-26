@@ -1,0 +1,55 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_aware_candidate_calibration_protocol_v1_20260722",
+  "status": "FROZEN_BEFORE_CANDIDATE_SPECIFIC_DEVELOPMENT_ANALYSIS",
+  "input_run": "results/execution_aware_calibration_v2/20260722T112956669678Z",
+  "input_role": "consumed development matrix; never independent holdout evidence",
+  "model": {
+    "family": "one nonnegative analytic cost formula per physical candidate",
+    "direct_winner_classifier": false,
+    "ridge_lambda_views": [0.000001, 0.0001, 0.01, 1.0],
+    "maximum_iterations_per_view": 10000,
+    "relative_objective_tolerance": 0.000001,
+    "practical_tie_fraction": 0.03,
+    "selection": "Compare candidate-specific predicted latencies only within each legal result-equivalence group.",
+    "override_rule": "Override the stable candidate only when every ridge view selects the same alternative outside the 3-percent tie band.",
+    "support_rule": "Any candidate outside its training feature envelope triggers the stable legal candidate.",
+    "governance_before_cost": true
+  },
+  "stable_legal_fallbacks": {
+    "column_pruning": "join_key_only_aggregate",
+    "mask_output": "postjoin_mask_fused_output",
+    "mask_aggregate": "postjoin_raw_materialized_mask_aggregate",
+    "mask_sorted_output": "postjoin_mask_fused_sorted_output"
+  },
+  "validation": {
+    "outer_group": "complete row_count + identifier_width + match_rate family",
+    "seed_level_leakage_allowed": false,
+    "outer_fold_count": 18,
+    "reported_metrics": [
+      "3-percent Oracle-set hit rate",
+      "mean regret",
+      "P95 regret",
+      "maximum regret",
+      "guard trigger rate",
+      "stable candidate selection rate",
+      "model override rate",
+      "fixed-fallback comparison"
+    ]
+  },
+  "predeclared_gates": {
+    "minimum_3_percent_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_regret_percent": 15.0,
+    "mean_regret_not_worse_than_fixed_fallback": true,
+    "p95_regret_not_worse_than_fixed_fallback": true,
+    "all_outer_families_reported": true
+  },
+  "decision_rule": {
+    "pass": "Freeze the candidate-specific design and construct a new unseen scenario matrix.",
+    "fail": "Retain the negative result; do not tune this consumed matrix into a fresh evaluation."
+  },
+  "analysis_command": "python -u scripts/analyze_execution_aware_candidate_calibration.py results/execution_aware_calibration_v2/20260722T112956669678Z",
+  "paper_performance_evidence": false
+}

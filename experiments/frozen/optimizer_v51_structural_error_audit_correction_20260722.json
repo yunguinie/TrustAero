@@ -1,0 +1,41 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v51_structural_error_audit_correction_20260722",
+  "status": "FACTUAL_BOUNDARY_CORRECTION",
+  "corrected_record": {
+    "path": "experiments/frozen/optimizer_v51_structural_error_audit_20260722.json",
+    "sha256": "b86ae0447abbac4eae28bb19dcffc4eb93679547aef0d0eaa133a1cad6a903c5"
+  },
+  "correction_reason": "The structural audit incorrectly described Phase 2G as an untouched independent partition for a future V6. Phase 2G was already consumed by the frozen Optimizer V3 one-shot holdout on 2026-07-21.",
+  "incorrect_phrases": [
+    "opening the independent Phase 2G partition before freezing a distinct model",
+    "freeze V6 before accessing the untouched Phase 2G partition"
+  ],
+  "corrected_boundary": "Optimizer V6 must never use Phase 2G as an independent evaluation or tuning source. If V6 is developed, its external evaluation must use a newly preregistered and demonstrably unaccessed partition. Phase 2G may only be cited as frozen evidence for Optimizer V3.",
+  "v51_scope_clarification": "V5.1 itself did not access Phase 2G or real-data labels during fitting, so the V5.1 external_partition_accessed=false field remains accurate for that run.",
+  "phase2g_v3_status": {
+    "holdout_consumed": true,
+    "holdout_gate_passes": true,
+    "paper_optimizer_evidence": true,
+    "statistically_authorized_superiority_over_v1": false,
+    "optimizer_v3_within_3_percent_rate": 1.0,
+    "optimizer_v3_mean_regret_percent": 0.07141379585649224,
+    "optimizer_v3_max_regret_percent": 1.461450530341879
+  },
+  "unchanged_findings": [
+    "V5.1 failed its frozen mean- and maximum-regret gates",
+    "severity weighting changed no final placement",
+    "the V5 mechanism prior mismatches the recorded candidate pipeline costs",
+    "another weight-only V5 revision is not authorized"
+  ],
+  "immutable_files": [
+    {
+      "path": "experiments/frozen/optimizer_v51_structural_error_audit_20260722.json",
+      "sha256": "b86ae0447abbac4eae28bb19dcffc4eb93679547aef0d0eaa133a1cad6a903c5"
+    },
+    {
+      "path": "experiments/frozen/phase2g_optimizer_v3_holdout_result_20260721.json",
+      "sha256": "7e628f1c03f3c1fbe093e7e3ca4b2d8e0d07641a26a0d1b8ea8146fbb7bcc21c"
+    }
+  ]
+}

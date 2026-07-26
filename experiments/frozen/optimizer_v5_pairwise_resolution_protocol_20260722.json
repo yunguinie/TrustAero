@@ -1,0 +1,66 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v5_pairwise_resolution_protocol_20260722",
+  "status": "FROZEN_BEFORE_MEASUREMENT",
+  "protocol_commit": "f51d4373db7233f46b01711d4afec3c25ca2a30e",
+  "scientific_question": "Can connection-isolated paired measurements resolve exactly the four V5 candidate-versus-fused comparisons that remained inconclusive in the frozen pollution-safe V2 inference?",
+  "scope": {
+    "dataset_partition": "January development partitions only",
+    "pair_count": 4,
+    "pairs": [
+      "bts-n100000::materialize-after-bts-filter",
+      "bts-n100000::materialize-after-gov-002-mask",
+      "bts-n500000::materialize-after-gov-002-mask",
+      "nyc_tlc-n500000::materialize-after-nyc-zone-join"
+    ],
+    "already_conclusive_comparisons_rerun": false,
+    "external_holdout_accessed": false
+  },
+  "measurement_protocol": {
+    "connection_isolation": "one persistent DuckDB connection per candidate within each pair",
+    "warmup_blocks_per_pair": 6,
+    "measured_blocks_per_pair": 40,
+    "candidate_executions_per_measured_block": 2,
+    "total_measured_candidate_executions": 320,
+    "order_control": "equal counts of fused-candidate and candidate-fused orders, deterministically shuffled",
+    "primary_ratio": "candidate latency divided by fused latency in the same paired block",
+    "confidence_interval": "95 percent order-stratified paired bootstrap median-ratio interval with 20000 repetitions",
+    "practical_tie_band": "plus or minus 3 percent"
+  },
+  "predeclared_decision_rules": {
+    "materially_faster": "confidence interval upper bound is below 0.97",
+    "materially_slower": "confidence interval lower bound is above 1.03",
+    "practically_equivalent": "the complete confidence interval lies within [0.97, 1.03]",
+    "inconclusive": "all other interval locations",
+    "minimum_distinct_model_eligible_units": 2,
+    "point_estimate_substitution_allowed": false
+  },
+  "governance_rule": "Apply policy-profile feasibility before constructing an optimizer label. A faster governance-illegal candidate is excluded rather than selected.",
+  "interpretation_boundary": "This protocol can authorize development labels for Optimizer V5. It is not an external holdout evaluation and cannot by itself establish final optimizer generalization.",
+  "immutable_files": [
+    {
+      "path": "experiments/configs/optimizer_v5_pairwise_resolution_v1.json",
+      "sha256": "dd2fe172f060ca3fe810d1117b2c6d29faaa2db819c04c864cfcd8ea18c1af44"
+    },
+    {
+      "path": "src/trustaero/experiments/optimizer_v5_pairwise_resolution.py",
+      "sha256": "de5fffea7007450cc975780732319004c66b70390a0085fb9ed5022916415833"
+    },
+    {
+      "path": "scripts/run_optimizer_v5_pairwise_resolution.py",
+      "sha256": "596a481b9e1374dc55ce3b28ba6ec95dc64ba0bfff96bb0a331d8653d35b8c1d"
+    },
+    {
+      "path": "tests/unit/test_optimizer_v5_pairwise_resolution.py",
+      "sha256": "356d3eb8761d5eb699d092c882b0e414f5ac69c2241eadf3dd5e5f1b637a300d"
+    },
+    {
+      "path": "experiments/frozen/optimizer_v5_calibration_v2_inference_negative_20260722.json",
+      "sha256": "98a10b791be5106010a67fcf4f20580933b16feb951fb19aa69dc2566a977219"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration_v2/20260721T135804629209Z/v5_inference.json",
+      "sha256": "49a0bc898498dd644a1f4d4c7ffeaa3ec61260e9b0ee65ab26e468b86e95aa6e"
+    }
+  ]
+}

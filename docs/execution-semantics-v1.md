@@ -23,6 +23,12 @@ contract because its comparison result depends on the session timezone.
 - `COUNT` without an input is `COUNT(*)`; other functions require an input.
 - The validator freezes numeric/comparable input restrictions and output types.
 - Aggregation does not automatically declassify sensitive data.
+- `SUM` and `AVG` additionally accept one non-nested product of two raw numeric
+  fields. This is the complete arithmetic fragment: constants, division,
+  nested arithmetic and SQL functions are not silently admitted.
+- Exact `decimal` values use canonical base-10 strings in JSON and Python
+  `Decimal` bindings. JSON numeric tokens are rejected for this type because a
+  binary float can change an inclusive database boundary such as `0.05`.
 
 ## Mask
 

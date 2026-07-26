@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch_q1_governed_semantics_and_complete_support_audit_20260719",
+  "status": "PASS",
+  "record_commit": "a70c3f9b9400829280ebaa5c072acf48d1432604",
+  "q1_source_commit": "de51a8fa06ee515c11e69d30a62205c1112cf5c8",
+  "paper_performance_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "semantic_evidence": {
+    "query_id": "Q01",
+    "official_row_count": 4,
+    "official_column_count": 10,
+    "candidate_count": 3,
+    "distinct_duckdb_plan_count": 3,
+    "all_official_schemas_equivalent": true,
+    "all_official_results_equivalent": true,
+    "candidate_result_digest": "sha256:ab3b13799ec3636d8a5c66bcd945b280ddae47a204a010371cf66c3445f7dbd4",
+    "certificate_boundary": "PARTIAL: plan, snapshot, event and source-lineage evidence are checked; unavailable database-internal execution facts remain explicitly unverified"
+  },
+  "complete_support_audit": {
+    "official_queries_executed": 22,
+    "duckdb_execution_pass_count": 22,
+    "exact_trustaero_ir_v1_supported_count": 2,
+    "exact_trustaero_ir_v1_supported_queries": ["Q01", "Q06"],
+    "unsupported_queries_retained_in_denominator": true
+  },
+  "immutable_files": [
+    {
+      "path": "results/tpch_q1_decimal_semantic_smoke/result.json",
+      "sha256": "f3ecd1430790618528eee2ca849b6732fee5905d4fc2fe57915be753b0f027ce"
+    },
+    {
+      "path": "results/tpch_sf1_support_audit_q01_q06_v3/audit.json",
+      "sha256": "3e2459f4a7460a7df41bbef21be824960fb0ad552dbcedac331d65cc2076bcdf"
+    },
+    {
+      "path": "results/tpch_sf1_support_audit_q01_q06_v3/report.md",
+      "sha256": "ed398102afc0f4f0d312591cdbd94b1c072ec5e87e9ce6a616149df7dceabb37"
+    }
+  ],
+  "scientific_boundary": "This record proves exact governed Q1 semantics and transparent 22-query support accounting on frozen TPC-H SF1. It contains no latency measurements and makes no optimizer-performance claim."
+}

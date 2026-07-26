@@ -183,6 +183,100 @@ def test_certificate_with_observed_result_digest_verifies_result_binding(
     assert result.unverified_components == ("physical_plan_execution",)
 
 
+def test_certificate_binds_independently_recomputed_planner_decision(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    """A copied digest is accepted only when trusted recomputation agrees."""
+
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    base = plan_physical_execution(plan)
+    selected = base.strategy.strategy_id
+    digest = "sha256:planner-decision"
+    physical = base.model_copy(
+        update={
+            "planner_decision_digest": digest,
+            "planner_selected_candidate_id": selected,
+        }
+    )
+    certificate = _certificate(plan, physical).model_copy(
+        update={
+            "planner_decision_digest": digest,
+            "planner_selected_candidate_id": selected,
+        }
+    )
+
+    result = verify_execution_certificate(
+        plan,
+        physical,
+        certificate,
+        observed_planner_decision_digest=digest,
+        observed_planner_selected_candidate_id=selected,
+    )
+
+    assert result.status == CertificateVerificationStatus.PARTIAL
+    assert result.diagnostics == ()
+    assert "planner_decision" not in result.unverified_components
+
+
+def test_unobserved_planner_digest_remains_explicitly_unverified(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    base = plan_physical_execution(plan)
+    selected = base.strategy.strategy_id
+    physical = base.model_copy(
+        update={
+            "planner_decision_digest": "sha256:planner-decision",
+            "planner_selected_candidate_id": selected,
+        }
+    )
+    certificate = _certificate(plan, physical).model_copy(
+        update={
+            "planner_decision_digest": "sha256:planner-decision",
+            "planner_selected_candidate_id": selected,
+        }
+    )
+
+    result = verify_execution_certificate(plan, physical, certificate)
+
+    assert result.status == CertificateVerificationStatus.PARTIAL
+    assert result.diagnostics == ()
+    assert "planner_decision" in result.unverified_components
+
+
+def test_certificate_rejects_planner_decision_binding_mismatch(
+    rewrite_plan: dict[str, Any],
+    policy_set: PolicySet,
+    catalog: InMemoryCatalog,
+) -> None:
+    plan = _validated_rewrite_plan(rewrite_plan, policy_set, catalog)
+    base = plan_physical_execution(plan)
+    selected = base.strategy.strategy_id
+    physical = base.model_copy(
+        update={
+            "planner_decision_digest": "sha256:expected",
+            "planner_selected_candidate_id": selected,
+        }
+    )
+    certificate = _certificate(plan, physical).model_copy(
+        update={
+            "planner_decision_digest": "sha256:tampered",
+            "planner_selected_candidate_id": selected,
+        }
+    )
+
+    result = verify_execution_certificate(plan, physical, certificate)
+
+    assert result.status == CertificateVerificationStatus.REJECT
+    assert ReasonCode.CERTIFICATE_PLANNER_DECISION_MISMATCH in {
+        diagnostic.code for diagnostic in result.diagnostics
+    }
+
+
 def test_certificate_rejects_observed_result_digest_mismatch(
     rewrite_plan: dict[str, Any],
     policy_set: PolicySet,

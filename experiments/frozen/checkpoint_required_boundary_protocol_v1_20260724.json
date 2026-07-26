@@ -1,0 +1,32 @@
+{
+  "protocol_id": "checkpoint-required-boundary-v1-20260724",
+  "status": "FROZEN_BEFORE_INTERMEDIATE_QUERY_SELECTIVITY_TIMINGS",
+  "scientific_role": "policy_conditioned_multifactor_necessity_gate",
+  "policy_condition": "A durable governance checkpoint is required, so fused_governed_pipeline is infeasible before cost comparison.",
+  "candidate_ids": [
+    "policy_first_narrow_checkpoint",
+    "query_first_raw_checkpoint"
+  ],
+  "matrix": {
+    "row_counts": [150000],
+    "identifier_widths": [128, 384, 640, 1024],
+    "policy_selectivities": [0.1, 0.3, 0.5],
+    "query_selectivities": [0.07, 0.1, 0.13, 0.16],
+    "seeds": [14101, 14202, 14303],
+    "scenario_count": 48,
+    "unit_count": 144,
+    "paired_blocks_per_unit": 30,
+    "total_paired_blocks": 4320
+  },
+  "selection_rationale": "Earlier frozen development results bracket the crossover between q=0.05 and q=0.20. The complete intermediate grid is fixed before observing any intermediate timing and crosses width and policy selectivity without selecting favorable cells.",
+  "admission_gates": {
+    "minimum_conclusive_scenario_rate": 0.75,
+    "require_policy_first_singleton_winner": true,
+    "require_query_first_singleton_winner": true,
+    "minimum_query_levels_with_cross_factor_winner_interaction": 1,
+    "maximum_best_global_query_threshold_accuracy": 0.9
+  },
+  "failure_policy": "Do not train a multifactor checkpoint optimizer. If a global query-selectivity threshold solves the frozen grid, retain it as the strongest simple rule and stop adding model complexity.",
+  "success_policy": "Authorize development of an interpretable p-q-width checkpoint cost boundary. This does not authorize a paper claim or access to a new real-data holdout.",
+  "paper_optimizer_performance_claim_authorized": false
+}

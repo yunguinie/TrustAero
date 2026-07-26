@@ -1,0 +1,430 @@
+{
+  "completed_units": 2,
+  "expected_units": 2,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "paper_performance_evidence": true,
+  "run_id": "20260719T051929196252Z",
+  "schema_version": 1,
+  "scientific_label": "real_data_formal_development_partition_v1",
+  "status": "PASS",
+  "units": [
+    {
+      "candidate_count": 3,
+      "candidate_summaries": {
+        "fused": {
+          "actual_cardinalities": [
+            0,
+            106251,
+            106251,
+            106251,
+            113697
+          ],
+          "certificate_status": "PARTIAL",
+          "duckdb_operator_names": [
+            "EXPLAIN_ANALYZE",
+            "PROJECTION",
+            "PROJECTION",
+            "FILTER",
+            "READ_PARQUET"
+          ],
+          "duckdb_plan_fingerprint": "sha256:65e4ab04721d1b24ea6bcb5e4b64147f8c39bdf7c7f5b5e99d41cef408ffd621",
+          "exposure": {
+            "candidate_id": "fused",
+            "masked_rows_materialized": 0,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 0
+          },
+          "max_intermediate_cardinality": 113697,
+          "max_ms": 1048.8609,
+          "median_ms": 731.8711000000001,
+          "min_ms": 532.1228,
+          "p95_ms": 965.877,
+          "peak_buffer_memory_bytes": 12338324,
+          "peak_temp_directory_bytes": 0,
+          "physical_plan_id": "pp-1b1fb59958a2b715",
+          "profile_latency_ms_single_observation": 84.82979999999999,
+          "rows_scanned": [
+            0,
+            0,
+            0,
+            0,
+            2189084
+          ]
+        },
+        "materialize-after-bts-filter": {
+          "actual_cardinalities": [
+            0,
+            106251,
+            106251,
+            0,
+            106251,
+            106251,
+            113697,
+            106251
+          ],
+          "certificate_status": "PARTIAL",
+          "duckdb_operator_names": [
+            "EXPLAIN_ANALYZE",
+            "PROJECTION",
+            "PROJECTION",
+            "CTE",
+            "PROJECTION",
+            "FILTER",
+            "READ_PARQUET",
+            "CTE_SCAN"
+          ],
+          "duckdb_plan_fingerprint": "sha256:a84920f98943029d62f6dc7253ab9e78fb59fb39d525167bbcff55b53234b57c",
+          "exposure": {
+            "candidate_id": "materialize-after-bts-filter",
+            "masked_rows_materialized": 0,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 106251
+          },
+          "max_intermediate_cardinality": 113697,
+          "max_ms": 1165.8607,
+          "median_ms": 781.0155,
+          "min_ms": 577.7769,
+          "p95_ms": 1013.0793,
+          "peak_buffer_memory_bytes": 22988286,
+          "peak_temp_directory_bytes": 0,
+          "physical_plan_id": "pp-44ace5abce148c12",
+          "profile_latency_ms_single_observation": 142.28099999999998,
+          "rows_scanned": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2189084,
+            0
+          ]
+        },
+        "materialize-after-gov-002-mask": {
+          "actual_cardinalities": [
+            0,
+            0,
+            106251,
+            106251,
+            106251,
+            113697,
+            106251
+          ],
+          "certificate_status": "PARTIAL",
+          "duckdb_operator_names": [
+            "EXPLAIN_ANALYZE",
+            "CTE",
+            "PROJECTION",
+            "PROJECTION",
+            "FILTER",
+            "READ_PARQUET",
+            "CTE_SCAN"
+          ],
+          "duckdb_plan_fingerprint": "sha256:9ab2d3c3ed047ef9de4b7cef79512d5ac9e5cdabb5887c77193a03b0d0663c48",
+          "exposure": {
+            "candidate_id": "materialize-after-gov-002-mask",
+            "masked_rows_materialized": 106251,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 0
+          },
+          "max_intermediate_cardinality": 113697,
+          "max_ms": 953.0843,
+          "median_ms": 638.1159,
+          "min_ms": 481.1493,
+          "p95_ms": 866.2816,
+          "peak_buffer_memory_bytes": 29711486,
+          "peak_temp_directory_bytes": 0,
+          "physical_plan_id": "pp-b86fdf11cb2d0364",
+          "profile_latency_ms_single_observation": 61.6354,
+          "rows_scanned": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2189084,
+            0
+          ]
+        }
+      },
+      "distinct_duckdb_plan_count": 3,
+      "full_month": true,
+      "heldout_optimizer_evidence": false,
+      "paper_performance_evidence": true,
+      "policy_profiles": {
+        "no-raw-sensitive-materialization": {
+          "feasible_candidate_ids": [
+            "fused",
+            "materialize-after-gov-002-mask"
+          ],
+          "fixed_fused_median_ms": 731.8711000000001,
+          "optimizer_selection_evaluated": false,
+          "oracle_median_ms": 638.1159,
+          "oracle_opportunity_speedup_vs_fused": 1.1469250335244743,
+          "oracle_strategy_id": "materialize-after-gov-002-mask",
+          "rejected_candidate_ids": [
+            "materialize-after-bts-filter"
+          ]
+        },
+        "output-mask-only": {
+          "feasible_candidate_ids": [
+            "fused",
+            "materialize-after-bts-filter",
+            "materialize-after-gov-002-mask"
+          ],
+          "fixed_fused_median_ms": 731.8711000000001,
+          "optimizer_selection_evaluated": false,
+          "oracle_median_ms": 638.1159,
+          "oracle_opportunity_speedup_vs_fused": 1.1469250335244743,
+          "oracle_strategy_id": "materialize-after-gov-002-mask",
+          "rejected_candidate_ids": []
+        }
+      },
+      "sample_rows": 547271,
+      "scientific_label": "real_data_formal_development_partition_v1",
+      "stage_statistics": {
+        "governed_rows": 106251,
+        "governed_selectivity": 0.19414695827113077,
+        "input_rows": 547271,
+        "temporal_rows": 245694,
+        "temporal_selectivity": 0.44894394184965036
+      },
+      "status": "PASS",
+      "unit_id": "bts-full-2024-01",
+      "verified_execution_artifacts": [
+        {
+          "artifact_id": "bts_on_time_2024_01_full",
+          "byte_size": 9077989,
+          "relative_path": "processed/bts/on_time/2024-01/bts_flights_full.parquet",
+          "row_count": 547271,
+          "sha256": "a9ac11e42c1812ac9fd3ce6885e1fce7713399426f2fd0cec7cbbc5cd1648d53"
+        }
+      ],
+      "workload": "bts"
+    },
+    {
+      "candidate_count": 3,
+      "candidate_summaries": {
+        "fused": {
+          "actual_cardinalities": [
+            0,
+            10,
+            550766,
+            550766,
+            550766,
+            550766,
+            265
+          ],
+          "certificate_status": "PARTIAL",
+          "duckdb_operator_names": [
+            "EXPLAIN_ANALYZE",
+            "HASH_GROUP_BY",
+            "PROJECTION",
+            "HASH_JOIN",
+            "PROJECTION",
+            "READ_PARQUET",
+            "READ_PARQUET"
+          ],
+          "duckdb_plan_fingerprint": "sha256:9b1e365802998583f3e41786edb5095936bdfe7c1f3e07718f5809867ec70dfe",
+          "exposure": {
+            "candidate_id": "fused",
+            "masked_rows_materialized": 0,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 0
+          },
+          "max_intermediate_cardinality": 550766,
+          "max_ms": 531.0791,
+          "median_ms": 342.01345000000003,
+          "min_ms": 237.8409,
+          "p95_ms": 433.8938,
+          "peak_buffer_memory_bytes": 58479856,
+          "peak_temp_directory_bytes": 0,
+          "physical_plan_id": "pp-c9af97dcfc0fd409",
+          "profile_latency_ms_single_observation": 410.29789999999997,
+          "rows_scanned": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            8893872,
+            265
+          ]
+        },
+        "materialize-after-nyc-filter": {
+          "actual_cardinalities": [
+            0,
+            10,
+            550766,
+            550766,
+            0,
+            550766,
+            550766,
+            556953,
+            550766,
+            265
+          ],
+          "certificate_status": "PARTIAL",
+          "duckdb_operator_names": [
+            "EXPLAIN_ANALYZE",
+            "HASH_GROUP_BY",
+            "PROJECTION",
+            "HASH_JOIN",
+            "CTE",
+            "PROJECTION",
+            "FILTER",
+            "READ_PARQUET",
+            "CTE_SCAN",
+            "READ_PARQUET"
+          ],
+          "duckdb_plan_fingerprint": "sha256:bfbbdf8c207c55b83c395ae14db26af5b71dedd4d7fe7dec391fb05b28a124fe",
+          "exposure": {
+            "candidate_id": "materialize-after-nyc-filter",
+            "masked_rows_materialized": 0,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 0
+          },
+          "max_intermediate_cardinality": 556953,
+          "max_ms": 598.1692,
+          "median_ms": 404.6185,
+          "min_ms": 299.0245,
+          "p95_ms": 565.9731,
+          "peak_buffer_memory_bytes": 70903584,
+          "peak_temp_directory_bytes": 0,
+          "physical_plan_id": "pp-f6f5539ca7fa761d",
+          "profile_latency_ms_single_observation": 672.6419999999999,
+          "rows_scanned": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8893872,
+            0,
+            265
+          ]
+        },
+        "materialize-after-nyc-zone-join": {
+          "actual_cardinalities": [
+            0,
+            10,
+            550766,
+            0,
+            550766,
+            550766,
+            550766,
+            550766,
+            265,
+            550766
+          ],
+          "certificate_status": "PARTIAL",
+          "duckdb_operator_names": [
+            "EXPLAIN_ANALYZE",
+            "HASH_GROUP_BY",
+            "PROJECTION",
+            "CTE",
+            "PROJECTION",
+            "HASH_JOIN",
+            "PROJECTION",
+            "READ_PARQUET",
+            "READ_PARQUET",
+            "CTE_SCAN"
+          ],
+          "duckdb_plan_fingerprint": "sha256:8cb2fb0b527493fdb0d409e1b19ef9d7eb033321d3fdec1b36e57aae77f11439",
+          "exposure": {
+            "candidate_id": "materialize-after-nyc-zone-join",
+            "masked_rows_materialized": 0,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 0
+          },
+          "max_intermediate_cardinality": 550766,
+          "max_ms": 614.9686,
+          "median_ms": 460.89459999999997,
+          "min_ms": 347.5658,
+          "p95_ms": 584.5798,
+          "peak_buffer_memory_bytes": 119182880,
+          "peak_temp_directory_bytes": 0,
+          "physical_plan_id": "pp-3ca195162a53f9f9",
+          "profile_latency_ms_single_observation": 545.3747,
+          "rows_scanned": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8893872,
+            265,
+            0
+          ]
+        }
+      },
+      "distinct_duckdb_plan_count": 3,
+      "full_month": true,
+      "heldout_optimizer_evidence": false,
+      "paper_performance_evidence": true,
+      "policy_profiles": {
+        "no-raw-sensitive-materialization": {
+          "feasible_candidate_ids": [
+            "fused",
+            "materialize-after-nyc-filter",
+            "materialize-after-nyc-zone-join"
+          ],
+          "fixed_fused_median_ms": 342.01345000000003,
+          "optimizer_selection_evaluated": false,
+          "oracle_median_ms": 342.01345000000003,
+          "oracle_opportunity_speedup_vs_fused": 1.0,
+          "oracle_strategy_id": "fused",
+          "rejected_candidate_ids": []
+        },
+        "output-mask-only": {
+          "feasible_candidate_ids": [
+            "fused",
+            "materialize-after-nyc-filter",
+            "materialize-after-nyc-zone-join"
+          ],
+          "fixed_fused_median_ms": 342.01345000000003,
+          "optimizer_selection_evaluated": false,
+          "oracle_median_ms": 342.01345000000003,
+          "oracle_opportunity_speedup_vs_fused": 1.0,
+          "oracle_strategy_id": "fused",
+          "rejected_candidate_ids": []
+        }
+      },
+      "sample_rows": 2964624,
+      "scientific_label": "real_data_formal_development_partition_v1",
+      "stage_statistics": {
+        "governed_rows": 550766,
+        "governed_selectivity": 0.18577937708120829,
+        "input_rows": 2964624,
+        "join_match_rate": 1.0,
+        "joined_rows": 550766,
+        "temporal_rows": 1356873,
+        "temporal_selectivity": 0.4576880575749235
+      },
+      "status": "PASS",
+      "unit_id": "nyc_tlc-full-2024-01",
+      "verified_execution_artifacts": [
+        {
+          "artifact_id": "nyc_tlc_yellow_2024_01",
+          "byte_size": 49961641,
+          "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-01.parquet",
+          "row_count": 2964624,
+          "sha256": "c4d59da7bbc8abaeeeb1727947ee93d9891a71acb42854bd80db1571b2030510"
+        },
+        {
+          "artifact_id": "nyc_tlc_taxi_zones",
+          "byte_size": 3887,
+          "relative_path": "processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+          "row_count": 265,
+          "sha256": "f29ce7251c147d9e0af7d4d2deca855d2ff618b8aef46cee9d1455df665d4988"
+        }
+      ],
+      "workload": "nyc_tlc"
+    }
+  ]
+}

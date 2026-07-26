@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "record_id": "multisource-case-study-v2-complete-loop-positive-20260726",
+  "status": "PASS_MULTISOURCE_CASE_STUDY_V2_COMPLETE_LOOP",
+  "frozen_on": "2026-07-26",
+  "source_commit": "43c4c17b9362bf0d194d5b1e86fca22a973131bd",
+  "source_git_dirty": false,
+  "protocol": {
+    "path": "experiments/frozen/multisource_case_study_v2_protocol_20260726.json",
+    "sha256": "d822e767dafcd2d6be23042e8d6b37d2a4a5458e814019dd23055f5120a87f87"
+  },
+  "agent_requests": {
+    "path": "examples/multisource/agent_requests_v2.json",
+    "sha256": "694db4bb3227078f741c996c88c54747c301d34abd234e3be0f654269efe112c"
+  },
+  "prepared_manifest": {
+    "path": "data/manifests/processed/multisource-case-v1.json",
+    "sha256": "c0427a2cee9660e2676f97e036e352223423aa7990252316b897d1db50e12959"
+  },
+  "run_id": "20260726T002619896907Z",
+  "primary_artifacts": [
+    {
+      "path": "results/multisource_case_study_v2/20260726T002619896907Z/summary.json",
+      "sha256": "6e64df529ed486ee8330d68f5323f084c1ae5e43aab335e90deba5abbddc7580"
+    },
+    {
+      "path": "results/multisource_case_study_v2/20260726T002619896907Z/agent_safe_request.json",
+      "sha256": "98b34bdb023189f2244b201c83283638098ba60af5370e419f4bbe305c9e7283"
+    },
+    {
+      "path": "results/multisource_case_study_v2/20260726T002619896907Z/agent_illegal_request.json",
+      "sha256": "a2300aa9e2b404b14c5988a75b0a36058cdd2715f88a4ccdf1b60bb6e5727eff"
+    },
+    {
+      "path": "results/multisource_case_study_v2/20260726T002619896907Z/validated_plan.json",
+      "sha256": "09e9998bb3dda153cca3256a377d0d9690d0b2a64f57751e45d8a9f8e67efc6f"
+    },
+    {
+      "path": "results/multisource_case_study_v2/20260726T002619896907Z/candidate_planning.json",
+      "sha256": "03a35da4a5e5e43e54b71a8212bf2084aa8cff532bce77a91268bb647eaa2578"
+    },
+    {
+      "path": "results/multisource_case_study_v2/20260726T002619896907Z/approved_physical_plan.json",
+      "sha256": "c605c304941008ba97af1bd4c8288dbd99040213d01b30ebec6b0e5970596672"
+    },
+    {
+      "path": "results/multisource_case_study_v2/20260726T002619896907Z/certificate.json",
+      "sha256": "227eee396bb76f433c9d972baf533adee2713cb9673091c68703df1427558d5b"
+    },
+    {
+      "path": "results/multisource_case_study_v2/20260726T002619896907Z/report.md",
+      "sha256": "77737b1ccad2ee33bdb1c5bf4734c6a8b1433228123bf02817d31f4a6c3847ea"
+    }
+  ],
+  "observations": {
+    "safe_agent_status": "REWRITE",
+    "illegal_agent_status": "REJECT",
+    "illegal_agent_reason": "POLICY_NOT_APPLICABLE",
+    "generated_physical_candidates": 4,
+    "policy_rejected_candidates": 3,
+    "selected_candidate": "materialize-after-gov-001-mask",
+    "planner_decision_digest": "sha256:9512a5059ab998a3760a710830c9d30ff188baa12f6495e12edc586e72812b03",
+    "governed_output_rows": 9128,
+    "raw_sensitive_exposure_rows": 0,
+    "lineage_level": "source",
+    "lineage_source_count": 4,
+    "certificate_status": "PARTIAL",
+    "certificate_diagnostics": 0,
+    "faults_injected": 6,
+    "faults_rejected": 6
+  },
+  "authorized_claim": "TrustAero transformed one safe Agent candidate into a governed Pl, rejected a policy-inapplicable Agent request, generated four Pp candidates, pruned three policy-incompatible candidates before ranking, selected and planner-bound the sole legal Mask-before-checkpoint Pp, executed it over four audited public sources, and independently rejected result, policy, data, lineage, event-DAG, and planner-decision faults.",
+  "boundary": "This is complete-loop semantic system evidence, not optimizer latency evidence. The optimizer decision is governance-determined because only one candidate remains legal. Source lineage covers four contributing scans; ordinal record Lineage V4 remains a separately evaluated single-source identity-preserving fragment. Certificate PARTIAL does not cryptographically attest every DuckDB-internal operator output."
+}

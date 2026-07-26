@@ -1,0 +1,16 @@
+{
+  "protocol_id": "multicandidate-optimizer-admission-v1-20260724",
+  "status": "FROZEN_BEFORE_NEW_MULTICANDIDATE_TIMINGS",
+  "purpose": "Prevent another optimizer from memorizing workload identity or a fixed baseline.",
+  "hard_requirements": [
+    "At least three semantic-ready query families expose three or more candidates.",
+    "All bound performance sources passed their frozen acceptance protocols.",
+    "Both baseline and non-baseline singleton winners exist globally.",
+    "At least one three-or-more-candidate family has two different singleton winners across predeclared strata.",
+    "Governance changes at least one legal candidate set.",
+    "Bidirectional checkpoint reversal exists in development and real distributions."
+  ],
+  "failure_policy": "Do not fit the multi-candidate optimizer. Add no performance-driven query template. Extend one already governance-frozen family and rerun this audit only after a separately frozen development measurement.",
+  "success_policy": "Authorize implementation and grouped development validation of one unified multi-candidate optimizer; do not authorize a paper performance claim or access a new final holdout.",
+  "paper_optimizer_performance_claim_authorized": false
+}

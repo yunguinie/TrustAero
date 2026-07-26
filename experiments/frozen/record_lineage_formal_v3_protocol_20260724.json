@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-record-lineage-formal-v3-20260724",
+  "phase": "formal_record_lineage_scalability",
+  "admission_record": {
+    "path": "experiments/frozen/record_lineage_database_v3_pilot_positive_20260724.json",
+    "sha256": "4133f7ab9f49caccf78baee4f35467c76b905a4441e6408c919904930ddff4c2"
+  },
+  "measurement_config": {
+    "path": "experiments/configs/record_lineage_formal_v3.json",
+    "sha256": "b82ff410e4943af233a023f434e66506a76d935b6b0d7623819a1d508f03a52e"
+  },
+  "evaluation_config": {
+    "path": "experiments/configs/record_lineage_formal_evaluation_v3.json",
+    "sha256": "49821b2b51301abc55c532cf9833d3e33841affebaf537db89b6a4a430f69859"
+  },
+  "measurement_design": {
+    "row_counts": [
+      100000,
+      500000
+    ],
+    "paired_blocks_per_scale": 30,
+    "executions_per_scale": 60,
+    "warmup_rounds_per_variant": 3,
+    "execution_orders": [
+      "direct_query -> record_lineage",
+      "record_lineage -> direct_query"
+    ],
+    "artifact_encoding": "duckdb_digest_v3"
+  },
+  "predeclared_gates": {
+    "confidence_level": 0.95,
+    "bootstrap_repetitions": 5000,
+    "maximum_position_median_spread_fraction": 0.3,
+    "maximum_half_ratio_drift_fraction": 0.2,
+    "maximum_bytes_per_edge": 65.0,
+    "all_results_equivalent": true,
+    "all_record_evidence_verified": true
+  },
+  "decision_policy": [
+    "The evaluator may authorize a measured overhead even when that overhead is large.",
+    "A point estimate without the frozen paired confidence interval cannot authorize a paper claim.",
+    "Any failed integrity or stability gate retains the run as negative evidence and requires diagnosis before rerun.",
+    "No threshold may be changed after viewing the formal measurements."
+  ],
+  "scientific_boundary": [
+    "Single source and one unique, non-null, unmasked STRING record key.",
+    "Join, Aggregate, SpatialJoin, composite keys, and non-STRING keys are unsupported.",
+    "This experiment measures record-evidence construction and verification, not the broader optimizer."
+  ]
+}

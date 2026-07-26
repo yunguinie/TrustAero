@@ -1,0 +1,97 @@
+{
+  "all_official_result_equivalent": true,
+  "artifact_sha256": "64a709fa8f995aeae23ffe6305a47e77c97113c823974a3f6a6933b8d05a0b22",
+  "candidate_count": 3,
+  "candidates": [
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "PROJECTION",
+        "ORDER_BY",
+        "PROJECTION",
+        "PROJECTION",
+        "PERFECT_HASH_GROUP_BY",
+        "PROJECTION",
+        "PROJECTION",
+        "PROJECTION",
+        "SEQ_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:ecb3afe8505928801633ce99b4982c8fc9a017315850c0c619b11241422df1f5",
+      "materialize_after": [],
+      "official_result_equivalent": true,
+      "physical_plan_id": "pp-412753ce6efc5483",
+      "result_digest": "sha256:ab3b13799ec3636d8a5c66bcd945b280ddae47a204a010371cf66c3445f7dbd4",
+      "row_count": 4,
+      "strategy_id": "fused"
+    },
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "ORDER_BY",
+        "HASH_GROUP_BY",
+        "PROJECTION",
+        "PROJECTION",
+        "CTE",
+        "PROJECTION",
+        "SEQ_SCAN",
+        "CTE_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:5c13d703c97554ef1f181595b291b4bd4bf58c84dfcf1d9fabfb14fd292df214",
+      "materialize_after": [
+        "q01-filter"
+      ],
+      "official_result_equivalent": true,
+      "physical_plan_id": "pp-4e845a7f05e2cba0",
+      "result_digest": "sha256:ab3b13799ec3636d8a5c66bcd945b280ddae47a204a010371cf66c3445f7dbd4",
+      "row_count": 4,
+      "strategy_id": "materialize-after-q01-filter"
+    },
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "ORDER_BY",
+        "CTE",
+        "PROJECTION",
+        "PERFECT_HASH_GROUP_BY",
+        "PROJECTION",
+        "PROJECTION",
+        "PROJECTION",
+        "SEQ_SCAN",
+        "CTE_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:5829eb103d3647807b469082e4ef8b8dceb449c684d4da55086be3a8facaeab5",
+      "materialize_after": [
+        "q01-aggregate"
+      ],
+      "official_result_equivalent": true,
+      "physical_plan_id": "pp-c57e9963e9a701d6",
+      "result_digest": "sha256:ab3b13799ec3636d8a5c66bcd945b280ddae47a204a010371cf66c3445f7dbd4",
+      "row_count": 4,
+      "strategy_id": "materialize-after-q01-aggregate"
+    }
+  ],
+  "distinct_duckdb_plan_count": 3,
+  "official_columns": [
+    "l_returnflag",
+    "l_linestatus",
+    "sum_qty",
+    "sum_base_price",
+    "sum_disc_price",
+    "sum_charge",
+    "avg_qty",
+    "avg_price",
+    "avg_disc",
+    "count_order"
+  ],
+  "official_row_count": 4,
+  "paper_performance_evidence": false,
+  "purpose": "Official TPC-H SF1 Q1 governed semantic smoke; no performance timing",
+  "query_id": "Q01",
+  "raw_sql_bypass_used": false,
+  "schema_version": 1,
+  "semantic_contract": "bounded_decimal_formula_and_sort_v1",
+  "source_commit": "de51a8fa06ee515c11e69d30a62205c1112cf5c8",
+  "source_dirty": false,
+  "status": "PASS",
+  "validation_status": "REWRITE"
+}

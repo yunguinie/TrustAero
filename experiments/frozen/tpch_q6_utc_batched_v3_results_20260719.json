@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch_q6_exact_decimal_utc_batched_v3_results_20260719",
+  "status": "PASS",
+  "source_commit": "e528fa24e45282bd6340b210d28f7dc8ec1ff47e",
+  "run_id": "20260719T135554438475Z",
+  "formal_paper_experiment_authorized": true,
+  "paper_performance_evidence": true,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "semantic_preflight": {
+    "official_result_equivalent": true,
+    "official_revenue_decimal": "123141078.2283",
+    "governed_rows": 114160,
+    "input_rows": 6001215,
+    "candidate_count": 3,
+    "distinct_duckdb_plans": 3,
+    "duckdb_timezone": "UTC"
+  },
+  "paired_results": {
+    "fused_median_ms": 152.24505,
+    "fused_p95_ms": 196.6222,
+    "materialize_after_predicate_median_ms": 168.3948,
+    "materialize_after_predicate_over_fused": 1.1692505927464367,
+    "materialize_after_time_median_ms": 683.6578,
+    "materialize_after_time_over_fused": 4.671674444203669,
+    "diagnostic_oracle_set_within_3_percent": ["fused"]
+  },
+  "gates": {
+    "integrity_all_passed": true,
+    "absolute_half_drift_passed": true,
+    "paired_ratio_half_drift_passed": true,
+    "paired_ratio_outlier_fraction_passed": true,
+    "all_six_permutations_balanced": true,
+    "all_positions_balanced": true,
+    "disk_spill_bytes": 0
+  },
+  "immutable_files": [
+    {"path": "results/tpch_q6_utc_batched_v3/20260719T135554438475Z/acceptance.json", "sha256": "97b5d62c565f2af83a8be90e6f3fddd26bbd55a2bab0012c68e8c4575d607c2f"},
+    {"path": "results/tpch_q6_utc_batched_v3/20260719T135554438475Z/config.json", "sha256": "5ebfbc76552ce0cc4eb846c9d0e6252855eec3fe426c33174a5080be3c4a1911"},
+    {"path": "results/tpch_q6_utc_batched_v3/20260719T135554438475Z/environment.json", "sha256": "8c4de5f954f72a15b54b094165e01f5b6f72a0d2a0658bff96e85d8e4e7e29f7"},
+    {"path": "results/tpch_q6_utc_batched_v3/20260719T135554438475Z/measurements.csv", "sha256": "dc91d7a478d5872f6733c0adde2e1572c2ace5eab82d35394a14f2c95381b269"},
+    {"path": "results/tpch_q6_utc_batched_v3/20260719T135554438475Z/progress.json", "sha256": "8ed3418929f0f6535b7cb1a4f1b8984e51fe0ba83b20f90463b95c29a7659212"},
+    {"path": "results/tpch_q6_utc_batched_v3/20260719T135554438475Z/report.md", "sha256": "99120e5d91dd2424900210ffa8b5a1b384e59cbe07fc4f3a30b250e5a2f93106"},
+    {"path": "results/tpch_q6_utc_batched_v3/20260719T135554438475Z/summary.json", "sha256": "2f4ec78850d24293e9aee4c5e068ec82e052b1aa3980a62009563822d9fd77d9"}
+  ],
+  "scientific_boundary": "This is stable standard-benchmark method evidence for one supported TPC-H query. Fused is the post-hoc diagnostic Oracle for Q6. No optimizer was evaluated and Q6 alone cannot establish workload-wide optimizer accuracy."
+}

@@ -1,0 +1,24 @@
+{
+  "results_dir": "results/governed_aggregate_admission_smoke_v1",
+  "row_count": 10000,
+  "identifier_width": 128,
+  "policy_selectivities": [0.5],
+  "query_selectivities": [0.5],
+  "key_domain_fractions": [0.01, 0.5],
+  "seeds": [27101, 27202, 27303],
+  "candidate_ids": [
+    "join_then_aggregate",
+    "partial_aggregate_then_join"
+  ],
+  "warmup_rounds_per_permutation": 1,
+  "measured_rounds_per_permutation": 5,
+  "duckdb_threads": 1,
+  "duckdb_memory_limit_mb": 512,
+  "order_seed": 26072621,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 2000,
+  "bootstrap_seed": 26072622,
+  "minimum_conclusive_scenario_rate": 0.0,
+  "require_clean_git": false
+}

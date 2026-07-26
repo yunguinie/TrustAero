@@ -1,0 +1,62 @@
+{
+  "status": "PASS_SYSTEM_SCALABILITY_MEASUREMENT_INTEGRITY",
+  "scientific_role": "500K scale integrity and formal-stage admission; not publication latency evidence",
+  "run_path": "results/system_scalability_500k_pilot_v1/20260724T130111069920Z",
+  "measurement_commit": "7499e516ace795804454c2a2f3357e3f46732b13",
+  "bound_artifacts": {
+    "summary": {
+      "path": "results/system_scalability_500k_pilot_v1/20260724T130111069920Z/summary.json",
+      "sha256": "10b769ea15b7ec741f5117668eb4e3c01ca98bd47c350964ab3dc4586148fc58"
+    },
+    "environment": {
+      "path": "results/system_scalability_500k_pilot_v1/20260724T130111069920Z/environment.json",
+      "sha256": "10c21253ec82fa2e4521881314815e784b16542c37492ac0c16615526b383c70"
+    },
+    "measurements": {
+      "path": "results/system_scalability_500k_pilot_v1/20260724T130111069920Z/measurements.csv",
+      "sha256": "29fab1b717f7c21a1d6cc389227a14a87f8e7b29a6fa6dd7dbb9b5b271b81ec6"
+    },
+    "bts_unit": {
+      "path": "results/system_scalability_500k_pilot_v1/20260724T130111069920Z/units/bts-500000.json",
+      "sha256": "784a919bab2fde7fe2e91b3e5dfca073992601a6f3643cfcdfa2fcb24df160ed"
+    },
+    "nyc_unit": {
+      "path": "results/system_scalability_500k_pilot_v1/20260724T130111069920Z/units/nyc_tlc-500000.json",
+      "sha256": "f45850db64d051ee98ed0f76711c13ad4ba43c08acc55d0bee1c77654d6ecf9b"
+    }
+  },
+  "integrity": {
+    "datasets": 2,
+    "input_rows_per_dataset": 500000,
+    "measurement_count": 24,
+    "paired_blocks_per_dataset": 3,
+    "result_digest_count_per_dataset": 1,
+    "source_lineage_edge_digest_count_per_dataset": 1,
+    "certificate_observation_count": 6,
+    "certificate_statuses": [
+      "PARTIAL"
+    ],
+    "duckdb_spill_bytes": 0,
+    "git_dirty": false,
+    "optimizer_refit_or_retune_performed": false
+  },
+  "profiles": {
+    "bts": {
+      "output_rows": 97082,
+      "max_intermediate_rows": 103849,
+      "duckdb_peak_buffer_memory_bytes": 12401420
+    },
+    "nyc_tlc": {
+      "output_rows": 10,
+      "max_intermediate_rows": 93127,
+      "duckdb_peak_buffer_memory_bytes": 42047756
+    }
+  },
+  "authorized_conclusion": "The four-layer runner remains semantically and evidentially consistent at 500K rows on BTS and NYC, records no DuckDB spill, and is admitted to a separately frozen 30-block formal real-data scaling stage.",
+  "boundaries": [
+    "Three measured blocks test scale integrity but do not authorize latency claims.",
+    "The implemented instrumentation is source-snapshot lineage, not record-level lineage.",
+    "Certificate status PARTIAL is the declared current verification boundary.",
+    "Formal measurements must use a new clean commit and predeclared stability gates."
+  ]
+}

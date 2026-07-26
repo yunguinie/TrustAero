@@ -1,0 +1,17 @@
+{
+  "results_dir": "results/system_scalability_bts100_confirmation_v1",
+  "workloads": [
+    {
+      "dataset": "bts",
+      "scales": [100000]
+    }
+  ],
+  "warmup_blocks": 8,
+  "measured_blocks": 48,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260727,
+  "require_clean_git": true,
+  "experiment_role": "system_scalability_governance_confirmation",
+  "ordering_design": "complete_permutation_cycles"
+}

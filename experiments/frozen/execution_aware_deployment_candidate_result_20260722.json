@@ -1,0 +1,23 @@
+{
+  "recorded_at": "2026-07-22",
+  "source_commit": "ee45897e1ccfdf30254639c01e26bf9bb555626b",
+  "source_result": "results/execution_aware_calibration_v2/20260722T112956669678Z/execution_aware_deployment_candidate_calibration.json",
+  "source_result_sha256": "c15c7564c34e44bb10a357313af0183372aedda43fa1c0ab1dd9ae7327739656",
+  "status": "FAIL_CANDIDATE_SPECIFIC_CALIBRATION_RETAIN",
+  "candidate_specific": {
+    "oracle_set_hit_rate": 0.932,
+    "mean_regret_percent": 1.038,
+    "p95_regret_percent": 3.779,
+    "maximum_regret_percent": 59.977,
+    "guard_rate": 0.148,
+    "override_rate": 0.037
+  },
+  "fixed_fallback": {
+    "oracle_set_hit_rate": 0.926,
+    "mean_regret_percent": 1.268,
+    "p95_regret_percent": 3.887,
+    "maximum_regret_percent": 59.977
+  },
+  "interpretation": "The adaptive model improves hit rate, mean regret, and P95 regret over the deployable fixed fallback, but it fails the pre-registered maximum-regret gate. Both methods share the same maximum-regret case.",
+  "paper_evidence": false
+}

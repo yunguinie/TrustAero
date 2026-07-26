@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "freeze_scope": "bts_full_month_natural_multijoin_protocol_before_measurement",
+  "status": "FROZEN",
+  "query_family_id": "QF-BTS-NATURAL-MULTIJOIN",
+  "candidate_count": 4,
+  "execution_order_permutation_count": 24,
+  "measured_blocks": 48,
+  "timed_candidate_executions": 192,
+  "paper_performance_evidence_authorized_after_runtime_gates": true,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "immutable_files": [
+    {
+      "path": "experiments/configs/bts_multijoin_formal_v1.json",
+      "sha256": "4eb9954d4b9d520b983bda03f7bc7e47e459647aee19332d2f094775ef574432"
+    },
+    {
+      "path": "experiments/configs/real_data_query_families_v1.json",
+      "sha256": "1f1ac460f346b1f660aef0b98fe9a6d92c45fb9bad14765c542e39ac947e9425"
+    },
+    {
+      "path": "data/manifests/processed/bts-multijoin-semantic-smoke.json",
+      "sha256": "e01857191eef039f9c0f609f2e31e30a2d708efb369146ce62591d095077c7db"
+    }
+  ],
+  "scientific_boundary": "Four candidates require all 24 permutations, each repeated twice. January is a development partition and the diagnostic Oracle is not optimizer selection."
+}

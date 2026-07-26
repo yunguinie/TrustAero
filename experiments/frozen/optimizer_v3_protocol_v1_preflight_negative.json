@@ -1,0 +1,31 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "optimizer_v3_protocol_v1_feasibility_preflight_not_phase2g",
+  "protocol_commit": "5f77468",
+  "status": "rejected_before_formal_development_evaluation",
+  "phase2g_authorized": false,
+  "formal_v3_evaluation_executed": false,
+  "source_family_count": 40,
+  "preflight_findings": {
+    "ridge_values_checked": [0.0, 0.01, 0.1, 1.0],
+    "nonzero_shared_physical_terms": ["log_hash_input_bytes"],
+    "collapsed_physical_terms": [
+      "log_join_input_bytes",
+      "log_masked_materialization_bytes"
+    ],
+    "direct_early_decisions_after_predeclared_uncertainty_guard": 0,
+    "required_direct_early_and_late_decisions": true
+  },
+  "decision": "reject_v1_basis_and_version_the_protocol_before_implementation",
+  "immutable_files": [
+    {
+      "path": "docs/optimizer-v3-development-protocol.md",
+      "sha256": "99ac35bcc170fa8dd918d38c2bb8f6bc3018cf9349f32a6288277ac2dc0b4cb8"
+    },
+    {
+      "path": "experiments/configs/optimizer_v3_development_v1.json",
+      "sha256": "5a4b35e0d9eaca51bbcfce0e96d839950f8fb1443eeb752fa4ba2fd979c2c2cb"
+    }
+  ],
+  "interpretation": "The three-term shared physical basis cannot represent the observed rows-width-match interaction and is structurally unable to pass its own direct-decision gate. This cheap development-only feasibility check prevents an expensive, predetermined failure; it is not a holdout result."
+}

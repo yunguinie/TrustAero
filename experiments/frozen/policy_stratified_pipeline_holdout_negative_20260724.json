@@ -1,0 +1,42 @@
+{
+  "status": "FAIL_POLICY_STRATIFIED_PIPELINE_OPTIMIZER_HOLDOUT_RETAIN",
+  "measurement_run": "results/policy_stratified_pipeline_holdout_measurement_v1/20260724T094318843802Z",
+  "measurement_summary_sha256": "f1fe28f789ea68a0ab5fa224bd4538b68f7a9c3a6725d77ffc951d1b697ae674",
+  "evaluation_path": "results/policy_stratified_pipeline_holdout_evaluation_v1/20260724T094318843802Z/evaluation.json",
+  "evaluation_sha256": "26d4ff4659763a95963a220d856097f7d20b5633f922f60b0ac23db93b4d2d6c",
+  "failed_gates": [
+    "maximum_primary_p95_regret_percent",
+    "maximum_primary_regret_percent"
+  ],
+  "optimizer_metrics": {
+    "oracle_set_hit_rate": 0.8645833333333334,
+    "mean_regret_percent": 2.717614452606954,
+    "p95_regret_percent": 20.681242106975816,
+    "maximum_regret_percent": 23.013043288858604
+  },
+  "best_fixed_policy_first_metrics": {
+    "oracle_set_hit_rate": 0.7395833333333334,
+    "mean_regret_percent": 5.1757699847759,
+    "p95_regret_percent": 20.85566005995103,
+    "maximum_regret_percent": 23.013043288858604
+  },
+  "root_cause_audit": {
+    "model_ranked_decisions": 74,
+    "model_ranked_oracle_set_hit_rate": 1.0,
+    "model_ranked_mean_regret_percent": 0.13885376050881093,
+    "model_ranked_p95_regret_percent": 1.1496653969831794,
+    "model_ranked_maximum_regret_percent": 1.9124117701350363,
+    "out_of_support_fallback_decisions": 22,
+    "fallback_oracle_set_hit_rate": 0.4090909090909091,
+    "fallback_mean_regret_percent": 11.394901792911504,
+    "fallback_p95_regret_percent": 20.779123605113515,
+    "fallback_maximum_regret_percent": 23.013043288858604,
+    "cause": "The production support check treated the nominal 0.700000 policy-selectivity boundary as exact. Sample-derived rates of 0.700008-0.703492 triggered conservative fallback. The earlier synthetic evaluator bypassed the production support path even though its observed rate reached 0.702508."
+  },
+  "scientific_decision": [
+    "The failed holdout remains negative evidence and is never reclassified.",
+    "The frozen cost coefficients and 3% practical-tie rule are not changed.",
+    "The next planner version may replace the exact selectivity wall with a predeclared sample-size-derived confidence tolerance.",
+    "Any revised planner requires a new holdout on months not used by this result."
+  ]
+}

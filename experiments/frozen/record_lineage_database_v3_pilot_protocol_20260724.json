@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-record-lineage-database-v3-pilot-20260724",
+  "phase": "record_lineage_database_assisted_development",
+  "v2_positive_record": {
+    "path": "experiments/frozen/record_lineage_compact_v2_pilot_positive_20260724.json",
+    "sha256": "0d2a3a326fd71c216d37fcdbeb55b5f9680a064ae02c7b02f1a03d0d1cb3ba67"
+  },
+  "measurement_config": {
+    "path": "experiments/configs/record_lineage_database_pilot_v3.json",
+    "sha256": "8c1f2082af9a618efdeb7bff779df4a1dc9043ac65587a0b433d83b93f0e8729"
+  },
+  "scope": {
+    "source_count": 1,
+    "key_column_count": 1,
+    "key_type": "STRING",
+    "required_key_properties": [
+      "projected",
+      "non-null",
+      "unique",
+      "unmasked"
+    ],
+    "unsupported_fragments": [
+      "Join",
+      "Aggregate",
+      "SpatialJoin",
+      "multiple record key columns",
+      "non-STRING record keys"
+    ]
+  },
+  "implementation_change": [
+    "DuckDB computes two hidden 32-byte SHA-256 record digests per output row.",
+    "Hidden instrumentation columns are stripped before the visible result and result digest are constructed.",
+    "Python assembles the fixed 64-byte edge payload and independently verifies it from visible keys."
+  ],
+  "integrity_gates": [
+    "All paired direct and record-lineage result digests must agree.",
+    "All V3 evidence artifacts must pass independent recomputation.",
+    "No hidden instrumentation column may appear in the user-visible result.",
+    "Artifact storage must remain approximately 64 bytes per record edge."
+  ],
+  "decision_policy": [
+    "V3 remains a bounded development pilot and is not paper performance evidence.",
+    "Advance to formal 100K/500K record-lineage scaling only if V3 preserves integrity and materially lowers V2 capture cost.",
+    "A slower or equivalent V3 result is retained as a negative result and does not authorize threshold tuning."
+  ]
+}

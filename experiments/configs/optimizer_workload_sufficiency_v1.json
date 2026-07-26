@@ -1,0 +1,22 @@
+{
+  "protocol_name": "optimizer_workload_discriminative_sufficiency_v1",
+  "results_dir": "results/optimizer_workload_sufficiency",
+  "paired_stability_audit_path": "results/optimizer_v4_calibration_development/20260721T184427124750+0800/paired_stability_audit.json",
+  "paired_stability_audit_sha256": "bff08a26ecb296fe6d3facb5eea557540cc6f37b6f1c2a88f1e16f0a246767d3",
+  "v41_result_path": "results/optimizer_v41_development/20260721T122941014452Z/cross_validation.json",
+  "v41_result_sha256": "d5ef029d71da134c0261fd193949299326ad3efa5e1d7518612503ec94eb63ca",
+  "query_template_ids": [
+    "bts_mask_join_sort_materialization"
+  ],
+  "require_clean_git": true,
+  "gates": {
+    "minimum_stable_family_count": 40,
+    "minimum_query_template_count": 2,
+    "minimum_fixed_match_rate_reversal_strata": 1,
+    "maximum_match_rate_baseline_top1": 0.95,
+    "minimum_identifier_width_levels": 4,
+    "minimum_complete_time_groups": 4
+  },
+  "scientific_boundary": "This audit evaluates only whether the frozen January development workload is discriminative enough to support a pipeline-aware optimizer claim. It fits no model, changes no labels, and accesses no February-December data. Failure requires workload expansion before another optimizer version; it does not authorize post-hoc threshold tuning."
+}
+

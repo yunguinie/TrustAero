@@ -1,0 +1,136 @@
+{
+  "approved_dag_places_mask_before_join": true,
+  "candidate_count": 2,
+  "candidates": [
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "PROJECTION",
+        "PROJECTION",
+        "HASH_JOIN",
+        "PROJECTION",
+        "READ_PARQUET",
+        "READ_PARQUET"
+      ],
+      "duckdb_plan_fingerprint": "sha256:20d29d34c89e35e0dd3baad7de57abb3f96b6fb455e8e48f057d00a7d0e7c50b",
+      "execution_mode": "fused",
+      "exposure": {
+        "candidate_id": "fused",
+        "masked_rows_materialized": 0,
+        "raw_rows_exposed_to_join": 19447,
+        "raw_rows_materialized": 0
+      },
+      "observed_projection_boundary": {
+        "projection_nodes_above_join": 2,
+        "projection_nodes_in_fact_subtree": 1
+      },
+      "output_row_count": 19447,
+      "physical_plan_id": "pp-f3d31a47dd9b2c54",
+      "semantic_result_digest": "sha256:89ecd3d22dea26da5cfe36de9e10b4c233259373f6b7ff3a5849d072fd816097",
+      "strategy_id": "fused"
+    },
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "PROJECTION",
+        "HASH_JOIN",
+        "PROJECTION",
+        "PROJECTION",
+        "READ_PARQUET",
+        "READ_PARQUET"
+      ],
+      "duckdb_plan_fingerprint": "sha256:c401d25d3a429e348aae8207a82f7c2a90c4a66cc5a7f3129efc299237caf90b",
+      "execution_mode": "governance_placed",
+      "exposure": {
+        "candidate_id": "place-002-mask-after-bts-mp-project",
+        "masked_rows_materialized": 0,
+        "raw_rows_exposed_to_join": 0,
+        "raw_rows_materialized": 0
+      },
+      "observed_projection_boundary": {
+        "projection_nodes_above_join": 1,
+        "projection_nodes_in_fact_subtree": 2
+      },
+      "output_row_count": 19447,
+      "physical_plan_id": "pp-0fda110023817a9b",
+      "semantic_result_digest": "sha256:89ecd3d22dea26da5cfe36de9e10b4c233259373f6b7ff3a5849d072fd816097",
+      "strategy_id": "place-002-mask-after-bts-mp-project"
+    }
+  ],
+  "distinct_duckdb_plan_count": 2,
+  "duckdb_boundary_direction_observed": true,
+  "filtered_rows_entering_join": 19447,
+  "governance_profiles": {
+    "no-raw-sensitive-join": {
+      "decisions": [
+        {
+          "candidate_id": "fused",
+          "diagnostics": [
+            {
+              "allowed_rows": 0,
+              "candidate_id": "fused",
+              "code": "CANDIDATE_RAW_JOIN_LIMIT_EXCEEDED",
+              "exposure_kind": "raw_join",
+              "observed_rows": 19447
+            }
+          ],
+          "is_feasible": false
+        },
+        {
+          "candidate_id": "place-002-mask-after-bts-mp-project",
+          "diagnostics": [],
+          "is_feasible": true
+        }
+      ],
+      "feasible_candidate_ids": [
+        "place-002-mask-after-bts-mp-project"
+      ],
+      "rejected_candidate_ids": [
+        "fused"
+      ],
+      "status": "ACCEPT"
+    },
+    "raw-join-permitted": {
+      "decisions": [
+        {
+          "candidate_id": "fused",
+          "diagnostics": [],
+          "is_feasible": true
+        },
+        {
+          "candidate_id": "place-002-mask-after-bts-mp-project",
+          "diagnostics": [],
+          "is_feasible": true
+        }
+      ],
+      "feasible_candidate_ids": [
+        "fused",
+        "place-002-mask-after-bts-mp-project"
+      ],
+      "rejected_candidate_ids": [],
+      "status": "ACCEPT"
+    }
+  },
+  "paper_performance_evidence": false,
+  "purpose": "BTS native Mask/Join placement semantic smoke; no timing",
+  "sample_rows": 100000,
+  "schema_version": 1,
+  "status": "PASS",
+  "strict_policy_forces_early_mask": true,
+  "verified_execution_artifacts": [
+    {
+      "artifact_id": "bts_on_time_2024_01_100000",
+      "byte_size": 2374449,
+      "relative_path": "processed/bts/on_time/2024-01/bts_flights_100000.parquet",
+      "row_count": 100000,
+      "sha256": "29c47a4a8f0f344bc810e469c4ae32987f781b2a213bb0984090d3e45b0bde8d"
+    },
+    {
+      "artifact_id": "bts_on_time_2024_01_airports",
+      "byte_size": 5380,
+      "relative_path": "processed/bts/on_time/2024-01/bts_airports.parquet",
+      "row_count": 334,
+      "sha256": "bccde61193c804f2a11fd4148e58f30187bd0a0461bf4b1b15b771c1b40c4a3c"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_REAL_BOUNDARY_DEVELOPMENT_RESULT",
+  "measurement_run": "results/real_governed_checkpoint_boundary_development_v2_1/20260723T053949407935Z",
+  "summary_sha256": "bf03ae421cbe2a66217b060b9f74b76615204eda8a149ba1cea4230f934d6efd",
+  "measurements_sha256": "ec6600dd2430c8f4102778b9732057eef1128dbae5ef0d77f9ca65f3a0075322",
+  "measurement_integrity": "PASS_EA1_REAL_MECHANISM_DEVELOPMENT_INTEGRITY",
+  "reversal_discovery": "STABLE_BIDIRECTIONAL_REVERSAL_DISCOVERED",
+  "scenario_count": 24,
+  "unit_count": 72,
+  "paired_block_count": 2160,
+  "observed_plan_directions": {
+    "policy_first_stable_families": 6,
+    "query_first_stable_families": 10,
+    "inconclusive_families": 8
+  },
+  "v31_diagnostic": {
+    "confidence_family_hit_rate": 0.5833333333333334,
+    "mean_regret_percent": 20.82369006014329,
+    "p95_regret_percent": 69.50515166950795,
+    "max_regret_percent": 97.03288727897983
+  },
+  "best_development_threshold_diagnostic": {
+    "threshold_interval": "0.35-0.40",
+    "confidence_family_hit_rate": 1.0,
+    "mean_regret_percent": 0.348172652562608,
+    "p95_regret_percent": 2.758816914009321,
+    "max_regret_percent": 11.721807909148897
+  },
+  "interpretation": "The real winner boundary lies between roughly 30% and 40% query selectivity at 150K rows. Width and policy selectivity change advantage magnitude and confidence, while V3.1 switches to policy-first too early.",
+  "paper_optimizer_performance_claim_authorized": false
+}

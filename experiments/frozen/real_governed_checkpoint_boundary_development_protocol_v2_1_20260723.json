@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "frozen_at_utc": "2026-07-23T05:30:00+00:00",
+  "status": "FROZEN_BEFORE_BOUNDARY_TIMING_RESULTS",
+  "scientific_role": "real_mechanism_development",
+  "optimizer_performance_claim_authorized": false,
+  "source_months": {
+    "bts": ["2024-04"],
+    "nyc_tlc": ["2024-05"]
+  },
+  "source_months_already_classified_as_development": true,
+  "factorial": {
+    "identifier_widths": [128, 1024],
+    "policy_selectivities": [0.10, 0.50],
+    "query_selectivities": [0.20, 0.30, 0.40],
+    "complete_cartesian_product": true,
+    "profile_count_per_source": 12,
+    "seeds": [10101, 10202, 10303],
+    "row_count_per_unit": 150000
+  },
+  "timing": {
+    "paired_blocks_per_unit": 30,
+    "complete_candidate_permutations": true,
+    "threads": 1,
+    "memory_limit_mb": 4096,
+    "resume_granularity": "complete unit"
+  },
+  "questions": [
+    "Does the winner change inside the 20%-40% query-selectivity boundary?",
+    "Does sensitive width move the winner boundary at the same query selectivity?",
+    "Does policy selectivity modify the boundary once query selectivity and width are fixed?"
+  ],
+  "stopping_rule": "After this complete boundary matrix, fit the real-data analytic cost model. Do not add more development grid points before grouped calibration.",
+  "failure_policy": "Retain all boundary results. Do not select only width or selectivity combinations that favor the optimizer."
+}

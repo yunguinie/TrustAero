@@ -1,0 +1,63 @@
+{
+  "status": "PASS_SYSTEM_SCALABILITY_MEASUREMENT_INTEGRITY",
+  "scientific_role": "runner integrity and 500K admission only; not publication performance evidence",
+  "run_path": "results/system_scalability_pilot_v1/20260724T125106341085Z",
+  "measurement_commit": "1585efc60dbf57450e65cc4ffc38cd1f2996718e",
+  "bound_artifacts": {
+    "summary": {
+      "path": "results/system_scalability_pilot_v1/20260724T125106341085Z/summary.json",
+      "sha256": "5414641eff527249885df7d2672253b2fb77b396bc0e7417e6c4eedeed3968f2"
+    },
+    "environment": {
+      "path": "results/system_scalability_pilot_v1/20260724T125106341085Z/environment.json",
+      "sha256": "6b42f4c61869afa905ffa05cd1862f967af2dfd86d39eedf2b75125dc2bbe58a"
+    },
+    "measurements": {
+      "path": "results/system_scalability_pilot_v1/20260724T125106341085Z/measurements.csv",
+      "sha256": "5141a6483bcfebd79ad9ccec6d5ee65cf153871a832062c58d2c6648c02e7867"
+    },
+    "bts_unit": {
+      "path": "results/system_scalability_pilot_v1/20260724T125106341085Z/units/bts-100000.json",
+      "sha256": "a0386c68f9009599baa617de1748d4358f1fdf42c8f714bdbe82d80c82ab5be0"
+    },
+    "nyc_unit": {
+      "path": "results/system_scalability_pilot_v1/20260724T125106341085Z/units/nyc_tlc-100000.json",
+      "sha256": "82aa36592df19bcdfaa71ea421d93109a1ef617da06fe48209a466a97d6f53ac"
+    }
+  },
+  "integrity": {
+    "datasets": 2,
+    "input_rows_per_dataset": 100000,
+    "measurement_count": 24,
+    "paired_blocks_per_dataset": 3,
+    "result_digest_count_per_dataset": 1,
+    "source_lineage_edge_digest_count_per_dataset": 1,
+    "certificate_observation_count": 6,
+    "certificate_statuses": [
+      "PARTIAL"
+    ],
+    "duckdb_spill_bytes": 0,
+    "git_dirty": false,
+    "optimizer_refit_or_retune_performed": false
+  },
+  "profiles": {
+    "bts": {
+      "output_rows": 19447,
+      "max_intermediate_rows": 20803,
+      "duckdb_peak_buffer_memory_bytes": 3331532
+    },
+    "nyc_tlc": {
+      "output_rows": 9,
+      "max_intermediate_rows": 18579,
+      "duckdb_peak_buffer_memory_bytes": 19803084
+    }
+  },
+  "authorized_conclusion": "The paired four-layer runner preserves relational results, produces stable source-lineage coverage, binds certificates without diagnostics, records DuckDB memory/spill profiles outside primary timings, and is admitted to a 500K integrity pilot.",
+  "boundaries": [
+    "Three measured blocks per layer are insufficient for a publication latency claim.",
+    "Observed direct-versus-complete paired ratios are noisy and are not interpreted as governance overhead.",
+    "The implemented instrumentation is source-snapshot lineage, not record-level lineage.",
+    "Certificate status PARTIAL is expected because physical DBMS execution remains trusted-executor evidence.",
+    "The earlier failed runner run is retained as implementation debugging history and is not a scientific negative result."
+  ]
+}

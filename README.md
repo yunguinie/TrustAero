@@ -34,10 +34,14 @@ named `TrustAero_env`, and run all commands from the repository root:
 ```powershell
 conda activate TrustAero_env
 python -m pip install -e ".[dev]"
-python -m pytest
+python -u scripts/run_tests.py -q
 python scripts/export_json_schemas.py
 python scripts/check_schema_sync.py
 ```
+
+The test wrapper disables unrelated global pytest plugins and keeps temporary
+test files inside this E-drive workspace. In a VS Code terminal, pytest prints
+its normal progress while the suite runs.
 
 To run the optional DuckDB execution smoke path, install the extra dependency
 inside the same environment:
@@ -46,6 +50,52 @@ inside the same environment:
 python -m pip install -e ".[dev,duckdb]"
 python scripts/run_duckdb_smoke.py
 ```
+
+The first paper-scale standard benchmark artifact is TPC-H SF10. Generate it
+locally with visible, newline-delimited progress (no C-drive staging is used):
+
+```powershell
+python -u scripts/prepare_tpch.py --scale-factor 10 --progress
+```
+
+The generator requires a clean commit, at least 12 GiB of free E-drive space,
+and records the eight exact table counts, DuckDB/TPC-H extension versions,
+database size, and SHA-256 digest. It is safe to rerun: a verified complete
+artifact is reused, and an interrupted build resumes after its last completed
+partition. The unpublished `.building` file is never accepted as formal input.
+After generation, run the scale-specific semantic gates before freezing any
+performance configuration:
+
+```powershell
+python -u scripts/run_tpch_q1_smoke.py --scale-factor 10
+python -u scripts/run_tpch_q6_smoke.py --scale-factor 10
+python scripts/freeze_tpch_sf10_protocol.py
+```
+
+The freeze command creates two deterministic, content-addressed config files
+but performs no timing and does not inspect a candidate winner. Review and
+commit those configs, re-run the source-freeze check, and then start the paired
+formal measurements with progress and ETA:
+
+```powershell
+python -u scripts/run_tpch_q1_formal.py `
+  --config experiments/configs/tpch_sf10_q1_paired_ci_v2.json --progress
+python -u scripts/run_tpch_q6_formal.py `
+  --config experiments/configs/tpch_sf10_q6_paired_ci_v2.json --progress
+```
+
+Formal Q1/Q6 measurements persist every complete paired block atomically. A
+stopped run can be completed with `--resume-run-id`, but the resumed result is
+deliberately classified as diagnostic because it spans multiple DuckDB
+processes and therefore no longer satisfies the frozen single-connection cache
+protocol. Final paper-table evidence must complete in one uninterrupted VS Code
+terminal process; run long experiments there so progress and ETA remain visible.
+The current inference protocol also tests whether each predeclared heavy
+materialization route changes a later candidate's latency. Performance claims
+use only blocks in which that possible polluter has not yet run, and each claim
+must be authorized by a deterministic 95% permutation-stratified paired
+bootstrap interval. A point-estimate winner or diagnostic Oracle is never
+enough to authorize paper text.
 
 The core dependency list intentionally stays small. Optional libraries are
 added only when production code uses them; a package already present in a
@@ -79,6 +129,8 @@ The next mechanism-calibration stage is specified in
 [docs/mechanism-microbenchmarks.md](docs/mechanism-microbenchmarks.md).
 For the first repeatable semantic evaluation layer, see
 [docs/phase0-experiments.md](docs/phase0-experiments.md).
+Before any publication-facing performance run, apply the reproducibility gate
+described in [docs/source-freeze.md](docs/source-freeze.md).
 
 ## Repository status
 

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch_sf10_q1_single_process_stability_negative_20260720",
+  "status": "FAIL",
+  "source_commit": "9937e707449dd232e86b27496591aac8a429c7e1",
+  "run_id": "20260720T065522179359Z",
+  "paper_performance_evidence": false,
+  "formal_paper_experiment_authorized": false,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "observed": {
+    "scale_factor": 10,
+    "input_rows": 59986052,
+    "qualified_rows": 59142609,
+    "qualified_selectivity": 0.9859393480337729,
+    "measurement_count": 450,
+    "execution_process_segments": 1,
+    "all_integrity_gates_passed": true,
+    "absolute_half_drift_passed": true,
+    "paired_ratio_half_drift_passed": false,
+    "paired_ratio_outlier_fraction_passed": false,
+    "aggregate_materialization_over_fused_ratio": 0.9965994005190686,
+    "filter_materialization_over_fused_ratio": 9.629532802859673,
+    "filter_materialization_paired_ratio_half_drift": 0.3989307533330839,
+    "filter_materialization_paired_ratio_outlier_fraction": 0.13333333333333333,
+    "diagnostic_oracle_set_within_3_percent": [
+      "fused",
+      "materialize-after-q01-aggregate"
+    ]
+  },
+  "failure_reasons": [
+    "The materialize-after-filter paired-ratio half drift was 0.3989, above the frozen 0.20 limit.",
+    "The materialize-after-filter paired-ratio outlier fraction was 0.1333, above the frozen 0.10 limit."
+  ],
+  "immutable_files": [
+    {
+      "path": "results/tpch_sf10_q1_formal_v1/20260720T065522179359Z/acceptance.json",
+      "sha256": "2d2ef03d7076582453161fc6dd69d70b87d3e631a45ed762b1974d0ab9e0e3d9"
+    },
+    {
+      "path": "results/tpch_sf10_q1_formal_v1/20260720T065522179359Z/config.json",
+      "sha256": "a4eafffcb3f7513a29df21387aee77ff943c18d46a116b423ca10af6d2015dea"
+    },
+    {
+      "path": "results/tpch_sf10_q1_formal_v1/20260720T065522179359Z/environment.json",
+      "sha256": "1312c9c95e9fc75d0f8aaac090fe53409c5668b04da52c7520cac0ed40e7b639"
+    },
+    {
+      "path": "results/tpch_sf10_q1_formal_v1/20260720T065522179359Z/measurements.csv",
+      "sha256": "5c61d7d1e551fdb57c8d1ecd3b1fb07bbd7fe5d71648b9f6840e8c14c0aaf462"
+    },
+    {
+      "path": "results/tpch_sf10_q1_formal_v1/20260720T065522179359Z/report.md",
+      "sha256": "3534d2f5209e136f54122fb306173df97e0cb0b7b86f70e9047d2659b7791b61"
+    },
+    {
+      "path": "results/tpch_sf10_q1_formal_v1/20260720T065522179359Z/summary.json",
+      "sha256": "9b76899e686b7c2447f101d09950267d7825c7c567c5ba91b8ac01ff3edbe3ea"
+    }
+  ],
+  "scientific_boundary": "This uninterrupted SF10 Q1 run completed correctly and passed every integrity gate, but it is retained as stability-negative diagnostic evidence because two pre-registered stability gates failed for the strongly dominated materialize-after-filter candidate. It must not be presented as an accepted formal performance run."
+}

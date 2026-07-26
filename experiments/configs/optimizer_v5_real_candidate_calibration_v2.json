@@ -1,0 +1,20 @@
+{
+  "results_dir": "results/optimizer_v5_real_candidate_calibration_v2",
+  "workloads": ["bts", "nyc_tlc"],
+  "sample_rows": [100000, 500000],
+  "full_month": false,
+  "warmup_runs": 6,
+  "measured_runs": 60,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260728,
+  "require_clean_git": true,
+  "order_protocol": "all_permutations",
+  "absolute_half_drift_limit": 0.5,
+  "paired_ratio_half_drift_limit": 0.2,
+  "paired_ratio_outlier_fraction_limit": 0.1,
+  "scientific_label": "real_data_multi_candidate_pilot_not_paper_evidence",
+  "paper_performance_evidence": false,
+  "heldout_optimizer_evidence": false
+}
+

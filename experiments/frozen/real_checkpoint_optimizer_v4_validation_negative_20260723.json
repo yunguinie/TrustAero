@@ -1,0 +1,25 @@
+{
+  "status": "FAIL_REAL_CHECKPOINT_OPTIMIZER_V4_VALIDATION_RETAIN",
+  "result_path": "results/real_checkpoint_optimizer_v4_validation_evaluation/20260723T081306784927Z/evaluation.json",
+  "measurement_path": "results/real_checkpoint_optimizer_v4_validation_measurement/20260723T075604326072Z/summary.json",
+  "metrics": {
+    "confidence_family_hit_rate": 0.9166666666666666,
+    "mean_regret_percent": 1.3206474318906896,
+    "p95_regret_percent": 12.032195458620976,
+    "max_regret_percent": 15.91626546978604
+  },
+  "failed_gate": "maximum_analytic_p95_regret_percent",
+  "failed_gate_limit_percent": 10.0,
+  "diagnosis": {
+    "confidence_misses": 12,
+    "all_misses_caused_by_reason": "GOVERNED_CHECKPOINT_PRACTICAL_TIE_SAFE_FALLBACK",
+    "minimum_cost_confidence_hits": 144,
+    "minimum_cost_confidence_units": 144,
+    "post_hoc_minimum_cost_metrics_are_development_only": {
+      "mean_regret_percent": 0.317240625382156,
+      "p95_regret_percent": 2.98140923066172,
+      "max_regret_percent": 9.40398639819209
+    }
+  },
+  "scientific_boundary": "The V4 validation remains a failed result. Its post-hoc diagnosis may motivate V4.1, but neither the V4.1 rule nor these diagnostic metrics are independent holdout evidence."
+}

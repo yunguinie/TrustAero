@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "results_dir": "results/real_agent_plan_coverage_v1",
+  "protocol_path": "experiments/frozen/real_agent_plan_coverage_protocol_v1_20260726.json",
+  "tasks_path": "experiments/frozen/real_agent_plan_tasks_v1_20260726.json",
+  "base_plan_path": "examples/multisource/plan.json",
+  "catalog_path": "examples/multisource/catalog.json",
+  "policy_path": "examples/multisource/policy.json",
+  "request_timeout_seconds": 300,
+  "transport_retries": 2,
+  "maximum_billable_calls": 120,
+  "maximum_response_bytes": 2000000,
+  "models": [
+    {
+      "provider": "alibaba_model_studio",
+      "model": "qwen3.7-max-2026-06-08",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "models_endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/models",
+      "api_key_environment_variable": "DASHSCOPE_API_KEY",
+      "modes": [
+        {
+          "mode_id": "thinking_high",
+          "request_parameters": {
+            "enable_thinking": true,
+            "reasoning_effort": "high"
+          }
+        },
+        {
+          "mode_id": "nonthinking",
+          "request_parameters": {
+            "enable_thinking": false,
+            "temperature": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "provider": "alibaba_model_studio",
+      "model": "glm-5.2",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "models_endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/models",
+      "api_key_environment_variable": "DASHSCOPE_API_KEY",
+      "modes": [
+        {
+          "mode_id": "thinking_high",
+          "request_parameters": {
+            "enable_thinking": true,
+            "reasoning_effort": "high"
+          }
+        },
+        {
+          "mode_id": "nonthinking",
+          "request_parameters": {
+            "enable_thinking": false,
+            "temperature": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "provider": "deepseek_official",
+      "model": "deepseek-v4-pro",
+      "endpoint": "https://api.deepseek.com/chat/completions",
+      "models_endpoint": "https://api.deepseek.com/models",
+      "api_key_environment_variable": "DEEPSEEK_API_KEY",
+      "max_tokens": 16000,
+      "modes": [
+        {
+          "mode_id": "thinking_high",
+          "request_parameters": {
+            "thinking": {
+              "type": "enabled"
+            },
+            "reasoning_effort": "high"
+          }
+        },
+        {
+          "mode_id": "nonthinking",
+          "request_parameters": {
+            "thinking": {
+              "type": "disabled"
+            },
+            "temperature": 0.0
+          }
+        }
+      ]
+    }
+  ]
+}

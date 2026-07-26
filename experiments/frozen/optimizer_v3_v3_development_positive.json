@@ -1,0 +1,77 @@
+{
+  "record_schema_version": 1,
+  "evaluation_scope": "optimizer_v3_v3_nested_development_not_phase2g",
+  "protocol_commit": "a61ca95",
+  "implementation_commit": "2f1cda4",
+  "status": "development_gate_passed_model_frozen",
+  "phase2g_authorized": false,
+  "family_count": 40,
+  "replicate_count": 162,
+  "development_gate_passes": true,
+  "all_gate_checks_passed": true,
+  "v3_metrics": {
+    "exact_top1_rate": 0.8,
+    "within_tie_rate": 0.85,
+    "mean_regret_percent": 1.0323887977251596,
+    "p95_regret_percent": 6.2015522762522535,
+    "max_regret_percent": 11.463621465547003,
+    "direct_model_coverage": 0.575,
+    "direct_early_decision_count": 4,
+    "direct_late_decision_count": 19
+  },
+  "frozen_v1_metrics": {
+    "within_tie_rate": 0.775,
+    "mean_regret_percent": 1.5463027347207954,
+    "p95_regret_percent": 9.559887083390661,
+    "max_regret_percent": 11.463621465547003
+  },
+  "governance_and_stability": {
+    "all_governance_audits_pass": true,
+    "feature_basis_matches_protocol": true,
+    "unanimous_ridge_stability_guard_matches_protocol": true,
+    "phase2g_was_not_read_or_run": true
+  },
+  "immutable_files": [
+    {
+      "path": "experiments/configs/optimizer_v3_development_v3.json",
+      "sha256": "732365b9137fb14a05e2f4b2ad2f52db06544cefc92e84c70f3a12c11212cef1"
+    },
+    {
+      "path": "docs/optimizer-v3-development-v3-protocol.md",
+      "sha256": "74877361b32510ed5a8820ada57398eb315d2ac79e693dda611392e527b4429d"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/family_observations.csv",
+      "sha256": "3a88f8464bc59357101a98117e84963724d734479a96a712d9e9e325938459f1"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/full_inner_candidates.csv",
+      "sha256": "93db20ce2419f05deae7ddae0ed2a66ab47d4243920f5ff144e5d564e3cb7b5d"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/interaction_mask_cost_model.json",
+      "sha256": "87ecf84e22accb3d5079a8189bd4f52ee3a62a326adc048515d562e48e8504d0"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/interaction_stability_models.json",
+      "sha256": "94074583813eb6f01667b207dcd0c9bfa901d54463d68daa4da3840e4da52217"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/outer_hyperparameter_selections.csv",
+      "sha256": "097ab0b055c3f2c71952da96f064427b86e403c17332a11c50bf19f338d1695a"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/outer_predictions.csv",
+      "sha256": "a9884e19c87b2f890ed59e61b3f43a5d4997b449a4325965eb5c68da7c0c055e"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/report.md",
+      "sha256": "5a3f99af6d4f1c358f074f04c24ed46baaa0b884b8802b10acf0a39ca052ce65"
+    },
+    {
+      "path": "results/phase2n_optimizer_v3_development/bounded_interaction_consensus_v3/summary.json",
+      "sha256": "ddcf40dc58e5b59f8a30797bbd5c051885a09a2e68fb6805bb9115577864bfb8"
+    }
+  ],
+  "interpretation": "The frozen V3-v3 model passes every predeclared development gate and improves V1 within-3%, mean, and P95 regret without worsening maximum regret. This authorizes model freezing only; Phase 2G remains a separate unopened holdout."
+}

@@ -1,0 +1,36 @@
+{
+  "frozen_at": "2026-07-23",
+  "status": "FAIL_EA1_FROZEN_OPTIMIZER_HOLDOUT_RETAIN",
+  "role": "permanent negative independent holdout record",
+  "analysis_commit_hash": "3763201e05b5571ac88911d4991546d8f1f4b316",
+  "measurement_commit_hash": "3763201e05b5571ac88911d4991546d8f1f4b316",
+  "evaluation_path": "results/governed_checkpoint_optimizer_holdout_evaluation_v1/20260723T023831088068Z/evaluation.json",
+  "evaluation_sha256": "acad63df809b47f2a9d0caf0484d58b23b814dd61b0318302f081351f8808bf8",
+  "metrics": {
+    "confidence_family_hit_rate": 0.9166666666666666,
+    "best_fixed_confidence_family_hit_rate": 0.75,
+    "mean_diagnostic_median_regret_percent": 1.621004079085549,
+    "p95_diagnostic_median_regret_percent": 19.0132868452789,
+    "maximum_diagnostic_median_regret_percent": 20.978916520024438,
+    "strict_policy_illegal_selection_count": 0
+  },
+  "failed_gate": {
+    "name": "maximum_p95_diagnostic_regret",
+    "frozen_limit_percent": 15.0,
+    "observed_percent": 19.0132868452789
+  },
+  "failed_family": {
+    "scenario_id": "n150000-w256-p0.4-q0.2",
+    "selected_candidate": "query_first_raw_checkpoint",
+    "confidence_oracle": "policy_first_narrow_checkpoint",
+    "policy_first_over_query_first_ratio": 0.8426250175510568,
+    "paired_confidence_interval": [0.8030513985032421, 0.8668151502256288],
+    "seed_regret_percent": [20.978916520024438, 18.363943481776435, 19.0132868452789]
+  },
+  "conclusion": "V2 beats both fixed orders but fails the frozen P95 tail-regret gate on one stable family.",
+  "scientific_boundary": [
+    "This failed holdout must never be relabelled as a passing independent test.",
+    "The measurements may now be used only as consumed diagnostic data.",
+    "Any successor requires a new protocol and a new untouched holdout."
+  ]
+}

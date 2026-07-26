@@ -1,0 +1,38 @@
+{
+  "support_id": "governed-pipeline-support-v2.1",
+  "frozen_at": "2026-07-24",
+  "hard_bounds": {
+    "input_rows": [50000, 120000],
+    "sensitive_width_bytes": [128.0, 1024.0]
+  },
+  "nominal_selectivity_bounds": {
+    "policy_selectivity": [0.1, 0.7],
+    "query_selectivity": [0.5, 0.9],
+    "join_match_rate": [0.5, 0.9]
+  },
+  "finite_sample_tolerance": {
+    "method": "two-sided Hoeffding bound",
+    "tail_probability": 0.001,
+    "formula": "sqrt(log(2 / tail_probability) / (2 * sample_rows))",
+    "policy_and_query_denominator": "input_rows",
+    "join_denominator": "estimated_query_rows"
+  },
+  "development_evidence": {
+    "combined_real_decisions": 192,
+    "model_ranked_decisions": 192,
+    "oracle_set_hit_rate": 0.9947916666666666,
+    "mean_regret_percent": 0.2611038963852183,
+    "p95_regret_percent": 1.6250871993051863,
+    "maximum_regret_percent": 3.4072132152709766,
+    "selected_candidate_counts": {
+      "policy_first_masked_checkpoint": 144,
+      "query_first_raw_checkpoint": 48
+    }
+  },
+  "scientific_boundary": [
+    "The cost coefficients and 3% practical-tie rule are unchanged.",
+    "The tolerance is derived from sample size and a frozen tail probability, not from a holdout winner label.",
+    "Hard row-count and byte-width bounds are never relaxed.",
+    "The failed January/April/July/October holdout remains negative evidence."
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "status": "FAIL_REAL_CHECKPOINT_OPTIMIZER_V41_FINAL_HOLDOUT_RETAIN",
+  "evaluation_path": "results/real_checkpoint_optimizer_v41_final_holdout_evaluation/20260723T091329021549Z/evaluation.json",
+  "evaluation_sha256": "723f7e22f5bb1d16daa780f8a1d802b3d3d64b8ef5c0e45c68705a55a9d31cb7",
+  "measurement_summary_path": "results/real_checkpoint_optimizer_v41_final_holdout_measurement/20260723T090008866869Z/summary.json",
+  "measurement_summary_sha256": "af227ceab1e4c25317bd9b354cd807c1cc3e1b90333e0879f24a41e14a8f5d81",
+  "measurement_commit_hash": "d8c14698061fe3a08e942aba1b0893eb7f58ee0b",
+  "analytic_v41": {
+    "confidence_family_hit_rate": 0.890625,
+    "mean_regret_percent": 1.472,
+    "p95_regret_percent": 9.495,
+    "max_regret_percent": 13.418
+  },
+  "frozen_threshold": {
+    "confidence_family_hit_rate": 0.96875,
+    "mean_regret_percent": 0.608,
+    "p95_regret_percent": 5.068,
+    "max_regret_percent": 10.455
+  },
+  "passed_properties": [
+    "absolute mean, P95, and maximum regret gates",
+    "seed consistency",
+    "zero out-of-support fallback",
+    "zero governance-illegal selections",
+    "stable bidirectional physical-plan reversal"
+  ],
+  "failed_properties": [
+    "family hit rate no worse than the frozen threshold",
+    "mean regret no worse than the frozen threshold",
+    "minimum hit-rate improvement over the frozen threshold",
+    "minimum mean-regret reduction versus the frozen threshold"
+  ],
+  "decision": "Retain the failed static optimizer and use these exposed months only as development input for a governance-safe adaptive pilot. Never relabel this artifact as a passed holdout.",
+  "paper_optimizer_performance_claim_authorized": false
+}

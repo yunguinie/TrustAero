@@ -1,0 +1,33 @@
+{
+  "results_dir": "results/real_governed_pipeline_transfer_evaluation_v1",
+  "measurement_results_dir": "results/real_governed_pipeline_transfer_v1",
+  "model_path": "experiments/frozen/models/governed_pipeline_cost_model_v2_20260724.json",
+  "model_sha256": "56399a09a3dccd2b02793eca97145fc17c68b9da8574edfef013925457f0fd6f",
+  "development_calibration_path": "results/governed_pipeline_cost_calibration_v2/calibration.json",
+  "development_calibration_sha256": "a59dfb321366d7bbd6f4431ac228a25a90a5dcaf7ade4b519e95a095ce616450",
+  "expected_sources": [
+    "bts-2024-02",
+    "bts-2024-05",
+    "bts-2024-08",
+    "bts-2024-11",
+    "nyc_tlc-2024-02",
+    "nyc_tlc-2024-05",
+    "nyc_tlc-2024-08",
+    "nyc_tlc-2024-11"
+  ],
+  "expected_profiles": [
+    "w256-p020-q065-j065",
+    "w256-p070-q080-j080",
+    "w768-p020-q080-j065",
+    "w768-p070-q065-j080"
+  ],
+  "expected_row_count": 120000,
+  "expected_seeds": [19101, 19202, 19303],
+  "minimum_oracle_set_hit_rate": 0.8,
+  "maximum_mean_regret_percent": 3.0,
+  "maximum_p95_regret_percent": 8.0,
+  "maximum_regret_percent": 15.0,
+  "minimum_selected_candidate_count": 2,
+  "require_not_worse_than_best_fixed_mean": true,
+  "require_not_worse_than_best_fixed_p95": true
+}

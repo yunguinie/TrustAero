@@ -1,0 +1,34 @@
+{
+  "protocol_id": "governed-checkpoint-multicandidate-pilot-v1-20260724",
+  "status": "FROZEN_BEFORE_THREE_CANDIDATE_TIMINGS",
+  "role": "development_label_diversity_gate",
+  "matrix": {
+    "row_counts": [150000],
+    "identifier_widths": [128, 640],
+    "policy_selectivities": [0.25, 0.45],
+    "query_selectivities": [0.2, 0.35, 0.5],
+    "seeds": [13101, 13202, 13303],
+    "scenario_count": 12,
+    "unit_count": 36,
+    "measured_blocks_per_unit": 30,
+    "total_measured_blocks": 1080
+  },
+  "timing": {
+    "all_candidate_permutations": 6,
+    "warmup_rounds_per_permutation": 1,
+    "measured_rounds_per_permutation": 5,
+    "practical_tie_fraction": 0.03,
+    "confidence_level": 0.95,
+    "bootstrap_draws": 10000
+  },
+  "pass_gates": {
+    "minimum_conclusive_scenario_rate": 0.4,
+    "minimum_distinct_singleton_winners": 2,
+    "maximum_dominant_singleton_winner_fraction": 0.8,
+    "require_fused_singleton_winner": true,
+    "require_checkpoint_singleton_winner": true
+  },
+  "failure_policy": "Retain the result and stop multi-candidate optimizer training. Do not modify the grid or confidence gates after opening timings.",
+  "success_policy": "Authorize multi-candidate optimizer training on development data only. A new real-data holdout remains inaccessible until the optimizer is frozen.",
+  "paper_optimizer_performance_claim_authorized": false
+}

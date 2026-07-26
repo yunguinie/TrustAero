@@ -1,0 +1,35 @@
+{
+  "frozen_at": "2026-07-23",
+  "status": "FROZEN_BEFORE_EA1_OPTIMIZER_V2_CALIBRATION",
+  "supersedes": "experiments/frozen/governed_checkpoint_optimizer_protocol_v1_20260723.json",
+  "preserved_negative_result": "experiments/frozen/governed_checkpoint_optimizer_v1_negative_20260723.json",
+  "single_correction": {
+    "support_relative_margin": 0.05,
+    "reason": "Planner cardinalities and controlled seed realizations vary slightly; exact empirical min/max is not a scientifically valid zero-error support boundary.",
+    "formula": "lower=max(0,min-0.05*max); upper=max+0.05*max"
+  },
+  "unchanged": {
+    "cost_features": [
+      "policy hash input GiB",
+      "narrow checkpoint write GiB",
+      "raw checkpoint write GiB",
+      "post-checkpoint rows in millions",
+      "Join result rows in millions"
+    ],
+    "lambda_grid": [0.000001, 0.0001, 0.01, 1.0],
+    "practical_tie_fraction": 0.03,
+    "governance_before_cost": true,
+    "safe_fallback": "policy_first_narrow_checkpoint",
+    "minimum_confidence_family_hit_rate": 1.0,
+    "maximum_mean_diagnostic_regret_percent": 5.0,
+    "maximum_diagnostic_regret_percent": 15.0,
+    "must_beat_both_fixed_candidates": true,
+    "seed_consistent_selection_rate": 1.0,
+    "illegal_candidate_selection_count": 0
+  },
+  "boundaries": [
+    "No cost coefficient or winner label is hand edited.",
+    "The V1 failure remains a failure.",
+    "Passing V2 only authorizes a new untouched holdout."
+  ]
+}

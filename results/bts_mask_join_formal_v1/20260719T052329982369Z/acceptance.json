@@ -1,0 +1,53 @@
+{
+  "absolute_half_drift_by_candidate": {
+    "early_mask_before_join": 0.013883136289261078,
+    "late_mask_fused": 0.026230189176490448
+  },
+  "data_scope": "full_month",
+  "diagnostic_oracle_set_within_tie_band": [
+    "early_mask_before_join",
+    "late_mask_fused"
+  ],
+  "formal_paper_experiment_authorized": true,
+  "heldout_optimizer_evidence": false,
+  "integrity_gates": {
+    "artifacts_verified": true,
+    "both_permutations_balanced": true,
+    "candidate_space_complete": true,
+    "certificates_partial": true,
+    "measurements_complete": true,
+    "paired_blocks_complete": true,
+    "positions_balanced": true,
+    "resources_observed": true,
+    "scientific_boundary_preserved": true,
+    "source_worktree_recorded": true,
+    "strict_policy_forces_early": true,
+    "summary_pass": true
+  },
+  "median_early_over_late_ratio": 1.006658968451923,
+  "median_latency_ms": {
+    "early_mask_before_join": 761.67205,
+    "late_mask_fused": 792.3096
+  },
+  "optimizer_selection_evaluated": false,
+  "paired_early_over_late_ratio_half_drift": 0.07833868452607451,
+  "paired_protocol_stable_for_future_clean_run": true,
+  "paired_ratio_outlier_fraction": 0.1,
+  "paper_performance_evidence": true,
+  "run_id": "20260719T052329982369Z",
+  "sample_rows": 547271,
+  "schema_version": 1,
+  "scientific_boundary": "This run evaluates a frozen query on the January development partition. It may support method-level paper analysis when the formal gates pass, but it does not evaluate Optimizer V1/V2 and is not independent held-out evidence.",
+  "scientific_label": "bts_mask_join_formal_development_partition_v1",
+  "source_worktree_dirty": false,
+  "stability_gates": {
+    "absolute_half_drift": true,
+    "paired_ratio_half_drift": true,
+    "paired_ratio_outlier_fraction": true
+  },
+  "status": "PASS",
+  "strict_policy_feasible_set": [
+    "early_mask_before_join"
+  ],
+  "tie_threshold_fraction": 0.03
+}

@@ -1,0 +1,38 @@
+{
+  "record_id": "real-governed-pipeline-transfer-negative-20260724",
+  "recorded_at": "2026-07-24",
+  "status": "FAIL_GOVERNED_PIPELINE_COST_MODEL_REAL_TRANSFER_RETAIN",
+  "measurement_summary": {
+    "path": "results/real_governed_pipeline_transfer_v1/20260724T084101389237Z/summary.json",
+    "sha256": "bbb816ec47b51d7726e4a29ffd3e25dd00d088acba5e935047e7867dabc4564d"
+  },
+  "evaluation": {
+    "path": "results/real_governed_pipeline_transfer_evaluation_v1/20260724T084101389237Z/evaluation.json",
+    "sha256": "0f1e5a873c86c9de97120b6d86ee2433125b26ed10263530777627664504266e"
+  },
+  "observed": {
+    "decision_count": 96,
+    "winner_counts": {
+      "join_first_masked_checkpoint": 96
+    },
+    "frozen_model_oracle_set_hit_rate": 1.0,
+    "frozen_model_mean_regret_percent": 0.0,
+    "best_fixed_oracle_set_hit_rate": 1.0,
+    "best_fixed_mean_regret_percent": 0.0
+  },
+  "scientific_decision": [
+    "The measurement is valid negative evidence, not a failed program run.",
+    "The permissive real-data fragment does not show an advantage over the strongest fixed join-first baseline.",
+    "This negative result motivated the predeclared policy-stratified holdout; it is not overwritten by that later positive result."
+  ],
+  "immutable_files": [
+    {
+      "path": "results/real_governed_pipeline_transfer_v1/20260724T084101389237Z/summary.json",
+      "sha256": "bbb816ec47b51d7726e4a29ffd3e25dd00d088acba5e935047e7867dabc4564d"
+    },
+    {
+      "path": "results/real_governed_pipeline_transfer_evaluation_v1/20260724T084101389237Z/evaluation.json",
+      "sha256": "0f1e5a873c86c9de97120b6d86ee2433125b26ed10263530777627664504266e"
+    }
+  ]
+}

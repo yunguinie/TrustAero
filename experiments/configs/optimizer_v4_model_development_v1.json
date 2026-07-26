@@ -1,0 +1,23 @@
+{
+  "protocol_name": "optimizer_v4_model_development_v1",
+  "results_dir": "results/optimizer_v4_model_development",
+  "calibration_run_dir": "results/optimizer_v4_calibration_development/20260721T184427124750+0800",
+  "audit_path": "results/optimizer_v4_calibration_development/20260721T184427124750+0800/paired_stability_audit.json",
+  "audit_sha256": "bff08a26ecb296fe6d3facb5eea557540cc6f37b6f1c2a88f1e16f0a246767d3",
+  "v3_transfer_config_path": "experiments/configs/real_optimizer_transfer_development_v1.json",
+  "ridge_lambda": 1.0,
+  "uncertainty_residual_quantile": 0.80,
+  "tie_threshold_fraction": 0.03,
+  "require_clean_git": true,
+  "gates": {
+    "minimum_within_3_percent_rate": 0.85,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 10.0,
+    "maximum_regret_percent": 20.0,
+    "minimum_direct_coverage": 0.50,
+    "minimum_unstable_uncertainty_capture": 0.75,
+    "maximum_mean_regret_gap_vs_match_baseline": 1.0,
+    "maximum_p95_regret_gap_vs_match_baseline": 3.0
+  },
+  "scientific_boundary": "This is January-only model development with leave-one-complete-time-window-out evaluation. Hyperparameters and gates are fixed before execution. All 48 families remain in training folds; strong accuracy metrics use the 44 pre-audited stable families. Profile timings are forbidden features. February-December remain unopened, and a failed gate must be retained rather than tuned against its answers."
+}

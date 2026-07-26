@@ -1,0 +1,10 @@
+{
+  "results_dir": "results/checkpoint_required_boundary_evaluation_v1",
+  "measurement_results_dir": "results/checkpoint_required_boundary_v1",
+  "minimum_conclusive_scenario_rate": 0.75,
+  "minimum_query_levels_with_cross_factor_winner_interaction": 1,
+  "maximum_best_global_query_threshold_accuracy": 0.9,
+  "require_policy_first_singleton_winner": true,
+  "require_query_first_singleton_winner": true,
+  "require_clean_git": true
+}

@@ -1,0 +1,105 @@
+{
+  "record_schema_version": 1,
+  "record_id": "execution_flow_audit_formal_result_20260722",
+  "status": "PASS_EA0_FEATURE_CONTRACT_AUTHORIZED_FINAL_TIMING_NOT_AUTHORIZED",
+  "phase": "EA-0 execution-aware physical mechanism confirmation",
+  "source_run": {
+    "path": "results/execution_flow_audit_formal/20260722T055455911174Z",
+    "commit_hash": "f4c7deb27482a2008db3866bb01697b2a8fc17ef",
+    "git_dirty": false,
+    "unit_count": 36,
+    "timed_execution_count": 4356,
+    "profile_execution_count": 792
+  },
+  "integrity_result": {
+    "all_36_units_complete": true,
+    "all_result_equivalence_checks_passed": true,
+    "all_required_physical_plan_distinctions_passed": true,
+    "unused_sensitive_projection_pruned": true,
+    "forced_raw_materialization_retained_sensitive_value": true,
+    "temporary_spill_observed": false,
+    "optimizer_trained": false,
+    "exact_engine_internal_payload_bytes_observed": false
+  },
+  "paired_inference": {
+    "status": "PASS_EA0_PAIRED_INFERENCE",
+    "family_count": 48,
+    "pairwise_comparison_count": 120,
+    "materially_faster_count": 68,
+    "materially_slower_count": 20,
+    "no_practical_dominance_authorized_count": 32,
+    "single_candidate_non_dominated_family_count": 25,
+    "two_candidate_non_dominated_family_count": 21,
+    "three_candidate_non_dominated_family_count": 2,
+    "pair_first_second_half_drift_over_20_percent_count": 2,
+    "maximum_pair_first_second_half_drift": 0.43164672207893795,
+    "inference_rule": "95 percent hierarchical bootstrap over complete data seeds and paired rounds, with a predeclared 3 percent practical-dominance threshold"
+  },
+  "mechanism_findings": [
+    {
+      "finding": "DuckDB column pruning changes physical work materially.",
+      "evidence": "The key-only aggregate was confidence-authorized as more than 3 percent faster than forced raw materialization in all 12 rows-width-match scenarios. The median key-only/raw-materialized latency ratio ranged from 0.015 to 0.623, and the advantage increased strongly with payload width and matched-row count."
+    },
+    {
+      "finding": "Mask cost follows the rows that actually reach Mask, not the logical input table alone.",
+      "evidence": "At 10 percent Join match, post-Join fused Mask was confidence-authorized as faster than pre-Join materialized Mask for output, aggregate, and sorted-output tasks in all 18 corresponding scenarios. Its median latency was 0.093 to 0.134 of the pre-Join route."
+    },
+    {
+      "finding": "A pipeline breaker is not uniformly harmful; downstream query shape changes its effect.",
+      "evidence": "For masked row output, post-Join fused execution was faster than or statistically non-dominated with post-Join raw materialization. For masked aggregation, post-Join raw materialization was confidence-authorized as faster than fused in all 12 scenarios; fused/raw-materialized median ratios ranged from 1.773 to 2.525."
+    },
+    {
+      "finding": "One fixed physical order cannot represent every legal query family.",
+      "evidence": "The confidence-authorized non-dominated sets differ across match rate, payload width, row count, output, aggregation, and sorting. Point winners alone were not used."
+    }
+  ],
+  "feature_contract_gate": {
+    "stable_mask_work_contrast": true,
+    "stable_materialization_work_contrast": true,
+    "different_downstream_tasks_have_different_non_dominated_sets": true,
+    "exact_byte_claim_avoided": true,
+    "authorized": true
+  },
+  "background_workload_disclosure": {
+    "user_reported_other_computer_tasks_during_measurement": true,
+    "interpretation": "The balanced within-round design and hierarchical paired intervals retain robust mechanism contrasts, but concurrent machine load can affect absolute latency and tail latency.",
+    "final_paper_end_to_end_timing_table_authorized": false,
+    "required_later_action": "After the optimizer and workloads are frozen, run the final headline performance evaluation on an otherwise idle machine. Preserve this run rather than overwriting it."
+  },
+  "scientific_boundary": "This controlled synthetic EA-0 audit authorizes the candidate-specific physical-work feature representation used to develop the Execution-Aware optimizer. It is not optimizer-performance evidence, not a real-data result, and not evidence of exact per-operator DuckDB payload bytes.",
+  "authorized_next_step": "Implement and test the frozen Execution-Aware physical-work feature extractor and analytic component-cost interface. Do not fit a residual model until the analytic feature implementation and component microbenchmark calibration protocol are frozen.",
+  "bound_artifacts": [
+    {
+      "path": "experiments/frozen/execution_flow_audit_formal_protocol_20260722.json",
+      "sha256": "7cee6704ff7ebbf274605e6eda63beddd6165e67ea396d89a0d99612e464c8e7"
+    },
+    {
+      "path": "results/execution_flow_audit_formal/20260722T055455911174Z/config.json",
+      "sha256": "099c7c19a363ad52a9be2fb0d3fe0fe4ece49f0534d820b6cf766900878fd0e9"
+    },
+    {
+      "path": "results/execution_flow_audit_formal/20260722T055455911174Z/environment.json",
+      "sha256": "9026b591aace83ffefe592da5561855e960f80166aa7d5336da4a54888e03b38"
+    },
+    {
+      "path": "results/execution_flow_audit_formal/20260722T055455911174Z/summary.json",
+      "sha256": "8ae1708206ea6f5641d32b8350bc66f4cada035d229e821a483ae70277ea7b1c"
+    },
+    {
+      "path": "results/execution_flow_audit_formal/20260722T055455911174Z/measurements.csv",
+      "sha256": "6b55778f3ee8dd142d549200d5e2c3fbb81776fee8af5ee88c671d0f5c3c3099"
+    },
+    {
+      "path": "results/execution_flow_audit_formal/20260722T055455911174Z/variant_summary.csv",
+      "sha256": "9ccebc0702f39c6a4fbbdd1e3f007c4351eb5745322194aff9c09fb0e13c0918"
+    },
+    {
+      "path": "results/execution_flow_audit_formal/20260722T055455911174Z/operator_summary.csv",
+      "sha256": "a7e0997d6732db4777cced268294afb3f9df919a9348deb6a905d807505c1d8a"
+    },
+    {
+      "path": "results/execution_flow_audit_formal/20260722T055455911174Z/paired_inference.json",
+      "sha256": "ebfe3356eb5ee4b6c5b1afdf42203068b56549986daac028bf03d79e6918f28e"
+    }
+  ]
+}

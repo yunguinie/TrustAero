@@ -1,0 +1,17 @@
+{
+  "cache_protocol": "hot_same_duckdb_connection",
+  "commit_hash": "5dcd06d23cf134492fa3824fe4d219d615c1568c",
+  "duckdb_memory_limit_mb": 4096,
+  "duckdb_threads": 4,
+  "git_dirty": false,
+  "gpu_acceleration": false,
+  "logical_cpu_count": 8,
+  "packages": {
+    "duckdb": "1.5.4",
+    "pydantic": "2.13.4",
+    "trustaero": "0.1.0"
+  },
+  "platform": "Windows-10-10.0.19045-SP0",
+  "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+  "python": "3.11.15 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:12:53) [MSC v.1942 64 bit (AMD64)]"
+}

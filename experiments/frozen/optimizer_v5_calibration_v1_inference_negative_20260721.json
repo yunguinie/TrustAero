@@ -1,0 +1,55 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v5_calibration_v1_inference_negative_20260721",
+  "status": "STRUCTURAL_PASS_TIMING_INFERENCE_FAIL",
+  "source_run_id": "20260721T132242419765Z",
+  "completed_units": 4,
+  "measured_candidate_executions": 360,
+  "semantic_and_physical_integrity_pass": true,
+  "absolute_timing_stability_pass": true,
+  "paired_timing_stability_pass": false,
+  "failed_outlier_units": {
+    "bts-n100000": 0.13333333333333333,
+    "nyc_tlc-n100000": 0.16666666666666666,
+    "nyc_tlc-n500000": 0.16666666666666666
+  },
+  "paired_ratio_outlier_fraction_limit": 0.1,
+  "diagnostic_pollution_safe_blocks_per_claim": 5,
+  "established_minimum_pollution_safe_blocks": 10,
+  "carryover_diagnosis": "INCONCLUSIVE_FOR_ALL_TESTED_PAIRS",
+  "optimizer_training_labels_authorized": false,
+  "rejected_fixes": [
+    "lower the 10 percent outlier gate after reading the result",
+    "use total candidate medians as stable Oracle labels",
+    "choose only one observed polluter after reading this run",
+    "treat five diagnostic safe blocks as the established ten-block minimum",
+    "overwrite or delete this negative inference result"
+  ],
+  "authorized_next_step": "Predeclare a 60-block V2 calibration with both materialized candidates treated as possible polluters, 20000 bootstrap repetitions, 95 percent confidence, a 3 percent tie band, and at least 10 pollution-safe blocks per candidate-vs-fused claim.",
+  "immutable_files": [
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration/20260721T132242419765Z/config.json",
+      "sha256": "3d9309d4d7d70003a3cd6272e10d39359ec23b96dc2814cde3efed111186b2a6"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration/20260721T132242419765Z/environment.json",
+      "sha256": "e7e61f05e8a71b85d9769b8c97c678c9ddf6cc920280976496cfb98d61359433"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration/20260721T132242419765Z/measurements.csv",
+      "sha256": "280ec4d27632034f58b18f2f016c8c391d9199dd65a77901849733bfa3bae196"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration/20260721T132242419765Z/summary.json",
+      "sha256": "38ea7c8538c80d9b6b34d359f3852c3ca8c60d7d7880563beb89cf6e97167092"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration/20260721T132242419765Z/acceptance.json",
+      "sha256": "50c000f5369cdc28abc9ca4148ee781a1226fe3be37eaea0713d2adc9bec70de"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration/20260721T132242419765Z/report.md",
+      "sha256": "686c42cdda62c4aae81a30a4e327c05de20ec8fa6a3f7146e20ca8b43a10be20"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "protocol_id": "policy-stratified-pipeline-holdout-v1",
+  "frozen_at": "2026-07-24",
+  "measurement_config": "experiments/configs/policy_stratified_pipeline_holdout_measurement_v1.json",
+  "evaluation_config": "experiments/configs/policy_stratified_pipeline_holdout_evaluation_v1.json",
+  "measurement_runner": "scripts/run_real_governed_pipeline_transfer.py",
+  "evaluation_runner": "scripts/evaluate_policy_stratified_pipeline_holdout.py",
+  "frozen_model": "experiments/frozen/models/governed_pipeline_cost_model_v2_20260724.json",
+  "frozen_model_sha256": "56399a09a3dccd2b02793eca97145fc17c68b9da8574edfef013925457f0fd6f",
+  "retained_development_result": {
+    "permissive_status": "FAIL_GOVERNED_PIPELINE_COST_MODEL_REAL_TRANSFER_RETAIN",
+    "summary_sha256": "bbb816ec47b51d7726e4a29ffd3e25dd00d088acba5e935047e7867dabc4564d",
+    "evaluation_sha256": "0f1e5a873c86c9de97120b6d86ee2433125b26ed10263530777627664504266e",
+    "posthoc_diagnostic_is_not_holdout_evidence": true
+  },
+  "temporal_split": {
+    "development_months": ["2024-02", "2024-05", "2024-08", "2024-11"],
+    "holdout_months": ["2024-01", "2024-04", "2024-07", "2024-10"],
+    "datasets": ["BTS Airline On-Time Performance", "NYC TLC Yellow Taxi"]
+  },
+  "policy_regimes": {
+    "permissive": "three legal candidates; no adaptive superiority claim",
+    "no_raw_join": "join-first is illegal; two legal candidates remain for cost ranking",
+    "strict": "raw Join and raw materialization are forbidden; one legal candidate remains"
+  },
+  "primary_claim": "Under the no-raw-join policy, the frozen optimizer must select at least two legal candidates and outperform the best legal fixed baseline.",
+  "predeclared_primary_gates": {
+    "minimum_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_regret_percent": 15.0,
+    "minimum_selected_candidate_count": 2,
+    "strictly_better_than_best_fixed_mean_and_p95": true,
+    "illegal_candidate_selections": 0,
+    "systematic_material_carryover_detected": false
+  },
+  "one_shot_rule": [
+    "No holdout month is used to refit coefficients or change the 3% tie rule.",
+    "Policy feasibility is evaluated before cost ranking.",
+    "The result is retained whether it passes or fails.",
+    "A failure ends this optimizer claim; it is not followed by another threshold revision."
+  ]
+}

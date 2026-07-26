@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch_sf1_support_and_q6_20260719",
+  "status": "PASS",
+  "source_commit": "b7028ea132ed3b0b3dd45c248a61c93b818b7e35",
+  "source_dirty": false,
+  "artifact_sha256": "64a709fa8f995aeae23ffe6305a47e77c97113c823974a3f6a6933b8d05a0b22",
+  "support_audit": {
+    "path": "results/tpch_sf1_support_audit/audit.json",
+    "sha256": "1525f40afd01aa90c6898e130bab3ed73838d1f30c7f2ec31e462eb5df412d57",
+    "official_queries_executed": 22,
+    "duckdb_passed": 22,
+    "exact_ir_v1_supported": ["Q06"],
+    "unsupported_queries_retained_in_denominator": true
+  },
+  "governed_q6_smoke": {
+    "path": "results/tpch_q6_semantic_smoke/result.json",
+    "sha256": "d713737e2b60c40ccb6e89c078883b5d2ef3b41f767bf2590e752225cdaf4e86",
+    "validation_status": "REWRITE",
+    "candidate_count": 3,
+    "distinct_duckdb_plans": 3,
+    "official_result_equivalent": true,
+    "official_revenue_decimal": "123141078.2283",
+    "certificate_status": "PARTIAL"
+  },
+  "scientific_boundary": "This record proves complete-query support accounting and a governed Q6 semantic loop. It contains no performance timing and is not heldout optimizer evidence.",
+  "next_gate": "Freeze a timing protocol and optimizer baselines before collecting TPC-H performance results."
+}

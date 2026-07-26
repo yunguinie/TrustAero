@@ -1,0 +1,27 @@
+{
+  "results_dir": "results/execution_flow_audit_pilot",
+  "row_counts": [10000],
+  "identifier_widths": [256, 2048],
+  "match_rates": [0.1, 1.0],
+  "seeds": [1701, 1802],
+  "variant_ids": [
+    "join_key_only_aggregate",
+    "dead_raw_projection_aggregate",
+    "raw_materialized_aggregate",
+    "prejoin_mask_materialized_output",
+    "postjoin_mask_fused_output",
+    "postjoin_raw_materialized_mask_output",
+    "prejoin_mask_materialized_aggregate",
+    "postjoin_mask_fused_aggregate",
+    "postjoin_raw_materialized_mask_aggregate",
+    "prejoin_mask_materialized_sorted_output",
+    "postjoin_mask_fused_sorted_output"
+  ],
+  "warmup_runs": 1,
+  "measured_runs": 5,
+  "profile_runs": 2,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260731,
+  "require_clean_git": true
+}

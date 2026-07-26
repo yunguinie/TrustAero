@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "20260719T042845123244Z",
+  "freeze_scope": "full_month_paired_confirmation_not_paper_evidence",
+  "source_commit": "973fa92c833116943ca2e573ac790e5da63b6533",
+  "source_worktree_dirty": true,
+  "status": "PASS",
+  "paper_performance_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "protocol": {
+    "sample_rows": 547271,
+    "cache_mode": "hot_same_duckdb_connection",
+    "candidate_count": 2,
+    "permutations": 2,
+    "warmup_blocks": 4,
+    "paired_measurement_blocks": 30,
+    "timed_candidate_executions": 60,
+    "tie_threshold_fraction": 0.03,
+    "absolute_half_drift_limit": 0.5,
+    "paired_ratio_half_drift_limit": 0.2,
+    "paired_ratio_outlier_fraction_limit": 0.1
+  },
+  "observed": {
+    "filtered_rows_entering_join": 106251,
+    "early_mask_median_ms": 874.8943,
+    "late_mask_median_ms": 907.2610999999999,
+    "early_mask_p95_ms": 1405.7895,
+    "late_mask_p95_ms": 1364.5512,
+    "median_early_over_late_ratio": 0.9869245135474846,
+    "paired_tie_band_set": [
+      "early_mask_before_join",
+      "late_mask_fused"
+    ],
+    "max_absolute_half_drift": 0.22851127577172292,
+    "paired_ratio_half_drift": 0.08563505079368017,
+    "paired_ratio_outlier_fraction": 0.03333333333333333,
+    "peak_temp_directory_bytes": 0,
+    "strict_policy_feasible_candidates": ["early_mask_before_join"]
+  },
+  "immutable_files": [
+    {
+      "path": "experiments/configs/bts_mask_join_full_month_pilot.json",
+      "sha256": "8758c26777a67a66d81fa2b3e85d4712bee7018654345fc7d2f9c3850455f6de"
+    },
+    {
+      "path": "results/bts_mask_join_full_month_pilot/20260719T042845123244Z/config.json",
+      "sha256": "6407920b6a439111e8cebb125e78aa6b124e6875088e2c1428ec9e33f2b59841"
+    },
+    {
+      "path": "results/bts_mask_join_full_month_pilot/20260719T042845123244Z/environment.json",
+      "sha256": "366464a81496ba18bdf3b7893f03df84226af3c6774bfab71c3a9cfe74e6b067"
+    },
+    {
+      "path": "results/bts_mask_join_full_month_pilot/20260719T042845123244Z/measurements.csv",
+      "sha256": "bd9c74605425b7ff7882dad9c0a7a8afc64b20dce8ba8cfbdbb3c9c15f0cdd35"
+    },
+    {
+      "path": "results/bts_mask_join_full_month_pilot/20260719T042845123244Z/summary.json",
+      "sha256": "8b868b31558920605f2ce64af7dc9075206cbb639f61816decc6b5a9d26a2bf6"
+    },
+    {
+      "path": "results/bts_mask_join_full_month_pilot/20260719T042845123244Z/acceptance.json",
+      "sha256": "778da1dceae9fdc0ad691ed7901b8f5e536b4ab7827ee237013202fee27f7d41"
+    },
+    {
+      "path": "results/bts_mask_join_full_month_pilot/20260719T042845123244Z/report.md",
+      "sha256": "fa74925ba5484b00c4f351720da6afec1f342178a852157138482cf657a300bd"
+    }
+  ],
+  "scientific_boundary": "The full-month paired method passed its predeclared stability gates. The paired 3% rule classifies early and late Mask as tied even though their separate medians differ. This dirty-worktree confirmation is not formal paper evidence and evaluates no optimizer."
+}

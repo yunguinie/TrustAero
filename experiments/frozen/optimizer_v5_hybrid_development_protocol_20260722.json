@@ -1,0 +1,67 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v5_hybrid_development_protocol_20260722",
+  "status": "FROZEN_BEFORE_DEVELOPMENT_RUN",
+  "protocol_commit": "09f365c770441d59ca68219f5d0cac2826ece112",
+  "model_type": "mechanism_prior_plus_pipeline_residual",
+  "direct_classifier_used": false,
+  "development_families": 40,
+  "aggregated_seed_replicates": 162,
+  "cross_validation": "leave one complete rows-width-match family out",
+  "mechanism_prior_sources": [
+    "SHA-256 microbenchmark",
+    "materialization roundtrip microbenchmark",
+    "DuckDB HASH_JOIN operator calibration"
+  ],
+  "residual_features": [
+    "log scan payload",
+    "log hash-input payload",
+    "log Join-input payload",
+    "log Join-output rows",
+    "pipeline breaker",
+    "pipeline-breaker by Join-payload interaction"
+  ],
+  "governance_before_ranking": true,
+  "uncertain_fallback": "early_mask",
+  "predeclared_parameters": {
+    "ridge_lambda": 0.1,
+    "uncertainty_multiplier": 1.0,
+    "practical_tie_fraction": 0.03
+  },
+  "predeclared_gates": {
+    "minimum_direct_coverage": 0.25,
+    "minimum_within_tie_improvement_over_v1": 0.025,
+    "maximum_mean_regret_percent": 1.5,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_max_regret_percent": 12.0
+  },
+  "external_partition_accessed": false,
+  "real_data_labels_used_for_fitting": false,
+  "scientific_boundary": "This is a new development method over previously frozen synthetic complete-fragment families and a frozen independent mechanism prior. The consumed holdout and all real-data labels are excluded from fitting. Passing authorizes only freezing a V5 candidate for a separately predeclared evaluation; failure must be retained without post-hoc feature or threshold changes.",
+  "immutable_files": [
+    {
+      "path": "experiments/configs/optimizer_v5_hybrid_development_v1.json",
+      "sha256": "34d66a09045ed0e0f38ae713d7f0f55ca90c8e493921aae5e1649846c5082377"
+    },
+    {
+      "path": "src/trustaero/optimizer/mask_pipeline_v5.py",
+      "sha256": "432a4c0bb10534321c2a13ab59c7c89874d8f606407d3625011212b127f6939a"
+    },
+    {
+      "path": "src/trustaero/experiments/optimizer_v5_hybrid_development.py",
+      "sha256": "79a6eaa05a8f0245435839bcbb4ed202fe614e378e70ce58a0f4b26a4287b196"
+    },
+    {
+      "path": "scripts/run_optimizer_v5_hybrid_development.py",
+      "sha256": "abd20dc1bbb0eb6ec754e5201975875580f937295c89d176fe37e7aead98841d"
+    },
+    {
+      "path": "tests/unit/test_mask_pipeline_v5.py",
+      "sha256": "e67e1d0f606b5182e4698fb1fa2dbc6e8b35910753846bfa055b1ac64ffcc9c5"
+    },
+    {
+      "path": "tests/unit/test_optimizer_v5_hybrid_development.py",
+      "sha256": "d5288da69ca2e9dec0d0691a85714f357c0135db3a5ec414270ff0c860f37f02"
+    }
+  ]
+}

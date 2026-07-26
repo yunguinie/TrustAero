@@ -1,0 +1,141 @@
+{
+  "artifact_sha256": "64a709fa8f995aeae23ffe6305a47e77c97113c823974a3f6a6933b8d05a0b22",
+  "cache_protocol": "hot_same_duckdb_connection",
+  "candidate_count": 3,
+  "candidate_summaries": {
+    "fused": {
+      "actual_cardinalities": [
+        0,
+        1,
+        114189,
+        114189
+      ],
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "EXPLAIN_ANALYZE",
+        "UNGROUPED_AGGREGATE",
+        "PROJECTION",
+        "SEQ_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:ebbb561a8c84be8f4d54cb85aac964708c63ebe03e5f1e514dd682cfd5c44667",
+      "max_ms": 312.7443,
+      "median_ms": 222.42669999999998,
+      "min_ms": 154.9967,
+      "p95_ms": 293.6661,
+      "peak_buffer_memory_bytes": 56061952,
+      "peak_temp_directory_bytes": 0,
+      "physical_plan_id": "pp-8f4c95df7d9dfdde",
+      "rows_scanned": [
+        0,
+        0,
+        0,
+        6001215
+      ],
+      "runs": 30
+    },
+    "materialize-after-q06-predicate": {
+      "actual_cardinalities": [
+        0,
+        1,
+        114189,
+        0,
+        114189,
+        114189,
+        114189
+      ],
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "EXPLAIN_ANALYZE",
+        "UNGROUPED_AGGREGATE",
+        "PROJECTION",
+        "CTE",
+        "PROJECTION",
+        "SEQ_SCAN",
+        "CTE_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:7c99acedc20eaaecf0eaf37092a7d4cf1087df84922b820e35ee68e3f3b10cd4",
+      "max_ms": 340.6086,
+      "median_ms": 253.9631,
+      "min_ms": 185.3181,
+      "p95_ms": 328.3909,
+      "peak_buffer_memory_bytes": 122028032,
+      "peak_temp_directory_bytes": 0,
+      "physical_plan_id": "pp-69af1314e995eb44",
+      "rows_scanned": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        6001215,
+        0
+      ],
+      "runs": 30
+    },
+    "materialize-after-q06-time": {
+      "actual_cardinalities": [
+        0,
+        1,
+        114189,
+        114189,
+        0,
+        114189,
+        114189,
+        909506,
+        114189,
+        114189
+      ],
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "EXPLAIN_ANALYZE",
+        "UNGROUPED_AGGREGATE",
+        "PROJECTION",
+        "PROJECTION",
+        "CTE",
+        "PROJECTION",
+        "FILTER",
+        "SEQ_SCAN",
+        "FILTER",
+        "CTE_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:77195f1f176465baf8b0cf9c7d3107e9cc91c225c9377c47a9285aa161fed734",
+      "max_ms": 782.4919,
+      "median_ms": 639.32845,
+      "min_ms": 520.9591,
+      "p95_ms": 763.8425,
+      "peak_buffer_memory_bytes": 122028032,
+      "peak_temp_directory_bytes": 0,
+      "physical_plan_id": "pp-c262017f0eac7508",
+      "rows_scanned": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        6001215,
+        0,
+        0
+      ],
+      "runs": 30
+    }
+  },
+  "distinct_duckdb_plan_count": 3,
+  "heldout_optimizer_evidence": false,
+  "measurement_count": 90,
+  "optimizer_selection_evaluated": false,
+  "paper_performance_evidence": true,
+  "run_id": "20260719T132257557607Z",
+  "schema_version": 1,
+  "scientific_label": "tpch_sf1_q6_formal_development_v1",
+  "stage_statistics": {
+    "governed_rows": 114160,
+    "governed_selectivity": 0.019022814546720956,
+    "input_rows": 6001215,
+    "post_temporal_predicate_selectivity": 0.125525726946358,
+    "temporal_rows": 909455,
+    "temporal_selectivity": 0.15154514544138145
+  },
+  "status": "PASS"
+}

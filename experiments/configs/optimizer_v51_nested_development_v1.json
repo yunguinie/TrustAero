@@ -1,0 +1,70 @@
+{
+  "protocol_name": "optimizer_v51_nested_severe_regret_hybrid_v1",
+  "results_dir": "results/optimizer_v51_nested_development",
+  "source_run_dirs": [
+    "results/phase2i_fragment_pilot/20260717T120435635390Z",
+    "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z"
+  ],
+  "immutable_bindings": [
+    {
+      "path": "results/phase2i_fragment_pilot/20260717T120435635390Z/summary.json",
+      "sha256": "4b2b3de48fa68a3f2da6348fa60443d16c6fdcc723532e14566986da995ac42c"
+    },
+    {
+      "path": "results/phase2i_fragment_pilot/20260717T120435635390Z/component_summary.csv",
+      "sha256": "c1373f2abe9d32a08dedac3693b1721b12cd6b250dca399aeca8a0fd5f2fd5e1"
+    },
+    {
+      "path": "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z/summary.json",
+      "sha256": "686f53d2e49d7481cee3d3aa199b904090e4dd1b0bd1cb761bd799b4dbe52faf"
+    },
+    {
+      "path": "results/phase2j_fragment_boundary_confirmation/20260717T134222171980Z/component_summary.csv",
+      "sha256": "0a1064a9e04f253cb8e0cf9abaa88c6b20077d647c9ebc4d0a4807cf5c7bce93"
+    },
+    {
+      "path": "src/trustaero/experiments/optimizer_v5_hybrid_development.py",
+      "sha256": "79a6eaa05a8f0245435839bcbb4ed202fe614e378e70ce58a0f4b26a4287b196"
+    },
+    {
+      "path": "src/trustaero/optimizer/mask_pipeline_v5.py",
+      "sha256": "432a4c0bb10534321c2a13ab59c7c89874d8f606407d3625011212b127f6939a"
+    },
+    {
+      "path": "src/trustaero/optimizer/mask_mechanism.py",
+      "sha256": "dc110fe67271d8993f25214fe421af01e921eb23464ffa5d7f458b9191497319"
+    },
+    {
+      "path": "src/trustaero/optimizer/mask.py",
+      "sha256": "acc47aff681b48c863c906e3920f860b3b1269cfcafb7dbf71b5eb0e44fb91d1"
+    },
+    {
+      "path": "src/trustaero/experiments/optimizer_v51_nested_development.py",
+      "sha256": "94fb7db2ff00da4ff2adc6b2983712094afd574310ce0db9b432a024905e9b52"
+    },
+    {
+      "path": "scripts/run_optimizer_v51_nested_development.py",
+      "sha256": "4e54ee7cadc41b00cd88c2c54e30aa86135b3aed01835b1d8ed48e0634bb2d15"
+    }
+  ],
+  "mechanism_model_path": "results/mechanism_optimizer_development/fixed_formula_v1/mechanism_mask_cost_model.json",
+  "mechanism_model_sha256": "5567838265cba60c3632a9fb4ab8a8ebdddc6002f679a879b838ff0de02cd481",
+  "v5_negative_record_path": "experiments/frozen/optimizer_v5_hybrid_development_negative_20260722.json",
+  "v5_negative_record_sha256": "8ffaae4e4d7df16431d697df3eaf66488170c5e4f33540251d533afc20408d71",
+  "severity_exponents": [0.0, 1.0, 2.0],
+  "severity_weight_cap": 16.0,
+  "inner_fold_count": 5,
+  "inner_partition_seed": 20260730,
+  "ridge_lambda": 0.1,
+  "uncertainty_multiplier": 1.0,
+  "tie_threshold_fraction": 0.03,
+  "require_clean_git": true,
+  "gates": {
+    "minimum_direct_coverage": 0.25,
+    "minimum_within_tie_improvement_over_v1": 0.025,
+    "maximum_mean_regret_percent": 1.5,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_max_regret_percent": 12.0
+  },
+  "scientific_boundary": "V5.1 changes only the residual fitting objective by selecting a severe-regret family weight exponent inside each outer fold. Complete rows-width-match families remain indivisible. The V5 gates, features, mechanism prior, uncertainty multiplier, fallback, consumed holdout prohibition, and real-label exclusion remain unchanged."
+}

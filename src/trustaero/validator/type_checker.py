@@ -33,12 +33,17 @@ from trustaero.ir.models import (
     Filter,
     GeneralizeLocation,
     Join,
+    Limit,
     LineageCapture,
     Mask,
     MinGroupSize,
+    NumericAffineExpression,
+    NumericProductExpression,
+    NumericProductFormulaExpression,
     Operator,
     Project,
     ScanSource,
+    Sort,
     SpatialFilter,
     SpatialJoin,
     TemporalFilter,
@@ -145,10 +150,27 @@ def _merge_inputs(
     return RelationSchema(left.fields + right.fields, left.spatial + right.spatial), ()
 
 
+def _selected_spatial_descriptor(
+    schema: RelationSchema,
+    fields: tuple[str, str],
+) -> SpatialDescriptor | None:
+    """Resolve one ordered ``(latitude, longitude)`` pair exactly."""
+
+    latitude, longitude = fields
+    return next(
+        (
+            descriptor
+            for descriptor in schema.spatial
+            if descriptor.latitude_field == latitude and descriptor.longitude_field == longitude
+        ),
+        None,
+    )
+
+
 def _types_are_comparable(left: DataType, right: DataType, operator: ComparisonOperator) -> bool:
     """Return whether the small IR fragment defines this comparison."""
 
-    numeric = {DataType.INTEGER, DataType.FLOAT}
+    numeric = {DataType.INTEGER, DataType.FLOAT, DataType.DECIMAL}
     if left in numeric and right in numeric:
         return True
     if operator in (ComparisonOperator.EQ, ComparisonOperator.NE):
@@ -224,9 +246,56 @@ def _aggregate_output(
                 available_fields=input_schema.names,
             ),
         )
-    if source is not None:
+    product_fields: tuple[FieldDescriptor, ...] = ()
+    formula_has_decimal_constant = False
+    if expression.input_expression is not None:
+        numeric_expression = expression.input_expression
+        names: tuple[str, ...]
+        if isinstance(numeric_expression, NumericProductExpression):
+            names = (numeric_expression.left.field, numeric_expression.right.field)
+        elif isinstance(numeric_expression, NumericProductFormulaExpression):
+            names = tuple(
+                factor.field.field if isinstance(factor, NumericAffineExpression) else factor.field
+                for factor in numeric_expression.factors
+            )
+            formula_has_decimal_constant = any(
+                isinstance(factor, NumericAffineExpression) for factor in numeric_expression.factors
+            )
+        else:  # pragma: no cover - the discriminated IR union is exhaustive
+            names = ()
+        resolved = tuple(input_schema.get(name) for name in names)
+        missing = [name for name, field in zip(names, resolved, strict=True) if field is None]
+        if missing:
+            return None, (
+                _diagnostic(
+                    ReasonCode.FIELD_NOT_AVAILABLE,
+                    "Aggregate numeric product references an unavailable field.",
+                    operator_id,
+                    fields=missing,
+                    available_fields=input_schema.names,
+                ),
+            )
+        product_fields = tuple(field for field in resolved if field is not None)
+        non_numeric = [
+            field.name
+            for field in product_fields
+            if field.data_type not in (DataType.INTEGER, DataType.FLOAT, DataType.DECIMAL)
+        ]
+        if non_numeric:
+            return None, (
+                _diagnostic(
+                    ReasonCode.AGGREGATE_TYPE_NOT_SUPPORTED,
+                    "Aggregate numeric expressions require raw numeric fields.",
+                    operator_id,
+                    fields=non_numeric,
+                    function=expression.function.value,
+                ),
+            )
+
+    semantic_sources = ((source,) if source is not None else ()) + product_fields
+    for semantic_source in semantic_sources:
         semantic_errors = _raw_value_required(
-            source,
+            semantic_source,
             operator_id,
             "aggregate",
             "aggregate_input",
@@ -246,12 +315,19 @@ def _aggregate_output(
             (),
         )
 
-    # The model guarantees non-COUNT calls have an input field.
-    assert source is not None
-    numeric = source.data_type in (DataType.INTEGER, DataType.FLOAT)
-    comparable = source.data_type in (
+    # The model guarantees non-COUNT calls have exactly one supported input.
+    assert source is not None or product_fields
+    effective_sources: tuple[FieldDescriptor, ...] = (
+        (source,) if source is not None else product_fields
+    )
+    numeric = all(
+        item.data_type in (DataType.INTEGER, DataType.FLOAT, DataType.DECIMAL)
+        for item in effective_sources
+    )
+    comparable = source is not None and source.data_type in (
         DataType.INTEGER,
         DataType.FLOAT,
+        DataType.DECIMAL,
         DataType.DATETIME,
     )
     if function in (AggregateFunction.SUM, AggregateFunction.AVG) and not numeric:
@@ -260,8 +336,8 @@ def _aggregate_output(
                 ReasonCode.AGGREGATE_TYPE_NOT_SUPPORTED,
                 "SUM and AVG require a numeric input field.",
                 operator_id,
-                field=source.name,
-                data_type=source.data_type.value,
+                field=source.name if source is not None else "numeric_product",
+                data_type=source.data_type.value if source is not None else "numeric_product",
                 function=function.value,
             ),
         )
@@ -271,13 +347,19 @@ def _aggregate_output(
                 ReasonCode.AGGREGATE_TYPE_NOT_SUPPORTED,
                 "MIN and MAX support numeric or datetime fields in IR v1.",
                 operator_id,
-                field=source.name,
-                data_type=source.data_type.value,
+                field=source.name if source is not None else "numeric_product",
+                data_type=source.data_type.value if source is not None else "numeric_product",
                 function=function.value,
             ),
         )
 
-    output_type = DataType.FLOAT if function == AggregateFunction.AVG else source.data_type
+    input_types = {item.data_type for item in effective_sources}
+    if function == AggregateFunction.AVG or DataType.FLOAT in input_types:
+        output_type = DataType.FLOAT
+    elif DataType.DECIMAL in input_types or formula_has_decimal_constant:
+        output_type = DataType.DECIMAL
+    else:
+        output_type = DataType.INTEGER
     return (
         FieldDescriptor(
             name=expression.output_field,
@@ -285,7 +367,7 @@ def _aggregate_output(
             nullable=True,
             # Aggregation is not automatically anonymization. Conservatively
             # retain sensitivity until a policy rule explicitly declassifies it.
-            sensitive=source.sensitive,
+            sensitive=any(item.sensitive for item in effective_sources),
         ),
         (),
     )
@@ -353,6 +435,45 @@ def _infer_operator(
         projected = tuple(field for field in fields if field is not None)
         selected = set(operator.fields)
         return RelationSchema(projected, _project_spatial(input_schema.spatial, selected)), ()
+
+    if isinstance(operator, Sort):
+        names = tuple(key.field for key in operator.keys)
+        duplicates = sorted(name for name in set(names) if names.count(name) > 1)
+        if duplicates:
+            return None, (
+                _diagnostic(
+                    ReasonCode.INVALID_OPERATOR_ARGUMENT,
+                    "Sort keys must not repeat the same field.",
+                    operator.operator_id,
+                    fields=duplicates,
+                ),
+            )
+        missing = [name for name in names if input_schema.get(name) is None]
+        if missing:
+            return None, (
+                _diagnostic(
+                    ReasonCode.FIELD_NOT_AVAILABLE,
+                    "Sort references fields absent from its input schema.",
+                    operator.operator_id,
+                    fields=missing,
+                    available_fields=input_schema.names,
+                ),
+            )
+        sort_semantic_errors: list[Diagnostic] = []
+        for name in names:
+            field = input_schema.get(name)
+            if field is not None:
+                sort_semantic_errors.extend(
+                    _raw_value_required(field, operator.operator_id, "sort", "sort_key")
+                )
+        if sort_semantic_errors:
+            return None, tuple(sort_semantic_errors)
+        return input_schema, ()
+
+    if isinstance(operator, Limit):
+        # The validated row-count bound changes cardinality, not schema or
+        # field capabilities.
+        return input_schema, ()
 
     if isinstance(operator, SpatialFilter):
         if not input_schema.spatial:
@@ -478,16 +599,45 @@ def _infer_operator(
                     right_has_spatial=bool(right.spatial),
                 ),
             )
-        left_crs = {descriptor.crs for descriptor in left.spatial}
-        right_crs = {descriptor.crs for descriptor in right.spatial}
-        if left_crs.isdisjoint(right_crs):
+        left_descriptor = _selected_spatial_descriptor(left, operator.left_fields)
+        right_descriptor = _selected_spatial_descriptor(right, operator.right_fields)
+        missing_sides = [
+            side
+            for side, descriptor in (
+                ("left", left_descriptor),
+                ("right", right_descriptor),
+            )
+            if descriptor is None
+        ]
+        if missing_sides:
+            return None, (
+                _diagnostic(
+                    ReasonCode.SPATIAL_DESCRIPTOR_NOT_FOUND,
+                    "SpatialJoin coordinate fields do not identify a declared spatial pair.",
+                    operator.operator_id,
+                    missing_sides=missing_sides,
+                    left_fields=operator.left_fields,
+                    right_fields=operator.right_fields,
+                    left_available=[
+                        [item.latitude_field, item.longitude_field] for item in left.spatial
+                    ],
+                    right_available=[
+                        [item.latitude_field, item.longitude_field] for item in right.spatial
+                    ],
+                ),
+            )
+        # The fail-closed branch above proves both selected descriptors exist;
+        # keep that invariant explicit for static analysis and future edits.
+        assert left_descriptor is not None
+        assert right_descriptor is not None
+        if left_descriptor.crs != right_descriptor.crs:
             return None, (
                 _diagnostic(
                     ReasonCode.SPATIAL_CRS_MISMATCH,
                     "SpatialJoin inputs must share a CRS in IR v1.",
                     operator.operator_id,
-                    left_crs=sorted(left_crs),
-                    right_crs=sorted(right_crs),
+                    left_crs=left_descriptor.crs,
+                    right_crs=right_descriptor.crs,
                 ),
             )
         return _merge_inputs(operator, left, right)

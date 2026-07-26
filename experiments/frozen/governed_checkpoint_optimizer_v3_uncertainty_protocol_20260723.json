@@ -1,0 +1,34 @@
+{
+  "frozen_at": "2026-07-23",
+  "status": "FROZEN_BEFORE_EA1_UNCERTAINTY_V3_CALIBRATION",
+  "predecessor_failure": "experiments/frozen/governed_checkpoint_optimizer_v2_holdout_negative_20260723.json",
+  "base_model": "experiments/frozen/models/governed_checkpoint_optimizer_v2_20260723.json",
+  "method": {
+    "name": "grouped_one_sided_conformal_v1",
+    "predicted_margin": "estimated query-first latency minus estimated policy-first latency",
+    "signed_error": "actual margin minus predicted margin",
+    "grouping": "median signed error across seeds within each complete scenario family",
+    "coverage": 0.9,
+    "finite_sample_rank": "min(n, ceil((n+1)*coverage))",
+    "decision": "select query-first only when predicted margin plus upper error bound is below zero",
+    "fallback": "policy_first_narrow_checkpoint"
+  },
+  "numeric_sources": [
+    "results/governed_checkpoint_reversal_v1/20260723T012103266124Z",
+    "results/governed_checkpoint_optimizer_v2/20260723T020104628457Z/calibration.json"
+  ],
+  "excluded_numeric_source": "the failed V2 independent holdout",
+  "development_gates": {
+    "minimum_confidence_family_hit_rate": 1.0,
+    "maximum_mean_regret_percent": 5.0,
+    "maximum_regret_percent": 15.0,
+    "seed_consistent_selection_rate": 1.0,
+    "illegal_candidate_selection_count": 0
+  },
+  "boundaries": [
+    "The failed V2 holdout motivates uncertainty protection but supplies no numeric calibration value.",
+    "Governance feasibility and out-of-support checks run before uncertainty-aware cost choice.",
+    "Passing development audit only authorizes a new untouched holdout.",
+    "A new holdout protocol will be frozen only after the V3 guard artifact is hashed."
+  ]
+}

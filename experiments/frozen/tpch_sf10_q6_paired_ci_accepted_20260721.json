@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch_sf10_q6_paired_ci_accepted_20260721",
+  "status": "PASS",
+  "source_commit": "4831ad0d7295dc1523aac59d9944be828f40e414",
+  "run_id": "20260721T012711938759Z",
+  "paper_performance_evidence": true,
+  "formal_paper_experiment_authorized": true,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "observed": {
+    "scale_factor": 10,
+    "input_rows": 59986052,
+    "temporal_rows": 9099165,
+    "governed_rows": 1139264,
+    "measurement_count": 900,
+    "execution_process_segments": 1,
+    "all_integrity_gates_passed": true,
+    "all_carryover_checks_no_material_carryover": true,
+    "authorized_claim_count": 1,
+    "total_candidate_claim_count": 2,
+    "time_materialization_over_fused_ratio": 5.3579111830444965,
+    "time_materialization_over_fused_ci95": [
+      4.934045483588658,
+      5.741035129661144
+    ],
+    "time_materialization_claim": "MATERIALLY_SLOWER",
+    "predicate_materialization_over_fused_ratio": 1.1017412061982879,
+    "predicate_materialization_over_fused_ci95": [
+      0.9919459709683858,
+      1.1652760824502892
+    ],
+    "predicate_materialization_claim": "INCONCLUSIVE"
+  },
+  "immutable_files": [
+    {
+      "path": "results/tpch_sf10_q6_formal_v2/20260721T012711938759Z/acceptance.json",
+      "sha256": "1b3bdc8122ab1146e1f3f25d93d4f74b0c47ec89ad220193c40183e8c664ee7f"
+    },
+    {
+      "path": "results/tpch_sf10_q6_formal_v2/20260721T012711938759Z/config.json",
+      "sha256": "1725baa221fcd96fd0ae8313e3f38a36c04b3a71b3dd41bab449dd7f98a8e7a9"
+    },
+    {
+      "path": "results/tpch_sf10_q6_formal_v2/20260721T012711938759Z/environment.json",
+      "sha256": "35d413b2608166729b1c275f45ea69e1c25b61ab365c5d650535da507927bfda"
+    },
+    {
+      "path": "results/tpch_sf10_q6_formal_v2/20260721T012711938759Z/measurements.csv",
+      "sha256": "ff62b2a51e6289f7c81bfa1019e27adec7895543e3b00304e54933fbb59ef54c"
+    },
+    {
+      "path": "results/tpch_sf10_q6_formal_v2/20260721T012711938759Z/report.md",
+      "sha256": "f3ce5926c9760ab2b581bfb425f044ab4e12e1a7ab48125eaf4702b8bacf41ce"
+    },
+    {
+      "path": "results/tpch_sf10_q6_formal_v2/20260721T012711938759Z/summary.json",
+      "sha256": "c9cc6038cf605d7e31c64b708ce4f7fcb099ec02fcaead08b90fb8d2d9763f83"
+    }
+  ],
+  "scientific_boundary": "This uninterrupted SF10 Q6 V2 run is accepted as standard-benchmark method evidence. Only the predeclared pollution-safe claim that time materialization is materially slower than fused is authorized. Predicate materialization versus fused remains inconclusive and must not be described as equivalence, superiority, or inferiority. The carryover conclusion is limited to the frozen 10% materiality tolerance and this execution environment."
+}

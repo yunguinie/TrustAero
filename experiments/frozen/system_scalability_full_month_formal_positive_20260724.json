@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-system-scalability-full-month-formal-positive-20260724",
+  "status": "PASS_FULL_MONTH_FORMAL_SOURCE_LINEAGE_EVIDENCE",
+  "measurement_run": "results/system_scalability_full_month_formal_v1/20260724T141132808592Z",
+  "measurement_commit": "b75b19d293b1ff001c463c68eb7475c9e4e8355f",
+  "artifacts": [
+    {
+      "path": "results/system_scalability_full_month_formal_v1/20260724T141132808592Z/summary.json",
+      "sha256": "28301b0ff2f7605fe30c0cad0c9d5602c7c2d8a9b49da2b66a16a07ecf45e640"
+    },
+    {
+      "path": "results/system_scalability_full_month_formal_v1/20260724T141132808592Z/environment.json",
+      "sha256": "c6ce42196ef4a527770cac29b59045c32b277ffaf3c66cf5222b165cceee8f2b"
+    },
+    {
+      "path": "results/system_scalability_full_month_formal_v1/20260724T141132808592Z/measurements.csv",
+      "sha256": "0f2362bd87880b1fa932507ab5e02722ada6cd22757fbc7f85d66b27c480f60d"
+    },
+    {
+      "path": "results/system_scalability_full_month_formal_evaluation_v1/20260724T141132808592Z/evaluation.json",
+      "sha256": "d606f26d69ba4034a8e57ba2832237d4f1fb06489fa96f7af5cd3b18d2d7e3f9"
+    }
+  ],
+  "unit_findings": [
+    {
+      "unit_id": "bts-full_month",
+      "input_rows": 547271,
+      "median_complete_over_direct_overhead_percent": -3.10115,
+      "paired_ratio_ci95": [0.90189, 1.049039],
+      "peak_memory_bytes": 12480596,
+      "temporary_spill_bytes": 0,
+      "median_control_components_ms": {
+        "planner": 0.29265,
+        "policy_validation": 0.929,
+        "source_lineage_capture": 0.1286,
+        "certificate_verification": 0.12435
+      }
+    },
+    {
+      "unit_id": "nyc_tlc-full_month",
+      "input_rows": 2964624,
+      "median_complete_over_direct_overhead_percent": 4.017065,
+      "paired_ratio_ci95": [0.985966, 1.057712],
+      "peak_memory_bytes": 55997936,
+      "temporary_spill_bytes": 0,
+      "median_control_components_ms": {
+        "planner": 0.34215,
+        "policy_validation": 0.92805,
+        "source_lineage_capture": 0.0735,
+        "certificate_verification": 0.1314
+      }
+    }
+  ],
+  "authorized_claims": [
+    "Complete TrustAero execution preserved relational results and source-lineage evidence on both full-month workloads.",
+    "Both workloads passed all frozen position, half-drift, certificate, and zero-spill gates.",
+    "At 547271 and 2964624 input rows, the complete/direct confidence intervals included parity.",
+    "Median planner, policy, source-lineage, and certificate control work totaled about 1.47 ms on BTS and 1.48 ms on NYC."
+  ],
+  "interpretation": [
+    "The observed negative BTS point estimate is timing variation, not a claim that governance has negative cost.",
+    "Both full-month workloads are reported as statistically indistinguishable from the equivalent direct SQL at the 95% paired interval.",
+    "The result suggests fixed control-path work is amortized as database execution grows."
+  ],
+  "scientific_boundaries": [
+    "The evidence covers source-snapshot lineage, not record-level lineage.",
+    "Certificate verification remains PARTIAL by design.",
+    "The result covers January 2024 BTS and NYC TLC on DuckDB 1.5.4 with four threads and a 4 GB memory limit.",
+    "The frozen optimizer was outside the timing loop and was not reopened."
+  ]
+}

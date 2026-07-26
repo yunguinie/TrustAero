@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-record-lineage-compact-v2-pilot-positive-20260724",
+  "status": "PASS_RECORD_LINEAGE_COMPACT_V2_PILOT",
+  "measurement_commit": "7434377562b1daf26b82747e3408a22d3cebbcfc",
+  "run_path": "results/record_lineage_compact_pilot_v2/20260724T150043416489Z",
+  "artifacts": [
+    {
+      "path": "results/record_lineage_compact_pilot_v2/20260724T150043416489Z/summary.json",
+      "sha256": "34de0dfa9864132056ccaa562a480bf3bc9f300824cf244a22a067d74522937d"
+    },
+    {
+      "path": "results/record_lineage_compact_pilot_v2/20260724T150043416489Z/environment.json",
+      "sha256": "9fac4fd068d28f749c9b861c2de5c8bb877724e3ac62e27d2d8dde26170a35dc"
+    },
+    {
+      "path": "results/record_lineage_compact_pilot_v2/20260724T150043416489Z/measurements.csv",
+      "sha256": "b1506385ca6427a8fbacc9c7d904c650e4450c0bd9b8ec66ac7e58c762443b93"
+    }
+  ],
+  "unit_findings": [
+    {
+      "row_count": 1000,
+      "record_median_ms": 26.07125,
+      "capture_median_ms": 21.2467,
+      "verification_median_ms": 20.94995,
+      "artifact_bytes": 64391,
+      "bytes_per_edge": 64.391
+    },
+    {
+      "row_count": 10000,
+      "record_median_ms": 323.7244,
+      "capture_median_ms": 280.0006,
+      "verification_median_ms": 226.07855,
+      "artifact_bytes": 640394,
+      "bytes_per_edge": 64.039
+    },
+    {
+      "row_count": 50000,
+      "record_median_ms": 820.55245,
+      "capture_median_ms": 680.5841,
+      "verification_median_ms": 764.45665,
+      "artifact_bytes": 3200394,
+      "bytes_per_edge": 64.008
+    }
+  ],
+  "comparison_to_v1_at_50000": {
+    "record_latency_reduction_percent": 59.446,
+    "capture_latency_reduction_percent": 63.415,
+    "verification_latency_reduction_percent": 49.542,
+    "artifact_size_reduction_percent": 74.191
+  },
+  "admission": {
+    "compact_storage_gate_passed": true,
+    "semantic_integrity_passed": true,
+    "database_assisted_digest_development_admitted": true,
+    "formal_performance_experiment_admitted": false
+  },
+  "interpretation": [
+    "V2 preserves V1 semantics and tamper detection while approaching the 64-byte fixed edge payload.",
+    "Remaining CPU cost is dominated by per-row Python key encoding and hashing.",
+    "Formal scale timing remains deferred until database-assisted digest generation is evaluated."
+  ]
+}

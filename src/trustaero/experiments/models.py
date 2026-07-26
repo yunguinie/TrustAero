@@ -56,6 +56,8 @@ class CaseResult:
     pending_obligation_count: int
     verified_obligation_count: int
     certificate_event_count: int
+    planner_median_latency_ms: float
+    certificate_verification_median_latency_ms: float
     plan_digest: str
 
 

@@ -1,0 +1,54 @@
+{
+  "frozen_at": "2026-07-24",
+  "status": "FAIL_CHECKPOINT_MULTIFACTOR_OPTIMIZER_ADMISSION_RETAIN",
+  "role": "permanent negative development admission record",
+  "source_commit": "9c19ad3a8bacdb9710d418ba4751373050c29a6f",
+  "measurement_run_id": "20260724T022205611804Z",
+  "evaluation_run_id": "20260724T022702971844Z",
+  "summary_path": "results/checkpoint_required_boundary_v1/20260724T022205611804Z/summary.json",
+  "summary_sha256": "638616b341dabe179c61a8df33f729b21be3451e8c2c92dd703440f68a9631a8",
+  "measurements_path": "results/checkpoint_required_boundary_v1/20260724T022205611804Z/measurements.csv",
+  "measurements_sha256": "a17bd6c4c7c12483d4a7818874047d8c9a507d0277377ebaef2f4fae4fa471ec",
+  "config_path": "results/checkpoint_required_boundary_v1/20260724T022205611804Z/config.json",
+  "config_sha256": "625700b288e220e83c462c08c34a62300e08985faee721f2861375789c7741fb",
+  "evaluation_path": "results/checkpoint_required_boundary_evaluation_v1/20260724T022702971844Z/evaluation.json",
+  "evaluation_sha256": "c17e4b7d389a55100bc6381c0fe015c4e1355501a5cbfa306145c4609a538104",
+  "observed": {
+    "scenario_count": 48,
+    "conclusive_scenario_count": 37,
+    "conclusive_scenario_rate": 0.7708333333333334,
+    "winner_counts": {
+      "policy_first_narrow_checkpoint": 3,
+      "query_first_raw_checkpoint": 34
+    },
+    "inconclusive_scenario_count": 11,
+    "best_global_query_threshold": 0.160000001,
+    "best_global_query_threshold_accuracy": 0.918918918918919,
+    "query_levels_with_cross_factor_winner_interaction": [
+      0.13,
+      0.16
+    ]
+  },
+  "passed_gates": [
+    "measurement_integrity",
+    "minimum_conclusive_scenario_rate",
+    "policy_first_singleton_winner",
+    "query_first_singleton_winner",
+    "minimum_cross_factor_interaction_levels"
+  ],
+  "failed_gate": {
+    "name": "global_threshold_not_sufficient",
+    "frozen_maximum_simple_threshold_accuracy": 0.9,
+    "observed_simple_threshold_accuracy": 0.918918918918919
+  },
+  "interpretation": [
+    "A required checkpoint creates a real bidirectional plan reversal: both policy-first and query-first are confidence-set singleton winners in the frozen matrix.",
+    "Width and policy selectivity affect the crossover at q=0.13 and q=0.16.",
+    "The fitted threshold 0.160000001 is just above the largest measured q=0.16, so within this matrix it degenerates to the fixed query-first baseline; its 34/37 accuracy mainly reflects label imbalance rather than a learned internal switching boundary.",
+    "The pre-registered admission rule therefore does not justify training a more complex multifactor optimizer for this isolated two-candidate family.",
+    "The eleven inconclusive scenarios are not relabelled as wins for either candidate."
+  ],
+  "decision": "Stop complex model development for this isolated required-checkpoint two-candidate family. Use governance feasibility to determine the legal candidate set and retain fixed query-first as the strongest simple development baseline for this matrix; do not promote the degenerate 0.16 threshold to a validated optimizer. Continue paper work on the full legal-plan enumerator, governance overhead, semantic correctness, and broader query families rather than weakening this gate.",
+  "optimizer_training_authorized": false,
+  "paper_optimizer_performance_claim_authorized": false
+}

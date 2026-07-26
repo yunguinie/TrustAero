@@ -1,0 +1,80 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v5_workload_protocol_20260721",
+  "status": "V5_WORKLOAD_EXPANSION_AUTHORIZED_BEFORE_NEW_TIMING",
+  "optimizer_model_fitting_authorized": false,
+  "new_external_partition_access_authorized": false,
+  "new_data_download_required": false,
+  "reason": "The frozen V4/V4.1 Mask-only workload is perfectly separable by match rate and cannot support a pipeline-aware superiority claim. Existing executable governance-driven query families provide a bounded, broader legal-candidate task.",
+  "new_calibration": {
+    "workloads": ["bts", "nyc_tlc"],
+    "sample_rows": [100000, 500000],
+    "unit_count": 4,
+    "candidate_count_per_unit": 3,
+    "warmup_blocks_per_unit": 6,
+    "measured_blocks_per_unit": 30,
+    "expected_query_executions_including_preflight": 444,
+    "order_protocol": "all_permutations",
+    "progress_and_resume_required": true,
+    "scientific_label": "development_only_not_optimizer_holdout"
+  },
+  "reused_query_templates": [
+    "QF-BTS-MASKED-READ",
+    "QF-NYC-ZONE-AGGREGATE",
+    "QF-BTS-NATURAL-MULTIJOIN",
+    "QF-BTS-MASK-JOIN-PLACEMENT"
+  ],
+  "post_run_gates": [
+    "all semantic outputs equivalent within each unit",
+    "all physical candidate fingerprints distinct within each unit",
+    "all candidate permutations equally represented",
+    "paired timing stability passes for all four new units",
+    "at least three governance-driven query templates in the merged matrix",
+    "at least two stable legal winner classes in the merged matrix",
+    "complete query-template families stay together during cross-validation",
+    "no illegal candidate selected or scored as feasible"
+  ],
+  "mandatory_baselines": [
+    "fixed_fused",
+    "fixed_conservative_legal",
+    "template_local_simple_rule",
+    "optimizer_v4",
+    "optimizer_v41",
+    "oracle"
+  ],
+  "immutable_files": [
+    {
+      "path": "experiments/configs/optimizer_v5_real_candidate_calibration_v1.json",
+      "sha256": "792ac201ecdaf936eb2d023772fac3162f220a204a35c01820b5b2525b547e36"
+    },
+    {
+      "path": "docs/optimizer-v5-workload-protocol.md",
+      "sha256": "d661f03cb8d3b377d7fc925f4ba86c7d186de5f41a125fc1d7960e6116333b10"
+    },
+    {
+      "path": "results/optimizer_workload_sufficiency/20260721T131015811798Z/audit.json",
+      "sha256": "59de7349352bf8f487ae11f1e87a0371afe1d26b77d7468ef7b05bb8513495a3"
+    },
+    {
+      "path": "results/real_data_formal_candidate_v1/20260719T051929196252Z/summary.json",
+      "sha256": "5d425a688e5bb1fb6ad332653e1ff62e56e82d9f7ae64cc4b789f083d2a7080e"
+    },
+    {
+      "path": "results/real_data_formal_candidate_v1/20260719T051929196252Z/acceptance.json",
+      "sha256": "8414ddce30dd8648451c2403f42c5d3886637e35e4ed45243d84ba69fd4b699c"
+    },
+    {
+      "path": "results/bts_multijoin_formal_v1/20260719T061237165086Z/summary.json",
+      "sha256": "5d6b5c09a5e16b6f333d2369c63811f27ee08ec0d4b067a13e0ab470ce801d5d"
+    },
+    {
+      "path": "results/optimizer_v4_calibration_development/20260721T184427124750+0800/paired_stability_audit.json",
+      "sha256": "bff08a26ecb296fe6d3facb5eea557540cc6f37b6f1c2a88f1e16f0a246767d3"
+    },
+    {
+      "path": "experiments/configs/real_data_query_families_v1.json",
+      "sha256": "1f1ac460f346b1f660aef0b98fe9a6d92c45fb9bad14765c542e39ac947e9425"
+    }
+  ],
+  "authorized_next_step": "Commit this protocol, run the four-unit calibration once with visible progress, apply the existing paired stability analyzer, and construct a hash-bound merged development manifest before fitting any V5 model."
+}

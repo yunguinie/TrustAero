@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "protocol_id": "tpch-multicandidate-scale-confirmation-v2-20260725",
+  "role": "development_scale_confirmation_after_inconclusive_sf1",
+  "runner": "scripts/run_tpch_multicandidate_scale_confirmation.py",
+  "config_path": "experiments/configs/tpch_multicandidate_scale_confirmation_v2.json",
+  "prior_negative": "experiments/frozen/tpch_multicandidate_admission_v1_negative_20260725.json",
+  "disclosure": "The SF1 admission was inspected. This SF10 stage tests scale amplification and may not be represented as an untouched optimizer holdout.",
+  "candidate_pruning": {
+    "q03": [
+      "fused",
+      "materialize-after-q03-orderdate-filter",
+      "materialize-after-q03-aggregate"
+    ],
+    "q10": [
+      "fused",
+      "materialize-after-q10-order-customer-join",
+      "materialize-after-q10-aggregate"
+    ],
+    "rule": "Retain fused and the two non-dominated SF1 contenders; permanently remove the materially dominated Q3 post-Join candidate and the lower-ranked Q10 post-lineitem candidate."
+  },
+  "measurement_protocol": {
+    "scale_factor": 10,
+    "candidate_count_per_query": 3,
+    "all_candidate_permutations": 6,
+    "measured_rounds_per_permutation": 5,
+    "paired_blocks_per_query": 30,
+    "timed_executions_per_query": 90,
+    "total_timed_executions": 180,
+    "tie_fraction": 0.03,
+    "paired_confidence_level": 0.95,
+    "bootstrap_draws": 5000,
+    "maximum_paired_ratio_half_drift": 0.20
+  },
+  "stop_rule": "If Q3 and Q10 do not produce two different confidence-authorized singleton winners, stop TPC-H optimizer expansion permanently and retain TPC-H only as semantic and method evidence.",
+  "scientific_boundary": "Passing supports stable query-dependent plan-cost evidence at SF10. It does not by itself prove that an optimizer predicts the winner."
+}

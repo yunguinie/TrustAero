@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "protocol_id": "multisource-case-study-source-v1",
+  "frozen_on": "2026-07-25",
+  "status": "SOURCE_SELECTION_FROZEN_DOWNLOAD_PENDING",
+  "purpose": "Prepare one end-to-end governance case study; this protocol does not authorize performance claims.",
+  "geographic_scope": {
+    "name": "New York State bounding box",
+    "crs": "EPSG:4326",
+    "minimum_latitude": 40.4774,
+    "maximum_latitude": 45.0153,
+    "minimum_longitude": -79.7624,
+    "maximum_longitude": -71.7517
+  },
+  "sources": [
+    {
+      "artifact_id": "multisource_usgs_earthquakes_ny_2000_2024",
+      "logical_dataset_id": "usgs_earthquake",
+      "publisher": "United States Geological Survey",
+      "version": "catalog events from 2000-01-01 through 2024-12-31",
+      "source_page": "https://earthquake.usgs.gov/fdsnws/event/1/",
+      "observed_fields": ["event_id", "time", "latitude", "longitude", "depth", "magnitude"],
+      "role": "governed spatiotemporal event source"
+    },
+    {
+      "artifact_id": "multisource_nysdec_regulated_wells_20260724",
+      "logical_dataset_id": "oil_gas_well",
+      "publisher": "New York State Department of Environmental Conservation",
+      "version": "Socrata dataset szye-wmt3 retrieved after its 2026-07-24 update",
+      "source_page": "https://data.ny.gov/d/szye-wmt3",
+      "observed_fields": ["api_well_number", "well_name", "well_type", "county", "latitude", "longitude"],
+      "role": "governed infrastructure source"
+    },
+    {
+      "artifact_id": "multisource_faa_airports_20241128",
+      "logical_dataset_id": "airport",
+      "publisher": "Federal Aviation Administration",
+      "version": "NASR 28-day subscription effective 2024-11-28",
+      "source_page": "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/NASR_Subscription/2024-11-28/",
+      "observed_fields": ["airport_id", "airport_name", "state", "latitude", "longitude"],
+      "role": "aviation facility source"
+    },
+    {
+      "artifact_id": "multisource_census_places_2024",
+      "logical_dataset_id": "city",
+      "publisher": "United States Census Bureau",
+      "version": "2024 National Places Gazetteer",
+      "source_page": "https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.2024.html",
+      "observed_fields": ["geoid", "name", "state", "internal_point_latitude", "internal_point_longitude"],
+      "role": "place reference source"
+    }
+  ],
+  "download": {
+    "registry_stage": "multisource_case_v1",
+    "project_relative_root": "data/raw/multisource",
+    "command": "python -u scripts/download_datasets.py --stage multisource_case_v1",
+    "resumable": true,
+    "progress_visible": true,
+    "sha256_audit_required": true
+  },
+  "scientific_boundaries": [
+    "The four sources form one composed end-to-end case study, not four independent performance datasets.",
+    "Raw row counts, coordinates, timestamps, and join relationships are observed data.",
+    "Governance labels, policies, and sensitive payloads may be deterministically augmented and must be reported as synthetic.",
+    "The case remains ineligible for paper claims until every download audit, transformation manifest, executable query, lineage artifact, and certificate check passes.",
+    "SpatialJoin execution and multi-source record lineage are not assumed to exist merely because the logical IR accepts SpatialJoin."
+  ],
+  "next_gates": [
+    "download_and_sha256_audit",
+    "schema_and_license_audit",
+    "deterministic_preparation",
+    "spatial_execution_capability",
+    "validated_plan_and_policy",
+    "lineage_and_certificate_integrity"
+  ]
+}

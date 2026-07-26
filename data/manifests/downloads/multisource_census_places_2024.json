@@ -1,0 +1,16 @@
+{
+  "artifact": {
+    "artifact_id": "multisource_census_places_2024",
+    "dataset_id": "multisource_case_study",
+    "expected_bytes": null,
+    "expected_sha256": null,
+    "relative_path": "raw/multisource/census/2024_Gaz_place_national.zip",
+    "stage": "multisource_case_v1",
+    "url": "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2024_Gazetteer/2024_Gaz_place_national.zip"
+  },
+  "byte_size": 1221402,
+  "local_path": "data/raw/multisource/census/2024_Gaz_place_national.zip",
+  "retrieved_at_utc": "2026-07-25T01:14:45.651906+00:00",
+  "schema_version": 1,
+  "sha256": "cf262fc92b2326f7a8c62a89d156a60eb17d64d6d35f7a62310c43bb08972c06"
+}

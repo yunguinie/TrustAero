@@ -1,0 +1,37 @@
+{
+  "record_id": "governed-pipeline-semantic-admission-v3-positive",
+  "recorded_at": "2026-07-24",
+  "status": "PASS_GOVERNED_PIPELINE_OPTIMIZER_ADMISSION",
+  "run_id": "20260724T072055085971Z",
+  "source_commit": "9d4cedda4b4a36b5eabab86b5ef44d3004ef9e40",
+  "summary_path": "results/governed_pipeline_semantic_admission_v3/20260724T072055085971Z/summary.json",
+  "summary_sha256": "81dbe915e9f4f2254bd1883845aee776ca520f77e8f060060bc3f8acf765b774",
+  "measurements_sha256": "a68036de7e6199119ebd656009c39187757f1c49c6e06bf4e47a60ffc5cd3f1d",
+  "integrity": {
+    "unit_count": 48,
+    "measurement_rows": 4320,
+    "paired_blocks": 1440,
+    "result_equivalence_passed": true,
+    "record_lineage_equivalence_passed": true,
+    "distinct_physical_plans_per_unit": 3,
+    "query_first_join_reads_sensitive_value": false,
+    "git_dirty_at_measurement": false
+  },
+  "admission": {
+    "scenario_count": 16,
+    "conclusive_scenario_rate": 0.6875,
+    "singleton_winner_counts": {
+      "join_first_masked_checkpoint": 6,
+      "policy_first_masked_checkpoint": 5
+    },
+    "dominant_singleton_winner_fraction": 0.5454545454545454,
+    "all_gate_checks_passed": true,
+    "systematic_material_carryover_detected": false
+  },
+  "authorization": {
+    "fresh_development_cost_calibration": true,
+    "reuse_retracted_v2_model": false,
+    "paper_optimizer_performance_claim": false,
+    "unseen_data_generalization_claim": false
+  }
+}

@@ -44,6 +44,11 @@ def main() -> None:
     )
     parser.add_argument("--warmup-runs", type=int, default=None)
     parser.add_argument("--measured-runs", type=int, default=None)
+    parser.add_argument(
+        "--progress",
+        action="store_true",
+        help="Print completed cases, elapsed time, and estimated remaining time.",
+    )
     args = parser.parse_args()
 
     config = (
@@ -83,7 +88,7 @@ def main() -> None:
             measured_runs=args.measured_runs,
         )
 
-    output_dir = run_phase0(config)
+    output_dir = run_phase0(config, progress=args.progress)
     print(output_dir)
 
 

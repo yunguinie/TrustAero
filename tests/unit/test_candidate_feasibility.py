@@ -7,6 +7,7 @@ import pytest
 from trustaero.optimizer.candidate_feasibility import (
     RAW_JOIN_LIMIT_EXCEEDED,
     RAW_MATERIALIZATION_LIMIT_EXCEEDED,
+    REQUIRED_CHECKPOINT_MISSING,
     CandidateExposure,
     GovernanceFeasibilityPolicy,
     evaluate_candidate_feasibility,
@@ -95,6 +96,33 @@ def test_empty_legal_set_returns_fail_closed_reject() -> None:
     assert result.status == "REJECT"
     assert result.feasible_candidate_ids == ()
     assert result.rejected_candidate_ids == ("raw_only",)
+
+
+def test_required_checkpoint_rejects_fused_candidate_before_cost() -> None:
+    """A fast fused plan cannot waive a policy-required audit boundary."""
+
+    exposures = (
+        CandidateExposure(
+            "fused",
+            0,
+            0,
+            provides_governance_checkpoint=False,
+        ),
+        CandidateExposure("materialized", 0, 0),
+    )
+    result = filter_feasible_candidates(
+        exposures,
+        GovernanceFeasibilityPolicy(
+            "checkpoint-required",
+            None,
+            None,
+            require_governance_checkpoint=True,
+        ),
+    )
+
+    assert result.feasible_candidate_ids == ("materialized",)
+    fused = next(item for item in result.decisions if item.candidate_id == "fused")
+    assert [item.code for item in fused.diagnostics] == [REQUIRED_CHECKPOINT_MISSING]
 
 
 def test_invalid_exposure_and_duplicate_ids_are_rejected() -> None:

@@ -1,0 +1,52 @@
+{
+  "status": "FAIL_ADAPTIVE_CHECKPOINT_PILOT_DEVELOPMENT_RETAIN",
+  "pilot_summary_path": "results/adaptive_checkpoint_pilot_development_v1/20260723T095612428612Z/summary.json",
+  "pilot_summary_sha256": "d966113339d0be31f5ac9937bebb34248b31cb743296f43bf4fc44ae7db9bc93",
+  "evaluation_path": "results/adaptive_checkpoint_pilot_development_v1_evaluation/20260723T095929859971Z/evaluation.json",
+  "evaluation_sha256": "aab321b4a7e734478558778904bf55dc3e82b68f3db995606e6b5ba879d15005",
+  "pilot_commit_hash": "9d264ea945ee107c509a956c9b71b17b17c35a91",
+  "workload": {
+    "unit_count": 192,
+    "scenario_count": 64,
+    "paired_block_count": 1920,
+    "pilot_rows": 15000,
+    "full_rows": 150000
+  },
+  "adaptive": {
+    "confidence_family_hit_rate": 0.9375,
+    "mean_regret_percent": 0.7580388078381785,
+    "p95_regret_percent": 6.569662096423268,
+    "max_regret_percent": 16.33981827539104,
+    "conclusive_pilot_rate": 0.08854166666666667,
+    "amortized_speedup_at_20_reuses": 0.7811202197377399
+  },
+  "frozen_threshold": {
+    "confidence_family_hit_rate": 0.96875,
+    "mean_regret_percent": 0.608,
+    "p95_regret_percent": 5.068,
+    "max_regret_percent": 10.455
+  },
+  "diagnosis": {
+    "conclusive_units": 17,
+    "inconclusive_units": 175,
+    "decisions_changed_from_threshold": 2,
+    "changed_decisions_helped": 0,
+    "changed_decisions_harmed": 2,
+    "changed_decision_cumulative_extra_regret_percent": 28.78289643165397,
+    "interpretation": "The 10 percent pilot is not a scale-stable proxy for the full-size winner. Most pilots were inconclusive; both conclusive overrides of the frozen threshold were harmful, and pilot cost did not amortize after 20 reuses."
+  },
+  "passed_properties": [
+    "zero governance-illegal pilot executions or selections",
+    "mean regret below the absolute 1 percent gate"
+  ],
+  "failed_properties": [
+    "confidence-family hit improvement over the frozen threshold",
+    "mean-regret reduction versus the frozen threshold",
+    "P95 and maximum regret gates",
+    "minimum conclusive-pilot rate",
+    "seed consistency",
+    "amortized speedup at 20 reuses"
+  ],
+  "decision": "Stop this bounded 10 percent pilot design. Do not retune its sample size, confidence interval, or fallback on these exposed answers, and do not use it to authorize a paper optimizer-performance claim.",
+  "paper_optimizer_performance_claim_authorized": false
+}

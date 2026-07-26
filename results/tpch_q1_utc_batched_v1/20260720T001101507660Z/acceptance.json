@@ -1,0 +1,50 @@
+{
+  "absolute_half_drift_by_candidate": {
+    "fused": 0.04010979822192429,
+    "materialize-after-q01-aggregate": 0.009100828819173401,
+    "materialize-after-q01-filter": 0.05086466490906161
+  },
+  "diagnostic_oracle_set_within_tie_band": [
+    "fused",
+    "materialize-after-q01-aggregate"
+  ],
+  "formal_paper_experiment_authorized": true,
+  "heldout_optimizer_evidence": false,
+  "integrity_gates": {
+    "all_6_permutations_balanced": true,
+    "all_positions_balanced": true,
+    "candidate_space_complete": true,
+    "certificates_partial": true,
+    "clean_source_recorded": true,
+    "measurements_complete": true,
+    "official_result_equivalent_preflight": true,
+    "resources_observed": true
+  },
+  "median_candidate_over_fused_ratio": {
+    "fused": 1.0,
+    "materialize-after-q01-aggregate": 1.0158310230567533,
+    "materialize-after-q01-filter": 2.2111883386580757
+  },
+  "optimizer_selection_evaluated": false,
+  "paired_block_statistic": "median_of_5",
+  "paired_ratio_half_drift_by_candidate": {
+    "materialize-after-q01-aggregate": 0.030078525705668158,
+    "materialize-after-q01-filter": 0.04976178790982089
+  },
+  "paired_ratio_outlier_fraction_by_candidate": {
+    "materialize-after-q01-aggregate": 0.0,
+    "materialize-after-q01-filter": 0.0
+  },
+  "paper_performance_evidence": true,
+  "run_id": "20260720T001101507660Z",
+  "schema_version": 1,
+  "scientific_boundary": "TPC-H SF1 Q1 is standard-benchmark method evidence. The Oracle is computed after running all candidates and is not optimizer selection or heldout evidence.",
+  "scientific_label": "tpch_sf1_q1_exact_decimal_utc_batched_v1",
+  "stability_gates": {
+    "absolute_half_drift": true,
+    "paired_ratio_half_drift": true,
+    "paired_ratio_outlier_fraction": true
+  },
+  "status": "PASS",
+  "timing_protocol": "exact_decimal_utc_batched_v1"
+}

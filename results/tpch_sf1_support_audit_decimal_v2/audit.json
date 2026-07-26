@@ -1,0 +1,436 @@
+{
+  "artifact_rows": 8661245,
+  "artifact_sha256": "64a709fa8f995aeae23ffe6305a47e77c97113c823974a3f6a6933b8d05a0b22",
+  "audit_id": "tpch_sf1_ir_v1_exact_decimal_support_20260719",
+  "duckdb_execution_pass_count": 22,
+  "ir_v1_supported_count": 1,
+  "ir_v1_supported_queries": [
+    "Q06"
+  ],
+  "official_query_count": 22,
+  "queries": [
+    {
+      "blockers": [
+        "computed_aggregate_expression",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "l_returnflag",
+        "l_linestatus",
+        "sum_qty",
+        "sum_base_price",
+        "sum_disc_price",
+        "sum_charge",
+        "avg_qty",
+        "avg_price",
+        "avg_disc",
+        "count_order"
+      ],
+      "output_row_count": 4,
+      "query_id": "Q01",
+      "result_digest": "sha256:ab3b13799ec3636d8a5c66bcd945b280ddae47a204a010371cf66c3445f7dbd4",
+      "sql_sha256": "d4e597b22093a45e33f1350641da9e928a96eb4906845b8a255234f557b1301d"
+    },
+    {
+      "blockers": [
+        "like_predicate",
+        "correlated_scalar_subquery",
+        "order_by",
+        "limit"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "s_acctbal",
+        "s_name",
+        "n_name",
+        "p_partkey",
+        "p_mfgr",
+        "s_address",
+        "s_phone",
+        "s_comment"
+      ],
+      "output_row_count": 100,
+      "query_id": "Q02",
+      "result_digest": "sha256:729526c252d753875b326c186f3b351983f8520754d981aec0eedc7e1414a0e9",
+      "sql_sha256": "c80c2f9d4e550d1bc078e180a3902fa850a5080d08623c4c72bb2f8238588424"
+    },
+    {
+      "blockers": [
+        "computed_aggregate_expression",
+        "order_by",
+        "limit"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "l_orderkey",
+        "revenue",
+        "o_orderdate",
+        "o_shippriority"
+      ],
+      "output_row_count": 10,
+      "query_id": "Q03",
+      "result_digest": "sha256:605c79d5fa8d4ec512ee23cb88350738b9d45ee3570792b3dcf8fd35ac48fb5e",
+      "sql_sha256": "3faa219cd44f93c6c71c39402111a390583089af590489c91d52ff5f2c222e12"
+    },
+    {
+      "blockers": [
+        "correlated_exists",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "o_orderpriority",
+        "order_count"
+      ],
+      "output_row_count": 5,
+      "query_id": "Q04",
+      "result_digest": "sha256:73c5343f972b5cf36dde304d4e02b3386597bb51002949f918a1f6977c753edf",
+      "sql_sha256": "eb79624cfe9ca071579bdfdfff0b7a93ae9039719b1953d8804c15732f3a57ae"
+    },
+    {
+      "blockers": [
+        "computed_aggregate_expression",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "n_name",
+        "revenue"
+      ],
+      "output_row_count": 5,
+      "query_id": "Q05",
+      "result_digest": "sha256:579ffde209994d1067e4da7c73a11d2cd8d2f19e00f0a6bce8ad5590fa89333e",
+      "sql_sha256": "a94e5740d2356660ea792297c4942a7106f95592641ee69f7802ae5181ca5f19"
+    },
+    {
+      "blockers": [],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "SUPPORTED",
+      "output_columns": [
+        "revenue"
+      ],
+      "output_row_count": 1,
+      "query_id": "Q06",
+      "result_digest": "sha256:a1aeb439b6dadb8e1b63b2a6767310d2b8aa89d387266856bc24473812d13e3c",
+      "sql_sha256": "5b07868809f0d57af3e4b01e20a9436a09ce2601cf196675f8b5697a98716db8"
+    },
+    {
+      "blockers": [
+        "derived_projection",
+        "from_subquery",
+        "computed_aggregate_expression",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "supp_nation",
+        "cust_nation",
+        "l_year",
+        "revenue"
+      ],
+      "output_row_count": 4,
+      "query_id": "Q07",
+      "result_digest": "sha256:31b2192c0f5e90a4ee13d78a0059d84ca367c30f7878e06e7e183361e27ca840",
+      "sql_sha256": "7fd63ac9db69d4cf50d24a3b6d93c18b680857b10e6e84cbd40b41d65a89a335"
+    },
+    {
+      "blockers": [
+        "case_expression",
+        "derived_projection",
+        "from_subquery",
+        "division",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "o_year",
+        "mkt_share"
+      ],
+      "output_row_count": 2,
+      "query_id": "Q08",
+      "result_digest": "sha256:9bac8027ac72c11ac8c5d76d8dc2a4b7d171ed6eace9535df9ca495fe2af8594",
+      "sql_sha256": "965c5ffb88ba921a00b1e2ce3d8bbe3bb99cdb49004894762fd4a4a3bde12687"
+    },
+    {
+      "blockers": [
+        "like_predicate",
+        "derived_projection",
+        "from_subquery",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "nation",
+        "o_year",
+        "sum_profit"
+      ],
+      "output_row_count": 175,
+      "query_id": "Q09",
+      "result_digest": "sha256:96f01418711ca0eeb957cab762e76fa14ac6382dbae21938f8b7e9302cf98381",
+      "sql_sha256": "107ff8c290c60c9bee4e10b23c5c605beda15f9ffe5ff2319a72e7c98863b523"
+    },
+    {
+      "blockers": [
+        "computed_aggregate_expression",
+        "order_by",
+        "limit"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "c_custkey",
+        "c_name",
+        "revenue",
+        "c_acctbal",
+        "n_name",
+        "c_address",
+        "c_phone",
+        "c_comment"
+      ],
+      "output_row_count": 20,
+      "query_id": "Q10",
+      "result_digest": "sha256:c570e9283ebd054bb87417d72867ac31cb00573f3758ed679308152136fc28cf",
+      "sql_sha256": "a581dcf099d72f5115fe10b139bbe6a12ba8fd1703e7f6f161d703166f71bc6c"
+    },
+    {
+      "blockers": [
+        "computed_aggregate_expression",
+        "having",
+        "scalar_subquery",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "ps_partkey",
+        "value"
+      ],
+      "output_row_count": 1048,
+      "query_id": "Q11",
+      "result_digest": "sha256:b1c444303f6bc5a5a4d43d1305cbeaaddf8402321b862cdc56824ff4b9199b8f",
+      "sql_sha256": "3c97cf56b398efb7b6acffef469e7b7eb3b70ff5f3296d6e3da134ca35825c1b"
+    },
+    {
+      "blockers": [
+        "case_expression",
+        "in_predicate",
+        "field_field_filter",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "l_shipmode",
+        "high_line_count",
+        "low_line_count"
+      ],
+      "output_row_count": 2,
+      "query_id": "Q12",
+      "result_digest": "sha256:0c76b3fa01dbae5ccc74f083f7d0ff5ad585f78d8bab672d8c706d00630cfc8a",
+      "sql_sha256": "57b5c149c79f57827b7be56154a9adea01248704463a95eb779b96d8c005e906"
+    },
+    {
+      "blockers": [
+        "join_predicate_filter",
+        "from_subquery",
+        "nested_aggregate",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "c_count",
+        "custdist"
+      ],
+      "output_row_count": 42,
+      "query_id": "Q13",
+      "result_digest": "sha256:b667ff1a0a4097e815e9928766b5ac477178440439073c6baeced62834eb5945",
+      "sql_sha256": "70c0225335cb534bfa12479abb83dfc4b698f2ce71391d42da65ab2449772636"
+    },
+    {
+      "blockers": [
+        "case_expression",
+        "like_predicate",
+        "division"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "promo_revenue"
+      ],
+      "output_row_count": 1,
+      "query_id": "Q14",
+      "result_digest": "sha256:b0e44dd292e3e972f2bda8c493248ab466fd0354a74a6a724eabf5c53d4a4254",
+      "sql_sha256": "dd7f7e978ff0ec8ee1e32277296ef5f6a5ff7e1a5e16492468e9456f40526c04"
+    },
+    {
+      "blockers": [
+        "common_table_expression",
+        "computed_aggregate_expression",
+        "scalar_subquery",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "s_suppkey",
+        "s_name",
+        "s_address",
+        "s_phone",
+        "total_revenue"
+      ],
+      "output_row_count": 1,
+      "query_id": "Q15",
+      "result_digest": "sha256:9a5e1eeff886a35f717f4b1b30ed7c31af8f7f7d1a91bd4a6552a69f7e4416c7",
+      "sql_sha256": "fa2d369016de5d10ea615b6056deb7cacfe067581497c03bd105922b2120b26e"
+    },
+    {
+      "blockers": [
+        "distinct_aggregate",
+        "like_predicate",
+        "in_predicate",
+        "subquery",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "p_brand",
+        "p_type",
+        "p_size",
+        "supplier_cnt"
+      ],
+      "output_row_count": 18314,
+      "query_id": "Q16",
+      "result_digest": "sha256:fdf3f56f9d24e8ee201fb91414addc579656a3157e0f0a6ed8e81a4346731279",
+      "sql_sha256": "bd955d0996d9c2da6fe5e26483b324b328daaf7ebde04310e586e42f46071edd"
+    },
+    {
+      "blockers": [
+        "division",
+        "correlated_scalar_subquery",
+        "computed_predicate"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "avg_yearly"
+      ],
+      "output_row_count": 1,
+      "query_id": "Q17",
+      "result_digest": "sha256:5e36b8e3e49eff67d510a5d571cad569f781461b035a5035e64039f7ced373cc",
+      "sql_sha256": "b0f5a8dc961b53eda506a4deb0c13c89dcbfbd95de2e178f41e6c1028398e562"
+    },
+    {
+      "blockers": [
+        "in_subquery",
+        "having",
+        "order_by",
+        "limit"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "c_name",
+        "c_custkey",
+        "o_orderkey",
+        "o_orderdate",
+        "o_totalprice",
+        "sum(l_quantity)"
+      ],
+      "output_row_count": 57,
+      "query_id": "Q18",
+      "result_digest": "sha256:1231823d8e24cb31255c4741a976f6991d4fcb72b3c9830b4f96e17a9367e4e7",
+      "sql_sha256": "67e3a6e757273b8b47e351230042e9c6515b27e491fe2cd21021fea5fa3d2602"
+    },
+    {
+      "blockers": [
+        "computed_aggregate_expression",
+        "in_predicate",
+        "nested_boolean",
+        "computed_predicate"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "revenue"
+      ],
+      "output_row_count": 1,
+      "query_id": "Q19",
+      "result_digest": "sha256:6e0931d301463a9be770b2e1d9d394f8cb976c2feb0b411a9351a590d0cdd567",
+      "sql_sha256": "5b8cfea2e30ccc72cb0e3e7a8126191286ea1e62bcfa8d7b64dd741d7f368dd0"
+    },
+    {
+      "blockers": [
+        "nested_subqueries",
+        "like_predicate",
+        "computed_aggregate_expression",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "s_name",
+        "s_address"
+      ],
+      "output_row_count": 186,
+      "query_id": "Q20",
+      "result_digest": "sha256:e5807e445cee1b9526f706106bfc8842088de47aea1fd07cc2ff270990be05f5",
+      "sql_sha256": "9c67bc89e6c2d637ad23767b31a9e83928c69724f75c266b1f546fcaf0fe595f"
+    },
+    {
+      "blockers": [
+        "correlated_exists",
+        "correlated_not_exists",
+        "field_field_filter",
+        "order_by",
+        "limit"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "s_name",
+        "numwait"
+      ],
+      "output_row_count": 100,
+      "query_id": "Q21",
+      "result_digest": "sha256:ac5cea43548d2d3ac365a38fc28f04c77b6ffee5143280513264d649751c9872",
+      "sql_sha256": "3650dee51f5967971f3657545d3223660bb1dca0e2e797cd617086236a94a4b1"
+    },
+    {
+      "blockers": [
+        "string_function",
+        "in_predicate",
+        "scalar_subquery",
+        "correlated_not_exists",
+        "order_by"
+      ],
+      "duckdb_status": "PASS",
+      "ir_v1_status": "BLOCKED",
+      "output_columns": [
+        "cntrycode",
+        "numcust",
+        "totacctbal"
+      ],
+      "output_row_count": 7,
+      "query_id": "Q22",
+      "result_digest": "sha256:30b110df719edec2cbf82529f82c490f3dbdf41f2d60ee276ad8b3a7b76591b0",
+      "sql_sha256": "cb159f433633ec4e7e0fcc0c404df433a3230e4ad43aaef99d884312624c5dda"
+    }
+  ],
+  "schema_version": 1,
+  "scientific_boundary": "All 22 official queries were executed as semantic smoke tests. This file contains no paper performance timing and does not treat raw DuckDB SQL as trusted IR.",
+  "source_commit": "5c434bc47ca208373e0b78df98c875da7bf65c9f",
+  "source_dirty": false,
+  "status": "PASS",
+  "unsupported_queries_retained_in_denominator": true
+}

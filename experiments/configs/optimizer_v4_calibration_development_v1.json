@@ -1,0 +1,22 @@
+{
+  "protocol_name": "optimizer_v4_calibration_development_v1",
+  "results_dir": "results/optimizer_v4_calibration_development",
+  "windows": [
+    {"window_id": "jan01-07", "start": "2024-01-01T00:00:00+00:00", "end": "2024-01-08T00:00:00+00:00"},
+    {"window_id": "jan08-14", "start": "2024-01-08T00:00:00+00:00", "end": "2024-01-15T00:00:00+00:00"},
+    {"window_id": "jan15-21", "start": "2024-01-15T00:00:00+00:00", "end": "2024-01-22T00:00:00+00:00"},
+    {"window_id": "jan22-31", "start": "2024-01-22T00:00:00+00:00", "end": "2024-02-01T00:00:00+00:00"}
+  ],
+  "identifier_widths": [192, 384, 768, 1536],
+  "target_match_rates": [0.25, 0.70, 0.95],
+  "warmup_blocks": 2,
+  "measured_blocks": 20,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260723,
+  "tie_threshold_fraction": 0.03,
+  "require_clean_git": true,
+  "profile_analysis_path": "results/optimizer_v4_profiles_development/20260721T100730786864Z/v4_profile_analysis.json",
+  "profile_analysis_sha256": "36eb3412c5f34afc26bc785a70a8faf9d8f070fe9d5a7ab0758b7ec8c5b39dc2",
+  "scientific_boundary": "This is an expanded January-only V4 development matrix over four non-overlapping complete time-window groups. It creates paired wall-clock calibration labels and pre-execution work records, but fits no model and is not paper holdout evidence. Cross-validation must keep every complete window group together. February-December remain unopened."
+}

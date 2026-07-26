@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trustaero-system-scalability-bts100-confirmation-v1-20260724",
+  "status": "FROZEN_NOT_EXECUTED",
+  "scientific_role": "targeted confirmation of the inconclusive BTS-100K system-overhead unit",
+  "trigger": {
+    "retained_record": "experiments/frozen/system_scalability_formal_partial_negative_20260724.json",
+    "reason": "The original formal matrix failed only the BTS-100K direct-layer position-stability gate."
+  },
+  "measurement_config": {
+    "path": "experiments/configs/system_scalability_bts100_confirmation_v1.json",
+    "sha256": "87f33474fd328f18a0489fb0c869a2ac87b41d08562e2900f847dc76b2811a52"
+  },
+  "evaluation_config": {
+    "path": "experiments/configs/system_scalability_bts100_confirmation_evaluation_v1.json",
+    "sha256": "147ed2257da534f62048672faff81b0c73bce384ec31134351553a82ee39f507"
+  },
+  "design": {
+    "dataset_scale": "bts-100000",
+    "warmup_blocks": 8,
+    "measured_blocks": 48,
+    "layers_per_block": 4,
+    "measurement_count": 192,
+    "ordering": "two complete cycles of all 24 four-layer permutations",
+    "position_count_per_layer_position": 12,
+    "purpose": "exactly balance execution position and immediate predecessor effects"
+  },
+  "unchanged_gates": {
+    "confidence_interval": "95% paired bootstrap median complete/direct ratio",
+    "bootstrap_repetitions": 5000,
+    "maximum_position_count_imbalance": 1,
+    "maximum_position_median_spread_fraction": 0.3,
+    "maximum_first_second_half_ratio_drift_fraction": 0.2,
+    "maximum_spilled_unit_count": 0
+  },
+  "decision_policy": [
+    "The original formal failure remains permanently retained.",
+    "A confirmation PASS authorizes BTS-100K evidence only when combined with the three originally passed units.",
+    "A confirmation FAIL leaves BTS-100K inconclusive and does not invalidate the other three passed units.",
+    "No threshold may be changed after observing the confirmation measurements.",
+    "The optimizer is neither refitted nor reevaluated in this confirmation."
+  ]
+}

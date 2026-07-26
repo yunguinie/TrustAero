@@ -1,0 +1,317 @@
+{
+  "inputs": [
+    {
+      "artifact_id": "bts_on_time_2024_12",
+      "byte_size": 30150370,
+      "relative_path": "raw/bts/on_time/2024/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_12.zip",
+      "sha256": "a324577aa76d1f0aa36239f8010b6b5270fea0ff5ac846177753b76a42c5d01c"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_12",
+      "byte_size": 61524085,
+      "relative_path": "raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-12.parquet",
+      "sha256": "41ebf7db80bebde60c58e5143c14cdf38ad04a0f3e3ff44215b3e240d55f6c78"
+    }
+  ],
+  "month": 12,
+  "nyc_row_count": 3668371,
+  "nyc_schema": [
+    [
+      "VendorID",
+      "INTEGER"
+    ],
+    [
+      "tpep_pickup_datetime",
+      "TIMESTAMP"
+    ],
+    [
+      "tpep_dropoff_datetime",
+      "TIMESTAMP"
+    ],
+    [
+      "passenger_count",
+      "BIGINT"
+    ],
+    [
+      "trip_distance",
+      "DOUBLE"
+    ],
+    [
+      "RatecodeID",
+      "BIGINT"
+    ],
+    [
+      "store_and_fwd_flag",
+      "VARCHAR"
+    ],
+    [
+      "PULocationID",
+      "INTEGER"
+    ],
+    [
+      "DOLocationID",
+      "INTEGER"
+    ],
+    [
+      "payment_type",
+      "BIGINT"
+    ],
+    [
+      "fare_amount",
+      "DOUBLE"
+    ],
+    [
+      "extra",
+      "DOUBLE"
+    ],
+    [
+      "mta_tax",
+      "DOUBLE"
+    ],
+    [
+      "tip_amount",
+      "DOUBLE"
+    ],
+    [
+      "tolls_amount",
+      "DOUBLE"
+    ],
+    [
+      "improvement_surcharge",
+      "DOUBLE"
+    ],
+    [
+      "total_amount",
+      "DOUBLE"
+    ],
+    [
+      "congestion_surcharge",
+      "DOUBLE"
+    ],
+    [
+      "Airport_fee",
+      "DOUBLE"
+    ]
+  ],
+  "outputs": [
+    {
+      "artifact_id": "bts_on_time_2024_12_full",
+      "byte_size": 9515865,
+      "derivation": "selected 40 reviewed fields from the official monthly CSV",
+      "relative_path": "processed/bts/on_time/2024-12/bts_flights_full.parquet",
+      "row_count": 590581,
+      "schema": [
+        [
+          "Year",
+          "BIGINT"
+        ],
+        [
+          "Quarter",
+          "BIGINT"
+        ],
+        [
+          "Month",
+          "BIGINT"
+        ],
+        [
+          "DayofMonth",
+          "BIGINT"
+        ],
+        [
+          "DayOfWeek",
+          "BIGINT"
+        ],
+        [
+          "FlightDate",
+          "DATE"
+        ],
+        [
+          "Reporting_Airline",
+          "VARCHAR"
+        ],
+        [
+          "DOT_ID_Reporting_Airline",
+          "BIGINT"
+        ],
+        [
+          "Tail_Number",
+          "VARCHAR"
+        ],
+        [
+          "Flight_Number_Reporting_Airline",
+          "BIGINT"
+        ],
+        [
+          "OriginAirportID",
+          "BIGINT"
+        ],
+        [
+          "Origin",
+          "VARCHAR"
+        ],
+        [
+          "OriginCityName",
+          "VARCHAR"
+        ],
+        [
+          "OriginState",
+          "VARCHAR"
+        ],
+        [
+          "DestAirportID",
+          "BIGINT"
+        ],
+        [
+          "Dest",
+          "VARCHAR"
+        ],
+        [
+          "DestCityName",
+          "VARCHAR"
+        ],
+        [
+          "DestState",
+          "VARCHAR"
+        ],
+        [
+          "CRSDepTime",
+          "VARCHAR"
+        ],
+        [
+          "DepTime",
+          "VARCHAR"
+        ],
+        [
+          "DepDelayMinutes",
+          "DOUBLE"
+        ],
+        [
+          "DepDel15",
+          "DOUBLE"
+        ],
+        [
+          "DepartureDelayGroups",
+          "BIGINT"
+        ],
+        [
+          "CRSArrTime",
+          "VARCHAR"
+        ],
+        [
+          "ArrTime",
+          "VARCHAR"
+        ],
+        [
+          "ArrDelayMinutes",
+          "DOUBLE"
+        ],
+        [
+          "ArrDel15",
+          "DOUBLE"
+        ],
+        [
+          "ArrivalDelayGroups",
+          "BIGINT"
+        ],
+        [
+          "Cancelled",
+          "DOUBLE"
+        ],
+        [
+          "CancellationCode",
+          "VARCHAR"
+        ],
+        [
+          "Diverted",
+          "DOUBLE"
+        ],
+        [
+          "CRSElapsedTime",
+          "DOUBLE"
+        ],
+        [
+          "ActualElapsedTime",
+          "DOUBLE"
+        ],
+        [
+          "AirTime",
+          "DOUBLE"
+        ],
+        [
+          "Distance",
+          "DOUBLE"
+        ],
+        [
+          "CarrierDelay",
+          "DOUBLE"
+        ],
+        [
+          "WeatherDelay",
+          "DOUBLE"
+        ],
+        [
+          "NASDelay",
+          "DOUBLE"
+        ],
+        [
+          "SecurityDelay",
+          "DOUBLE"
+        ],
+        [
+          "LateAircraftDelay",
+          "DOUBLE"
+        ]
+      ],
+      "sha256": "c199ae988a1b6671323ced548208d1915c09665cae6951a9b87302baa1d8492f"
+    },
+    {
+      "artifact_id": "bts_on_time_2024_12_airports",
+      "byte_size": 5426,
+      "derivation": "distinct observed monthly origin/destination airports",
+      "relative_path": "processed/bts/on_time/2024-12/bts_airports.parquet",
+      "row_count": 337,
+      "schema": [
+        [
+          "airport_id",
+          "BIGINT"
+        ],
+        [
+          "airport_code",
+          "VARCHAR"
+        ],
+        [
+          "city_name",
+          "VARCHAR"
+        ],
+        [
+          "state_code",
+          "VARCHAR"
+        ]
+      ],
+      "sha256": "105f11a3aba410cd9abffcbdc1e99d1a79fbcec6d37e611b05b777a8e955821b"
+    },
+    {
+      "artifact_id": "bts_on_time_2024_12_carriers",
+      "byte_size": 479,
+      "derivation": "distinct observed monthly reporting carriers",
+      "relative_path": "processed/bts/on_time/2024-12/bts_carriers.parquet",
+      "row_count": 15,
+      "schema": [
+        [
+          "carrier_id",
+          "BIGINT"
+        ],
+        [
+          "carrier_code",
+          "VARCHAR"
+        ]
+      ],
+      "sha256": "d9179009629b0e36171a9dbee26963dc382b93fdc712e41dec44f51f13fb6642"
+    }
+  ],
+  "prepared_at_utc": "2026-07-21T07:02:29.133627+00:00",
+  "purpose": "official monthly real-data input; no performance result",
+  "schema_version": 1,
+  "status": "PASS",
+  "year": 2024
+}

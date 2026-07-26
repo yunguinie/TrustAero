@@ -146,6 +146,30 @@
       "title": "Physical Plan Id",
       "type": "string"
     },
+    "planner_decision_digest": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Planner Decision Digest"
+    },
+    "planner_selected_candidate_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Planner Selected Candidate Id"
+    },
     "policy_snapshot": {
       "title": "Policy Snapshot",
       "type": "string"

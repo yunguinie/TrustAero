@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "protocol_id": "lineage-checkpoint-admission-v1-20260726",
+  "status": "FROZEN_BEFORE_FORMAL_TIMING",
+  "semantic_protocol": "experiments/frozen/lineage_checkpoint_family_semantic_protocol_v1_20260726.json",
+  "query_family": "record_lineage_checkpoint_reuse_v1",
+  "candidate_ids": ["late_per_query_capture", "policy_lineage_checkpoint", "snapshot_lineage_checkpoint"],
+  "hard_gates": {
+    "minimum_distinct_singleton_winners": 2,
+    "minimum_conclusive_scenario_rate": 0.5,
+    "maximum_dominant_winner_fraction": 0.8,
+    "practical_tie_fraction": 0.03,
+    "confidence_level": 0.95
+  },
+  "measurement_controls": {
+    "row_count": 50000,
+    "scenario_count": 6,
+    "seeds": 3,
+    "all_candidate_permutations": true,
+    "measured_rounds_per_permutation": 5,
+    "paired_hierarchical_bootstrap": true,
+    "duckdb_threads": 1,
+    "memory_limit_mb": 512
+  },
+  "runtime_scope_note": "The formal grid retains the single-query, moderate-reuse and high-reuse regimes while removing two redundant intermediate batches before formal timing. This runtime reduction was frozen after mechanism smoke and before formal measurements.",
+  "required_invariants": [
+    "All visible result digests and record-lineage edge digests match within every block.",
+    "All three observed DuckDB phase-plan fingerprints are distinct.",
+    "No candidate materializes a raw source identifier.",
+    "The optimizer sees only candidates satisfying the same record-level obligation."
+  ],
+  "stop_rule": "If admission fails, retain the negative result and permanently stop adding optimizer query families or tuning this family.",
+  "next_if_pass": "Fit an interpretable cost model using complete scenario groups, then freeze one independent holdout.",
+  "next_if_fail": "Proceed directly to external comparison, paper assembly, limitations and reproducibility packaging."
+}

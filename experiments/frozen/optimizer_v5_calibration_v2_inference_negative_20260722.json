@@ -1,0 +1,76 @@
+{
+  "record_schema_version": 1,
+  "record_id": "optimizer_v5_calibration_v2_inference_negative_20260722",
+  "status": "POLLUTION_SAFE_PROTOCOL_READY_BUT_LABEL_GATE_FAILED",
+  "measurement_commit": "c5a728c",
+  "analysis_commit": "967a766",
+  "source_run_id": "20260721T135804629209Z",
+  "completed_units": 4,
+  "measured_candidate_executions": 720,
+  "structural_integrity_pass": true,
+  "pollution_safe_inference_ready": true,
+  "minimum_model_eligible_units_required": 2,
+  "model_eligible_units_observed": 1,
+  "optimizer_training_authorized": false,
+  "unit_conclusions": {
+    "bts-n100000": "UNLABELLED_BOTH_COMPARISONS_INCONCLUSIVE",
+    "bts-n500000": "UNLABELLED_FILTER_SLOWER_MASK_ROUTE_INCONCLUSIVE",
+    "nyc_tlc-n100000": "FUSED_AUTHORIZED",
+    "nyc_tlc-n500000": "UNLABELLED_FILTER_SLOWER_JOIN_BOUNDARY_INCONCLUSIVE"
+  },
+  "scientific_interpretation": "Increasing from five to ten pollution-safe blocks resolved the sample-count protocol failure but did not make every near-boundary comparison conclusive. Only NYC 100K may be used as a set-valued optimizer label from this run. Point-estimate Oracle choices for the other units remain diagnostic.",
+  "rejected_fixes": [
+    "lower the minimum model-eligible unit gate after seeing this result",
+    "replace confidence-interval conclusions with total median winners",
+    "remove one possible polluter after reading carryover results",
+    "treat an interval crossing the 3 percent boundary as a tie or winner",
+    "retrain Optimizer V5 on the three unlabelled units"
+  ],
+  "authorized_next_step": "Predeclare an isolated pairwise resolution protocol for every inconclusive candidate-vs-fused comparison, using separate persistent DuckDB connections per candidate and preserving the 95 percent confidence interval and 3 percent practical tie band. Do not rerun already conclusive comparisons merely to improve their estimates.",
+  "immutable_files": [
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration_v2/20260721T135804629209Z/config.json",
+      "sha256": "7145568be2bef08df1a4b2372d84b6d2291cd66dab145405c5ffca366665710f"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration_v2/20260721T135804629209Z/environment.json",
+      "sha256": "162f48a1776faaf4cf09d405babace21c44a731ad58b3ff29ef184e11ba93c94"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration_v2/20260721T135804629209Z/measurements.csv",
+      "sha256": "341174b3ce7e8c9fd7677cae68a659bb3318b6cd4bbd2c78064b67700f05daa4"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration_v2/20260721T135804629209Z/summary.json",
+      "sha256": "967c10123d53fc34f09bd994a688e84b2d56e0e639df8514a9aa398250bd5a50"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration_v2/20260721T135804629209Z/acceptance.json",
+      "sha256": "f04055b0fff061ff6bd1e04d395ec96835d2fa6d1d39cfeb32b3da597eec7251"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration_v2/20260721T135804629209Z/report.md",
+      "sha256": "f8147d7ce311e324dba246875ee00f82e9dca50c8e7cb875a3d9b1b533412e1c"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration_v2/20260721T135804629209Z/legacy_stability_analysis.json",
+      "sha256": "f04055b0fff061ff6bd1e04d395ec96835d2fa6d1d39cfeb32b3da597eec7251"
+    },
+    {
+      "path": "results/optimizer_v5_real_candidate_calibration_v2/20260721T135804629209Z/v5_inference.json",
+      "sha256": "49a0bc898498dd644a1f4d4c7ffeaa3ec61260e9b0ee65ab26e468b86e95aa6e"
+    },
+    {
+      "path": "experiments/configs/optimizer_v5_real_candidate_calibration_v2.json",
+      "sha256": "25da0a7f5410e698cb96e3cb2236fe2e20c8854a8f105b973e1d3e187eee7c7b"
+    },
+    {
+      "path": "experiments/configs/optimizer_v5_calibration_inference_v2.json",
+      "sha256": "affac1b00f11e8f0dead99cfff67802fbce9adff26828d2add53188aa0fd30fc"
+    },
+    {
+      "path": "src/trustaero/experiments/optimizer_v5_calibration_analysis.py",
+      "sha256": "a9b960ec3bc13e9829bee49248760106ae0e5b75506e5ef5d40391b167a18824"
+    }
+  ]
+}

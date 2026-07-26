@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "freeze_scope": "tpch_sf1_q6_exact_decimal_utc_batched_v3_before_measurement",
+  "status": "FROZEN",
+  "query_id": "Q06",
+  "candidate_count": 3,
+  "execution_order_permutation_count": 6,
+  "warmup_blocks": 6,
+  "measured_blocks": 30,
+  "timed_repeats_per_candidate_position": 5,
+  "timed_candidate_executions": 450,
+  "paired_block_statistic": "median_of_5",
+  "duckdb_timezone": "UTC",
+  "exact_decimal_literals": true,
+  "official_result_preflight_required": true,
+  "thresholds_changed_from_v1_or_v2": false,
+  "paper_performance_evidence_authorized_after_runtime_gates": true,
+  "heldout_optimizer_evidence": false,
+  "optimizer_selection_evaluated": false,
+  "immutable_files": [
+    {"path": "experiments/configs/tpch_q6_utc_batched_v3.json", "sha256": "fdf483a4a9a01bec1c8d24e03bf4ceed74d9e60deb9817fc2b3c211f76740ae0"},
+    {"path": "experiments/frozen/tpch_q6_execution_semantics_correction_20260719.json", "sha256": "8054b28547d67d8943f0210d6f4856d2a7f024aec83d46ca5f348623362b6430"},
+    {"path": "results/tpch_q6_decimal_semantic_smoke/result.json", "sha256": "2e180f88c46f8eded56c24b91725a1fb6e15e386d8084278537eb99e1a0e26bb"},
+    {"path": "results/tpch_sf1_support_audit_decimal_v2/audit.json", "sha256": "cafbe45d1057101be0ef113fa744860bfbe48eacc6b28f3941c0c80ce93a762a"}
+  ],
+  "scientific_boundary": "V3 is the first Q6 timing protocol with explicit UTC, exact DECIMAL literals, and per-candidate official-result preflight. It retains all previous stability thresholds and is standard-benchmark method evidence, not optimizer holdout evidence."
+}

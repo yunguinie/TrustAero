@@ -1,0 +1,11 @@
+{
+  "results_dir": "results/record_lineage_pilot_v1",
+  "row_counts": [1000, 10000, 50000],
+  "warmup_rounds": 1,
+  "repetitions_per_permutation": 2,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260731,
+  "require_clean_git": true,
+  "experiment_role": "record_lineage_integrity_pilot"
+}

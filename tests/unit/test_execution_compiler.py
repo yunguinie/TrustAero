@@ -10,15 +10,18 @@ from typing import Any
 import pytest
 
 from trustaero.execution import (
+    CompiledQuery,
     DuckDBUnavailable,
     ExecutionCompileError,
     TableBindings,
+    compile_approved_physical_plan,
     compile_validated_plan,
     execute_with_connection,
     execute_with_duckdb,
 )
 from trustaero.ir.enums import DataType, ReasonCode, ValidationStatus
 from trustaero.ir.models import LiteralExpression
+from trustaero.planner import generate_duckdb_candidates
 from trustaero.validator.service import validate
 
 
@@ -305,6 +308,42 @@ def test_execute_aggregate_preserves_sql_null_and_type_contracts(
     assert result.rows == ((2, 4.949999999999999),)
 
 
+def test_execute_numeric_product_aggregate(
+    accept_plan, policy_set, catalog, duckdb_setup_sql
+) -> None:
+    """The bounded arithmetic input compiles to a real DuckDB product."""
+
+    raw = copy.deepcopy(accept_plan)
+    raw["plan_id"] = "numeric-product-aggregate"
+    raw["request_context"]["action"] = "aggregate"
+    raw["requested_output"]["fields"] = ["weighted_value"]
+    raw["operators"] = [
+        raw["operators"][0],
+        {
+            "operator_type": "Aggregate",
+            "operator_id": "aggregate-output",
+            "inputs": ["op1"],
+            "group_by": [],
+            "aggregates": [
+                {
+                    "function": "sum",
+                    "input_expression": {
+                        "expression_type": "numeric_product",
+                        "left": {"expression_type": "field", "field": "magnitude"},
+                        "right": {"expression_type": "field", "field": "latitude"},
+                    },
+                    "output_field": "weighted_value",
+                }
+            ],
+        },
+    ]
+    raw["output_operator"] = "aggregate-output"
+
+    result = _execute_real_duckdb(raw, policy_set, catalog, duckdb_setup_sql)
+
+    assert result.rows[0][0] == pytest.approx(4.8 * 39.9 + 5.1 * 40.1)
+
+
 @pytest.mark.parametrize(
     ("method", "expected_first"),
     [
@@ -398,3 +437,47 @@ def test_execute_generalize_location_uses_fixed_grid_without_filtering(
     assert result.row_count == 2
     assert result.rows[0][0] == pytest.approx(expected_latitude)
     assert result.rows[0][1] == pytest.approx(expected_longitude)
+
+
+def test_execution_digest_preserves_decimal_results_exactly() -> None:
+    """Fixed-point monetary aggregates remain serializable and deterministic."""
+
+    duckdb = pytest.importorskip("duckdb")
+    connection = duckdb.connect()
+    query = CompiledQuery(
+        sql="SELECT SUM(value) AS total FROM (VALUES (1.10::DECIMAL(18,2)), "
+        "(2.20::DECIMAL(18,2))) AS amounts(value)",
+        parameters=(),
+        output_fields=("total",),
+        logical_plan_id="decimal-digest-test",
+        logical_plan_digest="sha256:test",
+    )
+    try:
+        first = execute_with_connection(query, connection)
+        second = execute_with_connection(query, connection)
+    finally:
+        connection.close()
+
+    assert str(first.rows[0][0]) == "3.30"
+    assert first.result_digest == second.result_digest
+
+
+def test_approved_materialized_plan_compiles_only_with_exact_binding(
+    accept_plan, policy_set, catalog
+) -> None:
+    """Physical IDs and logical digests are checked again at execution time."""
+
+    logical = _validated_plan(accept_plan, policy_set, catalog)
+    candidate = generate_duckdb_candidates(
+        logical,
+        materialization_targets=("op1",),
+    )[1]
+    bindings = TableBindings(dataset_tables={"earthquakes": "earthquake_events"})
+
+    compiled = compile_approved_physical_plan(logical, candidate, catalog, bindings)
+
+    assert "AS MATERIALIZED" in compiled.sql
+    assert compiled.physical_plan_id == candidate.physical_plan_id
+    tampered = candidate.model_copy(update={"logical_plan_digest": "sha256:tampered"})
+    with pytest.raises(ExecutionCompileError, match="digest does not match"):
+        compile_approved_physical_plan(logical, tampered, catalog, bindings)

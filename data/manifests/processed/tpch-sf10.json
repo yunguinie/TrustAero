@@ -1,0 +1,24 @@
+{
+  "artifact_id": "tpch_sf10_duckdb_v1",
+  "byte_size": 2705600512,
+  "database_path": "data/processed/tpch/sf10/tpch_sf10.duckdb",
+  "duckdb_version": "v1.5.4",
+  "generation": "DuckDB signed core tpch extension; dbgen children=8, steps=0..7",
+  "query_count": 22,
+  "scale_factor": 10,
+  "schema_version": 1,
+  "scientific_boundary": "TPC-H is a standard relational benchmark. Governance policies and sensitive attributes are separate deterministic TrustAero augmentations.",
+  "sha256": "fb3788ec8cb5825f4e383a82dbc312c50eb8bf39559537825579881aa458c7cb",
+  "source_commit": "ad622fd8de232aa4d5539dadc190e6986ed13e12",
+  "table_rows": {
+    "customer": 1500000,
+    "lineitem": 59986052,
+    "nation": 25,
+    "orders": 15000000,
+    "part": 2000000,
+    "partsupp": 8000000,
+    "region": 5,
+    "supplier": 100000
+  },
+  "tpch_extension_version": "v1.5.4"
+}

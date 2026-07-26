@@ -1,0 +1,66 @@
+{
+  "protocol_id": "policy-stratified-pipeline-holdout-v2",
+  "frozen_at": "2026-07-24",
+  "measurement_config": "experiments/configs/policy_stratified_pipeline_holdout_measurement_v2.json",
+  "evaluation_config": "experiments/configs/policy_stratified_pipeline_holdout_evaluation_v2.json",
+  "measurement_runner": "scripts/run_real_governed_pipeline_transfer.py",
+  "evaluation_runner": "scripts/evaluate_policy_stratified_pipeline_holdout.py",
+  "frozen_cost_model": "experiments/frozen/models/governed_pipeline_cost_model_v2_20260724.json",
+  "frozen_cost_model_sha256": "56399a09a3dccd2b02793eca97145fc17c68b9da8574edfef013925457f0fd6f",
+  "frozen_support_model": "experiments/frozen/models/governed_pipeline_support_v21_20260724.json",
+  "frozen_support_model_sha256": "7642145c3892c838ff9171ca85e0c79ba34373a1ee8e5cb78b2cba0eab87c4d7",
+  "retained_negative_holdout": "experiments/frozen/policy_stratified_pipeline_holdout_negative_20260724.json",
+  "retained_negative_holdout_sha256": "29bf6491e1ad41b04843ff33a4412044f1d822e038185ee511affc906a46473a",
+  "method_change": {
+    "changed": "selectivity support assessment",
+    "unchanged": [
+      "cost coefficients",
+      "3% practical-tie threshold",
+      "candidate SQL",
+      "governance feasibility rules",
+      "acceptance gates"
+    ],
+    "reason": "The failed v1 holdout showed that exact comparison with a nominal 0.7 selectivity boundary caused 22 false out-of-support fallbacks. Synthetic holdout observations had already reached 0.702508, but its evaluator had bypassed the production support path."
+  },
+  "development_validation": {
+    "months": [
+      "2024-01",
+      "2024-02",
+      "2024-04",
+      "2024-05",
+      "2024-07",
+      "2024-08",
+      "2024-10",
+      "2024-11"
+    ],
+    "decisions": 192,
+    "out_of_support_fallbacks": 0,
+    "oracle_set_hit_rate": 0.9947916666666666,
+    "mean_regret_percent": 0.2611038963852183,
+    "p95_regret_percent": 1.6250871993051863,
+    "maximum_regret_percent": 3.4072132152709766
+  },
+  "final_holdout_months": [
+    "2024-03",
+    "2024-06",
+    "2024-09",
+    "2024-12"
+  ],
+  "predeclared_gates": {
+    "minimum_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 8.0,
+    "maximum_regret_percent": 15.0,
+    "minimum_selected_candidate_count": 2,
+    "strictly_better_than_best_fixed_mean_and_p95": true,
+    "maximum_out_of_support_fallback_rate": 0.0,
+    "illegal_candidate_selections": 0,
+    "systematic_material_carryover_detected": false
+  },
+  "one_shot_rule": [
+    "March/June/September/December measurements are opened only after this protocol and support artifact are committed.",
+    "The evaluator calls the production legality-first optimizer.",
+    "The result is retained whether it passes or fails.",
+    "A failure ends this optimizer claim and is not followed by another support or threshold revision."
+  ]
+}

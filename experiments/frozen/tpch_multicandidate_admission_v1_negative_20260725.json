@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "record_id": "tpch-multicandidate-admission-v1-negative-20260725",
+  "status": "FAIL_TPCH_MULTICANDIDATE_OPTIMIZER_ADMISSION_RETAIN",
+  "source_commit": "ee24937907e453a58fed4c9aa75c5be847528a72",
+  "protocol": {
+    "path": "experiments/frozen/tpch_multicandidate_admission_protocol_v1_20260725.json",
+    "sha256": "a0ac56399260c031afcd06272719619107565f290d55dd35032b79b131de3c2b"
+  },
+  "config": {
+    "path": "experiments/configs/tpch_multicandidate_admission_v1.json",
+    "sha256": "4a04dc56d6ed539071321b9c087c487cc9d2cf8540a72f732440eff9711f3ffa"
+  },
+  "artifacts": [
+    {
+      "path": "results/tpch_multicandidate_admission_v1/20260725T053250587296Z/summary.json",
+      "sha256": "b8e71c8a321dc750969a7109df9c335a6dad5143a7687bf7d4432713e2ed1169"
+    },
+    {
+      "path": "results/tpch_multicandidate_admission_v1/20260725T053250587296Z/measurements.csv",
+      "sha256": "81cde3ddd868cb01b6fe4df7626a9b5cb13c52000a396cfa57b7ea9aa6c0823d"
+    }
+  ],
+  "observations": {
+    "measurement_count": 384,
+    "elapsed_seconds": 82.45040609999978,
+    "all_results_equivalent": true,
+    "all_physical_plans_distinct": true,
+    "all_queries_stable": true,
+    "no_spill": true,
+    "q03_diagnostic_fastest": "materialize-after-q03-orderdate-filter",
+    "q03_fastest_median_ms": 175.395650000155,
+    "q03_singleton_winner": null,
+    "q10_diagnostic_fastest": "fused",
+    "q10_fastest_median_ms": 176.69430000023567,
+    "q10_singleton_winner": null,
+    "distinct_confidence_authorized_winners": 0
+  },
+  "diagnosis": "The experiment was stable, but the leading candidates were not separated by the preregistered paired 95% intervals and 3% materiality threshold. It is invalid to manufacture winner labels from their median ordering.",
+  "authorized_next_step": "One separately frozen SF10 scale confirmation may test whether longer executions reduce fixed timing noise and amplify the query-dependent boundary. It must retain fused and the leading non-dominated candidates, disclose that SF1 was inspected, and stop TPC-H optimizer development permanently if distinct confidence-authorized winners still do not emerge.",
+  "scientific_boundary": "This retained negative does not invalidate exact Q3/Q10 semantics, Q1/Q6 performance evidence, or the successful policy-stratified BTS/NYC optimizer holdout."
+}

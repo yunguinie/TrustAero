@@ -1,0 +1,24 @@
+{
+  "absolute_half_drift_limit": 0.5,
+  "duckdb_memory_limit_mb": 4096,
+  "duckdb_threads": 4,
+  "full_month": true,
+  "heldout_optimizer_evidence": false,
+  "measured_runs": 30,
+  "order_protocol": "all_permutations",
+  "order_seed": 20260721,
+  "paired_ratio_half_drift_limit": 0.2,
+  "paired_ratio_outlier_fraction_limit": 0.1,
+  "paper_performance_evidence": true,
+  "query_family_protocol_sha256": "1f1ac460f346b1f660aef0b98fe9a6d92c45fb9bad14765c542e39ac947e9425",
+  "require_clean_git": true,
+  "results_dir": "results/real_data_formal_candidate_v1",
+  "sample_rows": [],
+  "scientific_label": "real_data_formal_development_partition_v1",
+  "semantic_smoke_sha256": "6d1aa396598f1bb7856049d52e49469f99be27868dc5d0ae66f59ff7c2a3d4ee",
+  "warmup_runs": 6,
+  "workloads": [
+    "bts",
+    "nyc_tlc"
+  ]
+}

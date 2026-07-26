@@ -1,0 +1,23 @@
+{
+  "results_dir": "results/lineage_checkpoint_admission_smoke_v1",
+  "row_count": 5000,
+  "seeds": [29101, 29202, 29303],
+  "scenarios": [
+    {"scenario_id": "single", "query_count": 1, "policy_selectivities": [0.3], "query_selectivities": [0.3]},
+    {"scenario_id": "batch4", "query_count": 4, "policy_selectivities": [0.3, 0.7], "query_selectivities": [0.2, 0.8]}
+  ],
+  "candidate_ids": ["late_per_query_capture", "policy_lineage_checkpoint", "snapshot_lineage_checkpoint"],
+  "warmup_rounds_per_permutation": 1,
+  "measured_rounds_per_permutation": 5,
+  "duckdb_threads": 1,
+  "duckdb_memory_limit_mb": 512,
+  "order_seed": 26072641,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 2000,
+  "bootstrap_seed": 26072642,
+  "minimum_conclusive_scenario_rate": 0.0,
+  "minimum_distinct_singleton_winners": 2,
+  "maximum_dominant_winner_fraction": 1.0,
+  "require_clean_git": false
+}

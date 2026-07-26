@@ -1,0 +1,27 @@
+{
+  "results_dir": "results/lineage_checkpoint_admission_v1",
+  "row_count": 50000,
+  "seeds": [28101, 28202, 28303],
+  "scenarios": [
+    {"scenario_id": "single-selective", "query_count": 1, "policy_selectivities": [0.2], "query_selectivities": [0.2]},
+    {"scenario_id": "single-wide", "query_count": 1, "policy_selectivities": [0.8], "query_selectivities": [0.8]},
+    {"scenario_id": "batch4-one-policy", "query_count": 4, "policy_selectivities": [0.3], "query_selectivities": [0.1, 0.3, 0.6, 0.9]},
+    {"scenario_id": "batch8-two-policies", "query_count": 8, "policy_selectivities": [0.2, 0.6], "query_selectivities": [0.2, 0.5, 0.8]},
+    {"scenario_id": "batch16-four-policies", "query_count": 16, "policy_selectivities": [0.2, 0.4, 0.6, 0.8], "query_selectivities": [0.2, 0.5, 0.8]},
+    {"scenario_id": "batch32-eight-policies", "query_count": 32, "policy_selectivities": [0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85], "query_selectivities": [0.2, 0.5, 0.8]}
+  ],
+  "candidate_ids": ["late_per_query_capture", "policy_lineage_checkpoint", "snapshot_lineage_checkpoint"],
+  "warmup_rounds_per_permutation": 1,
+  "measured_rounds_per_permutation": 5,
+  "duckdb_threads": 1,
+  "duckdb_memory_limit_mb": 512,
+  "order_seed": 26072631,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 26072632,
+  "minimum_conclusive_scenario_rate": 0.5,
+  "minimum_distinct_singleton_winners": 2,
+  "maximum_dominant_winner_fraction": 0.8,
+  "require_clean_git": true
+}

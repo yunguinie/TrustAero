@@ -1,0 +1,100 @@
+{
+  "results_dir": "results/real_governed_checkpoint_mechanism_development_v2",
+  "sources": [
+    {
+      "dataset": "bts",
+      "month": "2024-04",
+      "event_path": "data/processed/bts/on_time/2024-04/bts_flights_full.parquet",
+      "dimension_path": "data/processed/bts/on_time/2024-04/bts_airports.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-04.json"
+    },
+    {
+      "dataset": "bts",
+      "month": "2024-08",
+      "event_path": "data/processed/bts/on_time/2024-08/bts_flights_full.parquet",
+      "dimension_path": "data/processed/bts/on_time/2024-08/bts_airports.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-08.json"
+    },
+    {
+      "dataset": "nyc_tlc",
+      "month": "2024-05",
+      "event_path": "data/raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-05.parquet",
+      "dimension_path": "data/processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-05.json"
+    },
+    {
+      "dataset": "nyc_tlc",
+      "month": "2024-09",
+      "event_path": "data/raw/nyc_tlc/yellow/2024/yellow_tripdata_2024-09.parquet",
+      "dimension_path": "data/processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+      "preparation_manifest_path": "data/manifests/processed/real-data-2024-09.json"
+    }
+  ],
+  "profiles": [
+    {
+      "profile_id": "w384-p010-q005",
+      "identifier_width": 384,
+      "policy_selectivity": 0.10,
+      "query_selectivity": 0.05
+    },
+    {
+      "profile_id": "w384-p010-q050",
+      "identifier_width": 384,
+      "policy_selectivity": 0.10,
+      "query_selectivity": 0.50
+    },
+    {
+      "profile_id": "w384-p050-q005",
+      "identifier_width": 384,
+      "policy_selectivity": 0.50,
+      "query_selectivity": 0.05
+    },
+    {
+      "profile_id": "w384-p050-q050",
+      "identifier_width": 384,
+      "policy_selectivity": 0.50,
+      "query_selectivity": 0.50
+    },
+    {
+      "profile_id": "w640-p010-q005",
+      "identifier_width": 640,
+      "policy_selectivity": 0.10,
+      "query_selectivity": 0.05
+    },
+    {
+      "profile_id": "w640-p010-q050",
+      "identifier_width": 640,
+      "policy_selectivity": 0.10,
+      "query_selectivity": 0.50
+    },
+    {
+      "profile_id": "w640-p050-q005",
+      "identifier_width": 640,
+      "policy_selectivity": 0.50,
+      "query_selectivity": 0.05
+    },
+    {
+      "profile_id": "w640-p050-q050",
+      "identifier_width": 640,
+      "policy_selectivity": 0.50,
+      "query_selectivity": 0.50
+    }
+  ],
+  "row_count": 150000,
+  "seeds": [9101, 9202, 9303],
+  "candidate_ids": [
+    "policy_first_narrow_checkpoint",
+    "query_first_raw_checkpoint"
+  ],
+  "warmup_rounds": 2,
+  "repetitions_per_permutation": 15,
+  "duckdb_threads": 1,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 2026072311,
+  "practical_tie_fraction": 0.03,
+  "confidence_level": 0.95,
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 2026072312,
+  "require_clean_git": true,
+  "experiment_role": "real_mechanism_development"
+}

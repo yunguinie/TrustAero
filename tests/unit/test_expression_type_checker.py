@@ -201,6 +201,71 @@ def test_aggregate_derives_named_output_schema(
     assert count.nullable is False
 
 
+def test_aggregate_numeric_product_propagates_type_and_sensitivity(
+    accept_plan: dict[str, Any], catalog: InMemoryCatalog
+) -> None:
+    """The arithmetic fragment accepts exactly two raw numeric fields."""
+
+    raw = _with_terminal_operator(
+        accept_plan,
+        {
+            "operator_type": "Aggregate",
+            "operator_id": "op-aggregate",
+            "inputs": ["op1"],
+            "group_by": [],
+            "aggregates": [
+                {
+                    "function": "sum",
+                    "input_expression": {
+                        "expression_type": "numeric_product",
+                        "left": {"expression_type": "field", "field": "magnitude"},
+                        "right": {"expression_type": "field", "field": "latitude"},
+                    },
+                    "output_field": "weighted_value",
+                }
+            ],
+        },
+        ["weighted_value"],
+    )
+
+    result = _check(raw, catalog)
+    output = result.outputs["op-aggregate"].get("weighted_value")
+
+    assert result.diagnostics == ()
+    assert output is not None
+    assert output.data_type == DataType.FLOAT
+
+
+def test_aggregate_numeric_product_rejects_non_numeric_field(
+    accept_plan: dict[str, Any], catalog: InMemoryCatalog
+) -> None:
+    raw = _with_terminal_operator(
+        accept_plan,
+        {
+            "operator_type": "Aggregate",
+            "operator_id": "op-aggregate",
+            "inputs": ["op1"],
+            "group_by": [],
+            "aggregates": [
+                {
+                    "function": "sum",
+                    "input_expression": {
+                        "expression_type": "numeric_product",
+                        "left": {"expression_type": "field", "field": "magnitude"},
+                        "right": {"expression_type": "field", "field": "event_id"},
+                    },
+                    "output_field": "invalid_product",
+                }
+            ],
+        },
+        ["invalid_product"],
+    )
+
+    result = _check(raw, catalog)
+
+    assert result.diagnostics[0].code == ReasonCode.AGGREGATE_TYPE_NOT_SUPPORTED
+
+
 def test_aggregate_rejects_unsupported_input_type(
     accept_plan: dict[str, Any], catalog: InMemoryCatalog
 ) -> None:

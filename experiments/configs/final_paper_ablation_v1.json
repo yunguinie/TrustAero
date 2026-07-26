@@ -1,0 +1,12 @@
+{
+  "phase0_cases": "results/phase0/20260724T034540Z/cases.csv",
+  "phase0_evaluation": "results/phase0/20260724T034540Z/phase0_evaluation.json",
+  "system_summary": "results/system_scalability_full_month_formal_v1/20260724T141132808592Z/summary.json",
+  "system_evaluation": "results/system_scalability_full_month_formal_evaluation_v1/20260724T141132808592Z/evaluation.json",
+  "multisource_summary": "results/multisource_case_study_v2/20260726T002619896907Z/summary.json",
+  "pipeline_holdout_run": "results/governed_pipeline_cost_holdout_measurement_v1/20260724T074335102248Z",
+  "pipeline_model": "experiments/frozen/models/governed_pipeline_cost_model_v2_20260724.json",
+  "lineage_holdout_run": "results/lineage_checkpoint_holdout_v1/20260726T024634020779Z",
+  "lineage_model": "experiments/frozen/models/lineage_checkpoint_cost_model_v1_20260726.json",
+  "results_dir": "results/final_paper_ablation_v1"
+}
