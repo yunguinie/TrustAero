@@ -34,6 +34,7 @@ def test_consumed_value_cannot_be_reintroduced() -> None:
         replace(config, holdout_identifier_widths=(256, 640))
 
 
+@pytest.mark.local_artifact
 def test_guard_is_hash_bound_to_passed_calibration() -> None:
     config = load_uncertainty_holdout_config(CONFIG_PATH)
 

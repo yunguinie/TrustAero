@@ -38,6 +38,9 @@ trustaero = ["py.typed"]
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["tests"]
+markers = [
+  "local_artifact: requires intentionally ignored local data or result artifacts",
+]
 
 [tool.ruff]
 line-length = 100

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from trustaero.experiments.lineage_checkpoint_calibration import (
     EQUIVALENCE_GROUP,
     evaluate_fixed_baselines,
@@ -21,6 +23,7 @@ def _formal_run() -> Path:
     )
 
 
+@pytest.mark.local_artifact
 def test_loader_builds_complete_candidate_groups_from_frozen_run() -> None:
     observations = load_lineage_calibration_observations(_formal_run())
 
@@ -30,6 +33,7 @@ def test_loader_builds_complete_candidate_groups_from_frozen_run() -> None:
     assert all(item.features == tuple(sorted(item.features)) for item in observations)
 
 
+@pytest.mark.local_artifact
 def test_each_fixed_baseline_is_evaluated_on_all_decisions() -> None:
     observations = load_lineage_calibration_observations(_formal_run())
 

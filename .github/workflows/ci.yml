@@ -21,4 +21,4 @@ jobs:
       - run: ruff format --check .
       - run: mypy src/trustaero
       - run: python scripts/check_schema_sync.py
-      - run: pytest
+      - run: pytest -m "not local_artifact"

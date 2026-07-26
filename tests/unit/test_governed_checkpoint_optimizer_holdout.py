@@ -41,6 +41,7 @@ def test_development_value_cannot_be_reintroduced() -> None:
         replace(config, holdout_identifier_widths=(128, 768))
 
 
+@pytest.mark.local_artifact
 def test_frozen_model_is_bound_to_passed_calibration() -> None:
     config = load_checkpoint_holdout_config(EVALUATION_CONFIG)
 

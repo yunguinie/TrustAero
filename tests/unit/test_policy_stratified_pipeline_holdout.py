@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+import pytest
+
 from trustaero.experiments.policy_stratified_pipeline_holdout import (
     load_policy_stratified_holdout_config,
 )
@@ -51,6 +53,7 @@ def test_holdout_months_are_disjoint_from_retained_development() -> None:
     assert len(real_governed_pipeline_units(measurement)) == 96
 
 
+@pytest.mark.local_artifact
 def test_every_frozen_source_and_manifest_exists() -> None:
     """Fail during tests instead of after the user starts a formal run."""
 
@@ -67,6 +70,7 @@ def test_every_frozen_source_and_manifest_exists() -> None:
             assert json.loads(manifest_path.read_text(encoding="utf-8"))["status"] == "PASS"
 
 
+@pytest.mark.local_artifact
 def test_normalized_january_manifest_matches_immutable_files() -> None:
     """January normalization must not merely assert hashes without checking."""
 
