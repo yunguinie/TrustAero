@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "frozen": true,
+  "experiment": "postgresql_conventional_governance_baseline",
+  "postgres_image": "postgres:16-alpine",
+  "rows": 1000000,
+  "tenants": 10,
+  "regions": 100,
+  "query_tenant": 3,
+  "query_purpose": "research",
+  "query_start": "2024-03-01",
+  "query_end": "2024-10-01",
+  "magnitude_threshold": 3.0,
+  "methods": ["direct_sql", "rls", "rls_masked_view"],
+  "warmup_transactions": 20,
+  "measurement_blocks": 5,
+  "transactions_per_block": 100,
+  "clients": 1,
+  "threads": 1,
+  "primary_metrics": [
+    "result_equivalence",
+    "authorized_visible_rows",
+    "wrong_purpose_visible_rows",
+    "cross_tenant_rows",
+    "masked_sensitive_values",
+    "median_transaction_latency_ms"
+  ],
+  "plan_observation": "Record the native EXPLAIN (ANALYZE, FORMAT JSON) plan without planner hints.",
+  "evidence_observation": "Record the fields present in the PostgreSQL statement log for the measured query.",
+  "retuning_rule": "Schema, policies, query, scale, methods, warmups, and measurement counts are fixed before the first measured block."
+}

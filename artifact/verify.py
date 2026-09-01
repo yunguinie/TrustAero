@@ -52,6 +52,12 @@ def verify_metrics() -> None:
     expect(scalability["case_count"] == 24, "validator scalability configuration count")
     expect(scalability["exception_count"] == 0, "validator scalability exceptions")
 
+    judge = load_json("artifact/results/rq1-llm-judge/summary.json")
+    expect(judge["evaluation"]["calls"] == 360, "LLM Judge call count")
+    expect(judge["overall"]["unsafe_acceptances"] == 32, "LLM Judge unsafe acceptance")
+    expect(judge["overall"]["false_rejections"] == 53, "LLM Judge false rejection")
+    expect(judge["overall"]["repeat_consistent_cells"] == 65, "LLM Judge stability")
+
     pipeline = load_json("artifact/results/rq2-governed-pipeline/evaluation.json")
     expect(pipeline["illegal_selections"] == [], "governed-pipeline illegal selections")
 
@@ -83,6 +89,12 @@ def verify_metrics() -> None:
     full_chain = cross_stage["profiles"][-1]
     expect(full_chain["illegal_physical_selection_count"] == 0, "full-chain legality")
     expect(full_chain["registered_faults_detected"] == 19, "full-chain fault detection")
+
+    postgres = load_json("artifact/results/postgresql-baseline/summary.json")
+    expect(postgres["correctness"]["result_equivalence"] is True, "PostgreSQL equivalence")
+    expect(postgres["correctness"]["wrong_purpose_visible_rows"] == 0, "PostgreSQL purpose")
+    expect(postgres["correctness"]["cross_tenant_rows"] == 0, "PostgreSQL tenant isolation")
+    expect(postgres["correctness"]["masked_sensitive_values"] == 0, "PostgreSQL masking")
 
 
 def verify_checksums() -> None:

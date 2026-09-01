@@ -53,6 +53,7 @@ result structure, and headline metrics. It does not retime the DBMS.
 | Evaluation component | Protocol/configuration | Committed result | Full-run entry point |
 |---|---|---|---|
 | Deterministic approval | `experiments/configs/phase0.json` | `artifact/results/rq1-phase0/` | `scripts/run_phase0.py` |
+| LLM-as-a-Judge approval baseline | `experiments/frozen/llm_judge_approval_protocol_v1_20260901.json` | `artifact/results/rq1-llm-judge/` | `scripts/verify_llm_judge_approval_result.py` |
 | Independent black-box plans | `experiments/frozen/blackbox_adversarial_exp4_v1.json` | `artifact/results/rq1-blackbox/` | `experiments/blackbox_exp4/generate_cases.py`, then `scripts/run_blackbox_adversarial_exp4.py` |
 | Validator scalability | `experiments/configs/validator_control_plane_scalability_v3.json` | `artifact/results/rq1-validator-scalability/` | `scripts/run_validator_scalability.py` |
 | Governed-pipeline holdout | `experiments/frozen/policy_stratified_pipeline_holdout_v2_protocol_20260724.json` | `artifact/results/rq2-governed-pipeline/` | `scripts/evaluate_policy_stratified_pipeline_holdout.py` |
@@ -66,6 +67,7 @@ result structure, and headline metrics. It does not retime the DBMS.
 | Four-source complete loop | `experiments/frozen/multisource_case_study_v2_protocol_20260726.json` | `artifact/results/rq3-four-source/` | `scripts/run_multisource_case_study_v2_lowmem.py` |
 | Independent Checker process | `experiments/frozen/independent_checker_manifest_protocol_v1_20260812.json` | `artifact/results/rq3-independent-checker/` | `scripts/run_independent_checker_manifest_experiment.py` |
 | Cross-stage ablation | `experiments/frozen/cross_stage_contract_ablation_protocol_v1_20260812.json` | `artifact/results/rq4-cross-stage/` | `scripts/run_cross_stage_contract_ablation.py` |
+| PostgreSQL RLS and masking baseline | `experiments/frozen/postgres_conventional_baseline_v1_20260901.json` | `artifact/results/postgresql-baseline/` | `scripts/run_postgres_conventional_baseline.py` |
 
 The TPC-H Q1/Q6 method checks are under `artifact/results/tpch/`. BTS 2025 is
 kept under `artifact/results/supplementary/` as a temporal robustness result and
@@ -124,6 +126,9 @@ python scripts/run_record_lineage_pilot.py \
 python scripts/run_multisource_case_study_v2_lowmem.py --progress \
   --memory-limit 512MB --threads 1
 python scripts/run_cross_stage_contract_ablation.py
+
+# Conventional PostgreSQL enforcement baseline (requires Docker)
+python scripts/run_postgres_conventional_baseline.py --docker docker --root . --output results/postgresql-baseline/run
 ```
 
 Each runner writes a new timestamped directory below `results/`, which is

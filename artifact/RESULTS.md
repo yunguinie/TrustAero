@@ -13,6 +13,10 @@ are stored under `artifact/results/`.
 - Validator scalability covers 24 configurations. The largest plan, output,
   policy, and obligation settings completed with median latencies of 59.3,
   231.6, 17.5, and 201.3 ms, respectively.
+- On the same 120 real-agent plan inputs used for the approval comparison, the
+  frozen LLM-as-a-Judge baseline made 32 unsafe acceptances and 53 false
+  rejections across 360 repeated judgments. Its decision was repeat-consistent
+  on 65/120 inputs; the deterministic TrustAero evaluation remained stable.
 
 ## Legality-first physical planning
 
@@ -54,3 +58,12 @@ TPC-H Q1, Q3, Q6, and Q10 have exact trusted-IR result checks. The committed
 SF10 timing artifacts for Q1 and Q6 record equivalent results and distinct
 physical candidates. They are method checks rather than the primary adaptive
 Planner result.
+
+## Conventional DBMS enforcement
+
+- On one million deterministic rows, PostgreSQL 16 RLS and RLS with a masking
+  view returned the same 38,985-row result as Direct SQL. Both restricted
+  wrong-purpose and cross-tenant access to zero rows; the masking view exposed
+  no unauthorized sensitive value.
+- Median latency was 23.792 ms for Direct SQL, 24.134 ms for RLS, and 26.145 ms
+  for RLS with masking, corresponding to 1.4% and 9.9% overhead.

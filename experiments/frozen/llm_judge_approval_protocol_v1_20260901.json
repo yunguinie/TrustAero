@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "frozen": true,
+  "experiment": "llm_judge_approval_baseline",
+  "expected_cells": 120,
+  "repeats_per_cell": 3,
+  "transport_retries": 2,
+  "maximum_output_tokens": 384,
+  "decision_space": ["ACCEPT", "REWRITE", "CLARIFY", "REJECT"],
+  "primary_metrics": ["unsafe_acceptances", "false_rejections", "family_correct_calls", "repeat_consistency_rate"],
+  "denominator_rule": "Every requested call remains in the denominator, including transport and parse failures.",
+  "prompt_rule": "The Judge receives the candidate plan and trusted catalog/policy context, but no TrustAero outcome or diagnostics.",
+  "retuning_rule": "The prompt, model, temperature, repeats, labels, and metrics are fixed before the first measured call."
+}

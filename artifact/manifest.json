@@ -11,6 +11,13 @@
       "runner": "scripts/run_phase0.py"
     },
     {
+      "id": "rq1-llm-judge",
+      "section": "logical approval",
+      "protocol": "experiments/frozen/llm_judge_approval_protocol_v1_20260901.json",
+      "result": "artifact/results/rq1-llm-judge/summary.json",
+      "runner": "scripts/verify_llm_judge_approval_result.py"
+    },
+    {
       "id": "rq1-blackbox",
       "section": "logical approval",
       "protocol": "experiments/frozen/blackbox_adversarial_exp4_v1.json",
@@ -100,6 +107,13 @@
       "protocol": "experiments/frozen/cross_stage_contract_ablation_protocol_v1_20260812.json",
       "result": "artifact/results/rq4-cross-stage/summary.json",
       "runner": "scripts/run_cross_stage_contract_ablation.py"
+    },
+    {
+      "id": "postgresql-baseline",
+      "section": "conventional DBMS enforcement",
+      "protocol": "experiments/frozen/postgres_conventional_baseline_v1_20260901.json",
+      "result": "artifact/results/postgresql-baseline/summary.json",
+      "runner": "scripts/run_postgres_conventional_baseline.py"
     }
   ]
 }

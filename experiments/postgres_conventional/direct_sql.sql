@@ -1,0 +1,11 @@
+BEGIN;
+SET LOCAL jit = off;
+SELECT count(*) AS n, sum(e.region_id) AS region_sum,
+       round(avg(e.magnitude)::numeric, 6) AS magnitude_mean,
+       count(e.sensitive_value) FILTER (WHERE false) AS visible_sensitive
+FROM events e JOIN regions r USING (region_id)
+WHERE e.tenant_id = 3
+  AND e.event_time >= DATE '2024-03-01'
+  AND e.event_time < DATE '2024-10-01'
+  AND e.magnitude >= 3.0;
+COMMIT;

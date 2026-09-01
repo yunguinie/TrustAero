@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "experiment": "postgresql_conventional_governance_baseline",
+  "system": "PostgreSQL 16",
+  "dataset": {"rows": 1000000, "tenants": 10, "regions": 100, "authorized_result_rows": 38985},
+  "correctness": {
+    "result_equivalence": true,
+    "wrong_purpose_visible_rows": 0,
+    "cross_tenant_rows": 0,
+    "masked_sensitive_values": 0,
+    "authorized_sensitive_values": 100000
+  },
+  "measurement": {"warmup_transactions": 20, "blocks": 5, "transactions_per_block": 100, "clients": 1, "threads": 1},
+  "performance": {
+    "direct_sql": {"block_latency_ms": [23.951, 23.918, 23.698, 23.792, 22.896], "median_latency_ms": 23.792, "minimum_latency_ms": 22.896, "maximum_latency_ms": 23.951, "overhead_percent": 0.0},
+    "rls": {"block_latency_ms": [24.908, 23.942, 23.713, 24.134, 24.502], "median_latency_ms": 24.134, "minimum_latency_ms": 23.713, "maximum_latency_ms": 24.908, "overhead_percent": 1.4},
+    "rls_masked_view": {"block_latency_ms": [25.938, 26.145, 27.5, 26.459, 25.639], "median_latency_ms": 26.145, "minimum_latency_ms": 25.639, "maximum_latency_ms": 27.5, "overhead_percent": 9.9}
+  },
+  "native_plan_node_types": ["Aggregate", "Gather", "Aggregate", "Hash Join", "Bitmap Heap Scan", "Bitmap Index Scan", "Hash", "Seq Scan"]
+}
