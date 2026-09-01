@@ -1,4 +1,5 @@
 """Check the committed LLM-as-a-Judge approval aggregate."""
+
 from __future__ import annotations
 
 import hashlib

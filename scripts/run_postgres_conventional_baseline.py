@@ -1,4 +1,5 @@
 """Run the frozen PostgreSQL conventional-governance baseline."""
+
 from __future__ import annotations
 
 import argparse
@@ -28,9 +29,7 @@ def command(args: list[str], *, stdin: str | None = None, check: bool = True) ->
     )
     if check and result.returncode:
         command_text = " ".join(args)
-        raise RuntimeError(
-            f"Command failed ({result.returncode}): {command_text}\n{result.stderr}"
-        )
+        raise RuntimeError(f"Command failed ({result.returncode}): {command_text}\n{result.stderr}")
     return result.stdout
 
 
@@ -60,9 +59,10 @@ def psql(docker_exe: str, user: str, sql: str) -> str:
 
 
 def summary_sql(source: str, direct: bool = False) -> str:
-    settings = "" if direct else (
-        "SET ta.tenant='3'; SET ta.purpose='research'; "
-        "SET ta.can_view_sensitive='false';"
+    settings = (
+        ""
+        if direct
+        else ("SET ta.tenant='3'; SET ta.purpose='research'; SET ta.can_view_sensitive='false';")
     )
     tenant = "e.tenant_id=3 AND" if direct else ""
     sensitive = "count(e.sensitive_value)" if source == "governed_events" else "0"
@@ -246,9 +246,7 @@ WHERE e.event_time >= DATE '2024-03-01'
             "rls_masked_view": ("ta_rls", "rls_masked_view.sql"),
         }
         for method, (user, script) in methods.items():
-            _, warmup = pgbench(
-                docker_exe, user, script, int(protocol["warmup_transactions"])
-            )
+            _, warmup = pgbench(docker_exe, user, script, int(protocol["warmup_transactions"]))
             raw[f"{method}_warmup"] = warmup
             values = []
             for block in range(int(protocol["measurement_blocks"])):
