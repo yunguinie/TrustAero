@@ -55,7 +55,7 @@ def _default_transport(
     timeout_seconds: int,
     maximum_response_bytes: int,
 ) -> JsonObject:
-    """Issue one OpenAI-compatible request without adding an SDK dependency."""
+    """Issue one chat-completions request without adding an SDK dependency."""
 
     request = urllib.request.Request(
         endpoint,
