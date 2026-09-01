@@ -1,7 +1,7 @@
 {
   "protocol_id": "paper-gap-closure-v1-20260801",
   "frozen_at": "2026-08-01",
-  "purpose": "Close reviewer-facing mechanism-ablation and adversarial-validation gaps without reopening frozen RQ2.",
+  "purpose": "Evaluate mechanism ablations and adversarial validation without modifying the frozen RQ2 protocol.",
   "analyses": [
     "four_level_validator_ablation",
     "legality_first_planner_architecture_diagnostic",

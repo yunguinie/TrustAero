@@ -512,6 +512,6 @@ def rank_execution_aware_candidates(
 def cast_exposure(spec: ExecutionAwareCandidateSpec) -> CandidateExposure:
     """Narrow the validated optional field after dataclass construction checks."""
 
-    if spec.exposure is None:  # Defensive for non-standard deserializers.
+    if spec.exposure is None:  # Fallback for non-standard deserializers.
         raise ValueError("Execution-aware candidate is missing trusted exposure")
     return spec.exposure

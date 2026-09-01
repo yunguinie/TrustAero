@@ -374,6 +374,6 @@ def calibrate_governed_pipeline_cost_model(
 
 
 def false_value() -> bool:
-    """Make the development-only claim boundary conspicuous in source."""
+    """Return the fixed flag used by the development-only configuration."""
 
     return False

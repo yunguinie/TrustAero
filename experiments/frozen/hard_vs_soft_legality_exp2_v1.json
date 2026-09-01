@@ -50,7 +50,7 @@
     }
   ],
   "reporting_rules": [
-    "No penalty is selected after seeing the experiment as the TrustAero method.",
+    "TrustAero uses hard feasibility; all soft-penalty settings are comparison baselines.",
     "Every scanned penalty is reported in every policy regime.",
     "An illegal selection is never counted as a Legal-Oracle hit, even when it is faster.",
     "A sufficiently large finite penalty matching hard pruning on this bounded dataset is reported honestly.",

@@ -491,7 +491,7 @@ def validate(
         if operator.operator_type != "ScanSource":
             continue
         dataset = catalog.get_dataset(operator.dataset)
-        if dataset is None:  # Defensive fail-closed assertion after earlier resolution.
+        if dataset is None:  # Fail-closed assertion after earlier resolution.
             return ValidatorResponse(
                 status=ValidationStatus.REJECT,
                 candidate_plan_id=plan.plan_id,

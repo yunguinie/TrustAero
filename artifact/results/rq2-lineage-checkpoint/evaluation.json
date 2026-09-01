@@ -573,7 +573,7 @@
       "p95_regret_percent": 163.88562224820612
     }
   },
-  "frozen_model_path": "E:/ProjectAll/codex/PVLDB/experiments/frozen/models/lineage_checkpoint_cost_model_v1_20260726.json",
+  "frozen_model_path": "experiments/frozen/models/lineage_checkpoint_cost_model_v1_20260726.json",
   "gates": {
     "beats_best_fixed_mean": true,
     "beats_best_fixed_p95": true,
@@ -792,7 +792,7 @@
     "oracle_set_hit_rate": 1,
     "p95_regret_percent": 0.0
   },
-  "source_run": "E:/ProjectAll/codex/PVLDB/results/lineage_checkpoint_holdout_v1/20260726T024634020779Z",
+  "source_run": "results/lineage_checkpoint_holdout_v1/20260726T024634020779Z",
   "status": "PASS_LINEAGE_CHECKPOINT_COST_MODEL_INDEPENDENT_HOLDOUT",
   "threshold_baseline": {
     "decision_count": 18,
