@@ -1,0 +1,987 @@
+{
+  "best_fixed_candidate_id": "policy_lineage_checkpoint",
+  "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+  "fixed_baselines": {
+    "late_per_query_capture": {
+      "decision_count": 18,
+      "decisions": [
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 31.071346654056175,
+          "scenario_id": "holdout-batch10-three-policies",
+          "seed": 31101,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 31.22489775417805,
+          "scenario_id": "holdout-batch10-three-policies",
+          "seed": 31202,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 32.08324059766123,
+          "scenario_id": "holdout-batch10-three-policies",
+          "seed": 31303,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "late_per_query_capture"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch2-one-policy",
+          "seed": 31101,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "late_per_query_capture"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch2-one-policy",
+          "seed": 31202,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "late_per_query_capture"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch2-one-policy",
+          "seed": 31303,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 42.16862849159082,
+          "scenario_id": "holdout-batch20-five-policies",
+          "seed": 31101,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 42.340449417531566,
+          "scenario_id": "holdout-batch20-five-policies",
+          "seed": 31202,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 41.66986967586097,
+          "scenario_id": "holdout-batch20-five-policies",
+          "seed": 31303,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 48.787425435998856,
+          "scenario_id": "holdout-batch28-seven-policies",
+          "seed": 31101,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 48.62227266478827,
+          "scenario_id": "holdout-batch28-seven-policies",
+          "seed": 31202,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 48.59653446136496,
+          "scenario_id": "holdout-batch28-seven-policies",
+          "seed": 31303,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 53.44216324147239,
+          "scenario_id": "holdout-batch40-ten-policies",
+          "seed": 31101,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 53.799754939915935,
+          "scenario_id": "holdout-batch40-ten-policies",
+          "seed": 31202,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 52.7999015760716,
+          "scenario_id": "holdout-batch40-ten-policies",
+          "seed": 31303,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "policy_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 11.952286400782363,
+          "scenario_id": "holdout-batch6-two-policies",
+          "seed": 31101,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "policy_lineage_checkpoint",
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 10.149042599925263,
+          "scenario_id": "holdout-batch6-two-policies",
+          "seed": 31202,
+          "selected_candidate_id": "late_per_query_capture"
+        },
+        {
+          "oracle_candidate_ids": [
+            "policy_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 10.970563671738054,
+          "scenario_id": "holdout-batch6-two-policies",
+          "seed": 31303,
+          "selected_candidate_id": "late_per_query_capture"
+        }
+      ],
+      "maximum_regret_percent": 53.799754939915935,
+      "mean_regret_percent": 31.09324319905203,
+      "oracle_set_hit_rate": 0.16666666666666666,
+      "p95_regret_percent": 53.799754939915935
+    },
+    "policy_lineage_checkpoint": {
+      "decision_count": 18,
+      "decisions": [
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 10.295522494923958,
+          "scenario_id": "holdout-batch10-three-policies",
+          "seed": 31101,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 10.400416158350922,
+          "scenario_id": "holdout-batch10-three-policies",
+          "seed": 31202,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 10.963923910334316,
+          "scenario_id": "holdout-batch10-three-policies",
+          "seed": 31303,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "late_per_query_capture"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 13.510158586923481,
+          "scenario_id": "holdout-batch2-one-policy",
+          "seed": 31101,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "late_per_query_capture"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 11.468769846457572,
+          "scenario_id": "holdout-batch2-one-policy",
+          "seed": 31202,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "late_per_query_capture"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 13.28927552170114,
+          "scenario_id": "holdout-batch2-one-policy",
+          "seed": 31303,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 17.665302970599384,
+          "scenario_id": "holdout-batch20-five-policies",
+          "seed": 31101,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 17.621318250754904,
+          "scenario_id": "holdout-batch20-five-policies",
+          "seed": 31202,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 16.98765098511894,
+          "scenario_id": "holdout-batch20-five-policies",
+          "seed": 31303,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 23.28648320839095,
+          "scenario_id": "holdout-batch28-seven-policies",
+          "seed": 31101,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 22.750762418315507,
+          "scenario_id": "holdout-batch28-seven-policies",
+          "seed": 31202,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 23.051073401345022,
+          "scenario_id": "holdout-batch28-seven-policies",
+          "seed": 31303,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 26.568800335110687,
+          "scenario_id": "holdout-batch40-ten-policies",
+          "seed": 31101,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 26.667732544490242,
+          "scenario_id": "holdout-batch40-ten-policies",
+          "seed": 31202,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 26.779588720086455,
+          "scenario_id": "holdout-batch40-ten-policies",
+          "seed": 31303,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "policy_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch6-two-policies",
+          "seed": 31101,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "policy_lineage_checkpoint",
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch6-two-policies",
+          "seed": 31202,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "policy_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch6-two-policies",
+          "seed": 31303,
+          "selected_candidate_id": "policy_lineage_checkpoint"
+        }
+      ],
+      "maximum_regret_percent": 26.779588720086455,
+      "mean_regret_percent": 15.072598852939082,
+      "oracle_set_hit_rate": 0.16666666666666666,
+      "p95_regret_percent": 26.779588720086455
+    },
+    "snapshot_lineage_checkpoint": {
+      "decision_count": 18,
+      "decisions": [
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch10-three-policies",
+          "seed": 31101,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch10-three-policies",
+          "seed": 31202,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch10-three-policies",
+          "seed": 31303,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "late_per_query_capture"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 163.88562224820612,
+          "scenario_id": "holdout-batch2-one-policy",
+          "seed": 31101,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "late_per_query_capture"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 158.2153642755753,
+          "scenario_id": "holdout-batch2-one-policy",
+          "seed": 31202,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "late_per_query_capture"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 162.23232432156115,
+          "scenario_id": "holdout-batch2-one-policy",
+          "seed": 31303,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch20-five-policies",
+          "seed": 31101,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch20-five-policies",
+          "seed": 31202,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch20-five-policies",
+          "seed": 31303,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch28-seven-policies",
+          "seed": 31101,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch28-seven-policies",
+          "seed": 31202,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch28-seven-policies",
+          "seed": 31303,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch40-ten-policies",
+          "seed": 31101,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch40-ten-policies",
+          "seed": 31202,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 0.0,
+          "scenario_id": "holdout-batch40-ten-policies",
+          "seed": 31303,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "policy_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 5.173633260559529,
+          "scenario_id": "holdout-batch6-two-policies",
+          "seed": 31101,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "policy_lineage_checkpoint",
+            "snapshot_lineage_checkpoint"
+          ],
+          "oracle_hit": true,
+          "regret_percent": 2.974583312298784,
+          "scenario_id": "holdout-batch6-two-policies",
+          "seed": 31202,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        },
+        {
+          "oracle_candidate_ids": [
+            "policy_lineage_checkpoint"
+          ],
+          "oracle_hit": false,
+          "regret_percent": 4.516877449401613,
+          "scenario_id": "holdout-batch6-two-policies",
+          "seed": 31303,
+          "selected_candidate_id": "snapshot_lineage_checkpoint"
+        }
+      ],
+      "maximum_regret_percent": 163.88562224820612,
+      "mean_regret_percent": 27.611022492644583,
+      "oracle_set_hit_rate": 0.7222222222222222,
+      "p95_regret_percent": 163.88562224820612
+    }
+  },
+  "frozen_model_path": "E:/ProjectAll/codex/PVLDB/experiments/frozen/models/lineage_checkpoint_cost_model_v1_20260726.json",
+  "gates": {
+    "beats_best_fixed_mean": true,
+    "beats_best_fixed_p95": true,
+    "maximum_mean_regret": true,
+    "maximum_p95_regret": true,
+    "maximum_regret": true,
+    "minimum_oracle_set_hit_rate": true,
+    "not_worse_than_threshold_hit": true,
+    "not_worse_than_threshold_mean": true
+  },
+  "model": {
+    "decision_count": 18,
+    "decisions": [
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch10-three-policies",
+        "seed": 31101,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch10-three-policies",
+        "seed": 31202,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch10-three-policies",
+        "seed": 31303,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "late_per_query_capture"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch2-one-policy",
+        "seed": 31101,
+        "selected_candidate_id": "late_per_query_capture"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "late_per_query_capture"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch2-one-policy",
+        "seed": 31202,
+        "selected_candidate_id": "late_per_query_capture"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "late_per_query_capture"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch2-one-policy",
+        "seed": 31303,
+        "selected_candidate_id": "late_per_query_capture"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch20-five-policies",
+        "seed": 31101,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch20-five-policies",
+        "seed": 31202,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch20-five-policies",
+        "seed": 31303,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch28-seven-policies",
+        "seed": 31101,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch28-seven-policies",
+        "seed": 31202,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch28-seven-policies",
+        "seed": 31303,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch40-ten-policies",
+        "seed": 31101,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch40-ten-policies",
+        "seed": 31202,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch40-ten-policies",
+        "seed": 31303,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "policy_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch6-two-policies",
+        "seed": 31101,
+        "selected_candidate_id": "policy_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "policy_lineage_checkpoint",
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch6-two-policies",
+        "seed": 31202,
+        "selected_candidate_id": "policy_lineage_checkpoint"
+      },
+      {
+        "equivalence_group": "record_lineage_checkpoint_reuse_v1",
+        "oracle_candidate_ids": [
+          "policy_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch6-two-policies",
+        "seed": 31303,
+        "selected_candidate_id": "policy_lineage_checkpoint"
+      }
+    ],
+    "maximum_regret_percent": 0.0,
+    "mean_regret_percent": 0.0,
+    "oracle_set_hit_rate": 1,
+    "p95_regret_percent": 0.0
+  },
+  "source_run": "E:/ProjectAll/codex/PVLDB/results/lineage_checkpoint_holdout_v1/20260726T024634020779Z",
+  "status": "PASS_LINEAGE_CHECKPOINT_COST_MODEL_INDEPENDENT_HOLDOUT",
+  "threshold_baseline": {
+    "decision_count": 18,
+    "decisions": [
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch10-three-policies",
+        "seed": 31101,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch10-three-policies",
+        "seed": 31202,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch10-three-policies",
+        "seed": 31303,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "late_per_query_capture"
+        ],
+        "oracle_hit": false,
+        "regret_percent": 13.510158586923481,
+        "scenario_id": "holdout-batch2-one-policy",
+        "seed": 31101,
+        "selected_candidate_id": "policy_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "late_per_query_capture"
+        ],
+        "oracle_hit": false,
+        "regret_percent": 11.468769846457572,
+        "scenario_id": "holdout-batch2-one-policy",
+        "seed": 31202,
+        "selected_candidate_id": "policy_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "late_per_query_capture"
+        ],
+        "oracle_hit": false,
+        "regret_percent": 13.28927552170114,
+        "scenario_id": "holdout-batch2-one-policy",
+        "seed": 31303,
+        "selected_candidate_id": "policy_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch20-five-policies",
+        "seed": 31101,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch20-five-policies",
+        "seed": 31202,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch20-five-policies",
+        "seed": 31303,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch28-seven-policies",
+        "seed": 31101,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch28-seven-policies",
+        "seed": 31202,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch28-seven-policies",
+        "seed": 31303,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch40-ten-policies",
+        "seed": 31101,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch40-ten-policies",
+        "seed": 31202,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch40-ten-policies",
+        "seed": 31303,
+        "selected_candidate_id": "snapshot_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "policy_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch6-two-policies",
+        "seed": 31101,
+        "selected_candidate_id": "policy_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "policy_lineage_checkpoint",
+          "snapshot_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch6-two-policies",
+        "seed": 31202,
+        "selected_candidate_id": "policy_lineage_checkpoint"
+      },
+      {
+        "oracle_candidate_ids": [
+          "policy_lineage_checkpoint"
+        ],
+        "oracle_hit": true,
+        "regret_percent": 0.0,
+        "scenario_id": "holdout-batch6-two-policies",
+        "seed": 31303,
+        "selected_candidate_id": "policy_lineage_checkpoint"
+      }
+    ],
+    "maximum_regret_percent": 13.510158586923481,
+    "mean_regret_percent": 2.1260113308378994,
+    "oracle_set_hit_rate": 0.8333333333333334,
+    "p95_regret_percent": 13.510158586923481
+  }
+}

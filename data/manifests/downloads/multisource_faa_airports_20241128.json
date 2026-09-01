@@ -1,0 +1,16 @@
+{
+  "artifact": {
+    "artifact_id": "multisource_faa_airports_20241128",
+    "dataset_id": "multisource_case_study",
+    "expected_bytes": null,
+    "expected_sha256": null,
+    "relative_path": "raw/multisource/faa/28_Nov_2024_APT_CSV.zip",
+    "stage": "multisource_case_v1",
+    "url": "https://nfdc.faa.gov/webContent/28DaySub/extra/28_Nov_2024_APT_CSV.zip"
+  },
+  "byte_size": 8132339,
+  "local_path": "data/raw/multisource/faa/28_Nov_2024_APT_CSV.zip",
+  "retrieved_at_utc": "2026-07-25T01:14:36.079973+00:00",
+  "schema_version": 1,
+  "sha256": "eaaf20f6219e1c0efde83b5028d51b57b92004695416dd4ce1602d8548e6555a"
+}

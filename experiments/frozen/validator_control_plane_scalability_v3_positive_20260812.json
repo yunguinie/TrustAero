@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "status": "PASS_VALIDATOR_CONTROL_PLANE_SCALABILITY_V3",
+  "protocol": "experiments/frozen/validator_control_plane_scalability_protocol_v3_20260812.json",
+  "config": "experiments/configs/validator_control_plane_scalability_v3.json",
+  "formal_run": "results/validator_control_plane_scalability_v3/20260812T101837Z",
+  "git_commit": "95acd56",
+  "summary_sha256": "466bc95ca90fbba063f31950a355c927fd21be68fb0830c09b57396e8251f5b5",
+  "environment_sha256": "185ccdc7c0eda0bf237f77594644998c735729b3c30866f27f05ed2a7507bbb5",
+  "integrity": {
+    "case_count": 24,
+    "measured_blocks_per_case": 50,
+    "all_statuses_correct": true,
+    "all_digests_deterministic": true,
+    "exception_count": 0,
+    "tracked_tree_clean": true
+  },
+  "selected_endpoints": [
+    {
+      "dimension": "plan_nodes",
+      "size": 1536,
+      "expected_status": "ACCEPT",
+      "median_latency_ms": 59.3328,
+      "p95_latency_ms": 135.3734,
+      "median_ci95_ms": [57.2257, 61.0067]
+    },
+    {
+      "dimension": "output_fields",
+      "size": 3072,
+      "expected_status": "ACCEPT",
+      "median_latency_ms": 231.614,
+      "p95_latency_ms": 293.8825,
+      "median_ci95_ms": [230.1503, 234.72645]
+    },
+    {
+      "dimension": "applicable_policies",
+      "size": 15000,
+      "expected_status": "ACCEPT",
+      "median_latency_ms": 17.4801,
+      "p95_latency_ms": 21.2125,
+      "median_ci95_ms": [17.28845, 18.0548]
+    },
+    {
+      "dimension": "raw_obligations",
+      "size": 15000,
+      "expected_status": "REWRITE",
+      "median_latency_ms": 201.3346,
+      "p95_latency_ms": 268.2442,
+      "median_ci95_ms": [199.5287, 205.96605]
+    }
+  ],
+  "development_disclosure": [
+    {
+      "run": "results/validator_control_plane_scalability_v1/20260812T100456Z",
+      "finding": "Repeated linear field lookup exposed a wide-schema hotspot.",
+      "repair": "A cached field-name index was added to propagated schemas."
+    },
+    {
+      "attempt": "validator-control-plane-scalability-v2-20260812",
+      "finding": "The unopened 1024-node case exceeded the recursive graph traversal depth before measurement.",
+      "repair": "Graph validation and topological propagation were changed to iterative traversal."
+    }
+  ],
+  "scientific_claim_authorized": "Across the frozen in-process control-plane grid, Validator completed every case with the expected ACCEPT or REWRITE status, a deterministic canonical digest, and zero uncaught exceptions. The largest measured cases contained 1,536 plan nodes, 3,072 output fields, 15,000 applicable policies, or 15,000 raw compatible obligations.",
+  "scientific_boundary": [
+    "The benchmark isolates one dimension at a time using synthetic metadata fixtures.",
+    "It excludes DBMS execution, network I/O, policy retrieval, and unsupported IR forms.",
+    "The six measured points per dimension do not establish asymptotic complexity.",
+    "V1 and the pre-measurement V2 failure remain part of the disclosed development record."
+  ]
+}

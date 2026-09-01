@@ -1,0 +1,21 @@
+{
+  "results_dir": "results/system_scalability_full_month_formal_v1",
+  "workloads": [
+    {
+      "dataset": "bts",
+      "scales": ["full_month"]
+    },
+    {
+      "dataset": "nyc_tlc",
+      "scales": ["full_month"]
+    }
+  ],
+  "warmup_blocks": 8,
+  "measured_blocks": 48,
+  "duckdb_threads": 4,
+  "duckdb_memory_limit_mb": 4096,
+  "order_seed": 20260730,
+  "require_clean_git": true,
+  "experiment_role": "system_scalability_governance_formal",
+  "ordering_design": "complete_permutation_cycles"
+}

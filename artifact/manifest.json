@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "artifact": "TrustAero",
+  "release": "0.1.0",
+  "experiments": [
+    {
+      "id": "rq1-phase0",
+      "section": "logical approval",
+      "protocol": "experiments/configs/phase0.json",
+      "result": "artifact/results/rq1-phase0/summary.json",
+      "runner": "scripts/run_phase0.py"
+    },
+    {
+      "id": "rq1-blackbox",
+      "section": "logical approval",
+      "protocol": "experiments/frozen/blackbox_adversarial_exp4_v1.json",
+      "result": "artifact/results/rq1-blackbox/primary_result.json",
+      "runner": "scripts/run_blackbox_adversarial_exp4.py"
+    },
+    {
+      "id": "rq1-validator-scalability",
+      "section": "logical approval",
+      "protocol": "experiments/frozen/validator_control_plane_scalability_protocol_v3_20260812.json",
+      "result": "artifact/results/rq1-validator-scalability/summary.json",
+      "runner": "scripts/run_validator_scalability.py"
+    },
+    {
+      "id": "rq2-governed-pipeline",
+      "section": "physical planning",
+      "protocol": "experiments/frozen/policy_stratified_pipeline_holdout_v2_protocol_20260724.json",
+      "result": "artifact/results/rq2-governed-pipeline/evaluation.json",
+      "runner": "scripts/evaluate_policy_stratified_pipeline_holdout.py"
+    },
+    {
+      "id": "rq2-lineage-checkpoint",
+      "section": "physical planning",
+      "protocol": "experiments/frozen/lineage_checkpoint_holdout_protocol_v1_20260726.json",
+      "result": "artifact/results/rq2-lineage-checkpoint/evaluation.json",
+      "runner": "scripts/evaluate_lineage_checkpoint_holdout.py"
+    },
+    {
+      "id": "rq2-third-family",
+      "section": "physical planning",
+      "protocol": "experiments/frozen/tpch_multijoin_aggregate_exp1_sf10_holdout_v1.json",
+      "result": "artifact/results/rq2-third-family/sf10-primary/summary.json",
+      "runner": "scripts/run_tpch_multijoin_aggregate_exp1_holdout.py"
+    },
+    {
+      "id": "rq2-hard-vs-soft",
+      "section": "physical planning",
+      "protocol": "experiments/frozen/hard_vs_soft_legality_exp2_v1.json",
+      "result": "artifact/results/rq2-hard-vs-soft/summary.json",
+      "runner": "scripts/run_hard_vs_soft_legality_exp2.py"
+    },
+    {
+      "id": "rq2-candidate-scalability",
+      "section": "physical planning",
+      "protocol": "experiments/frozen/candidate_space_scalability_exp3_v1.json",
+      "result": "artifact/results/rq2-candidate-scalability/summary.json",
+      "runner": "scripts/run_candidate_space_scalability_exp3.py"
+    },
+    {
+      "id": "rq3-full-month",
+      "section": "execution evidence",
+      "protocol": "experiments/frozen/system_scalability_full_month_formal_protocol_v1_20260724.json",
+      "result": "artifact/results/rq3-full-month/evaluation.json",
+      "runner": "scripts/run_system_scalability.py"
+    },
+    {
+      "id": "rq3-lineage-1m",
+      "section": "execution evidence",
+      "protocol": "experiments/frozen/record_lineage_ordinal_scaleup_protocol_v1_20260810.json",
+      "result": "artifact/results/rq3-lineage-1m/evaluation.json",
+      "runner": "scripts/run_record_lineage_pilot.py"
+    },
+    {
+      "id": "rq3-certificate",
+      "section": "execution evidence",
+      "protocol": "experiments/frozen/paper_gap_closure_protocol_v1_20260801.json",
+      "result": "artifact/results/rq3-certificate/certificate_component_ablation.json",
+      "runner": "scripts/run_cross_stage_contract_ablation.py"
+    },
+    {
+      "id": "rq3-four-source",
+      "section": "execution evidence",
+      "protocol": "experiments/frozen/multisource_case_study_v2_protocol_20260726.json",
+      "result": "artifact/results/rq3-four-source/summary.json",
+      "runner": "scripts/run_multisource_case_study_v2_lowmem.py"
+    },
+    {
+      "id": "rq3-independent-checker",
+      "section": "execution evidence",
+      "protocol": "experiments/frozen/independent_checker_manifest_protocol_v1_20260812.json",
+      "result": "artifact/results/rq3-independent-checker/summary.json",
+      "runner": "scripts/run_independent_checker_manifest_experiment.py"
+    },
+    {
+      "id": "rq4-cross-stage",
+      "section": "end-to-end ablation",
+      "protocol": "experiments/frozen/cross_stage_contract_ablation_protocol_v1_20260812.json",
+      "result": "artifact/results/rq4-cross-stage/summary.json",
+      "runner": "scripts/run_cross_stage_contract_ablation.py"
+    }
+  ]
+}

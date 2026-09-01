@@ -1,0 +1,29 @@
+{
+  "all_record_evidence_verified": true,
+  "all_results_equivalent": true,
+  "artifact_encoding": "ordinal_bound_v4",
+  "experiment_role": "record_lineage_scalability_formal",
+  "measurement_count": 40,
+  "paper_performance_evidence": false,
+  "record_lineage_fragment": "single-source unique-unmasked-output-key Filter/Mask/Project/Sort",
+  "status": "PASS_RECORD_LINEAGE_PILOT_INTEGRITY",
+  "unit_count": 1,
+  "unit_summaries": [
+    {
+      "all_record_evidence_verified": true,
+      "all_result_digests_equal": true,
+      "artifact_bytes": 32000462,
+      "capture_median_ms": 5956.847099999322,
+      "direct_median_ms": 2927.3399000003337,
+      "measurement_count": 40,
+      "record_median_ms": 6189.883200000622,
+      "row_count": 1000000,
+      "verification_median_ms": 5415.950200001134
+    }
+  ],
+  "unsupported_fragments": [
+    "Join",
+    "Aggregate",
+    "SpatialJoin"
+  ]
+}

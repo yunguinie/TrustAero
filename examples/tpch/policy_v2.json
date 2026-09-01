@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "policy_set_id": "tpch-sf1-governance-v2",
+  "policy_snapshot": "policy-tpch-sf1-v2-2026-07-25",
+  "rules": [
+    {
+      "policy_id": "P-TPCH-V2-RESEARCH-AGGREGATE",
+      "policy_version": "1",
+      "subject_roles": ["researcher"],
+      "purposes": ["benchmark-research"],
+      "actions": ["aggregate"],
+      "resources": [
+        "tpch_sf1_customer",
+        "tpch_sf1_orders",
+        "tpch_sf1_lineitem_v2",
+        "tpch_sf1_nation"
+      ],
+      "decision": "PERMIT",
+      "obligations": [
+        {"obligation_type": "VERSION_PIN", "parameters": {}},
+        {"obligation_type": "LINEAGE_CAPTURE", "parameters": {"level": "source"}}
+      ],
+      "reason": "Reviewed TPC-H V2 adapters require pinned sources and source lineage."
+    }
+  ]
+}

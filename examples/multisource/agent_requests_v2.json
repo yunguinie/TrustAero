@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "safe_request": {
+    "base_plan_path": "examples/multisource/plan.json",
+    "provenance": "Frozen deterministic representation of an untrusted Agent candidate; no claim is made that a particular LLM produced it."
+  },
+  "illegal_request": {
+    "base_plan_path": "examples/multisource/plan.json",
+    "mutation": {
+      "json_path": "request_context.subject.role",
+      "value": "unauthorized_agent"
+    },
+    "expected_status": "REJECT",
+    "expected_reason_codes": [
+      "POLICY_NOT_APPLICABLE"
+    ]
+  }
+}

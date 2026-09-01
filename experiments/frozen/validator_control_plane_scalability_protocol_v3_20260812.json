@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "protocol_id": "validator-control-plane-scalability-v3-20260812",
+  "frozen_on": "2026-08-12",
+  "purpose": "Final confirmation of logical-approval scalability after iterative graph traversal and indexed schema lookup.",
+  "development_disclosure": [
+    {
+      "run": "results/validator_control_plane_scalability_v1/20260812T100456Z",
+      "finding": "Repeated linear schema lookup caused a wide-schema hotspot.",
+      "repair": "Cache a field-name index per propagated schema."
+    },
+    {
+      "attempt": "validator-control-plane-scalability-v2-20260812",
+      "finding": "The unopened 1024-node case exceeded Python's recursive DFS depth before measurement.",
+      "repair": "Use iterative graph validation and topological propagation."
+    }
+  ],
+  "runner": "scripts/run_validator_scalability.py",
+  "config": "experiments/configs/validator_control_plane_scalability_v3.json",
+  "unopened_confirmation_grid": {
+    "plan_nodes": [3, 12, 48, 192, 768, 1536],
+    "output_fields": [6, 24, 96, 384, 1536, 3072],
+    "applicable_policies": [3, 30, 300, 1500, 7500, 15000],
+    "raw_obligations": [3, 30, 300, 1500, 7500, 15000]
+  },
+  "timing": {
+    "warmup_rounds": 5,
+    "measured_blocks": 50,
+    "balanced_rotation": true,
+    "adaptive_inner_loop_target_ms": 10.0,
+    "primary_statistics": ["median", "P95", "bootstrap 95% CI"]
+  },
+  "integrity_gates": [
+    "clean tracked Git tree",
+    "expected ACCEPT or REWRITE status for every observation",
+    "stable canonical digest within every case",
+    "zero uncaught exceptions"
+  ],
+  "reporting_rule": "Report all V3 points and disclose both development repairs; do not infer asymptotic complexity from six points.",
+  "claim_boundary": "The benchmark measures in-process validation of synthetic metadata fixtures; it excludes DBMS execution, network I/O, policy retrieval, and unsupported IR forms."
+}

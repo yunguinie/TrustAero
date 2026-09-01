@@ -1,0 +1,627 @@
+{
+  "artifact_sha256": "64a709fa8f995aeae23ffe6305a47e77c97113c823974a3f6a6933b8d05a0b22",
+  "claim_boundary": [
+    "V1 remains retained and is not relabelled or pooled into V3.",
+    "The interrupted V2 directory contains no measurements or summary and is never analyzed.",
+    "Candidate implementations, workload grid, 3% band, bootstrap method, and admission thresholds are unchanged from V2.",
+    "No SF10 timing from this query family has been inspected.",
+    "No further SF1 workload expansion follows the V3 result."
+  ],
+  "conclusive_scenario_rate": 0.625,
+  "experimental_unit_count": 24,
+  "gates": {
+    "minimum_conclusive_scenario_rate": true,
+    "minimum_distinct_singleton_winners": true
+  },
+  "measurement_count": 864,
+  "preflight": [
+    {
+      "lineage_digest": "b55566ea9d24e6901f3c4c5e1bf9b5681983c3e517858b94bbaa10ea82106dc8",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "c86f80fe8ded7feb6a42b0c19e96fbf2aa27dc73785405cf39e46d044eb1cd82",
+        "governed_fact_first": "0f6f31915f01498b8519796ce876d1b7de09b1f65beadc69e1ea10cdc9f59a1f",
+        "partial_aggregate_first": "b9be167c18f85de6769f66cd71a103b97b0ee747ae0fa205d1c0cf06e5cae7a2"
+      },
+      "result_digest": "fe4d80c15d217d4ab3a50c32918533f624ec36eb837306897fcc0fa762b92144",
+      "unit_id": "p0.001-q1.000-s5101"
+    },
+    {
+      "lineage_digest": "d78c010aa4e47bc5ed7a2258b1058dc4d492de722b265a28362205215f09ac98",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "0eb98235c6afcd3c984d8139bdf1c5f4380efd2a1ce6033f4997df7a564cb53b",
+        "governed_fact_first": "8ddb241a575a01b4e6a71bef4a70d3bf68149052e999d76b64619785396eb9ff",
+        "partial_aggregate_first": "85da939f3c206cf6ea8da3ee1a38bc35d0d1820dfdfa60a831a560c155cb2c9f"
+      },
+      "result_digest": "a039514081b4796e7d1834b7afae3deb3610b70fd89009caede47652c28407f4",
+      "unit_id": "p0.001-q1.000-s5209"
+    },
+    {
+      "lineage_digest": "8f85834aa33150984761a54326d8950a86aca786759cc5a8d94845c23dfd5b9e",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "c412208bb2a52e8bc2fdc6bcfaa3c6389cb44986e2148429a483b6e21657708d",
+        "governed_fact_first": "5fc8d8cf2d22096683a65ca1948e895e8201500a1bca6caeb653e7cf7ea382ba",
+        "partial_aggregate_first": "ff5421509f8633db1a22334fb19ad959898e72ebc4d844a80f193f1476edbbd9"
+      },
+      "result_digest": "69491c3aa1ae10606b2e36cfd8d77fcd4eeb0889d0cb1c1b7c082248ccc3fe53",
+      "unit_id": "p0.001-q1.000-s5303"
+    },
+    {
+      "lineage_digest": "eefdf1dfae5c72d92155ac707122129d0bfecb6cf065a2813cc458f286e7ab36",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "a3567310d34d648960fe28a0ebe47e5114b133750e41b9c3bb2c7ffa3e4a3735",
+        "governed_fact_first": "97dfe4313b335626c10bbd4d7f9e2803c89b12d2f530ccde57dc2f6167541df9",
+        "partial_aggregate_first": "336c3ed24c61447e6eb37f1c59f262f17512428b3bd00f1314e958012c48683c"
+      },
+      "result_digest": "0dedfd9e4f76f578d73138f7ea9697d5b7fd7c1278e6a077d37f9f02ba2e7fd3",
+      "unit_id": "p0.005-q0.750-s5101"
+    },
+    {
+      "lineage_digest": "cec63429b92c3c289d863b421e8ea5c990abca2b5ffede3725f6de9395296017",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "bfdceccffbed4e9656c91131d9b773dde2f5fb984a2a2c797b59027a9444f9b8",
+        "governed_fact_first": "09a0adb793e4ae88109a40d03fc5932daddfa615a8f0ac3e89f9b1bee13212d7",
+        "partial_aggregate_first": "15c029a7ea7fbe750ebfaa735f3e7c649ed0fdcf2aa77724f123a8ada13ebc14"
+      },
+      "result_digest": "bfca6260e92b96457e3df1fdb618177c9bd482b1ac2f6cb02b83cc9037b8cf51",
+      "unit_id": "p0.005-q0.750-s5209"
+    },
+    {
+      "lineage_digest": "416f67207f4b8e82bb9497a94c767d9556402502cffc0e97c661bb0472369beb",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "1b2298774b786db01dfe80ae43e44b6c21c822f370189a46f9b1e6e2cc23d409",
+        "governed_fact_first": "a113f5450ed3e44115be257f70ac294d84908223c4d8995a7175f1446b2bd868",
+        "partial_aggregate_first": "37fb99c95868d17faa8cc60629cd0ac95174fe05f58d6e6b29e914eff3e2b15b"
+      },
+      "result_digest": "040f884518bd331f38737ac7f220835e570d4e9ebfd5bb8afaa80e5f651ef7c7",
+      "unit_id": "p0.005-q0.750-s5303"
+    },
+    {
+      "lineage_digest": "578cacaf46ef8298cb5b58aa3dfc127291d4d485f533b90c7f9acd68865ed770",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "18de76e34d76ed2774b8fcf241c83a948d696d45f53ba5000fab6935400e3862",
+        "governed_fact_first": "bbcc42dbcac6e1a0a272164b84b98c477ff1e9745a8c5a4fcf572b408e9a9e42",
+        "partial_aggregate_first": "c081681d2fd60749feca4f4bf922cd82d07a7d2c2ce7f97c2b681d0e9037bdd5"
+      },
+      "result_digest": "4f861384fe22eb47dcce608386659d354cff67856d68c35c7208d4f658bfc579",
+      "unit_id": "p0.010-q0.250-s5101"
+    },
+    {
+      "lineage_digest": "00ff3925da6c88ad79bb8a019f16a2bfdf0fde1e95a35a08b04ede2ce632e4de",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "66298011a6d47c9cfe01504b4f77886a47e6b34e7d4c18fad9a056693059a3e5",
+        "governed_fact_first": "3b822a36d337b53619373e2d3e7e82d7e0c317a1ade46f1641634a8d10fd7649",
+        "partial_aggregate_first": "7820d670cce40a7765a5577ff917492caec1cae06ade371db11f7b63e6503fa8"
+      },
+      "result_digest": "9d0f88b4c95841daeb7dc2d142afe812cab4de6538aa2c88a2aca08fec0615a4",
+      "unit_id": "p0.010-q0.250-s5209"
+    },
+    {
+      "lineage_digest": "90bb052c3863825d2c314b3c90f9a56cf321e986df0309cabd46033f820e928c",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "80c118ff043f14c3ebdf604cafc638f64d0915d76f8db38e0f5648cd8c5ba0c3",
+        "governed_fact_first": "bd702a6d15267ee768e57bb3d6c251cecdc2743ca631b8bd02798ab27d98c5ff",
+        "partial_aggregate_first": "1e10087c87447604f8c88f81ea7cd9dc0e0ad35995a2b308cc96f690db040f14"
+      },
+      "result_digest": "7a7528c5051af221ea861a36089152bdd792f059e4f5418e87cdb1c88f4a7529",
+      "unit_id": "p0.010-q0.250-s5303"
+    },
+    {
+      "lineage_digest": "7d1541aae7c416d0a296349000a99f4b53782ce2a7ded79a1aa4d10fe0594b52",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "fca0f93424833a7b3c2aa3261c2c61d6c808903a869adfec68f9ed099dea5198",
+        "governed_fact_first": "e786da39fffebb6c1adedd69d43493a8128ac9c2cbb6d2ab7185d095f677f9b6",
+        "partial_aggregate_first": "4e344f1f339474d8370dcbb06eb85fbca6bac2da7da0b96eecdb3cfadf2e8102"
+      },
+      "result_digest": "2271f4d3ce15a8cc638e3101a630d29ad0a92c8174433ce88edfef176040a6cb",
+      "unit_id": "p0.050-q0.750-s5101"
+    },
+    {
+      "lineage_digest": "2f37e8fdeb5033683861c425cc99514d383523e2e4ca84771d46444187e49715",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "72a0371d131a0e87c7442cf32f255213157d39e8b60a826f5ca7785009ebd731",
+        "governed_fact_first": "1a9ca1c29ec7bb0e6b0f5295a34dfa0529e9bf5fda5f4234893e36361697fa59",
+        "partial_aggregate_first": "6cb70738d6523322bf6db7071af2f13312b8fdf1e1d0072ce0111bb154b37cc3"
+      },
+      "result_digest": "9c36e38c756c95c79a6b67d0d9e363470c7247a1a1aa44c55a5a62094c72f925",
+      "unit_id": "p0.050-q0.750-s5209"
+    },
+    {
+      "lineage_digest": "81e65bdb558fff3791cfda5cfa9698bc8c9c6d80676c625d602f5b7bd34b7f38",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "695873d19028b393c06cc1ff6255a504e4151a16a35b2be25a2b00c516adb53a",
+        "governed_fact_first": "cac22ad62a8393eeba8617a6282507f587ee9acaa346c120fd39028cf80e90fe",
+        "partial_aggregate_first": "a1be465f11aa1b17e1da056c9b2f678d200c2ff6e4b728ead915558b3638205f"
+      },
+      "result_digest": "dc463218fc7888fa34eef0b4859d581c1ee11e03822dd93d50c8e74b404aad5a",
+      "unit_id": "p0.050-q0.750-s5303"
+    },
+    {
+      "lineage_digest": "16fc600a275ab35d97385b5579abf2a9ed74fe01f3d8359435cd392ffdb01cec",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "3ff7439e8a347c4d20f2078a396f33359d8cf9eb93f8dd7eb7f48d2999b472f7",
+        "governed_fact_first": "fe38042ae03de1aac04ec6a691c3399e9c1bdff43c11104cb32e1a659e32a584",
+        "partial_aggregate_first": "a97c18be2aafa8d10f9b371068622e7fc1c7055e31bb0e39435425d08afaad5a"
+      },
+      "result_digest": "4ea8f45b8faf3e3627c3801d2a58e961357e82e814a09c9fd849034202e8bc15",
+      "unit_id": "p0.250-q0.250-s5101"
+    },
+    {
+      "lineage_digest": "6d99a1c33ef95653e18610e9fb4cdda67f040abf940c18b4986b83411fb1a274",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "363b9f9d5fc03e46b4a7d1ff98d082d54f9432654720243566c2bfe4be48a4e6",
+        "governed_fact_first": "3db8823f1a02242fee4a0b6aa3c442dc68487b72fb93843654bad94a7cc72b1c",
+        "partial_aggregate_first": "2fc05920bdbff02801e6d41b96be751835a04a373dc823208549f9f35eba2a20"
+      },
+      "result_digest": "ff03a019eb5d8bf100d0ea38547e624726d9f2f1efa238cff1d302f819350353",
+      "unit_id": "p0.250-q0.250-s5209"
+    },
+    {
+      "lineage_digest": "5c6dbf1903d32055ec37164ad5765b8d0faf8c52626a1e3639b8ee17dfc3bf20",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "d1b5a21b8c28b3feff47fa4a1ca3cb75db8b87daa63019bb1d457cd1a480eb60",
+        "governed_fact_first": "89b88cb47c5ee79146498b3a49d1d25b7349b65501e07ad548b3b84ffcd4c1ab",
+        "partial_aggregate_first": "fce76e86e29c118ed9a030d682261ea3f759afc952104213e3fe2ecd090f9742"
+      },
+      "result_digest": "00e176e2c1c32b48ee89693c6462ba2023e62bd752736f3deb9da7a98f5327c0",
+      "unit_id": "p0.250-q0.250-s5303"
+    },
+    {
+      "lineage_digest": "03c8854515637d601ac3caeeaae1264407877ed1a684d7fc6fec46e86337395b",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "4cd71e0895baed46da7c752c2df4b57d3f55e14a92aff411f37382ef8586340a",
+        "governed_fact_first": "74c539330e4aa2ac57a21af4c323634f0ef288c81ee4af168d6514b376df20ca",
+        "partial_aggregate_first": "e291046380c9b98e5adfbe17b1601c44598d0ba8c7a7e5ec6b0c7af1ec63935f"
+      },
+      "result_digest": "757a7248938782368b8b1b88d384cadd2e6c18d0a2e1ce0aee6a7e39ce21edc0",
+      "unit_id": "p0.250-q0.050-s5101"
+    },
+    {
+      "lineage_digest": "82ee63f98925f0b020d593ef886bd8c9a487d4d77f698e3766066ff6697ca956",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "1780688d9af58e5e4ea405513b9c5337e7866cb9ddc8cd2fcf5aafe07ac28077",
+        "governed_fact_first": "5274f74f76ff9238c617a57620d9111d22f11293c3f44e0955230945575ab920",
+        "partial_aggregate_first": "3305ffe39145f669f22195772617074100c9d1c6ed55eedeea447cfd88f9c64d"
+      },
+      "result_digest": "43c33838e608284d8979bb453cb5a375fefda8de523f29f3ebeecc717e9e98fc",
+      "unit_id": "p0.250-q0.050-s5209"
+    },
+    {
+      "lineage_digest": "5132fc334933d6a135c50734fafee1d264712eac8c2312374174c7d6a038f9de",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "e83d77557bd9088c41ffc0592c49f51e94910cc077243d811ccad694e905e846",
+        "governed_fact_first": "a9ad07e884b9590eb7c9e2adcb384a95fde87e1b8c9f1e06a5c703d0bb9e1c38",
+        "partial_aggregate_first": "283177798c1a2b655c069dd2fedd65b74dd6610addfb9fddff33ef79b86792b3"
+      },
+      "result_digest": "0da7369cdd00e34de60f8bd5d6e0d08a90e875004f3d17682edafb921673ec05",
+      "unit_id": "p0.250-q0.050-s5303"
+    },
+    {
+      "lineage_digest": "bdc9952f4bf243fb9fb5db8994247ee729879206528aca799fdfc2e9bfdb04d9",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "fe1eb6e33bfbfa5ee56fc2e457ee5dbbb3b4c0fd2eb474a6b286ddf120dfc36f",
+        "governed_fact_first": "d49c291c342ff0edd821ac799ceff14b423e32c8c6d3a56a581b3880de342782",
+        "partial_aggregate_first": "6c14e24e91b38fe7d286412cfed0cf0e1f4ef9a91d962279fcb61dc6fb9c761f"
+      },
+      "result_digest": "36d3bfefce1ebbeb127f06df344d808e4ef0f8d4a516d321d6f220dbbe9b5c6e",
+      "unit_id": "p0.750-q0.050-s5101"
+    },
+    {
+      "lineage_digest": "d4363e3e7c802c52d1e696bcd5af2fd0e126dcdd73d8cfa841ffc8e78fb13796",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "c946afcc917b1c80c4f593a5edf5bafd6f66dc0699ac9e3e2974b3642a436b18",
+        "governed_fact_first": "8afb51600cd7e1d3379ba0b8e71a0726f4a8418de89089ff98197bce4bff710b",
+        "partial_aggregate_first": "d528c72d8c6ef03157dd1bd49a64ed3f85e3b4a4bb163e81457c442f2014d9b0"
+      },
+      "result_digest": "5794db41632e4a3776f830881427a8633abfc7c2f0abc97efc9a817e182d9a9f",
+      "unit_id": "p0.750-q0.050-s5209"
+    },
+    {
+      "lineage_digest": "362a3ea420be25d2e84c6d37f1fab21ec5f821b8207c5b1196b67d62f90a9f09",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "e4669e3c5570808e8349a9e6e8142656893f5fe52067fe0a91dc10943f4bbe3e",
+        "governed_fact_first": "bab42abf9bec7ef78d2c7aecfdad75153681702287a86f7f28970062ed7cb5a0",
+        "partial_aggregate_first": "7869c6acf8ea73c9db214981aa29c77c05f223c56bf0b5201705c18c6e4fdf7c"
+      },
+      "result_digest": "426b0025236d91efc0fd353d5a161e44dd7f820c2c7f8f81e55eb7cffbc04651",
+      "unit_id": "p0.750-q0.050-s5303"
+    },
+    {
+      "lineage_digest": "0da87eaae5e42e08dda9e39be5f5339426c5c8f547d736da11f9ac1c3dc30969",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "51ce3c982e9a572191b3b5842e2fe3579ad6beabf16a1cbd5b2bebce3dc6b3c4",
+        "governed_fact_first": "00295db60ff388df39fbfb1235b3613253a1683d4c34bec453aa19c2e2adf480",
+        "partial_aggregate_first": "a1ba20295e679f6b86f02f88c51898ffe406a989ca02bab6b376b75da93eaca7"
+      },
+      "result_digest": "f0fdfb98386c5e82b8c15200f765164e54adcfc88134bb0e8507ffe9418ee023",
+      "unit_id": "p0.750-q1.000-s5101"
+    },
+    {
+      "lineage_digest": "4be5409b7c779813438634807d293caf1a6efb98b041edfc50ecd7899753ae88",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "375bafb4c20561d1a9dde3680acb480985a715749db1a20d4f4d907ac2ce20eb",
+        "governed_fact_first": "402c80ef1472ee63292329b97fbe0ca5a81a874e7947b6fcf9f8058b54566637",
+        "partial_aggregate_first": "e8ebde76f032c76b6c6feb95867861b258dd7b5375c46d965afb92f8611c1ecf"
+      },
+      "result_digest": "cf33fbe37482aa29a6e885b5860256bbc1442f9f6e8852741812d16b724555e3",
+      "unit_id": "p0.750-q1.000-s5209"
+    },
+    {
+      "lineage_digest": "5cebf86be890085b1ed5c1193bd1b4cb93310da70a0f04d2113534ac9b3a8ec3",
+      "physical_fingerprints": {
+        "eligible_dimension_first": "083be154f535dfda4089788c4a9dfb2c9ca62a33fb7b9b24b6f9646271d11507",
+        "governed_fact_first": "2ca98158e4174978af0013d68ebc782f2f0864efeb76356c04b6352c29aa1ca0",
+        "partial_aggregate_first": "7630df0cf84e0d1e3140c0890d49e2a090fc3ad580414c895f0506383219f988"
+      },
+      "result_digest": "40c7e8ad929a89e0ac2289a0fb91e0babccb82bc292431137b31841a0b022edf",
+      "unit_id": "p0.750-q1.000-s5303"
+    }
+  ],
+  "protocol_id": "tpch-multijoin-aggregate-exp1-dev-v3-20260830",
+  "run_id": "20260830T085839208834Z",
+  "scale_factor": 1,
+  "scenario_count": 8,
+  "scenario_results": [
+    {
+      "candidate_median_ms": {
+        "eligible_dimension_first": 215.9675,
+        "governed_fact_first": 185.59715,
+        "partial_aggregate_first": 171.5707
+      },
+      "confidence_undominated_candidate_ids": [
+        "partial_aggregate_first"
+      ],
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7954278074304124,
+            0.9020433657470625
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 0.8630083219168547,
+          "right_candidate_id": "eligible_dimension_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_SLOWER",
+          "confidence_interval": [
+            1.0341715423146853,
+            1.1039193102420934
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 1.0582348570112983,
+          "right_candidate_id": "partial_aggregate_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_SLOWER",
+          "confidence_interval": [
+            1.186723386706434,
+            1.306205587952019
+          ],
+          "left_candidate_id": "eligible_dimension_first",
+          "left_over_right_ratio": 1.2483474095569438,
+          "right_candidate_id": "partial_aggregate_first"
+        }
+      ],
+      "scenario_id": "p0.001-q1.000",
+      "singleton_winner": "partial_aggregate_first"
+    },
+    {
+      "candidate_median_ms": {
+        "eligible_dimension_first": 260.5208,
+        "governed_fact_first": 202.02025,
+        "partial_aggregate_first": 200.53775000000002
+      },
+      "confidence_undominated_candidate_ids": [
+        "governed_fact_first",
+        "partial_aggregate_first"
+      ],
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.706757960191232,
+            0.791549935580888
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 0.7618783505007893,
+          "right_candidate_id": "eligible_dimension_first"
+        },
+        {
+          "conclusion": "NO_PRACTICAL_DOMINANCE_AUTHORIZED",
+          "confidence_interval": [
+            0.9085579127168102,
+            1.0705600391349102
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 1.031715291378298,
+          "right_candidate_id": "partial_aggregate_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_SLOWER",
+          "confidence_interval": [
+            1.2829608524238234,
+            1.3800160499756564
+          ],
+          "left_candidate_id": "eligible_dimension_first",
+          "left_over_right_ratio": 1.3260746567040396,
+          "right_candidate_id": "partial_aggregate_first"
+        }
+      ],
+      "scenario_id": "p0.005-q0.750",
+      "singleton_winner": null
+    },
+    {
+      "candidate_median_ms": {
+        "eligible_dimension_first": 225.99445,
+        "governed_fact_first": 212.60105,
+        "partial_aggregate_first": 208.29500000000002
+      },
+      "confidence_undominated_candidate_ids": [
+        "governed_fact_first",
+        "partial_aggregate_first"
+      ],
+      "pairwise": [
+        {
+          "conclusion": "NO_PRACTICAL_DOMINANCE_AUTHORIZED",
+          "confidence_interval": [
+            0.9236009710038933,
+            0.9930032777351621
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 0.9531027957563155,
+          "right_candidate_id": "eligible_dimension_first"
+        },
+        {
+          "conclusion": "NO_PRACTICAL_DOMINANCE_AUTHORIZED",
+          "confidence_interval": [
+            0.9971762499115657,
+            1.04727733004735
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 1.0196276264846347,
+          "right_candidate_id": "partial_aggregate_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_SLOWER",
+          "confidence_interval": [
+            1.039248821304158,
+            1.1069525539780143
+          ],
+          "left_candidate_id": "eligible_dimension_first",
+          "left_over_right_ratio": 1.0775292726069088,
+          "right_candidate_id": "partial_aggregate_first"
+        }
+      ],
+      "scenario_id": "p0.010-q0.250",
+      "singleton_winner": null
+    },
+    {
+      "candidate_median_ms": {
+        "eligible_dimension_first": 308.96355,
+        "governed_fact_first": 287.73519999999996,
+        "partial_aggregate_first": 350.55425
+      },
+      "confidence_undominated_candidate_ids": [
+        "governed_fact_first"
+      ],
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8837879541873549,
+            0.964349203191716
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 0.9489679403589003,
+          "right_candidate_id": "eligible_dimension_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8038601765880251,
+            0.8610910873045895
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 0.8327286865843321,
+          "right_candidate_id": "partial_aggregate_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8632570948377702,
+            0.9086430835614474
+          ],
+          "left_candidate_id": "eligible_dimension_first",
+          "left_over_right_ratio": 0.8820121930630718,
+          "right_candidate_id": "partial_aggregate_first"
+        }
+      ],
+      "scenario_id": "p0.050-q0.750",
+      "singleton_winner": "governed_fact_first"
+    },
+    {
+      "candidate_median_ms": {
+        "eligible_dimension_first": 299.48425,
+        "governed_fact_first": 381.49565,
+        "partial_aggregate_first": 536.4764
+      },
+      "confidence_undominated_candidate_ids": [
+        "eligible_dimension_first"
+      ],
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_SLOWER",
+          "confidence_interval": [
+            1.2237496462626571,
+            1.3075802221937303
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 1.253244203221022,
+          "right_candidate_id": "eligible_dimension_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.690122369752003,
+            0.7340821726897123
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 0.7063771300119671,
+          "right_candidate_id": "partial_aggregate_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5485278170712675,
+            0.5823418880199928
+          ],
+          "left_candidate_id": "eligible_dimension_first",
+          "left_over_right_ratio": 0.5574631272803781,
+          "right_candidate_id": "partial_aggregate_first"
+        }
+      ],
+      "scenario_id": "p0.250-q0.050",
+      "singleton_winner": "eligible_dimension_first"
+    },
+    {
+      "candidate_median_ms": {
+        "eligible_dimension_first": 385.74755,
+        "governed_fact_first": 451.80485,
+        "partial_aggregate_first": 623.14115
+      },
+      "confidence_undominated_candidate_ids": [
+        "eligible_dimension_first"
+      ],
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_SLOWER",
+          "confidence_interval": [
+            1.1388361504357978,
+            1.214198876214952
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 1.177210883059842,
+          "right_candidate_id": "eligible_dimension_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7115710775334867,
+            0.7503658094203168
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 0.7400622690318148,
+          "right_candidate_id": "partial_aggregate_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5940013476821,
+            0.6296982822430238
+          ],
+          "left_candidate_id": "eligible_dimension_first",
+          "left_over_right_ratio": 0.6128851845326491,
+          "right_candidate_id": "partial_aggregate_first"
+        }
+      ],
+      "scenario_id": "p0.250-q0.250",
+      "singleton_winner": "eligible_dimension_first"
+    },
+    {
+      "candidate_median_ms": {
+        "eligible_dimension_first": 652.49185,
+        "governed_fact_first": 839.35555,
+        "partial_aggregate_first": 1039.2709
+      },
+      "confidence_undominated_candidate_ids": [
+        "eligible_dimension_first"
+      ],
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_SLOWER",
+          "confidence_interval": [
+            1.2533426605974094,
+            1.3726989747183391
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 1.285346636834257,
+          "right_candidate_id": "eligible_dimension_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7758401978678744,
+            0.8616605727522542
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 0.8327766087290994,
+          "right_candidate_id": "partial_aggregate_first"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5982265052191772,
+            0.6387633482751871
+          ],
+          "left_candidate_id": "eligible_dimension_first",
+          "left_over_right_ratio": 0.6190975709545241,
+          "right_candidate_id": "partial_aggregate_first"
+        }
+      ],
+      "scenario_id": "p0.750-q0.050",
+      "singleton_winner": "eligible_dimension_first"
+    },
+    {
+      "candidate_median_ms": {
+        "eligible_dimension_first": 1154.718,
+        "governed_fact_first": 1095.31275,
+        "partial_aggregate_first": 1223.2361999999998
+      },
+      "confidence_undominated_candidate_ids": [
+        "eligible_dimension_first",
+        "governed_fact_first",
+        "partial_aggregate_first"
+      ],
+      "pairwise": [
+        {
+          "conclusion": "NO_PRACTICAL_DOMINANCE_AUTHORIZED",
+          "confidence_interval": [
+            0.9147736548424995,
+            0.9970240015318121
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 0.9637359304207175,
+          "right_candidate_id": "eligible_dimension_first"
+        },
+        {
+          "conclusion": "NO_PRACTICAL_DOMINANCE_AUTHORIZED",
+          "confidence_interval": [
+            0.8619907459098406,
+            0.9793299271988386
+          ],
+          "left_candidate_id": "governed_fact_first",
+          "left_over_right_ratio": 0.9148805328426368,
+          "right_candidate_id": "partial_aggregate_first"
+        },
+        {
+          "conclusion": "NO_PRACTICAL_DOMINANCE_AUTHORIZED",
+          "confidence_interval": [
+            0.9047592508562584,
+            0.9713841686658854
+          ],
+          "left_candidate_id": "eligible_dimension_first",
+          "left_over_right_ratio": 0.9405173563682953,
+          "right_candidate_id": "partial_aggregate_first"
+        }
+      ],
+      "scenario_id": "p0.750-q1.000",
+      "singleton_winner": null
+    }
+  ],
+  "singleton_winner_counts": {
+    "eligible_dimension_first": 3,
+    "governed_fact_first": 1,
+    "partial_aggregate_first": 1
+  },
+  "status": "PASS_EXPERIMENT1_DEVELOPMENT_ADMISSION"
+}

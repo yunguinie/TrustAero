@@ -1,0 +1,22 @@
+{
+  "diagnostics": [
+    {
+      "code": "PHYSICAL_PLAN_BINDING_MISMATCH",
+      "details": {
+        "actual": "pl-tampered-manifest",
+        "expected": "pl-7b7986dcdc0d8b0b"
+      },
+      "message": "Approved physical plan does not bind to the validated logical plan.",
+      "operator_id": null,
+      "policy_id": null
+    }
+  ],
+  "status": "REJECT",
+  "unverified_components": [
+    "physical_plan_execution"
+  ],
+  "verified_obligations": [
+    "MASK",
+    "LINEAGE_CAPTURE"
+  ]
+}

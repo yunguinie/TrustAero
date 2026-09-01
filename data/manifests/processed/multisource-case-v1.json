@@ -1,0 +1,218 @@
+{
+  "claim_status": "PREPARED_NOT_YET_END_TO_END_VALIDATED",
+  "dataset_id": "multisource_case_study",
+  "geographic_scope": {
+    "crs": "EPSG:4326",
+    "maximum_latitude": 45.0153,
+    "maximum_longitude": -71.7517,
+    "minimum_latitude": 40.4774,
+    "minimum_longitude": -79.7624
+  },
+  "inputs": [
+    {
+      "artifact_id": "multisource_usgs_earthquakes_ny_2000_2024",
+      "byte_size": 187607,
+      "download_audit": "manifests/downloads/multisource_usgs_earthquakes_ny_2000_2024.json",
+      "relative_path": "raw/multisource/usgs/earthquakes_ny_2000_2024.csv",
+      "sha256": "40a7ab69a5f3107c4242470ca846f5270d5b375678f5581ec0324926077bec7b"
+    },
+    {
+      "artifact_id": "multisource_nysdec_regulated_wells_20260724",
+      "byte_size": 28420716,
+      "download_audit": "manifests/downloads/multisource_nysdec_regulated_wells_20260724.json",
+      "relative_path": "raw/multisource/nysdec/regulated_wells_20260724.csv",
+      "sha256": "4304d3b4292dc6def77802c69c033160a9243ac98f5f4606c7ea46e77e7ed9e6"
+    },
+    {
+      "artifact_id": "multisource_faa_airports_20241128",
+      "byte_size": 8132339,
+      "download_audit": "manifests/downloads/multisource_faa_airports_20241128.json",
+      "relative_path": "raw/multisource/faa/28_Nov_2024_APT_CSV.zip",
+      "sha256": "eaaf20f6219e1c0efde83b5028d51b57b92004695416dd4ce1602d8548e6555a"
+    },
+    {
+      "artifact_id": "multisource_census_places_2024",
+      "byte_size": 1221402,
+      "download_audit": "manifests/downloads/multisource_census_places_2024.json",
+      "relative_path": "raw/multisource/census/2024_Gaz_place_national.zip",
+      "sha256": "cf262fc92b2326f7a8c62a89d156a60eb17d64d6d35f7a62310c43bb08972c06"
+    }
+  ],
+  "outputs": [
+    {
+      "artifact_id": "multisource_earthquakes_v1",
+      "byte_size": 34416,
+      "derivation": "USGS rows in the frozen NY bounding box; ordered by event time and event id.",
+      "dropped_rows": 0,
+      "relative_path": "processed/multisource/v1/earthquakes.parquet",
+      "row_count": 992,
+      "schema": [
+        [
+          "event_id",
+          "VARCHAR"
+        ],
+        [
+          "event_time",
+          "TIMESTAMP WITH TIME ZONE"
+        ],
+        [
+          "earthquake_latitude",
+          "DOUBLE"
+        ],
+        [
+          "earthquake_longitude",
+          "DOUBLE"
+        ],
+        [
+          "depth_km",
+          "DOUBLE"
+        ],
+        [
+          "magnitude",
+          "DOUBLE"
+        ],
+        [
+          "earthquake_place",
+          "VARCHAR"
+        ],
+        [
+          "earthquake_review_status",
+          "VARCHAR"
+        ]
+      ],
+      "sha256": "654830be9afbe1f23660c5f9f39456b37797b26c140d45ca1b647fb0805068d3",
+      "source_rows": 992
+    },
+    {
+      "artifact_id": "multisource_wells_v1",
+      "byte_size": 862006,
+      "derivation": "NYSDEC rows with valid surface coordinates in the frozen NY bounding box; ordered by API well number.",
+      "dropped_rows": 1085,
+      "relative_path": "processed/multisource/v1/wells.parquet",
+      "row_count": 46350,
+      "schema": [
+        [
+          "api_well_number",
+          "VARCHAR"
+        ],
+        [
+          "well_name",
+          "VARCHAR"
+        ],
+        [
+          "well_town",
+          "VARCHAR"
+        ],
+        [
+          "well_county",
+          "VARCHAR"
+        ],
+        [
+          "well_type",
+          "VARCHAR"
+        ],
+        [
+          "well_status",
+          "VARCHAR"
+        ],
+        [
+          "well_latitude",
+          "DOUBLE"
+        ],
+        [
+          "well_longitude",
+          "DOUBLE"
+        ],
+        [
+          "last_modified",
+          "TIMESTAMP"
+        ]
+      ],
+      "sha256": "7d8a993dc7db4ea5f06d8cb037c93be07efb7e0bf6c9bcddc696830183f99162",
+      "source_rows": 47435
+    },
+    {
+      "artifact_id": "multisource_airports_v1",
+      "byte_size": 19606,
+      "derivation": "FAA APT_BASE rows for New York with valid coordinates; ordered by site number.",
+      "dropped_rows": 19623,
+      "relative_path": "processed/multisource/v1/airports.parquet",
+      "row_count": 534,
+      "schema": [
+        [
+          "site_number",
+          "VARCHAR"
+        ],
+        [
+          "airport_id",
+          "VARCHAR"
+        ],
+        [
+          "airport_name",
+          "VARCHAR"
+        ],
+        [
+          "airport_city",
+          "VARCHAR"
+        ],
+        [
+          "airport_facility_use",
+          "VARCHAR"
+        ],
+        [
+          "airport_latitude",
+          "DOUBLE"
+        ],
+        [
+          "airport_longitude",
+          "DOUBLE"
+        ],
+        [
+          "airport_status",
+          "VARCHAR"
+        ]
+      ],
+      "sha256": "bc0ccfde3bbd2432d7b1d7d81409aa40d356fe02f86c3576ec8cc80f4f16d3d2",
+      "source_rows": 20157
+    },
+    {
+      "artifact_id": "multisource_cities_v1",
+      "byte_size": 36944,
+      "derivation": "Census 2024 Places rows for New York with valid internal-point coordinates; ordered by GEOID.",
+      "dropped_rows": 31040,
+      "relative_path": "processed/multisource/v1/cities.parquet",
+      "row_count": 1293,
+      "schema": [
+        [
+          "geoid",
+          "VARCHAR"
+        ],
+        [
+          "place_name",
+          "VARCHAR"
+        ],
+        [
+          "legal_statistical_area",
+          "VARCHAR"
+        ],
+        [
+          "city_latitude",
+          "DOUBLE"
+        ],
+        [
+          "city_longitude",
+          "DOUBLE"
+        ],
+        [
+          "land_area_sqmi",
+          "DOUBLE"
+        ]
+      ],
+      "sha256": "de6d98951932e9e27e7dcf539f430eda5d79d0503bcd048a31b8ca936b34a076",
+      "source_rows": 32333
+    }
+  ],
+  "preparation_version": "v1",
+  "prepared_at_utc": "2026-07-25T01:33:22.511168+00:00",
+  "schema_version": 1
+}

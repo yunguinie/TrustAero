@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "model_id": "lineage-checkpoint-cost-model-v1-20260726",
+  "status": "FROZEN_AFTER_GROUPED_DEVELOPMENT",
+  "calibration": {
+    "path": "results/lineage_checkpoint_cost_calibration_v1/20260726T023803164877Z/calibration.json",
+    "sha256": "bc65dadf85969ab5e83c61e36f865bf037b1564bd7be07032e76b3be0ab79fe4"
+  },
+  "model": {
+    "intercept_ms": 0.46205493697305916,
+    "coefficients": {
+      "checkpoint.rows_million": 66.00367961595046,
+      "checkpoint.scan_rows_million": 0.0,
+      "lineage.hash_rows_million": 853.1422043339909,
+      "lineage.output_edges_million": 1520.1523541748372,
+      "pipeline_breaker.count": 0.0,
+      "source.scan_rows_million": 29.230072034200436
+    },
+    "ridge_lambda": 0.1,
+    "practical_tie_fraction": 0.03,
+    "stable_preference": "late_per_query_capture"
+  },
+  "strong_threshold_baseline": {
+    "lower_query_count_threshold": 1,
+    "upper_query_count_threshold": 8,
+    "if_at_or_below_lower": "late_per_query_capture",
+    "if_at_or_below_upper": "policy_lineage_checkpoint",
+    "otherwise": "snapshot_lineage_checkpoint"
+  },
+  "development_result": {
+    "grouped_oracle_set_hit_rate": 1.0,
+    "mean_regret_percent": 0.0,
+    "p95_regret_percent": 0.0,
+    "maximum_regret_percent": 0.0,
+    "threshold_outer_hit_rate": 0.833,
+    "threshold_outer_mean_regret_percent": 1.43
+  },
+  "deployment_boundary": "Only the three frozen record-lineage-equivalent candidates are eligible. Features must be estimated before candidate execution."
+}

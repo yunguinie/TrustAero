@@ -1,0 +1,331 @@
+{
+  "bindings": {
+    "data_snapshots": {
+      "airport": "sha256:bc0ccfde3bbd2432d7b1d7d81409aa40d356fe02f86c3576ec8cc80f4f16d3d2",
+      "city": "sha256:de6d98951932e9e27e7dcf539f430eda5d79d0503bcd048a31b8ca936b34a076",
+      "oil_gas_well": "sha256:7d8a993dc7db4ea5f06d8cb037c93be07efb7e0bf6c9bcddc696830183f99162",
+      "usgs_earthquake": "sha256:654830be9afbe1f23660c5f9f39456b37797b26c140d45ca1b647fb0805068d3"
+    },
+    "policy_snapshot": "multisource-policy-2026-07-25"
+  },
+  "candidate_plan_id": "multisource-case-query-v1",
+  "lineage_instrumentation": [
+    {
+      "capture_mode": "logical_suffix",
+      "capture_operator": "gov-002-lineagecapture",
+      "level": "source",
+      "target_operator": "case-sort"
+    }
+  ],
+  "lineage_requirements": [
+    {
+      "level": "source",
+      "target_operator": "case-sort"
+    }
+  ],
+  "logical_plan_id": "pl-7b7986dcdc0d8b0b",
+  "operators": [
+    {
+      "dataset": "usgs_earthquake",
+      "inputs": [],
+      "operator_id": "earthquake-scan",
+      "operator_type": "ScanSource",
+      "snapshot": null
+    },
+    {
+      "end": "2025-01-01T00:00:00Z",
+      "field": "event_time",
+      "inputs": [
+        "earthquake-scan"
+      ],
+      "operator_id": "earthquake-time",
+      "operator_type": "TemporalFilter",
+      "start": "2024-01-01T00:00:00Z"
+    },
+    {
+      "expression": {
+        "expression_type": "comparison",
+        "left": {
+          "expression_type": "field",
+          "field": "magnitude"
+        },
+        "negated": false,
+        "operator": "ge",
+        "right": {
+          "data_type": "float",
+          "expression_type": "literal",
+          "value": 2.5
+        }
+      },
+      "inputs": [
+        "earthquake-time"
+      ],
+      "operator_id": "earthquake-magnitude",
+      "operator_type": "Filter"
+    },
+    {
+      "dataset": "oil_gas_well",
+      "inputs": [],
+      "operator_id": "well-scan",
+      "operator_type": "ScanSource",
+      "snapshot": null
+    },
+    {
+      "distance_km": 25.0,
+      "inputs": [
+        "earthquake-magnitude",
+        "well-scan"
+      ],
+      "left_fields": [
+        "earthquake_latitude",
+        "earthquake_longitude"
+      ],
+      "operator_id": "earthquake-well-join",
+      "operator_type": "SpatialJoin",
+      "relation": "distance_within",
+      "right_fields": [
+        "well_latitude",
+        "well_longitude"
+      ]
+    },
+    {
+      "dataset": "airport",
+      "inputs": [],
+      "operator_id": "airport-scan",
+      "operator_type": "ScanSource",
+      "snapshot": null
+    },
+    {
+      "distance_km": 50.0,
+      "inputs": [
+        "earthquake-well-join",
+        "airport-scan"
+      ],
+      "left_fields": [
+        "earthquake_latitude",
+        "earthquake_longitude"
+      ],
+      "operator_id": "earthquake-airport-join",
+      "operator_type": "SpatialJoin",
+      "relation": "distance_within",
+      "right_fields": [
+        "airport_latitude",
+        "airport_longitude"
+      ]
+    },
+    {
+      "dataset": "city",
+      "inputs": [],
+      "operator_id": "city-scan",
+      "operator_type": "ScanSource",
+      "snapshot": null
+    },
+    {
+      "distance_km": 25.0,
+      "inputs": [
+        "earthquake-airport-join",
+        "city-scan"
+      ],
+      "left_fields": [
+        "earthquake_latitude",
+        "earthquake_longitude"
+      ],
+      "operator_id": "earthquake-city-join",
+      "operator_type": "SpatialJoin",
+      "relation": "distance_within",
+      "right_fields": [
+        "city_latitude",
+        "city_longitude"
+      ]
+    },
+    {
+      "fields": [
+        "event_id",
+        "magnitude",
+        "api_well_number",
+        "well_type",
+        "airport_id",
+        "airport_name",
+        "geoid",
+        "place_name"
+      ],
+      "inputs": [
+        "earthquake-city-join"
+      ],
+      "operator_id": "case-output",
+      "operator_type": "Project"
+    },
+    {
+      "inputs": [
+        "case-output"
+      ],
+      "keys": [
+        {
+          "direction": "asc",
+          "field": "event_id"
+        },
+        {
+          "direction": "asc",
+          "field": "api_well_number"
+        },
+        {
+          "direction": "asc",
+          "field": "airport_id"
+        },
+        {
+          "direction": "asc",
+          "field": "geoid"
+        }
+      ],
+      "operator_id": "case-sort",
+      "operator_type": "Sort"
+    },
+    {
+      "fields": [
+        "api_well_number"
+      ],
+      "inputs": [
+        "case-sort"
+      ],
+      "method": "hash",
+      "operator_id": "gov-001-mask",
+      "operator_type": "Mask"
+    },
+    {
+      "inputs": [
+        "gov-001-mask"
+      ],
+      "level": "source",
+      "operator_id": "gov-002-lineagecapture",
+      "operator_type": "LineageCapture"
+    }
+  ],
+  "output_operator": "gov-002-lineagecapture",
+  "output_schema": [
+    {
+      "data_type": "string",
+      "name": "event_id",
+      "nullable": false,
+      "roles": [
+        "identifier"
+      ],
+      "sensitive": false,
+      "spatial_precision_km": null,
+      "value_state": "raw"
+    },
+    {
+      "data_type": "float",
+      "name": "magnitude",
+      "nullable": false,
+      "roles": [],
+      "sensitive": false,
+      "spatial_precision_km": null,
+      "value_state": "raw"
+    },
+    {
+      "data_type": "string",
+      "name": "api_well_number",
+      "nullable": false,
+      "roles": [],
+      "sensitive": true,
+      "spatial_precision_km": null,
+      "value_state": "hashed"
+    },
+    {
+      "data_type": "string",
+      "name": "well_type",
+      "nullable": false,
+      "roles": [],
+      "sensitive": false,
+      "spatial_precision_km": null,
+      "value_state": "raw"
+    },
+    {
+      "data_type": "string",
+      "name": "airport_id",
+      "nullable": false,
+      "roles": [
+        "identifier"
+      ],
+      "sensitive": false,
+      "spatial_precision_km": null,
+      "value_state": "raw"
+    },
+    {
+      "data_type": "string",
+      "name": "airport_name",
+      "nullable": false,
+      "roles": [],
+      "sensitive": false,
+      "spatial_precision_km": null,
+      "value_state": "raw"
+    },
+    {
+      "data_type": "string",
+      "name": "geoid",
+      "nullable": false,
+      "roles": [
+        "identifier"
+      ],
+      "sensitive": false,
+      "spatial_precision_km": null,
+      "value_state": "raw"
+    },
+    {
+      "data_type": "string",
+      "name": "place_name",
+      "nullable": false,
+      "roles": [],
+      "sensitive": false,
+      "spatial_precision_km": null,
+      "value_state": "raw"
+    }
+  ],
+  "pending_obligations": [
+    "LINEAGE_CAPTURE"
+  ],
+  "request_context": {
+    "action": "join",
+    "purpose": "risk_assessment",
+    "query_time_window": {
+      "dimension": "event_time",
+      "end": "2025-01-01T00:00:00Z",
+      "start": "2024-01-01T00:00:00Z"
+    },
+    "subject": {
+      "attributes": {},
+      "role": "infrastructure_researcher",
+      "subject_id": "case-study-researcher"
+    }
+  },
+  "requested_output": {
+    "export": {
+      "destination": null,
+      "format": null,
+      "requested": false
+    },
+    "fields": [
+      "event_id",
+      "magnitude",
+      "api_well_number",
+      "well_type",
+      "airport_id",
+      "airport_name",
+      "geoid",
+      "place_name"
+    ],
+    "lineage_level": "source"
+  },
+  "satisfied_obligations": [
+    "MASK"
+  ],
+  "schema_version": "1.0",
+  "validation": {
+    "canonical_digest": "sha256:7b7986dcdc0d8b0bb7cc57fb3e9f299b22ce64e909aee59ddce0adc6319ba320",
+    "reason_codes": [
+      "MASK_REQUIRED",
+      "LINEAGE_REQUIRED"
+    ],
+    "rounds": 2
+  }
+}

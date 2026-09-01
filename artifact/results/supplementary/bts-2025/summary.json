@@ -1,0 +1,930 @@
+{
+  "candidate_count": 4,
+  "claim_boundary": [
+    "The full 2025 calendar year was not used by prior candidate design, model fitting, or threshold tuning.",
+    "This evaluates temporal transfer and candidate-family performance admission, not online Planner selection.",
+    "The result does not alter the frozen 114-decision RQ2 denominator or retrain its estimator.",
+    "All outcomes, including a fixed winner or no singleton, are publishable negative evidence and trigger no retuning."
+  ],
+  "gates": {
+    "all_candidates_distinct": true,
+    "all_certificates_partial": true,
+    "all_measurements_complete": true,
+    "all_months_complete": true,
+    "all_results_equivalent": true
+  },
+  "heldout_optimizer_selection_evidence": false,
+  "measurement_count": 2304,
+  "month_count": 12,
+  "monthly_results": [
+    {
+      "candidate_median_ms": {
+        "fused": 74.4323,
+        "materialize-after-bts-mj-carrier-join": 129.66915,
+        "materialize-after-bts-mj-filter": 110.28285,
+        "materialize-after-bts-mj-origin-join": 118.92755
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-01",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5430219822824994,
+            0.6861914863407798
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.6161446771478285,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5209756385451895,
+            0.6375381899769916
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5844268056660159,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.47104904430110184,
+            0.5699796893538492
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5084464608974936,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8548974494159836,
+            0.9698074480065239
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.9098773106991934,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7593413406105693,
+            0.8666762873487471
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.839499615750788,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.765272548490144,
+            0.9511315369902601
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.8817170150113489,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    },
+    {
+      "candidate_median_ms": {
+        "fused": 31.5753,
+        "materialize-after-bts-mj-carrier-join": 61.44805,
+        "materialize-after-bts-mj-filter": 49.8425,
+        "materialize-after-bts-mj-origin-join": 58.34
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-02",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6229586651856404,
+            0.696528004871393
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.6556673656145054,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5364511944185985,
+            0.5897777544265222
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5650144618762022,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.4892761131513236,
+            0.5459566187116593
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5182726480220399,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.817438721941687,
+            0.9315811761737861
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.8754845962612601,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7751819996479622,
+            0.8553880561782459
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.8104592197773146,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8930643775838392,
+            0.952751937488435
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.9125863510616417,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    },
+    {
+      "candidate_median_ms": {
+        "fused": 40.91895,
+        "materialize-after-bts-mj-carrier-join": 85.79685,
+        "materialize-after-bts-mj-filter": 60.55625,
+        "materialize-after-bts-mj-origin-join": 71.76515
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-03",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6073865702611932,
+            0.6881031224519082
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.6601891776312213,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.531764279155902,
+            0.5806300598614924
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5517506984632319,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.4407610051073048,
+            0.5124143351793439
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.4631075515723058,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7887352351003393,
+            0.96935768557728
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.8364068242813694,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6727904788122843,
+            0.7812363536577804
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.7104844440871746,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7870308286884048,
+            0.8687985218959395
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.8330581467170745,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    },
+    {
+      "candidate_median_ms": {
+        "fused": 41.847750000000005,
+        "materialize-after-bts-mj-carrier-join": 87.70255,
+        "materialize-after-bts-mj-filter": 65.6181,
+        "materialize-after-bts-mj-origin-join": 82.37075
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-04",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6216676709539344,
+            0.68404230529123
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.651977802476001,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.48014843933348983,
+            0.5302543999114983
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5128809376772617,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.4569241675696563,
+            0.4972146571588551
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.46839708154790594,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7468650593096887,
+            0.8295569603408515
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.7773446917188934,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6859913717877486,
+            0.8443784166184319
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.728847078913263,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "NO_PRACTICAL_DOMINANCE_AUTHORIZED",
+          "confidence_interval": [
+            0.8894182999821105,
+            0.9813158520186944
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.916819357595329,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    },
+    {
+      "candidate_median_ms": {
+        "fused": 67.1934,
+        "materialize-after-bts-mj-carrier-join": 123.10505,
+        "materialize-after-bts-mj-filter": 99.21495,
+        "materialize-after-bts-mj-origin-join": 117.66355
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-05",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6052359853886572,
+            0.717427544008532
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.6487736602064229,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.47831975907722746,
+            0.5755939889850308
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5238666230942958,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.44711153497964307,
+            0.5282185706532407
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.4906675381182015,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.707454803517544,
+            0.8988518697043434
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.807052394955621,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7111679050184393,
+            0.8005893429602526
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.7443272065882196,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "NO_PRACTICAL_DOMINANCE_AUTHORIZED",
+          "confidence_interval": [
+            0.8593866766629987,
+            0.9878688795108194
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.9084676190104265,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    },
+    {
+      "candidate_median_ms": {
+        "fused": 42.77835,
+        "materialize-after-bts-mj-carrier-join": 83.4661,
+        "materialize-after-bts-mj-filter": 62.6934,
+        "materialize-after-bts-mj-origin-join": 72.91065
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-06",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6219499221779057,
+            0.7000718688211857
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.6481406257562929,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5263208715213381,
+            0.5834785926754602
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5550747711891781,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.48181287661185196,
+            0.5344186781571864
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.502522984116459,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.80319965455309,
+            0.8825629924870478
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.8417963953223785,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7309492983901553,
+            0.7853589958920435
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.7523926408242867,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8727896590443759,
+            0.9513186318451493
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.9201139285519849,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    },
+    {
+      "candidate_median_ms": {
+        "fused": 41.9216,
+        "materialize-after-bts-mj-carrier-join": 84.1383,
+        "materialize-after-bts-mj-filter": 62.2393,
+        "materialize-after-bts-mj-origin-join": 76.08305
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-07",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6298968113786372,
+            0.7127289037327795
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.684328471094453,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5221490064272657,
+            0.5567446668034175
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5439689135334981,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.4615024781558319,
+            0.5309051644069633
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.48657815935517384,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7854274695762222,
+            0.8456638052978429
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.8174808298358582,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7100534221512399,
+            0.7658452434108489
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.7366591530530407,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8570548785553702,
+            0.9441670552188105
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.9072657257417736,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    },
+    {
+      "candidate_median_ms": {
+        "fused": 43.2792,
+        "materialize-after-bts-mj-carrier-join": 84.47829999999999,
+        "materialize-after-bts-mj-filter": 64.3973,
+        "materialize-after-bts-mj-origin-join": 75.99615
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-08",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6513029880174961,
+            0.7195103645211514
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.6851420752139554,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5385423263461394,
+            0.5765109847418463
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5561399091593516,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.49283655491813294,
+            0.5407731782783194
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5150366324185056,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8004907827468524,
+            0.882917226981183
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.8335937503363653,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7083695841308508,
+            0.7923734420390579
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.7546617428769762,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8769697342025485,
+            0.9561489758598826
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.928071442954243,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    },
+    {
+      "candidate_median_ms": {
+        "fused": 42.557950000000005,
+        "materialize-after-bts-mj-carrier-join": 86.84485000000001,
+        "materialize-after-bts-mj-filter": 64.9914,
+        "materialize-after-bts-mj-origin-join": 79.4823
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-09",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6106526251032586,
+            0.6976256685194244
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.6407025463086355,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5145619934962704,
+            0.5608927220215066
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5420327794147671,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.4770717568461796,
+            0.5310196602669002
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.49523385846754575,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8123704879225104,
+            0.850221917042066
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.8258147365580552,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7349395818852591,
+            0.8184273905919445
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.7742782033570951,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "NO_PRACTICAL_DOMINANCE_AUTHORIZED",
+          "confidence_interval": [
+            0.8984298814700289,
+            0.9845860812313518
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.9430534404412516,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    },
+    {
+      "candidate_median_ms": {
+        "fused": 47.5176,
+        "materialize-after-bts-mj-carrier-join": 95.81190000000001,
+        "materialize-after-bts-mj-filter": 69.8608,
+        "materialize-after-bts-mj-origin-join": 85.21965
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-10",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6251043245039015,
+            0.7198084613229413
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.6790387979910596,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5028410558584544,
+            0.5869090447220207
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5277548265838619,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.4662318276443817,
+            0.5107608871030703
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.49201687316644577,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.7494549354620109,
+            0.860201934951378
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.8064243276075397,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.702193842606576,
+            0.8050290522452346
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.7381790604576752,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8599978739236739,
+            0.9565885480495485
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.8859157502537061,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    },
+    {
+      "candidate_median_ms": {
+        "fused": 45.042,
+        "materialize-after-bts-mj-carrier-join": 92.61495,
+        "materialize-after-bts-mj-filter": 72.719,
+        "materialize-after-bts-mj-origin-join": 87.7516
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-11",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5748104820686013,
+            0.6777516916234813
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.6371699275488881,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5230660364157791,
+            0.5711692851693508
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5428030460234612,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.4669322778805074,
+            0.5209157012949683
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.487996111405819,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8135325715890809,
+            0.9173297826247768
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.8658453846963099,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.6930130627965515,
+            0.7881268396950211
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.7453216560813584,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "NO_PRACTICAL_DOMINANCE_AUTHORIZED",
+          "confidence_interval": [
+            0.859349627087317,
+            0.9731034003545459
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.9156032519051733,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    },
+    {
+      "candidate_median_ms": {
+        "fused": 53.48235,
+        "materialize-after-bts-mj-carrier-join": 104.4451,
+        "materialize-after-bts-mj-filter": 90.84530000000001,
+        "materialize-after-bts-mj-origin-join": 91.9755
+      },
+      "confidence_undominated_candidate_ids": [
+        "fused"
+      ],
+      "month": "2025-12",
+      "pairwise": [
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5849044471641296,
+            0.6765513409701023
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.6081496733854712,
+          "right_candidate_id": "materialize-after-bts-mj-filter"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.5249441134365831,
+            0.5855851747165163
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5642802621927276,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.4600017263615408,
+            0.54206366480309
+          ],
+          "left_candidate_id": "fused",
+          "left_over_right_ratio": 0.5048262763370971,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8211814534348819,
+            0.9498932965492037
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.870559362413141,
+          "right_candidate_id": "materialize-after-bts-mj-origin-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.744588627456752,
+            0.8617694656138095
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-filter",
+          "left_over_right_ratio": 0.8167134499554225,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        },
+        {
+          "conclusion": "LEFT_MATERIALLY_FASTER",
+          "confidence_interval": [
+            0.8487183244007909,
+            0.9652705513341936
+          ],
+          "left_candidate_id": "materialize-after-bts-mj-origin-join",
+          "left_over_right_ratio": 0.9236351862795442,
+          "right_candidate_id": "materialize-after-bts-mj-carrier-join"
+        }
+      ],
+      "singleton_winner": "fused"
+    }
+  ],
+  "paper_performance_evidence": true,
+  "schema_version": 1,
+  "scientific_conclusion": "SINGLE_SINGLETON_WINNER_OBSERVED",
+  "singleton_month_count": 12,
+  "singleton_winner_counts": {
+    "fused": 12
+  },
+  "status": "PASS_BTS_2025_TEMPORAL_HOLDOUT_COMPLETED",
+  "year": 2025
+}

@@ -1,0 +1,82 @@
+{
+  "status": "PASS_POLICY_STRATIFIED_PIPELINE_OPTIMIZER_HOLDOUT",
+  "measurement_run": "results/policy_stratified_pipeline_holdout_measurement_v2/20260724T104015738465Z",
+  "measurement_summary_sha256": "12ad47fcaf7d023775a7e95c4e3663531dd6b5a682cef41ab738583f116d07ac",
+  "evaluation_path": "results/policy_stratified_pipeline_holdout_evaluation_v2/20260724T104015738465Z/evaluation.json",
+  "evaluation_sha256": "00f9666892bca1fb45b5c8de430e933ddc0560c0ecf662b6662103e7c8a889ab",
+  "frozen_cost_model_sha256": "56399a09a3dccd2b02793eca97145fc17c68b9da8574edfef013925457f0fd6f",
+  "frozen_support_model_sha256": "7642145c3892c838ff9171ca85e0c79ba34373a1ee8e5cb78b2cba0eab87c4d7",
+  "primary_policy": "no_raw_join",
+  "primary_optimizer_metrics": {
+    "decision_count": 96,
+    "oracle_set_hit_rate": 1.0,
+    "mean_regret_percent": 0.21991364162354463,
+    "p95_regret_percent": 1.4422564016466355,
+    "maximum_regret_percent": 2.083754272538574,
+    "selected_candidate_counts": {
+      "policy_first_masked_checkpoint": 72,
+      "query_first_raw_checkpoint": 24
+    }
+  },
+  "best_fixed_baseline": {
+    "candidate_id": "policy_first_masked_checkpoint",
+    "oracle_set_hit_rate": 0.75,
+    "mean_regret_percent": 5.193481807451276,
+    "p95_regret_percent": 20.44325967375833,
+    "maximum_regret_percent": 20.788253291209635
+  },
+  "relative_improvement_over_best_fixed": {
+    "oracle_set_hit_rate_percentage_points": 25.0,
+    "mean_regret_reduction_percent": 95.76558367244058,
+    "p95_regret_reduction_percent": 92.94507615388771,
+    "maximum_regret_reduction_percent": 89.97628976639564
+  },
+  "policy_regime_results": {
+    "permissive": {
+      "legal_candidate_count": 3,
+      "selected_candidate_counts": {
+        "join_first_masked_checkpoint": 96
+      },
+      "oracle_set_hit_rate": 1.0,
+      "mean_regret_percent": 0.0
+    },
+    "no_raw_join": {
+      "legal_candidate_count": 2,
+      "selected_candidate_counts": {
+        "policy_first_masked_checkpoint": 72,
+        "query_first_raw_checkpoint": 24
+      },
+      "oracle_set_hit_rate": 1.0,
+      "mean_regret_percent": 0.21991364162354463
+    },
+    "strict": {
+      "legal_candidate_count": 1,
+      "selected_candidate_counts": {
+        "policy_first_masked_checkpoint": 96
+      },
+      "oracle_set_hit_rate": 1.0,
+      "mean_regret_percent": 0.0
+    }
+  },
+  "integrity": {
+    "gate_count": 11,
+    "failed_gates": [],
+    "unit_count": 96,
+    "observation_count": 288,
+    "measurement_row_count": 8640,
+    "out_of_support_fallback_count": 0,
+    "illegal_selection_count": 0,
+    "result_equivalence_passed": true,
+    "record_lineage_equivalence_passed": true,
+    "physical_plan_distinctness_passed": true,
+    "balanced_schedule_passed": true,
+    "systematic_carryover_passed": true
+  },
+  "scientific_claim_authorized": "Across unseen March/June/September/December BTS and NYC TLC months, governance policy changes the legal physical-plan space. Under the no-raw-join policy, the frozen optimizer selects both remaining legal candidates and substantially reduces mean and tail regret relative to the strongest legal fixed baseline.",
+  "scientific_boundary": [
+    "The permissive regime selects join-first in every evaluated unit; no adaptive superiority claim is made for that regime.",
+    "The strict regime has one legal candidate; its result demonstrates fail-closed legality pruning rather than cost-model benefit.",
+    "The result applies to the frozen candidate fragment, DuckDB execution backend, data scale, policies, and workload profiles in the bound protocol.",
+    "The retained failed v1 holdout remains part of the scientific record."
+  ]
+}

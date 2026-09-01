@@ -1,0 +1,60 @@
+{
+  "cases": [
+    {
+      "case_id": "bts_join_100000",
+      "dataset_id": "bts_on_time_2024_01",
+      "filtered_rows": 19447,
+      "fused_plan_digest": "2ebf0cf9a876ee561937823463edf9b736e510d9d1e561c8b086d857d0aa4b9f",
+      "input_rows": 100000,
+      "joined_rows": 19447,
+      "materialized_plan_digest": "91b54c9940cf9117b22d514e81595810472c39ea775c373d4f1ea33ddde08161",
+      "plans_distinct": true,
+      "result_digest": "c34091e9aaf8a3a1e53c9cd78368a2b9dce1355f03766538e2bfaff055e14f5f",
+      "result_rows": 52,
+      "results_equal": true
+    },
+    {
+      "case_id": "nyc_join_100000",
+      "dataset_id": "nyc_tlc_yellow_2024_01",
+      "filtered_rows": 18579,
+      "fused_plan_digest": "08bfcef39fc34be08bd4f08ea131156867f53b1e567c62e60f77e0ca57081c8f",
+      "input_rows": 100000,
+      "joined_rows": 18579,
+      "materialized_plan_digest": "a89f52a5e29de758d5af05d73c0475133cb14d4eb499dd13abfb35038c1490dd",
+      "plans_distinct": true,
+      "result_digest": "4cdcc366f6d912bb89820fcef21286e5952154017e8d1db35a6241bce7f6edbf",
+      "result_rows": 9,
+      "results_equal": true
+    },
+    {
+      "case_id": "bts_join_500000",
+      "dataset_id": "bts_on_time_2024_01",
+      "filtered_rows": 97082,
+      "fused_plan_digest": "bd2419ffe9f781456404023cce20ae23433e80058f5c31048c2989a405a67f9d",
+      "input_rows": 500000,
+      "joined_rows": 97082,
+      "materialized_plan_digest": "e1ee54a8c1b4d4d04c6875f511ab8a10099b91fce101c60b113e80b765ceb5e7",
+      "plans_distinct": true,
+      "result_digest": "df5746b1ba5a028a1c72b127103d35575970449a52f342196acc3e87e903e9ef",
+      "result_rows": 52,
+      "results_equal": true
+    },
+    {
+      "case_id": "nyc_join_500000",
+      "dataset_id": "nyc_tlc_yellow_2024_01",
+      "filtered_rows": 93127,
+      "fused_plan_digest": "3904222b9651d75d40420cc250c133c5fa81c4b16f1a4e88c11481a39ef8c4fb",
+      "input_rows": 500000,
+      "joined_rows": 93127,
+      "materialized_plan_digest": "0d87f6a1abd702ff55f6829f939ca5d6d1199c973e1324f97060514a990bcafb",
+      "plans_distinct": true,
+      "result_digest": "e6a6dfbc041e143ad47956b5ec7ec0070e45bc6c22fcb631edf3617e37968a8c",
+      "result_rows": 10,
+      "results_equal": true
+    }
+  ],
+  "purpose": "correctness and physical-plan smoke; timings are intentionally absent",
+  "run_at_utc": "2026-07-18T14:24:38.837726+00:00",
+  "schema_version": 1,
+  "status": "PASS"
+}

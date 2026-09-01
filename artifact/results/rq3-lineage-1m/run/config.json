@@ -1,0 +1,14 @@
+{
+  "artifact_encoding": "ordinal_bound_v4",
+  "duckdb_memory_limit_mb": 4096,
+  "duckdb_threads": 4,
+  "experiment_role": "record_lineage_scalability_formal",
+  "order_seed": 20260810,
+  "repetitions_per_permutation": 10,
+  "require_clean_git": true,
+  "results_dir": "results/record_lineage_ordinal_scaleup_v1",
+  "row_counts": [
+    1000000
+  ],
+  "warmup_rounds": 2
+}

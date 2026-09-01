@@ -1,0 +1,62 @@
+{
+  "protocol_id": "paper-gap-closure-v1-20260801",
+  "frozen_at": "2026-08-01",
+  "purpose": "Close reviewer-facing mechanism-ablation and adversarial-validation gaps without reopening frozen RQ2.",
+  "analyses": [
+    "four_level_validator_ablation",
+    "legality_first_planner_architecture_diagnostic",
+    "certificate_component_fault_coverage",
+    "deterministic_fixed_seed_plan_mutation_fuzz",
+    "lineage_v3_v4_representation_comparison"
+  ],
+  "immutable_boundaries": {
+    "agent_api_calls": 0,
+    "duckdb_benchmark_runs": 0,
+    "optimizer_refit": false,
+    "holdout_retuning": false,
+    "practical_significance_threshold_percent": 3.0,
+    "rq2_status": "closed",
+    "negative_results_preserved": true
+  },
+  "validator_layers": {
+    "no_validation": "A strictly parsed candidate crosses the execution boundary without semantic checks.",
+    "schema_type_only": "IR parsing, graph, schema, type, and operator capability checks; policy is ignored.",
+    "policy_output_only": "Schema/type and policy decision plus direct-output checks; no deterministic repair, all-path obligation proof, snapshot binding, or evidence closure.",
+    "trustaero_full": "Complete deterministic validation, safe rewrite, and independent postcondition checks."
+  },
+  "fuzz_design": {
+    "seed": 20260801,
+    "cases": 5000,
+    "unsafe_fraction": 0.8,
+    "valid_control_fraction": 0.2,
+    "post_hoc_case_removal": false,
+    "expected_full_validator_unsafe_acceptance": 0,
+    "expected_full_validator_exceptions": 0
+  },
+  "planner_design": {
+    "input": "consumed policy-stratified real holdout",
+    "role": "offline architecture diagnostic only",
+    "governance_blind_baseline": "frozen cost model ranks all observed candidates before checking policy feasibility",
+    "legality_first_method": "hard feasibility pruning followed by the same frozen cost model",
+    "soft_penalty_excluded_reason": "No finite penalty guarantees a hard governance constraint; an infinite penalty is equivalent to pruning."
+  },
+  "certificate_design": {
+    "method": "replay registered rejected faults against enabled independent checker components",
+    "profiles": [
+      "ordinary_event_log",
+      "lineage_plus_event_log",
+      "certificate_without_event_dag",
+      "certificate_without_snapshots",
+      "certificate_without_result_binding",
+      "certificate_without_lineage_binding",
+      "certificate_without_planner_binding",
+      "trustaero_certificate_full"
+    ]
+  },
+  "claim_limits": [
+    "Offline replay is not a new independent holdout.",
+    "Mutation fuzz establishes zero observed unsafe acceptance only for the frozen mutation grammar and seed.",
+    "Certificate component replay measures registered-fault coverage, not cryptographic execution proof.",
+    "V3/V4 comparison reuses frozen separate runs and must not be described as a paired same-run benchmark."
+  ]
+}

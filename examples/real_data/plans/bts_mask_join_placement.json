@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "real-bts-mask-join-placement-100k",
+  "request_context": {
+    "subject": {"subject_id": "researcher-001", "role": "researcher", "attributes": {}},
+    "purpose": "research",
+    "action": "join",
+    "query_time_window": null
+  },
+  "requested_output": {
+    "fields": ["Tail_Number", "airport_code", "city_name", "state_code", "Distance"],
+    "export": {"requested": false, "destination": null, "format": null},
+    "lineage_level": "source"
+  },
+  "operators": [
+    {
+      "operator_type": "ScanSource",
+      "operator_id": "bts-mp-flight-scan",
+      "inputs": [],
+      "dataset": "bts_on_time_2024_01_mask_join",
+      "snapshot": "v2024-01-a9ac11e42c18"
+    },
+    {
+      "operator_type": "TemporalFilter",
+      "operator_id": "bts-mp-time",
+      "inputs": ["bts-mp-flight-scan"],
+      "field": "FlightDate",
+      "start": "2024-01-08T00:00:00+00:00",
+      "end": "2024-01-22T00:00:00+00:00"
+    },
+    {
+      "operator_type": "Filter",
+      "operator_id": "bts-mp-filter",
+      "inputs": ["bts-mp-time"],
+      "expression": {
+        "expression_type": "boolean",
+        "operator": "and",
+        "operands": [
+          {
+            "expression_type": "comparison",
+            "operator": "ge",
+            "left": {"expression_type": "field", "field": "Distance"},
+            "right": {"expression_type": "literal", "data_type": "float", "value": 750.0},
+            "negated": false
+          },
+          {
+            "expression_type": "comparison",
+            "operator": "eq",
+            "left": {"expression_type": "field", "field": "Cancelled"},
+            "right": {"expression_type": "literal", "data_type": "boolean", "value": false},
+            "negated": false
+          }
+        ],
+        "negated": false
+      }
+    },
+    {
+      "operator_type": "Project",
+      "operator_id": "bts-mp-project",
+      "inputs": ["bts-mp-filter"],
+      "fields": ["Tail_Number", "OriginAirportID", "Distance"]
+    },
+    {
+      "operator_type": "ScanSource",
+      "operator_id": "bts-mp-airport-scan",
+      "inputs": [],
+      "dataset": "bts_airports_2024_01_mask_join",
+      "snapshot": "v2024-01-bccde61193c8"
+    },
+    {
+      "operator_type": "Join",
+      "operator_id": "bts-mp-airport-join",
+      "inputs": ["bts-mp-project", "bts-mp-airport-scan"],
+      "left_field": "OriginAirportID",
+      "right_field": "airport_id",
+      "join_type": "inner"
+    },
+    {
+      "operator_type": "Project",
+      "operator_id": "bts-mp-output",
+      "inputs": ["bts-mp-airport-join"],
+      "fields": ["Tail_Number", "airport_code", "city_name", "state_code", "Distance"]
+    }
+  ],
+  "output_operator": "bts-mp-output"
+}

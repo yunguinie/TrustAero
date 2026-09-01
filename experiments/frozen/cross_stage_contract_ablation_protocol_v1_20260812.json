@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "protocol_id": "cross-stage-contract-ablation-v1-20260812",
+  "status": "FROZEN_BEFORE_EXECUTION",
+  "source_summary": "results/paper_gap_closure_v1/20260801T062838038926Z/summary.json",
+  "source_summary_sha256": "7c89600e4b3f57da547f74da40dc58c210d8dc36d09aaeff62847d580d37a39d",
+  "results_dir": "results/cross_stage_contract_ablation_v1",
+  "profiles": [
+    "policy_output_plus_blind_planner_plus_event_log",
+    "approval_plus_blind_planner_plus_event_log",
+    "approval_plus_legality_first_plus_event_log",
+    "full_trustaero"
+  ],
+  "success_gates": [
+    "Only full_trustaero closes all three stage-specific failure dimensions.",
+    "Logical approval has zero unsafe acceptance and zero false rejection on the frozen validation subset.",
+    "Legality-first planning has zero illegal physical selections in all frozen policy regimes.",
+    "The full Certificate detects all registered faults; event-only evidence leaves detectable gaps."
+  ],
+  "claim_boundary": [
+    "This is an offline composition of previously frozen observations, not a new independent holdout.",
+    "No DuckDB query is rerun, no optimizer is refit, and no three-percent threshold is changed.",
+    "The experiment establishes non-substitutability of stage guarantees over registered frozen cases, not universal necessity for every possible system.",
+    "The 11-case validation, 96-decision-per-policy planning, and 19-fault Certificate denominators remain unchanged."
+  ]
+}

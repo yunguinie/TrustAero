@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "real-bts-illegal-mask-reuse",
+  "request_context": {
+    "subject": {"subject_id": "researcher-001", "role": "researcher", "attributes": {}},
+    "purpose": "research",
+    "action": "read",
+    "query_time_window": null
+  },
+  "requested_output": {
+    "fields": ["Tail_Number"],
+    "export": {"requested": false, "destination": null, "format": null},
+    "lineage_level": "none"
+  },
+  "operators": [
+    {
+      "operator_type": "ScanSource",
+      "operator_id": "bts-scan",
+      "inputs": [],
+      "dataset": "bts_on_time_2024_01",
+      "snapshot": "v2024-01-fe089b45523f"
+    },
+    {
+      "operator_type": "Mask",
+      "operator_id": "bts-agent-mask",
+      "inputs": ["bts-scan"],
+      "fields": ["Tail_Number"],
+      "method": "hash"
+    },
+    {
+      "operator_type": "Filter",
+      "operator_id": "bts-illegal-filter",
+      "inputs": ["bts-agent-mask"],
+      "expression": {
+        "expression_type": "comparison",
+        "operator": "eq",
+        "left": {"expression_type": "field", "field": "Tail_Number"},
+        "right": {"expression_type": "literal", "data_type": "string", "value": "N12345"},
+        "negated": false
+      }
+    },
+    {
+      "operator_type": "Project",
+      "operator_id": "bts-output",
+      "inputs": ["bts-illegal-filter"],
+      "fields": ["Tail_Number"]
+    }
+  ],
+  "output_operator": "bts-output"
+}

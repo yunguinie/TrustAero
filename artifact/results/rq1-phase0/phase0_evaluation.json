@@ -1,0 +1,35 @@
+{
+  "failed_gates": [],
+  "gate_checks": {
+    "certificate_latency_observed": true,
+    "expected_case_count": true,
+    "expected_planner_binding_case_count": true,
+    "maximum_false_reject_rate": true,
+    "minimum_detection_rate": true,
+    "minimum_reason_code_accuracy": true,
+    "minimum_status_accuracy": true,
+    "planner_latency_observed": true
+  },
+  "metrics": {
+    "case_count": 26,
+    "detection_rate": 1.0,
+    "false_reject_rate": 0.0,
+    "max_latency_ms": 35.10559999267571,
+    "median_certificate_verification_latency_ms": 0.11395333761659761,
+    "median_planner_latency_ms": 0.18772500091775632,
+    "p95_latency_ms": 10.700499988161027,
+    "reason_code_accuracy": 1.0,
+    "status_accuracy": 1.0
+  },
+  "optimizer_speedup_claim_authorized": false,
+  "protocol_id": "phase0-planner-fault-v1",
+  "protocol_sha256": "64fae5ca4028bbeffc4a3ce410d722b9918724ddfc8ee621fcb9c756c70380ff",
+  "run_id": "20260724T034540Z",
+  "schema_version": 1,
+  "scientific_boundary": [
+    "This micro-experiment measures TrustAero semantic detection and Python-side governance overhead.",
+    "It does not measure DuckDB query latency or authorize an optimizer speedup claim.",
+    "Planner and certificate latency are reported rather than judged against a threshold chosen after observing the run."
+  ],
+  "status": "PASS_PHASE0_PLANNER_FAULT_INJECTION"
+}

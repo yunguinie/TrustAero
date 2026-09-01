@@ -1,0 +1,449 @@
+{
+  "all_digests_deterministic": true,
+  "all_statuses_correct": true,
+  "case_count": 24,
+  "claim_boundary": "This measures in-process logical approval over synthetic metadata fixtures. It excludes DBMS execution, network I/O, policy retrieval, and unsupported IR forms.",
+  "config_path": "experiments/configs/validator_control_plane_scalability_v3.json",
+  "config_sha256": "23cb21587fb39ea8b56fd8e4271f67a7788bb149e980b1e87c8d7120dfeda30e",
+  "exception_count": 0,
+  "git_commit": "95acd56f93670ef8e81fb19d740dfe02b151b781",
+  "measured_blocks": 50,
+  "results": [
+    {
+      "canonical_digest": "sha256:0adf9e1cd4ff66827f0f1485d6686f2c855f2582acc0c6d6dcfe3e91c1b3bad0",
+      "case_id": "applicable_policies-1500",
+      "dimension": "applicable_policies",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 4,
+      "maximum_latency_ms": 3.203075,
+      "median_ci95_ms": [
+        1.8038,
+        2.0652625000000002
+      ],
+      "median_latency_ms": 1.867775,
+      "minimum_latency_ms": 1.558725,
+      "observation_count": 50,
+      "p95_latency_ms": 3.0061,
+      "size": 1500
+    },
+    {
+      "canonical_digest": "sha256:c2d84661f7fc928de2c443470cb7e0200209bf92c951f1003c380965ae69060d",
+      "case_id": "applicable_policies-15000",
+      "dimension": "applicable_policies",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 1,
+      "maximum_latency_ms": 21.8863,
+      "median_ci95_ms": [
+        17.28845,
+        18.0548
+      ],
+      "median_latency_ms": 17.4801,
+      "minimum_latency_ms": 16.01,
+      "observation_count": 50,
+      "p95_latency_ms": 21.2125,
+      "size": 15000
+    },
+    {
+      "canonical_digest": "sha256:1edf5209b0b03fd4a123f332a1c1ba70c760f91aeb7e4e0ae2290148ae72a783",
+      "case_id": "applicable_policies-3",
+      "dimension": "applicable_policies",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 53,
+      "maximum_latency_ms": 0.28823396226415093,
+      "median_ci95_ms": [
+        0.1936858490566038,
+        0.21657735849056603
+      ],
+      "median_latency_ms": 0.20262264150943396,
+      "minimum_latency_ms": 0.16629245283018868,
+      "observation_count": 50,
+      "p95_latency_ms": 0.2616283018867925,
+      "size": 3
+    },
+    {
+      "canonical_digest": "sha256:df69bd9ac8d2851869171ad073bdcd54ab3714a8c6d40522bfe167ac5b7367df",
+      "case_id": "applicable_policies-30",
+      "dimension": "applicable_policies",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 49,
+      "maximum_latency_ms": 0.3577489795918367,
+      "median_ci95_ms": [
+        0.21656122448979592,
+        0.23406938775510205
+      ],
+      "median_latency_ms": 0.21958061224489797,
+      "minimum_latency_ms": 0.18645306122448982,
+      "observation_count": 50,
+      "p95_latency_ms": 0.2967836734693878,
+      "size": 30
+    },
+    {
+      "canonical_digest": "sha256:f05fad39b418e5bebc6263222afe11b0016977ff180474af0da6d5d2c62c4517",
+      "case_id": "applicable_policies-300",
+      "dimension": "applicable_policies",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 22,
+      "maximum_latency_ms": 0.7317999999999999,
+      "median_ci95_ms": [
+        0.5106363636363637,
+        0.5533522727272727
+      ],
+      "median_latency_ms": 0.5240954545454546,
+      "minimum_latency_ms": 0.45001363636363634,
+      "observation_count": 50,
+      "p95_latency_ms": 0.6609045454545455,
+      "size": 300
+    },
+    {
+      "canonical_digest": "sha256:8ea7b46ee67cb58d6779f4f6a0dfcd34e134e291496b3649eb89177adde93ecf",
+      "case_id": "applicable_policies-7500",
+      "dimension": "applicable_policies",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 2,
+      "maximum_latency_ms": 10.86585,
+      "median_ci95_ms": [
+        8.7391,
+        9.1978
+      ],
+      "median_latency_ms": 8.890925,
+      "minimum_latency_ms": 8.1115,
+      "observation_count": 50,
+      "p95_latency_ms": 10.30765,
+      "size": 7500
+    },
+    {
+      "canonical_digest": "sha256:0927cef15ac666d023400de9387a5dc2a6bcac49daf967330ccd6522896ad633",
+      "case_id": "output_fields-1536",
+      "dimension": "output_fields",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 1,
+      "maximum_latency_ms": 133.3733,
+      "median_ci95_ms": [
+        59.2965,
+        61.56465
+      ],
+      "median_latency_ms": 60.343450000000004,
+      "minimum_latency_ms": 57.1333,
+      "observation_count": 50,
+      "p95_latency_ms": 67.1045,
+      "size": 1536
+    },
+    {
+      "canonical_digest": "sha256:025f3d8b7ce9348605182e45ed4700885f29f6dd4b139c5a45ed48662f5694e7",
+      "case_id": "output_fields-24",
+      "dimension": "output_fields",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 42,
+      "maximum_latency_ms": 0.4561880952380952,
+      "median_ci95_ms": [
+        0.2915904761904762,
+        0.3249440476190476
+      ],
+      "median_latency_ms": 0.30752500000000005,
+      "minimum_latency_ms": 0.25757142857142856,
+      "observation_count": 50,
+      "p95_latency_ms": 0.38306666666666667,
+      "size": 24
+    },
+    {
+      "canonical_digest": "sha256:151ae62a53b13681be599a28d5d27ff83660fc36d2cd9e8d17a07ee4bcfb9621",
+      "case_id": "output_fields-3072",
+      "dimension": "output_fields",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 1,
+      "maximum_latency_ms": 320.7097,
+      "median_ci95_ms": [
+        230.1503,
+        234.72645
+      ],
+      "median_latency_ms": 231.614,
+      "minimum_latency_ms": 224.1055,
+      "observation_count": 50,
+      "p95_latency_ms": 293.8825,
+      "size": 3072
+    },
+    {
+      "canonical_digest": "sha256:a1d5ade47e1a368d1a8adb018adf8ea0b22c88dc5d836ba423da7a12f686c878",
+      "case_id": "output_fields-384",
+      "dimension": "output_fields",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 2,
+      "maximum_latency_ms": 40.1586,
+      "median_ci95_ms": [
+        6.00655,
+        6.3512
+      ],
+      "median_latency_ms": 6.10055,
+      "minimum_latency_ms": 5.1623,
+      "observation_count": 50,
+      "p95_latency_ms": 7.4615,
+      "size": 384
+    },
+    {
+      "canonical_digest": "sha256:bc060746615309194eca609f272bb506dca9ae6b95286caafaae510fb284a232",
+      "case_id": "output_fields-6",
+      "dimension": "output_fields",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 64,
+      "maximum_latency_ms": 0.2546984375,
+      "median_ci95_ms": [
+        0.18337265625,
+        0.19861875
+      ],
+      "median_latency_ms": 0.189703125,
+      "minimum_latency_ms": 0.1630890625,
+      "observation_count": 50,
+      "p95_latency_ms": 0.2419671875,
+      "size": 6
+    },
+    {
+      "canonical_digest": "sha256:020178b81d041b9ed393908d334f47cb6ccace8e94e6607009ecad76d36c078d",
+      "case_id": "output_fields-96",
+      "dimension": "output_fields",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 13,
+      "maximum_latency_ms": 1.3035384615384618,
+      "median_ci95_ms": [
+        0.9498307692307691,
+        1.0283615384615383
+      ],
+      "median_latency_ms": 0.9957692307692307,
+      "minimum_latency_ms": 0.8341076923076923,
+      "observation_count": 50,
+      "p95_latency_ms": 1.2862769230769229,
+      "size": 96
+    },
+    {
+      "canonical_digest": "sha256:6e00e8637bd3d56c702767f16750371b42a0d2b534e3f97ddf7c428a2f7a4bc5",
+      "case_id": "plan_nodes-12",
+      "dimension": "plan_nodes",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 23,
+      "maximum_latency_ms": 3.845721739130435,
+      "median_ci95_ms": [
+        0.5242804347826087,
+        0.5641130434782609
+      ],
+      "median_latency_ms": 0.5385978260869565,
+      "minimum_latency_ms": 0.45845217391304344,
+      "observation_count": 50,
+      "p95_latency_ms": 0.6573086956521739,
+      "size": 12
+    },
+    {
+      "canonical_digest": "sha256:c2f9db2e3958fa3e0e00725a39fdbaf9ac64da7a17f1e6f0995307c50a25755d",
+      "case_id": "plan_nodes-1536",
+      "dimension": "plan_nodes",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 1,
+      "maximum_latency_ms": 145.0181,
+      "median_ci95_ms": [
+        57.2257,
+        61.0067
+      ],
+      "median_latency_ms": 59.3328,
+      "minimum_latency_ms": 53.7507,
+      "observation_count": 50,
+      "p95_latency_ms": 135.3734,
+      "size": 1536
+    },
+    {
+      "canonical_digest": "sha256:55d25d7e224152de88a24ef7a5fe610d9d284190883f4f84a973049a07464490",
+      "case_id": "plan_nodes-192",
+      "dimension": "plan_nodes",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 2,
+      "maximum_latency_ms": 40.1775,
+      "median_ci95_ms": [
+        6.836125,
+        7.218775
+      ],
+      "median_latency_ms": 6.9391,
+      "minimum_latency_ms": 5.91475,
+      "observation_count": 50,
+      "p95_latency_ms": 8.5451,
+      "size": 192
+    },
+    {
+      "canonical_digest": "sha256:7c4ea1d521b5ce9d17345060f68d101ff80c3efb78446875c8e95f248e1e6d9b",
+      "case_id": "plan_nodes-3",
+      "dimension": "plan_nodes",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 49,
+      "maximum_latency_ms": 1.5475714285714286,
+      "median_ci95_ms": [
+        0.22890000000000002,
+        0.2447061224489796
+      ],
+      "median_latency_ms": 0.2396061224489796,
+      "minimum_latency_ms": 0.20644285714285715,
+      "observation_count": 50,
+      "p95_latency_ms": 0.3303,
+      "size": 3
+    },
+    {
+      "canonical_digest": "sha256:ebe24f600fd821a591e2231f98d97f2ef2dfa5bf2819537bcb2418f7effdced5",
+      "case_id": "plan_nodes-48",
+      "dimension": "plan_nodes",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 7,
+      "maximum_latency_ms": 11.983014285714287,
+      "median_ci95_ms": [
+        1.8385571428571428,
+        1.9825428571428572
+      ],
+      "median_latency_ms": 1.9104428571428573,
+      "minimum_latency_ms": 1.5313714285714286,
+      "observation_count": 50,
+      "p95_latency_ms": 11.545842857142857,
+      "size": 48
+    },
+    {
+      "canonical_digest": "sha256:2f4e2b358686678e7ae5a17119fc54cfa3a4d46cd52db1e4fc3eb870d8e0e958",
+      "case_id": "plan_nodes-768",
+      "dimension": "plan_nodes",
+      "exception_count": 0,
+      "expected_status": "ACCEPT",
+      "inner_loops": 1,
+      "maximum_latency_ms": 110.2146,
+      "median_ci95_ms": [
+        27.6034,
+        28.2957
+      ],
+      "median_latency_ms": 27.879849999999998,
+      "minimum_latency_ms": 25.0784,
+      "observation_count": 50,
+      "p95_latency_ms": 97.3595,
+      "size": 768
+    },
+    {
+      "canonical_digest": "sha256:0d977f524e92f3af6765a0c263fd0e4de28bb06f706686abbec46706e2675b90",
+      "case_id": "raw_obligations-1500",
+      "dimension": "raw_obligations",
+      "exception_count": 0,
+      "expected_status": "REWRITE",
+      "inner_loops": 1,
+      "maximum_latency_ms": 80.0772,
+      "median_ci95_ms": [
+        11.5522,
+        12.359950000000001
+      ],
+      "median_latency_ms": 11.7905,
+      "minimum_latency_ms": 9.9762,
+      "observation_count": 50,
+      "p95_latency_ms": 16.0567,
+      "size": 1500
+    },
+    {
+      "canonical_digest": "sha256:fda78033f683c8fa9b26b96f6c6aa38fd09f6f4bf5b3982d81ebd3745b9de48f",
+      "case_id": "raw_obligations-15000",
+      "dimension": "raw_obligations",
+      "exception_count": 0,
+      "expected_status": "REWRITE",
+      "inner_loops": 1,
+      "maximum_latency_ms": 273.1792,
+      "median_ci95_ms": [
+        199.5287,
+        205.96605
+      ],
+      "median_latency_ms": 201.3346,
+      "minimum_latency_ms": 186.5017,
+      "observation_count": 50,
+      "p95_latency_ms": 268.2442,
+      "size": 15000
+    },
+    {
+      "canonical_digest": "sha256:f0a826d7ae1ad8f66522483513a4764342bec01fe47d646c28c42c6fa70f38dc",
+      "case_id": "raw_obligations-3",
+      "dimension": "raw_obligations",
+      "exception_count": 0,
+      "expected_status": "REWRITE",
+      "inner_loops": 38,
+      "maximum_latency_ms": 0.472778947368421,
+      "median_ci95_ms": [
+        0.2875026315789474,
+        0.3143578947368421
+      ],
+      "median_latency_ms": 0.3067565789473684,
+      "minimum_latency_ms": 0.2514763157894737,
+      "observation_count": 50,
+      "p95_latency_ms": 0.39957631578947367,
+      "size": 3
+    },
+    {
+      "canonical_digest": "sha256:93fb89922d19938ce10b9c1c0390f9b8cacc5f6a3b6e6f8e298023007f096892",
+      "case_id": "raw_obligations-30",
+      "dimension": "raw_obligations",
+      "exception_count": 0,
+      "expected_status": "REWRITE",
+      "inner_loops": 24,
+      "maximum_latency_ms": 0.653075,
+      "median_ci95_ms": [
+        0.45545,
+        0.4937416666666667
+      ],
+      "median_latency_ms": 0.47200624999999996,
+      "minimum_latency_ms": 0.41323333333333334,
+      "observation_count": 50,
+      "p95_latency_ms": 0.5917041666666667,
+      "size": 30
+    },
+    {
+      "canonical_digest": "sha256:41ea142ad0cbb591312879b0953a340ce91337fe9a2616a8cbd6c94411d9b37a",
+      "case_id": "raw_obligations-300",
+      "dimension": "raw_obligations",
+      "exception_count": 0,
+      "expected_status": "REWRITE",
+      "inner_loops": 5,
+      "maximum_latency_ms": 16.34024,
+      "median_ci95_ms": [
+        2.40322,
+        2.56327
+      ],
+      "median_latency_ms": 2.50117,
+      "minimum_latency_ms": 1.9489,
+      "observation_count": 50,
+      "p95_latency_ms": 3.7885800000000005,
+      "size": 300
+    },
+    {
+      "canonical_digest": "sha256:419c6dd269ca9f48c66290a51d24fa73a011485a006b2e8f201db25df11852fb",
+      "case_id": "raw_obligations-7500",
+      "dimension": "raw_obligations",
+      "exception_count": 0,
+      "expected_status": "REWRITE",
+      "inner_loops": 1,
+      "maximum_latency_ms": 246.6451,
+      "median_ci95_ms": [
+        128.3662,
+        135.97275
+      ],
+      "median_latency_ms": 131.8908,
+      "minimum_latency_ms": 57.3352,
+      "observation_count": 50,
+      "p95_latency_ms": 153.2984,
+      "size": 7500
+    }
+  ],
+  "run_id": "20260812T101837Z",
+  "schema_version": 1,
+  "status": "PASS_VALIDATOR_CONTROL_PLANE_SCALABILITY",
+  "tracked_tree_clean": true
+}

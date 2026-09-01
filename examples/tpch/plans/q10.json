@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "tpch-sf1-q10-governed-v2",
+  "request_context": {
+    "subject": {"subject_id": "researcher-001", "role": "researcher", "attributes": {}},
+    "purpose": "benchmark-research",
+    "action": "aggregate",
+    "query_time_window": null
+  },
+  "requested_output": {
+    "fields": [
+      "c_custkey", "c_name", "revenue", "c_acctbal",
+      "n_name", "c_address", "c_phone", "c_comment"
+    ],
+    "export": {"requested": false, "destination": null, "format": null},
+    "lineage_level": "source"
+  },
+  "operators": [
+    {
+      "operator_type": "ScanSource",
+      "operator_id": "q10-orders-scan",
+      "inputs": [],
+      "dataset": "tpch_sf1_orders",
+      "snapshot": "sf1-64a709fa8f99"
+    },
+    {
+      "operator_type": "TemporalFilter",
+      "operator_id": "q10-orderdate-filter",
+      "inputs": ["q10-orders-scan"],
+      "field": "o_orderdate",
+      "start": "1993-10-01T00:00:00+00:00",
+      "end": "1994-01-01T00:00:00+00:00"
+    },
+    {
+      "operator_type": "ScanSource",
+      "operator_id": "q10-customer-scan",
+      "inputs": [],
+      "dataset": "tpch_sf1_customer",
+      "snapshot": "sf1-64a709fa8f99"
+    },
+    {
+      "operator_type": "Join",
+      "operator_id": "q10-order-customer-join",
+      "inputs": ["q10-orderdate-filter", "q10-customer-scan"],
+      "left_field": "o_custkey",
+      "right_field": "c_custkey",
+      "join_type": "inner"
+    },
+    {
+      "operator_type": "ScanSource",
+      "operator_id": "q10-lineitem-scan",
+      "inputs": [],
+      "dataset": "tpch_sf1_lineitem_v2",
+      "snapshot": "sf1-64a709fa8f99"
+    },
+    {
+      "operator_type": "Filter",
+      "operator_id": "q10-return-filter",
+      "inputs": ["q10-lineitem-scan"],
+      "expression": {
+        "expression_type": "comparison",
+        "operator": "eq",
+        "left": {"expression_type": "field", "field": "l_returnflag"},
+        "right": {"expression_type": "literal", "data_type": "string", "value": "R"},
+        "negated": false
+      }
+    },
+    {
+      "operator_type": "Join",
+      "operator_id": "q10-lineitem-join",
+      "inputs": ["q10-order-customer-join", "q10-return-filter"],
+      "left_field": "o_orderkey",
+      "right_field": "l_orderkey",
+      "join_type": "inner"
+    },
+    {
+      "operator_type": "ScanSource",
+      "operator_id": "q10-nation-scan",
+      "inputs": [],
+      "dataset": "tpch_sf1_nation",
+      "snapshot": "sf1-64a709fa8f99"
+    },
+    {
+      "operator_type": "Join",
+      "operator_id": "q10-nation-join",
+      "inputs": ["q10-lineitem-join", "q10-nation-scan"],
+      "left_field": "c_nationkey",
+      "right_field": "n_nationkey",
+      "join_type": "inner"
+    },
+    {
+      "operator_type": "Aggregate",
+      "operator_id": "q10-aggregate",
+      "inputs": ["q10-nation-join"],
+      "group_by": [
+        "c_custkey", "c_name", "c_acctbal", "c_phone",
+        "n_name", "c_address", "c_comment"
+      ],
+      "aggregates": [
+        {
+          "function": "sum",
+          "input_expression": {
+            "expression_type": "numeric_product_formula",
+            "factors": [
+              {"expression_type": "field", "field": "l_extendedprice"},
+              {
+                "expression_type": "numeric_affine",
+                "constant": {
+                  "expression_type": "literal",
+                  "data_type": "decimal",
+                  "value": "1"
+                },
+                "operator": "subtract",
+                "field": {"expression_type": "field", "field": "l_discount"}
+              }
+            ]
+          },
+          "output_field": "revenue"
+        }
+      ]
+    },
+    {
+      "operator_type": "Project",
+      "operator_id": "q10-project",
+      "inputs": ["q10-aggregate"],
+      "fields": [
+        "c_custkey", "c_name", "revenue", "c_acctbal",
+        "n_name", "c_address", "c_phone", "c_comment"
+      ]
+    },
+    {
+      "operator_type": "Sort",
+      "operator_id": "q10-sort",
+      "inputs": ["q10-project"],
+      "keys": [{"field": "revenue", "direction": "desc"}]
+    },
+    {
+      "operator_type": "Limit",
+      "operator_id": "q10-output",
+      "inputs": ["q10-sort"],
+      "row_count": 20
+    }
+  ],
+  "output_operator": "q10-output"
+}

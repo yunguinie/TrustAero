@@ -1,0 +1,149 @@
+{
+  "artifact_sha256": "fb3788ec8cb5825f4e383a82dbc312c50eb8bf39559537825579881aa458c7cb",
+  "cache_protocol": "hot_same_duckdb_connection",
+  "candidate_count": 3,
+  "candidate_summaries": {
+    "fused": {
+      "actual_cardinalities": [
+        0,
+        1,
+        1139264,
+        1139264
+      ],
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "EXPLAIN_ANALYZE",
+        "UNGROUPED_AGGREGATE",
+        "PROJECTION",
+        "SEQ_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:64448711575062464d28f9ed27e40ca2d91770937e3f81af74e33dccb23969ac",
+      "max_ms": 1384.4971,
+      "median_ms": 644.87615,
+      "min_ms": 555.805,
+      "p95_ms": 926.2269,
+      "peak_buffer_memory_bytes": 515366912,
+      "peak_temp_directory_bytes": 0,
+      "physical_plan_id": "pp-930f0d32b093fd37",
+      "rows_scanned": [
+        0,
+        0,
+        0,
+        59986052
+      ],
+      "runs": 300
+    },
+    "materialize-after-q06-predicate": {
+      "actual_cardinalities": [
+        0,
+        1,
+        1139264,
+        0,
+        1139264,
+        1139264,
+        1139264
+      ],
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "EXPLAIN_ANALYZE",
+        "UNGROUPED_AGGREGATE",
+        "PROJECTION",
+        "CTE",
+        "PROJECTION",
+        "SEQ_SCAN",
+        "CTE_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:57a0c042d309fbeb796a0fc99919531471133b85f9910bdc7e29b986dde77d77",
+      "max_ms": 1315.1024,
+      "median_ms": 734.1599,
+      "min_ms": 634.4869,
+      "p95_ms": 943.6888,
+      "peak_buffer_memory_bytes": 1110892544,
+      "peak_temp_directory_bytes": 0,
+      "physical_plan_id": "pp-622ccf76b3f5c661",
+      "rows_scanned": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        59986052,
+        0
+      ],
+      "runs": 300
+    },
+    "materialize-after-q06-time": {
+      "actual_cardinalities": [
+        0,
+        1,
+        1139264,
+        1139264,
+        0,
+        1139264,
+        1139264,
+        9099165,
+        1139264,
+        1139264
+      ],
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "EXPLAIN_ANALYZE",
+        "UNGROUPED_AGGREGATE",
+        "PROJECTION",
+        "PROJECTION",
+        "CTE",
+        "PROJECTION",
+        "FILTER",
+        "SEQ_SCAN",
+        "FILTER",
+        "CTE_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:a754c4c912b0871ddfc401bca6a8cc3a1a0845e7d4468ef68ecfcdb969f6392c",
+      "max_ms": 6310.9176,
+      "median_ms": 3501.5822,
+      "min_ms": 3201.5613,
+      "p95_ms": 4149.601,
+      "peak_buffer_memory_bytes": 1110892544,
+      "peak_temp_directory_bytes": 0,
+      "physical_plan_id": "pp-ae5db1b4f88b3eed",
+      "rows_scanned": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        59986052,
+        0,
+        0
+      ],
+      "runs": 300
+    }
+  },
+  "distinct_duckdb_plan_count": 3,
+  "execution_segment_count": 1,
+  "heldout_optimizer_evidence": false,
+  "measurement_count": 900,
+  "official_result_equivalent_preflight": true,
+  "official_revenue_decimal": "1230113636.0101",
+  "optimizer_selection_evaluated": false,
+  "paired_block_statistic": "median_of_5",
+  "paper_performance_evidence": true,
+  "resumed_run": false,
+  "run_id": "20260721T012711938759Z",
+  "scale_factor": 10,
+  "schema_version": 1,
+  "scientific_label": "tpch_sf10_q6_pollution_safe_paired_ci_v2",
+  "stage_statistics": {
+    "governed_rows": 1139264,
+    "governed_selectivity": 0.018992148374758853,
+    "input_rows": 59986052,
+    "post_temporal_predicate_selectivity": 0.1252053347752239,
+    "temporal_rows": 9099165,
+    "temporal_selectivity": 0.15168801240661745
+  },
+  "status": "PASS",
+  "timed_repeats_per_position": 5,
+  "timing_protocol": "exact_decimal_utc_pollution_safe_paired_ci_v4"
+}

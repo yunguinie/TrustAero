@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "datasets": [
+    {
+      "dataset_id": "tpch_sf1_lineitem",
+      "versions": ["sf1-64a709fa8f99"],
+      "default_version": "sf1-64a709fa8f99",
+      "fields": [
+        {"name": "l_returnflag", "data_type": "string", "roles": []},
+        {"name": "l_linestatus", "data_type": "string", "roles": []},
+        {"name": "l_shipdate", "data_type": "datetime", "roles": ["temporal"]},
+        {"name": "l_discount", "data_type": "decimal", "roles": []},
+        {"name": "l_tax", "data_type": "decimal", "roles": []},
+        {"name": "l_quantity", "data_type": "decimal", "roles": []},
+        {"name": "l_extendedprice", "data_type": "decimal", "roles": [], "sensitive": true}
+      ],
+      "spatial": null,
+      "temporal_field": "l_shipdate"
+    }
+  ]
+}

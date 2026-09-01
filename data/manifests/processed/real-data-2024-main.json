@@ -1,0 +1,36 @@
+{
+  "bts_total_rows": 6531790,
+  "month_count": 11,
+  "month_manifest_paths": [
+    "manifests/processed/real-data-2024-02.json",
+    "manifests/processed/real-data-2024-03.json",
+    "manifests/processed/real-data-2024-04.json",
+    "manifests/processed/real-data-2024-05.json",
+    "manifests/processed/real-data-2024-06.json",
+    "manifests/processed/real-data-2024-07.json",
+    "manifests/processed/real-data-2024-08.json",
+    "manifests/processed/real-data-2024-09.json",
+    "manifests/processed/real-data-2024-10.json",
+    "manifests/processed/real-data-2024-11.json",
+    "manifests/processed/real-data-2024-12.json"
+  ],
+  "months": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "nyc_total_rows": 38205096,
+  "prepared_at_utc": "2026-07-21T07:02:29.219488+00:00",
+  "schema_version": 1,
+  "scientific_boundary": "Preparation verifies official rows and deterministic BTS transformations; it does not authorize or evaluate an optimizer.",
+  "status": "PASS",
+  "year": 2024
+}

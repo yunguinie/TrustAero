@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "policy_set_id": "bts-natural-multijoin-policy",
+  "policy_snapshot": "policy-bts-multijoin-2026-07-19",
+  "rules": [
+    {
+      "policy_id": "P-BTS-RESEARCH-MULTIJOIN",
+      "policy_version": "1",
+      "subject_roles": ["researcher"],
+      "purposes": ["research"],
+      "actions": ["aggregate"],
+      "resources": [
+        "bts_on_time_2024_01_multijoin",
+        "bts_airports_2024_01",
+        "bts_carriers_2024_01"
+      ],
+      "decision": "PERMIT",
+      "obligations": [
+        {"obligation_type": "VERSION_PIN", "parameters": {}},
+        {"obligation_type": "LINEAGE_CAPTURE", "parameters": {"level": "source"}}
+      ],
+      "reason": "Aviation research aggregation is permitted with all three snapshots pinned and source lineage covering the output."
+    },
+    {
+      "policy_id": "P-BTS-PUBLIC-MULTIJOIN-DENY",
+      "policy_version": "1",
+      "subject_roles": ["public"],
+      "purposes": ["research"],
+      "actions": ["aggregate"],
+      "resources": [
+        "bts_on_time_2024_01_multijoin",
+        "bts_airports_2024_01",
+        "bts_carriers_2024_01"
+      ],
+      "decision": "DENY",
+      "obligations": [],
+      "reason": "The multi-table research template is not authorized for the public role."
+    }
+  ]
+}

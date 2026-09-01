@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "policy_set_id": "bts-mask-join-placement-policy",
+  "policy_snapshot": "policy-bts-mask-join-2026-07-19",
+  "rules": [
+    {
+      "policy_id": "P-BTS-RESEARCH-MASK-JOIN",
+      "policy_version": "1",
+      "subject_roles": ["researcher"],
+      "purposes": ["research"],
+      "actions": ["join"],
+      "resources": [
+        "bts_on_time_2024_01_mask_join",
+        "bts_airports_2024_01_mask_join"
+      ],
+      "decision": "PERMIT",
+      "obligations": [
+        {"obligation_type": "VERSION_PIN", "parameters": {}},
+        {"obligation_type": "MASK", "parameters": {"fields": ["Tail_Number"], "method": "hash"}},
+        {"obligation_type": "LINEAGE_CAPTURE", "parameters": {"level": "source"}}
+      ],
+      "reason": "The Tail_Number may be shown only as a SHA-256 value; the Join key remains the independent OriginAirportID field."
+    }
+  ]
+}

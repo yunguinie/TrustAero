@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "pc-clarify-001",
+  "request_context": {
+    "subject": {"subject_id": "u-001", "role": "researcher", "attributes": {}},
+    "purpose": null,
+    "action": "read",
+    "query_time_window": null
+  },
+  "requested_output": {
+    "fields": ["event_id"],
+    "export": {"requested": false, "destination": null, "format": null},
+    "lineage_level": "none"
+  },
+  "operators": [
+    {"operator_type": "ScanSource", "operator_id": "op1", "inputs": [], "dataset": "earthquakes", "snapshot": null}
+  ],
+  "output_operator": "op1"
+}
+

@@ -1,0 +1,16 @@
+{
+  "results_dir": "results/validator_control_plane_scalability_v3",
+  "dimensions": {
+    "plan_nodes": [3, 12, 48, 192, 768, 1536],
+    "output_fields": [6, 24, 96, 384, 1536, 3072],
+    "applicable_policies": [3, 30, 300, 1500, 7500, 15000],
+    "raw_obligations": [3, 30, 300, 1500, 7500, 15000]
+  },
+  "warmup_rounds": 5,
+  "measured_blocks": 50,
+  "target_block_ms": 10.0,
+  "maximum_inner_loops": 200,
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 2026081203,
+  "require_tracked_tree_clean": true
+}

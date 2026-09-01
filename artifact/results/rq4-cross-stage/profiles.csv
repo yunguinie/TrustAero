@@ -1,0 +1,5 @@
+﻿profile_id,logical_approval,legality_first_planning,evidence_bound_checking,unsafe_logical_acceptance_count,false_logical_rejection_count,illegal_physical_selection_count,registered_faults_detected,registered_fault_count,cross_stage_contract_complete
+policy_output_plus_blind_planner_plus_event_log,False,False,False,0,1,192,6,19,False
+approval_plus_blind_planner_plus_event_log,True,False,False,0,0,192,6,19,False
+approval_plus_legality_first_plus_event_log,True,True,False,0,0,0,6,19,False
+full_trustaero,True,True,True,0,0,0,19,19,True

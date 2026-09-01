@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "experiment_id": "blackbox-adversarial-exp4-v1",
+  "description": "One-shot black-box evaluation of the frozen production Validator using independently generated cases.",
+  "generator": "experiments/blackbox_exp4/generate_cases.py",
+  "attack_objectives": "experiments/blackbox_exp4/attack_objectives_v1.json",
+  "candidate_schema": "schemas/v1/candidate_plan.schema.json",
+  "accept_seed": "examples/plans/accept_earthquakes.json",
+  "rewrite_seed": "examples/plans/rewrite_precision.json",
+  "policy": "examples/policies/research_policy.json",
+  "catalog": "examples/catalogs/minimal_catalog.json",
+  "case_count": 1000,
+  "unsafe_count": 800,
+  "valid_control_count": 200,
+  "primary_metrics": ["unsafe_acceptance_count", "false_rejection_count", "unexpected_exception_count", "attack_objective_coverage", "valid_decision_match_count", "diagnostic_code_coverage"],
+  "one_shot_rule": "After cases.json is generated and hashed, the production Validator, generator inputs, policy, and catalog may not change before the primary result is written."
+}

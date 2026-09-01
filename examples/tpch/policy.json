@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "policy_set_id": "tpch-sf1-governance",
+  "policy_snapshot": "policy-tpch-sf1-2026-07-19",
+  "rules": [
+    {
+      "policy_id": "P-TPCH-RESEARCH-AGGREGATE",
+      "policy_version": "1",
+      "subject_roles": ["researcher"],
+      "purposes": ["benchmark-research"],
+      "actions": ["aggregate"],
+      "resources": ["tpch_sf1_lineitem"],
+      "decision": "PERMIT",
+      "obligations": [
+        {"obligation_type": "VERSION_PIN", "parameters": {}},
+        {"obligation_type": "LINEAGE_CAPTURE", "parameters": {"level": "source"}}
+      ],
+      "reason": "Reviewed official TPC-H aggregates are permitted with a pinned SF1 artifact and source lineage."
+    }
+  ]
+}

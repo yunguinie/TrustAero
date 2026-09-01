@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "record_id": "trustaero-record-lineage-ordinal-v4-formal-positive-20260725",
+  "status": "PASS_RECORD_LINEAGE_FORMAL_SCALABILITY_EVIDENCE",
+  "measurement_commit": "92206c2f1b651fda6ac58a3e6b3f2714ed016030",
+  "evaluator_commit": "92206c2f1b651fda6ac58a3e6b3f2714ed016030",
+  "measurement_run": "results/record_lineage_ordinal_formal_v4/20260725T001744356217Z",
+  "artifacts": [
+    {
+      "path": "results/record_lineage_ordinal_formal_v4/20260725T001744356217Z/summary.json",
+      "sha256": "8e1978d475c45ac8b9782c794cd7886a3f149d1a3fab584aabd92a5eb153c197"
+    },
+    {
+      "path": "results/record_lineage_ordinal_formal_v4/20260725T001744356217Z/environment.json",
+      "sha256": "8ccb13c4b630040e0ad97ab121534de1f774b8a92318c9aab602ee5033ca4f91"
+    },
+    {
+      "path": "results/record_lineage_ordinal_formal_v4/20260725T001744356217Z/measurements.csv",
+      "sha256": "4bb0e625d02aabc58531d2d2cbc39f8f21d96fa508c38a891a1b24c29910df25"
+    },
+    {
+      "path": "results/record_lineage_ordinal_formal_evaluation_v4/20260725T001744356217Z/evaluation.json",
+      "sha256": "97105b9a03682e958f8962f998a6e4f42c06635f3326472c5b42846b7b996733"
+    }
+  ],
+  "unit_findings": [
+    {
+      "row_count": 100000,
+      "direct_median_ms": 310.0783,
+      "record_median_ms": 653.0304,
+      "capture_median_ms": 627.7257,
+      "verification_median_ms": 522.29655,
+      "median_record_over_direct_ratio": 2.116592,
+      "paired_ratio_ci_95": [
+        2.035445,
+        2.190776
+      ],
+      "bytes_per_edge": 32.00459
+    },
+    {
+      "row_count": 500000,
+      "direct_median_ms": 1547.63995,
+      "record_median_ms": 3045.7915,
+      "capture_median_ms": 2933.46535,
+      "verification_median_ms": 2684.2268,
+      "median_record_over_direct_ratio": 1.934887,
+      "paired_ratio_ci_95": [
+        1.876084,
+        1.981791
+      ],
+      "bytes_per_edge": 32.000918
+    }
+  ],
+  "formal_comparison_to_v3": [
+    {
+      "row_count": 100000,
+      "record_latency_reduction_percent": 49.491,
+      "capture_latency_reduction_percent": 50.314,
+      "verification_latency_reduction_percent": 15.645,
+      "storage_reduction_percent": 49.996
+    },
+    {
+      "row_count": 500000,
+      "record_latency_reduction_percent": 62.823,
+      "capture_latency_reduction_percent": 63.612,
+      "verification_latency_reduction_percent": 11.997,
+      "storage_reduction_percent": 49.999
+    }
+  ],
+  "authorized_claim": "Ordinal-bound output identities reduce compact record-lineage storage to approximately 32 bytes per edge. Relative to the immutable V3 formal baseline, V4 reduced end-to-end record-lineage latency by 49.5% at 100K rows and 62.8% at 500K rows while preserving independent verification.",
+  "boundary": [
+    "The evidence covers one source and one unique, non-null, unmasked STRING key.",
+    "Output identity is bound to the visible result digest and zero-based row ordinal.",
+    "Join, Aggregate, SpatialJoin, composite keys, and non-STRING keys remain unsupported.",
+    "V4 still adds 111.7% and 93.5% median latency relative to direct querying at 100K and 500K."
+  ]
+}

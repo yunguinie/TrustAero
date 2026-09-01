@@ -1,0 +1,16 @@
+{
+  "artifact": {
+    "artifact_id": "nyc_tlc_taxi_zone_lookup",
+    "dataset_id": "nyc_tlc_yellow_2024",
+    "expected_bytes": null,
+    "expected_sha256": null,
+    "relative_path": "raw/nyc_tlc/lookup/taxi_zone_lookup.csv",
+    "stage": "smoke",
+    "url": "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv"
+  },
+  "byte_size": 12331,
+  "local_path": "data/raw/nyc_tlc/lookup/taxi_zone_lookup.csv",
+  "retrieved_at_utc": "2026-07-18T07:16:59.528359+00:00",
+  "schema_version": 1,
+  "sha256": "1a99e105092230f8620f301edcca7f80d3080642ff404d28ed957d3fa222c8ed"
+}

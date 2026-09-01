@@ -1,0 +1,1267 @@
+{
+  "$defs": {
+    "Aggregate": {
+      "additionalProperties": false,
+      "properties": {
+        "aggregates": {
+          "items": {
+            "$ref": "#/$defs/AggregateExpression"
+          },
+          "minItems": 1,
+          "title": "Aggregates",
+          "type": "array"
+        },
+        "group_by": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Group By",
+          "type": "array"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "Aggregate",
+          "title": "Operator Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "group_by",
+        "aggregates"
+      ],
+      "title": "Aggregate",
+      "type": "object"
+    },
+    "AggregateExpression": {
+      "additionalProperties": false,
+      "description": "One named aggregate result in the supported relational fragment.",
+      "properties": {
+        "function": {
+          "$ref": "#/$defs/AggregateFunction"
+        },
+        "input_expression": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NumericProductExpression"
+            },
+            {
+              "$ref": "#/$defs/NumericProductFormulaExpression"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Expression"
+        },
+        "input_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Field"
+        },
+        "output_field": {
+          "minLength": 1,
+          "title": "Output Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "function",
+        "output_field"
+      ],
+      "title": "AggregateExpression",
+      "type": "object"
+    },
+    "AggregateFunction": {
+      "enum": [
+        "count",
+        "sum",
+        "avg",
+        "min",
+        "max"
+      ],
+      "title": "AggregateFunction",
+      "type": "string"
+    },
+    "BooleanExpression": {
+      "additionalProperties": false,
+      "description": "A deliberately flat boolean fragment for deterministic Phase A checks.\n\nNested arbitrary expression trees are deferred until the small fragment is\nvalidated experimentally. ``negated`` represents NOT over the whole group.",
+      "properties": {
+        "expression_type": {
+          "const": "boolean",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "negated": {
+          "default": false,
+          "title": "Negated",
+          "type": "boolean"
+        },
+        "operands": {
+          "items": {
+            "$ref": "#/$defs/ComparisonExpression"
+          },
+          "minItems": 2,
+          "title": "Operands",
+          "type": "array"
+        },
+        "operator": {
+          "enum": [
+            "and",
+            "or"
+          ],
+          "title": "Operator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expression_type",
+        "operator",
+        "operands"
+      ],
+      "title": "BooleanExpression",
+      "type": "object"
+    },
+    "ComparisonExpression": {
+      "additionalProperties": false,
+      "description": "Compare one bound field with one typed literal.\n\nField-to-field comparisons and arithmetic are intentionally absent from\nthe first trusted fragment; they require additional coercion semantics.",
+      "properties": {
+        "expression_type": {
+          "const": "comparison",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "left": {
+          "$ref": "#/$defs/FieldExpression"
+        },
+        "negated": {
+          "default": false,
+          "title": "Negated",
+          "type": "boolean"
+        },
+        "operator": {
+          "$ref": "#/$defs/ComparisonOperator"
+        },
+        "right": {
+          "$ref": "#/$defs/LiteralExpression"
+        }
+      },
+      "required": [
+        "expression_type",
+        "operator",
+        "left",
+        "right"
+      ],
+      "title": "ComparisonExpression",
+      "type": "object"
+    },
+    "ComparisonOperator": {
+      "enum": [
+        "eq",
+        "ne",
+        "gt",
+        "ge",
+        "lt",
+        "le"
+      ],
+      "title": "ComparisonOperator",
+      "type": "string"
+    },
+    "DataType": {
+      "description": "Logical scalar types shared by Catalog metadata and typed expressions.",
+      "enum": [
+        "string",
+        "integer",
+        "float",
+        "decimal",
+        "boolean",
+        "datetime"
+      ],
+      "title": "DataType",
+      "type": "string"
+    },
+    "ExportRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "destination": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Destination"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "enum": [
+                "json",
+                "csv",
+                "parquet"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format"
+        },
+        "requested": {
+          "default": false,
+          "title": "Requested",
+          "type": "boolean"
+        }
+      },
+      "title": "ExportRequest",
+      "type": "object"
+    },
+    "FieldExpression": {
+      "additionalProperties": false,
+      "description": "Reference a field in the current input relation schema.",
+      "properties": {
+        "expression_type": {
+          "const": "field",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "field": {
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expression_type",
+        "field"
+      ],
+      "title": "FieldExpression",
+      "type": "object"
+    },
+    "Filter": {
+      "additionalProperties": false,
+      "properties": {
+        "expression": {
+          "discriminator": {
+            "mapping": {
+              "boolean": "#/$defs/BooleanExpression",
+              "comparison": "#/$defs/ComparisonExpression"
+            },
+            "propertyName": "expression_type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ComparisonExpression"
+            },
+            {
+              "$ref": "#/$defs/BooleanExpression"
+            }
+          ],
+          "title": "Expression"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "Filter",
+          "title": "Operator Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "expression"
+      ],
+      "title": "Filter",
+      "type": "object"
+    },
+    "GeneralizeLocation": {
+      "additionalProperties": false,
+      "description": "Reduce disclosed location detail without changing prior selection.\n\nThe logical contract maps the named spatial fields to deterministic fixed\ngrid cells of approximately ``precision_km``. It preserves record\nmembership: for example, a preceding 50 km SpatialFilter remains a 50 km\nquery. Physical coordinate transformation is deliberately deferred to the\ntrusted execution layer.",
+      "properties": {
+        "fields": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Fields",
+          "type": "array"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "method": {
+          "const": "fixed_grid",
+          "default": "fixed_grid",
+          "title": "Method",
+          "type": "string"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "GeneralizeLocation",
+          "title": "Operator Type",
+          "type": "string"
+        },
+        "precision_km": {
+          "exclusiveMinimum": 0,
+          "title": "Precision Km",
+          "type": "number"
+        },
+        "preserves_selection": {
+          "const": true,
+          "default": true,
+          "title": "Preserves Selection",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "fields",
+        "precision_km"
+      ],
+      "title": "GeneralizeLocation",
+      "type": "object"
+    },
+    "Join": {
+      "additionalProperties": false,
+      "properties": {
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "join_type": {
+          "default": "inner",
+          "enum": [
+            "inner",
+            "left"
+          ],
+          "title": "Join Type",
+          "type": "string"
+        },
+        "left_field": {
+          "title": "Left Field",
+          "type": "string"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "Join",
+          "title": "Operator Type",
+          "type": "string"
+        },
+        "right_field": {
+          "title": "Right Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "left_field",
+        "right_field"
+      ],
+      "title": "Join",
+      "type": "object"
+    },
+    "Limit": {
+      "additionalProperties": false,
+      "description": "Return at most a reviewed number of rows from an ordered relation.\n\nThe upper bound keeps this operator inside a small, independently\nauditable fragment. Limit never establishes an order itself: benchmark\nadapters must place it after an explicit ``Sort`` for Top-K semantics.",
+      "properties": {
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "Limit",
+          "title": "Operator Type",
+          "type": "string"
+        },
+        "row_count": {
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Row Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "row_count"
+      ],
+      "title": "Limit",
+      "type": "object"
+    },
+    "LineageCapture": {
+      "additionalProperties": false,
+      "properties": {
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "level": {
+          "$ref": "#/$defs/LineageLevel"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "LineageCapture",
+          "title": "Operator Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "level"
+      ],
+      "title": "LineageCapture",
+      "type": "object"
+    },
+    "LineageLevel": {
+      "enum": [
+        "none",
+        "source",
+        "record"
+      ],
+      "title": "LineageLevel",
+      "type": "string"
+    },
+    "LiteralExpression": {
+      "additionalProperties": false,
+      "description": "A typed scalar constant; datetime values use ISO-8601 strings.",
+      "properties": {
+        "data_type": {
+          "$ref": "#/$defs/DataType"
+        },
+        "expression_type": {
+          "const": "literal",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "expression_type",
+        "data_type",
+        "value"
+      ],
+      "title": "LiteralExpression",
+      "type": "object"
+    },
+    "Mask": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Fields",
+          "type": "array"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "method": {
+          "default": "redact",
+          "enum": [
+            "redact",
+            "hash",
+            "null"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "Mask",
+          "title": "Operator Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "fields"
+      ],
+      "title": "Mask",
+      "type": "object"
+    },
+    "MinGroupSize": {
+      "additionalProperties": false,
+      "properties": {
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "minimum_count": {
+          "minimum": 2,
+          "title": "Minimum Count",
+          "type": "integer"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "MinGroupSize",
+          "title": "Operator Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "minimum_count"
+      ],
+      "title": "MinGroupSize",
+      "type": "object"
+    },
+    "NumericAffineExpression": {
+      "additionalProperties": false,
+      "description": "Add or subtract one raw numeric field from an exact decimal constant.\n\nThis bounded shape is sufficient for benchmark formulas such as\n``1 - discount`` and ``1 + tax``. It deliberately forbids nesting,\ndivision and arbitrary functions, keeping the accepted arithmetic small\nenough to type-check and compile independently.",
+      "properties": {
+        "constant": {
+          "$ref": "#/$defs/LiteralExpression"
+        },
+        "expression_type": {
+          "const": "numeric_affine",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "field": {
+          "$ref": "#/$defs/FieldExpression"
+        },
+        "operator": {
+          "enum": [
+            "add",
+            "subtract"
+          ],
+          "title": "Operator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expression_type",
+        "constant",
+        "operator",
+        "field"
+      ],
+      "title": "NumericAffineExpression",
+      "type": "object"
+    },
+    "NumericProductExpression": {
+      "additionalProperties": false,
+      "description": "Multiply two raw numeric fields inside one aggregate input.\n\nThis deliberately small expression exists for TPC-H Q6 and similarly\nshaped database workloads.  It is *not* a general SQL-expression escape\nhatch: constants, division, nesting and arbitrary functions remain outside\nthe reviewed fragment and therefore fail closed.",
+      "properties": {
+        "expression_type": {
+          "const": "numeric_product",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "left": {
+          "$ref": "#/$defs/FieldExpression"
+        },
+        "right": {
+          "$ref": "#/$defs/FieldExpression"
+        }
+      },
+      "required": [
+        "expression_type",
+        "left",
+        "right"
+      ],
+      "title": "NumericProductExpression",
+      "type": "object"
+    },
+    "NumericProductFormulaExpression": {
+      "additionalProperties": false,
+      "description": "Multiply two or three reviewed numeric factors inside an aggregate.",
+      "properties": {
+        "expression_type": {
+          "const": "numeric_product_formula",
+          "title": "Expression Type",
+          "type": "string"
+        },
+        "factors": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "field": "#/$defs/FieldExpression",
+                "numeric_affine": "#/$defs/NumericAffineExpression"
+              },
+              "propertyName": "expression_type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/FieldExpression"
+              },
+              {
+                "$ref": "#/$defs/NumericAffineExpression"
+              }
+            ]
+          },
+          "maxItems": 3,
+          "minItems": 2,
+          "title": "Factors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "expression_type",
+        "factors"
+      ],
+      "title": "NumericProductFormulaExpression",
+      "type": "object"
+    },
+    "Project": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "Project",
+          "title": "Operator Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "fields"
+      ],
+      "title": "Project",
+      "type": "object"
+    },
+    "RequestContext": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "read",
+            "join",
+            "aggregate",
+            "export"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "purpose": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
+        "query_time_window": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TimeWindow"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "subject": {
+          "$ref": "#/$defs/Subject"
+        }
+      },
+      "required": [
+        "subject",
+        "action"
+      ],
+      "title": "RequestContext",
+      "type": "object"
+    },
+    "RequestedOutput": {
+      "additionalProperties": false,
+      "properties": {
+        "export": {
+          "$ref": "#/$defs/ExportRequest"
+        },
+        "fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "lineage_level": {
+          "$ref": "#/$defs/LineageLevel",
+          "default": "none"
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "title": "RequestedOutput",
+      "type": "object"
+    },
+    "ScanSource": {
+      "additionalProperties": false,
+      "properties": {
+        "dataset": {
+          "title": "Dataset",
+          "type": "string"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "ScanSource",
+          "title": "Operator Type",
+          "type": "string"
+        },
+        "snapshot": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snapshot"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "dataset"
+      ],
+      "title": "ScanSource",
+      "type": "object"
+    },
+    "Sort": {
+      "additionalProperties": false,
+      "description": "Order rows by an explicit, non-empty sequence of validated fields.",
+      "properties": {
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "keys": {
+          "items": {
+            "$ref": "#/$defs/SortKey"
+          },
+          "minItems": 1,
+          "title": "Keys",
+          "type": "array"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "Sort",
+          "title": "Operator Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "keys"
+      ],
+      "title": "Sort",
+      "type": "object"
+    },
+    "SortKey": {
+      "additionalProperties": false,
+      "description": "One deterministic sort key over a field in the current relation.",
+      "properties": {
+        "direction": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "field": {
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field"
+      ],
+      "title": "SortKey",
+      "type": "object"
+    },
+    "SpatialFilter": {
+      "additionalProperties": false,
+      "description": "Select records inside a query area.\n\n``radius_km`` controls which records belong to the result. Governance\nrewrites must not reinterpret it as an output-privacy parameter.",
+      "properties": {
+        "center": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Center",
+          "type": "array"
+        },
+        "crs": {
+          "default": "EPSG:4326",
+          "title": "Crs",
+          "type": "string"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "SpatialFilter",
+          "title": "Operator Type",
+          "type": "string"
+        },
+        "radius_km": {
+          "exclusiveMinimum": 0,
+          "title": "Radius Km",
+          "type": "number"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "center",
+        "radius_km"
+      ],
+      "title": "SpatialFilter",
+      "type": "object"
+    },
+    "SpatialJoin": {
+      "additionalProperties": false,
+      "description": "Join two point relations using explicitly selected coordinate pairs.\n\nA relation may contain several spatial descriptors after an earlier join.\nExplicit latitude/longitude pairs keep every later SpatialJoin\nunambiguous.  The current DuckDB execution fragment implements only\n``distance_within`` over EPSG:4326 points.",
+      "properties": {
+        "distance_km": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Km"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "left_fields": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Left Fields",
+          "type": "array"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "SpatialJoin",
+          "title": "Operator Type",
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "intersects",
+            "within",
+            "distance_within"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "right_fields": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Right Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "relation",
+        "left_fields",
+        "right_fields"
+      ],
+      "title": "SpatialJoin",
+      "type": "object"
+    },
+    "Subject": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Attributes",
+          "type": "object"
+        },
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "subject_id": {
+          "title": "Subject Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject_id",
+        "role"
+      ],
+      "title": "Subject",
+      "type": "object"
+    },
+    "TemporalFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        },
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "operator_id": {
+          "title": "Operator Id",
+          "type": "string"
+        },
+        "operator_type": {
+          "const": "TemporalFilter",
+          "title": "Operator Type",
+          "type": "string"
+        },
+        "start": {
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operator_id",
+        "operator_type",
+        "field",
+        "start",
+        "end"
+      ],
+      "title": "TemporalFilter",
+      "type": "object"
+    },
+    "TimeWindow": {
+      "additionalProperties": false,
+      "properties": {
+        "dimension": {
+          "enum": [
+            "event_time",
+            "valid_time",
+            "publication_time"
+          ],
+          "title": "Dimension",
+          "type": "string"
+        },
+        "end": {
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        },
+        "start": {
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dimension",
+        "start",
+        "end"
+      ],
+      "title": "TimeWindow",
+      "type": "object"
+    }
+  },
+  "$id": "https://trustaero.org/schemas/v1/candidate_plan.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "operators": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "Aggregate": "#/$defs/Aggregate",
+            "Filter": "#/$defs/Filter",
+            "GeneralizeLocation": "#/$defs/GeneralizeLocation",
+            "Join": "#/$defs/Join",
+            "Limit": "#/$defs/Limit",
+            "LineageCapture": "#/$defs/LineageCapture",
+            "Mask": "#/$defs/Mask",
+            "MinGroupSize": "#/$defs/MinGroupSize",
+            "Project": "#/$defs/Project",
+            "ScanSource": "#/$defs/ScanSource",
+            "Sort": "#/$defs/Sort",
+            "SpatialFilter": "#/$defs/SpatialFilter",
+            "SpatialJoin": "#/$defs/SpatialJoin",
+            "TemporalFilter": "#/$defs/TemporalFilter"
+          },
+          "propertyName": "operator_type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/ScanSource"
+          },
+          {
+            "$ref": "#/$defs/SpatialFilter"
+          },
+          {
+            "$ref": "#/$defs/TemporalFilter"
+          },
+          {
+            "$ref": "#/$defs/Filter"
+          },
+          {
+            "$ref": "#/$defs/Join"
+          },
+          {
+            "$ref": "#/$defs/SpatialJoin"
+          },
+          {
+            "$ref": "#/$defs/Project"
+          },
+          {
+            "$ref": "#/$defs/Sort"
+          },
+          {
+            "$ref": "#/$defs/Limit"
+          },
+          {
+            "$ref": "#/$defs/Aggregate"
+          },
+          {
+            "$ref": "#/$defs/Mask"
+          },
+          {
+            "$ref": "#/$defs/GeneralizeLocation"
+          },
+          {
+            "$ref": "#/$defs/MinGroupSize"
+          },
+          {
+            "$ref": "#/$defs/LineageCapture"
+          }
+        ]
+      },
+      "title": "Operators",
+      "type": "array"
+    },
+    "output_operator": {
+      "title": "Output Operator",
+      "type": "string"
+    },
+    "plan_id": {
+      "title": "Plan Id",
+      "type": "string"
+    },
+    "request_context": {
+      "$ref": "#/$defs/RequestContext"
+    },
+    "requested_output": {
+      "$ref": "#/$defs/RequestedOutput"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "plan_id",
+    "request_context",
+    "requested_output",
+    "operators",
+    "output_operator"
+  ],
+  "title": "CandidatePlan",
+  "type": "object"
+}

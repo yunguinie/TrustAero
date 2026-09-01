@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "protocol_id": "tpch-multijoin-aggregate-exp1-sf10-holdout-v1-20260830",
+  "status": "FROZEN_BEFORE_SF10_OPEN",
+  "experiment_role": "one-shot scale-and-configuration holdout for Experiment 1",
+  "scale_factor": 10,
+  "results_dir": "results/tpch_multijoin_aggregate_exp1_sf10_holdout_v1",
+  "candidate_ids": [
+    "governed_fact_first",
+    "eligible_dimension_first",
+    "partial_aggregate_first"
+  ],
+  "scenarios": [
+    {"policy_selectivity": 0.002, "query_selectivity": 0.9},
+    {"policy_selectivity": 0.03, "query_selectivity": 0.8},
+    {"policy_selectivity": 0.15, "query_selectivity": 0.15},
+    {"policy_selectivity": 0.4, "query_selectivity": 0.6}
+  ],
+  "salts": [6101, 6203, 6301],
+  "selector": {
+    "selector_id": "mechanism-aware-exp1-v1",
+    "rule": "If p <= 0.01, select partial-aggregate-first when q >= 0.5 and governed-fact-first otherwise; else if p <= 0.1 and q > 0.25, select governed-fact-first; otherwise select eligible-dimension-first.",
+    "sf1_confidence_set_hits": "8/8 development configurations",
+    "parameters_frozen_before_sf10": true
+  },
+  "timing": {
+    "duckdb_threads": 4,
+    "duckdb_memory_limit_mb": 4096,
+    "warmup_executions_per_candidate": 1,
+    "measured_permutation_cycles": 1,
+    "order_seed": 20260836,
+    "latency_metric": "client materialization wall-clock latency including registered candidate setup",
+    "expected_measurement_count": 216
+  },
+  "inference": {
+    "practical_tie_fraction": 0.03,
+    "confidence_level": 0.95,
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 20260837
+  },
+  "immutable_inputs": [
+    {
+      "path": "results/tpch_multijoin_aggregate_exp1_dev_v3/20260830T085839208834Z/summary.json",
+      "sha256": "541b9f55b2660cba5eda07a2cae085c17c577deb5eab32b8adcfee95d1a509fc"
+    },
+    {
+      "path": "src/trustaero/experiments/tpch_multijoin_aggregate_exp1.py",
+      "sha256": "003c5066d5cbafd80526c32044e04679a0ed74d9aebabba467d1a2753117c7e0"
+    },
+    {
+      "path": "src/trustaero/experiments/tpch_multijoin_aggregate_exp1_holdout.py",
+      "sha256": "36f64adcd3789cee36cf0f58864b94d3e2cedeefeb736a79721181f11da56e64"
+    },
+    {
+      "path": "experiments/development/tpch_multijoin_aggregate_exp1_dev_v3.json",
+      "sha256": "48b91157c5c66273eb511e044f87ffb2e483fe05471778c5672920c8c567e982"
+    },
+    {
+      "path": "data/manifests/processed/tpch-sf10.json",
+      "sha256": "38a774a259aea785cdc4965a23ed939ac8b6037743609846e21fdc04a3594fe1"
+    }
+  ],
+  "preflight_gates": [
+    "The SF10 database matches its reviewed SHA-256 manifest.",
+    "All three candidates execute and return identical canonical results for every unit.",
+    "All three candidates retain distinct observed DuckDB physical fingerprints.",
+    "All six candidate orders occur once per unit in measured blocks.",
+    "The selector returns only governance-legal registered candidates."
+  ],
+  "outcome_metrics": [
+    "Within 3% of the per-unit Legal Oracle",
+    "mean, P95, and maximum regret",
+    "illegal physical selections",
+    "scenario-level confidence-undominated candidate sets"
+  ],
+  "claim_boundary": [
+    "The four SF10 configurations are absent from every SF1 development grid.",
+    "The scale factor, selector, candidates, scenarios, seeds, timing, and inference are frozen before any SF10 timing from this query family.",
+    "The result is retained without retuning and remains separate from the original 114-decision denominator.",
+    "This evaluates transfer of one bounded third candidate family, not general SQL join enumeration."
+  ]
+}

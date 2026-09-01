@@ -1,0 +1,172 @@
+{
+  "absolute_half_drift_by_candidate": {
+    "fused": 0.055196059256423236,
+    "materialize-after-q06-predicate": 0.062353182580035305,
+    "materialize-after-q06-time": 0.021141325918413667
+  },
+  "authorized_claim_count": 1,
+  "carryover_assessments": [
+    {
+      "carryover_candidate_id": "materialize-after-q06-time",
+      "classification": "NO_MATERIAL_CARRYOVER",
+      "confidence_interval": {
+        "level": 0.95,
+        "lower": 0.9105873423827966,
+        "upper": 1.056271070618448
+      },
+      "median_exposed_over_control_ratio": 0.9853287977853686,
+      "pair_count": 10,
+      "target_candidate_id": "fused",
+      "tolerance_fraction": 0.1
+    },
+    {
+      "carryover_candidate_id": "materialize-after-q06-time",
+      "classification": "NO_MATERIAL_CARRYOVER",
+      "confidence_interval": {
+        "level": 0.95,
+        "lower": 0.912537091981505,
+        "upper": 1.0196643974614519
+      },
+      "median_exposed_over_control_ratio": 0.9960358480283982,
+      "pair_count": 10,
+      "target_candidate_id": "materialize-after-q06-predicate",
+      "tolerance_fraction": 0.1
+    },
+    {
+      "carryover_candidate_id": "materialize-after-q06-predicate",
+      "classification": "NO_MATERIAL_CARRYOVER",
+      "confidence_interval": {
+        "level": 0.95,
+        "lower": 0.9467266763393406,
+        "upper": 1.0986919179017889
+      },
+      "median_exposed_over_control_ratio": 1.0149431411318321,
+      "pair_count": 10,
+      "target_candidate_id": "fused",
+      "tolerance_fraction": 0.1
+    },
+    {
+      "carryover_candidate_id": "materialize-after-q06-predicate",
+      "classification": "NO_MATERIAL_CARRYOVER",
+      "confidence_interval": {
+        "level": 0.95,
+        "lower": 1.0055344590231625,
+        "upper": 1.075910580076989
+      },
+      "median_exposed_over_control_ratio": 1.0326808201526378,
+      "pair_count": 10,
+      "target_candidate_id": "materialize-after-q06-time",
+      "tolerance_fraction": 0.1
+    }
+  ],
+  "claim_authorization_required": true,
+  "diagnostic_oracle_set_within_tie_band": [
+    "fused"
+  ],
+  "formal_paper_experiment_authorized": true,
+  "heldout_optimizer_evidence": false,
+  "inference_protocol_ready": true,
+  "integrity_gates": {
+    "all_6_permutations_balanced": true,
+    "all_positions_balanced": true,
+    "candidate_space_complete": true,
+    "certificates_partial": true,
+    "clean_source_recorded": true,
+    "measurements_complete": true,
+    "resources_observed": true,
+    "single_execution_process": true
+  },
+  "legacy_stability_diagnostics": {
+    "absolute_half_drift": true,
+    "paired_ratio_half_drift": true,
+    "paired_ratio_outlier_fraction": false
+  },
+  "median_candidate_over_fused_ratio": {
+    "fused": 1.0,
+    "materialize-after-q06-predicate": 1.1229398615659605,
+    "materialize-after-q06-time": 5.547647353000725
+  },
+  "optimizer_selection_evaluated": false,
+  "paired_block_statistic": "median_of_5",
+  "paired_claims": [
+    {
+      "baseline_id": "fused",
+      "candidate_id": "materialize-after-q06-predicate",
+      "claim_authorized": false,
+      "conclusion": "INCONCLUSIVE",
+      "confidence_interval": {
+        "level": 0.95,
+        "lower": 0.9919459709683858,
+        "method": "permutation_stratified_paired_bootstrap_median_ratio_v1",
+        "repetitions": 20000,
+        "seed": 20260726,
+        "upper": 1.1652760824502892
+      },
+      "median_candidate_over_baseline_ratio": 1.1017412061982879,
+      "pollution_safe_block_count": 10,
+      "pollution_safe_block_ids": [
+        2,
+        11,
+        12,
+        21,
+        27,
+        32,
+        40,
+        43,
+        49,
+        56
+      ],
+      "tie_fraction": 0.03
+    },
+    {
+      "baseline_id": "fused",
+      "candidate_id": "materialize-after-q06-time",
+      "claim_authorized": true,
+      "conclusion": "MATERIALLY_SLOWER",
+      "confidence_interval": {
+        "level": 0.95,
+        "lower": 4.934045483588658,
+        "method": "permutation_stratified_paired_bootstrap_median_ratio_v1",
+        "repetitions": 20000,
+        "seed": 20260726,
+        "upper": 5.741035129661144
+      },
+      "median_candidate_over_baseline_ratio": 5.3579111830444965,
+      "pollution_safe_block_count": 10,
+      "pollution_safe_block_ids": [
+        4,
+        8,
+        13,
+        19,
+        29,
+        30,
+        38,
+        46,
+        48,
+        57
+      ],
+      "tie_fraction": 0.03
+    }
+  ],
+  "paired_ratio_half_drift_by_candidate": {
+    "materialize-after-q06-predicate": 0.01112563240462694,
+    "materialize-after-q06-time": 0.08407853814819699
+  },
+  "paired_ratio_outlier_fraction_by_candidate": {
+    "materialize-after-q06-predicate": 0.13333333333333333,
+    "materialize-after-q06-time": 0.16666666666666666
+  },
+  "paper_performance_evidence": true,
+  "paper_performance_evidence_requested": true,
+  "run_id": "20260721T012711938759Z",
+  "schema_version": 1,
+  "scientific_boundary": "TPC-H SF10 Q6 is standard-benchmark method evidence. V4 authorizes only claims whose predeclared pollution-safe paired confidence interval is conclusive; an Oracle point estimate never authorizes a claim. A resumed multi-process run is diagnostic only.",
+  "scientific_label": "tpch_sf10_q6_pollution_safe_paired_ci_v2",
+  "stability_gates": {
+    "absolute_half_drift": true,
+    "paired_ratio_half_drift": true,
+    "paired_ratio_outlier_fraction": false
+  },
+  "status": "PASS",
+  "timing_protocol": "exact_decimal_utc_pollution_safe_paired_ci_v4"
+}

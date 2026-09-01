@@ -1,0 +1,215 @@
+{
+  "certificate_id": "cert-multisource-case-v2",
+  "data_snapshots": {
+    "airport": "sha256:bc0ccfde3bbd2432d7b1d7d81409aa40d356fe02f86c3576ec8cc80f4f16d3d2",
+    "city": "sha256:de6d98951932e9e27e7dcf539f430eda5d79d0503bcd048a31b8ca936b34a076",
+    "oil_gas_well": "sha256:7d8a993dc7db4ea5f06d8cb037c93be07efb7e0bf6c9bcddc696830183f99162",
+    "usgs_earthquake": "sha256:654830be9afbe1f23660c5f9f39456b37797b26c140d45ca1b647fb0805068d3"
+  },
+  "events": [
+    {
+      "event_type": "PlanApproved",
+      "operator_id": null,
+      "payload_digest": "pp-a78057888206307e",
+      "sequence": 0
+    },
+    {
+      "event_type": "PolicyDecisionRecorded",
+      "operator_id": null,
+      "payload_digest": "multisource-policy-2026-07-25",
+      "sequence": 1
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-airport-scan",
+      "payload_digest": "sha256:0ffb03474f252cccabc145f5fca2014cd1ecb0536256b91f38f1c8ab1059e3a5",
+      "sequence": 2
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-airport-scan",
+      "payload_digest": "sha256:d20146284e335fd189fa6a2a5debeba873d7fd94e2e97097c9bc020a3194db7c",
+      "sequence": 3
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-city-scan",
+      "payload_digest": "sha256:28d0a1ab068fa480105161bfe94b41e4dcc025a85f143447912fceaa3b8693ec",
+      "sequence": 4
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-city-scan",
+      "payload_digest": "sha256:c18396c357c7badbf0feb42e99c6c02eb9719154aa6cd048c3f058a31da10caa",
+      "sequence": 5
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-earthquake-scan",
+      "payload_digest": "sha256:d25d5f8206c730f615b712beb1e68ea616bd425ae1d73659fe50b107d45bd73c",
+      "sequence": 6
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-earthquake-scan",
+      "payload_digest": "sha256:833228577f2f1ec3e20100804805330429552368a474385b9b66da98a82b612f",
+      "sequence": 7
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-well-scan",
+      "payload_digest": "sha256:061b0521e056c3e30c891fa1edc410f41282e52cae516a035b0929c9b518a8c7",
+      "sequence": 8
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-well-scan",
+      "payload_digest": "sha256:cf2e809643d254598415bc8b3f56df5559a8688be3c84609728a96f74668d75d",
+      "sequence": 9
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-earthquake-time",
+      "payload_digest": "sha256:17be44736c963aa4e4c00f5da9311fc359e7654787137847e3857493a5b3d346",
+      "sequence": 10
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-earthquake-time",
+      "payload_digest": "sha256:48a0a1d30cb32e7b5fb0eaf3b88eb9e3824cfc802add06800332336e72cdc9ac",
+      "sequence": 11
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-earthquake-magnitude",
+      "payload_digest": "sha256:1904930f53268d018974ca640e4db1c3b05d6f39dc11ac87d598947304fd95ed",
+      "sequence": 12
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-earthquake-magnitude",
+      "payload_digest": "sha256:653193b7520a3cc5a591299c0a2691f86bec5a12e99e5620f5fae6656f26b32d",
+      "sequence": 13
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-earthquake-well-join",
+      "payload_digest": "sha256:4bf394e51eb77754ca076651d4497e3bc6356bf05cdf54ace4e79d3379edfe28",
+      "sequence": 14
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-earthquake-well-join",
+      "payload_digest": "sha256:b371768a667567112e79c4e3d268906e771eacd8c56514d07696af4a821fba08",
+      "sequence": 15
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-earthquake-airport-join",
+      "payload_digest": "sha256:b0108d9fb1d64921212b6b2cdab3740211b9532b1792b402bd38db69c653930f",
+      "sequence": 16
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-earthquake-airport-join",
+      "payload_digest": "sha256:5096e8334fb085466505a58e9b045e7be0e2046739d69f85f05ae8ad4e6566fa",
+      "sequence": 17
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-earthquake-city-join",
+      "payload_digest": "sha256:b3edd34e4dff4166e8654100588d33187f589d99fb529fb04a77a8a42aa6a8d0",
+      "sequence": 18
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-earthquake-city-join",
+      "payload_digest": "sha256:00618c6b3ebe54084c3df634ba0d31b5fac4214e0c2be12e9ae8bb08abb22b13",
+      "sequence": 19
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-case-output",
+      "payload_digest": "sha256:a39d95ae882e5c253a4d43a32336ba78b9a6be856e590d79e918444f852cc7c2",
+      "sequence": 20
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-case-output",
+      "payload_digest": "sha256:6ec2f1b06dd4343706e0061db3bb6706511b616625a952ae516389386510fd1a",
+      "sequence": 21
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-case-sort",
+      "payload_digest": "sha256:cc72acb5265286ba23bb862e9e042e97ffc0d4608f1b83f7c389ed079d38bbe6",
+      "sequence": 22
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-case-sort",
+      "payload_digest": "sha256:7f41caf5400a69f8443154b9b833d90714e85400f21f4f41017b326397fb41a7",
+      "sequence": 23
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-gov-001-mask",
+      "payload_digest": "sha256:e2dc165499f7271ae8ad9d1af6f64be2572e86024c581428b5fef956ee599628",
+      "sequence": 24
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-gov-001-mask",
+      "payload_digest": "sha256:d2ad4ca447271c035afdffdc55c2d81f33e722830d68622586288d72d8b7ed82",
+      "sequence": 25
+    },
+    {
+      "event_type": "OperatorStarted",
+      "operator_id": "phys-gov-002-lineagecapture",
+      "payload_digest": "sha256:8390ec0f3b586313d124743baec9b1877b8f904e96b149671a00435a60d74502",
+      "sequence": 26
+    },
+    {
+      "event_type": "OperatorCompleted",
+      "operator_id": "phys-gov-002-lineagecapture",
+      "payload_digest": "sha256:2bf2f84ba39a3cf5390937cc81c72c7172c1feba6e48de1c593aba9c8c1f43a9",
+      "sequence": 27
+    },
+    {
+      "event_type": "ResultMaterialized",
+      "operator_id": null,
+      "payload_digest": "sha256:97d5a5e03f22b26f5ed5540cfd3b5aeea4f21ce5f5eca6bccc56693031294a08",
+      "sequence": 28
+    },
+    {
+      "event_type": "LineageRecorded",
+      "operator_id": null,
+      "payload_digest": "sha256:48f087aa64ba77c96a251b1b42114ebdd523912e54f2dc6122d0d729dbea158a",
+      "sequence": 29
+    },
+    {
+      "event_type": "CertificateEmitted",
+      "operator_id": null,
+      "payload_digest": "sha256:03d66dd08835c1ca3f128cceacd1f31ac94163096b20f445ae84285bc0832d72",
+      "sequence": 30
+    }
+  ],
+  "lineage_digest": "sha256:48f087aa64ba77c96a251b1b42114ebdd523912e54f2dc6122d0d729dbea158a",
+  "lineage_evidence": {
+    "covered_operators": [
+      "case-sort"
+    ],
+    "edge_digest": "sha256:20557f1d22292893b610660b60249b07534990b2e7a9652baa945b82bdda28f2",
+    "execution_id": "exec-multisource-case-v2",
+    "lineage_level": "source",
+    "result_id": "sha256:97d5a5e03f22b26f5ed5540cfd3b5aeea4f21ce5f5eca6bccc56693031294a08"
+  },
+  "logical_plan_id": "pl-7b7986dcdc0d8b0b",
+  "physical_plan_id": "pp-a78057888206307e",
+  "planner_decision_digest": "sha256:9512a5059ab998a3760a710830c9d30ff188baa12f6495e12edc586e72812b03",
+  "planner_selected_candidate_id": "materialize-after-gov-001-mask",
+  "policy_snapshot": "multisource-policy-2026-07-25",
+  "result_digest": "sha256:97d5a5e03f22b26f5ed5540cfd3b5aeea4f21ce5f5eca6bccc56693031294a08",
+  "schema_version": "1.0",
+  "task_digest": "sha256:7b7986dcdc0d8b0bb7cc57fb3e9f299b22ce64e909aee59ddce0adc6319ba320"
+}

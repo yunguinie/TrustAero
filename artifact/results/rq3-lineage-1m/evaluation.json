@@ -1,0 +1,97 @@
+{
+  "evaluation_config_path": "experiments/configs/record_lineage_ordinal_scaleup_evaluation_v1.json",
+  "evaluation_config_sha256": "d5554bad2aba5861f6c759760bb68050510a7aacc983ae4e1b15685d509a9018",
+  "evaluator_commit": "5d217b6990f647e19e3612ae835653c1265901c9",
+  "evaluator_git_dirty": false,
+  "failed_gates": [],
+  "gates": {
+    "all_findings_present": true,
+    "all_unit_gates_passed": true,
+    "clean_measurement_commit": true,
+    "expected_artifact_encoding": true,
+    "expected_scales": true,
+    "formal_role": true,
+    "measurement_did_not_self_authorize": true,
+    "measurement_integrity_passed": true
+  },
+  "measurement_commit": "5d217b6990f647e19e3612ae835653c1265901c9",
+  "measurement_config_path": "experiments/configs/record_lineage_ordinal_scaleup_v1.json",
+  "measurement_config_sha256": "3c7b5f8b593faa8b289a4a5e9f790e5739a3999f909d5bb4987eb8a39adcfe6b",
+  "measurement_csv_sha256": "d05faf1f2c32f9fd3007df13b3d633a9d857267328343e10648a8bc9b2448d3a",
+  "measurement_run": "results/record_lineage_ordinal_scaleup_v1/20260810T051730579994Z",
+  "measurement_summary_sha256": "1496468b622b70175ef3e78a22e3bcd4ea84a6d31639956f82d43d3499357b2c",
+  "record_lineage_performance_evidence_authorized": true,
+  "scientific_boundary": [
+    "The result covers the single-source, single-STRING-key record fragment.",
+    "Join, Aggregate, SpatialJoin, composite keys, and non-STRING keys remain unsupported.",
+    "The direct and record variants execute the same validated query result.",
+    "A PASS authorizes the measured overhead and storage observations, not broader lineage claims."
+  ],
+  "status": "PASS_RECORD_LINEAGE_FORMAL_SCALABILITY_EVIDENCE",
+  "unit_findings": [
+    {
+      "artifact_bytes": 32000462,
+      "artifact_size_range_bytes": 1,
+      "bytes_per_edge": 32.000462,
+      "capture_median_ms": 5956.847099999322,
+      "direct_median_ms": 2927.3399000003337,
+      "first_half_median_ratio": 2.1109201303530725,
+      "first_second_half_drift_fraction": 0.03237236777731112,
+      "gates": {
+        "all_evidence_verified": true,
+        "balanced_positions": true,
+        "compact_storage": true,
+        "edge_count_matches_output": true,
+        "every_block_is_complete": true,
+        "expected_block_count": true,
+        "first_second_half_stability": true,
+        "one_edge_digest": true,
+        "one_result_digest": true,
+        "position_stability": true
+      },
+      "maximum_position_median_spread_fraction": 0.04996024173391023,
+      "median_record_over_direct_overhead_percent": 104.47274609818021,
+      "median_record_over_direct_ratio": 2.044727460981802,
+      "paired_block_count": 20,
+      "paired_bootstrap_confidence_interval": {
+        "level": 0.95,
+        "lower": 2.014709131070136,
+        "method": "order_stratified_paired_bootstrap_median_ratio_v1",
+        "repetitions": 5000,
+        "seed": 21260810,
+        "upper": 2.145153945127019
+      },
+      "passed": true,
+      "position_diagnostics": {
+        "direct_query": {
+          "count_imbalance": 0,
+          "maximum_over_minimum_fraction": 0.04283115417160266,
+          "position_counts": {
+            "0": 10,
+            "1": 10
+          },
+          "position_medians_ms": {
+            "0": 2816.033150000294,
+            "1": 2936.6471000003003
+          }
+        },
+        "record_lineage": {
+          "count_imbalance": 0,
+          "maximum_over_minimum_fraction": 0.04996024173391023,
+          "position_counts": {
+            "0": 10,
+            "1": 10
+          },
+          "position_medians_ms": {
+            "0": 6328.9536000002045,
+            "1": 6027.803099999801
+          }
+        }
+      },
+      "record_median_ms": 6189.883200000622,
+      "row_count": 1000000,
+      "second_half_median_ratio": 2.044727460981802,
+      "verification_median_ms": 5415.950200001134
+    }
+  ]
+}

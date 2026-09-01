@@ -1,0 +1,16 @@
+{
+  "artifact": {
+    "artifact_id": "multisource_nysdec_regulated_wells_20260724",
+    "dataset_id": "multisource_case_study",
+    "expected_bytes": null,
+    "expected_sha256": null,
+    "relative_path": "raw/multisource/nysdec/regulated_wells_20260724.csv",
+    "stage": "multisource_case_v1",
+    "url": "https://data.ny.gov/resource/szye-wmt3.csv?$limit=50000&$order=api_well_number"
+  },
+  "byte_size": 28420716,
+  "local_path": "data/raw/multisource/nysdec/regulated_wells_20260724.csv",
+  "retrieved_at_utc": "2026-07-25T01:14:31.675442+00:00",
+  "schema_version": 1,
+  "sha256": "4304d3b4292dc6def77802c69c033160a9243ac98f5f4606c7ea46e77e7ed9e6"
+}

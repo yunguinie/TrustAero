@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "experiment_id": "blackbox-adversarial-exp4-v1",
+  "seed": 20260830,
+  "unsafe_cases_per_objective": 50,
+  "valid_controls_per_seed": 100,
+  "unsafe_objectives": [
+    "missing_operator_collection", "unexpected_plan_property", "unsupported_schema_version",
+    "unknown_operator_kind", "duplicate_operator_identity", "dangling_input_reference",
+    "cyclic_dataflow", "unknown_declared_output", "unreachable_subgraph",
+    "invalid_operator_arity", "unknown_dataset_reference", "unknown_field_reference",
+    "unavailable_snapshot", "missing_declared_purpose", "unauthorized_subject_role",
+    "unknown_requested_output"
+  ],
+  "valid_control_transforms": ["graph_preserving_identifier_renaming", "topological_list_permutation"],
+  "generator_access_contract": {
+    "allowed_inputs": ["schemas/v1/candidate_plan.schema.json", "examples/plans/accept_earthquakes.json", "examples/plans/rewrite_precision.json", "experiments/blackbox_exp4/attack_objectives_v1.json"],
+    "prohibited_inputs": ["src/trustaero/validator", "src/trustaero/experiments/paper_gap_closure.py", "tests", "validator diagnostics", "existing mutation operators"]
+  }
+}

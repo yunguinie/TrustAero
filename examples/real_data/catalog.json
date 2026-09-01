@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "datasets": [
+    {
+      "dataset_id": "bts_on_time_2024_01",
+      "versions": ["v2024-01-fe089b45523f"],
+      "default_version": "v2024-01-fe089b45523f",
+      "fields": [
+        {
+          "name": "Tail_Number",
+          "data_type": "string",
+          "nullable": true,
+          "roles": ["identifier"],
+          "sensitive": true
+        },
+        {
+          "name": "FlightDate",
+          "data_type": "datetime",
+          "roles": ["temporal"]
+        },
+        {"name": "Origin", "data_type": "string", "roles": []},
+        {"name": "Dest", "data_type": "string", "roles": []},
+        {"name": "Distance", "data_type": "float", "roles": []},
+        {"name": "Cancelled", "data_type": "boolean", "roles": []}
+      ],
+      "spatial": null,
+      "temporal_field": "FlightDate"
+    },
+    {
+      "dataset_id": "nyc_tlc_yellow_2024_01",
+      "versions": ["v2024-01-c4d59da7bbc8"],
+      "default_version": "v2024-01-c4d59da7bbc8",
+      "fields": [
+        {
+          "name": "PULocationID",
+          "data_type": "integer",
+          "roles": ["identifier"]
+        },
+        {
+          "name": "tpep_pickup_datetime",
+          "data_type": "datetime",
+          "roles": ["temporal"]
+        },
+        {"name": "trip_distance", "data_type": "float", "roles": []},
+        {"name": "total_amount", "data_type": "float", "roles": []}
+      ],
+      "spatial": null,
+      "temporal_field": "tpep_pickup_datetime"
+    },
+    {
+      "dataset_id": "nyc_tlc_taxi_zones",
+      "versions": ["v2024-lookup-1a99e1050922"],
+      "default_version": "v2024-lookup-1a99e1050922",
+      "fields": [
+        {
+          "name": "LocationID",
+          "data_type": "integer",
+          "roles": ["identifier"]
+        },
+        {"name": "Borough", "data_type": "string", "roles": []},
+        {"name": "service_zone", "data_type": "string", "nullable": true, "roles": []}
+      ],
+      "spatial": null,
+      "temporal_field": null
+    }
+  ]
+}

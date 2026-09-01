@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "protocol_id": "record-lineage-ordinal-scaleup-v1-20260810",
+  "frozen_on": "2026-08-10",
+  "purpose": "Post-freeze scalability extension of the row-ordinal record-Lineage representation to one million rows.",
+  "base_formal_protocol": "experiments/frozen/record_lineage_ordinal_v4_formal_protocol_20260725.json",
+  "measurement_config": "experiments/configs/record_lineage_ordinal_scaleup_v1.json",
+  "evaluation_config": "experiments/configs/record_lineage_ordinal_scaleup_evaluation_v1.json",
+  "row_count": 1000000,
+  "paired_blocks": 20,
+  "executions": 40,
+  "warmup_rounds": 2,
+  "predeclared_gates": {
+    "all_results_equivalent": true,
+    "all_record_evidence_verified": true,
+    "maximum_bytes_per_edge": 33.0,
+    "maximum_position_median_spread_fraction": 0.3,
+    "maximum_half_ratio_drift_fraction": 0.2
+  },
+  "reproduce": [
+    "python -u scripts/run_record_lineage_pilot.py --config experiments/configs/record_lineage_ordinal_scaleup_v1.json --progress",
+    "python -u scripts/evaluate_record_lineage_formal.py latest --config experiments/configs/record_lineage_ordinal_scaleup_evaluation_v1.json"
+  ],
+  "claim_boundary": "This extends the supported single-source, unique non-null STRING-key fragment. It does not add Join, Aggregate, composite-key, non-STRING-key, or multi-source record-Lineage support."
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "record_id": "lineage-checkpoint-holdout-v1-positive-20260726",
+  "status": "PASS_LINEAGE_CHECKPOINT_COST_MODEL_INDEPENDENT_HOLDOUT",
+  "source_commit": "e6a35844d7d93e100006fdf5d828c83fe310629c",
+  "model": {
+    "path": "experiments/frozen/models/lineage_checkpoint_cost_model_v1_20260726.json",
+    "sha256": "ff30976cbc5ef0e6131badcf994bca55ab9f0038be34d55e118835139a65166d"
+  },
+  "protocol": {
+    "path": "experiments/frozen/lineage_checkpoint_holdout_protocol_v1_20260726.json",
+    "sha256": "ec7117cf208f5311e594f0efa878dad7349de896c88088a3d16d8007bd924277"
+  },
+  "config": {
+    "path": "experiments/configs/lineage_checkpoint_holdout_v1.json",
+    "sha256": "d70364ded6a6defddf6e7a65902a2b1f127b39679c2e9c7e1c75fae1ba83e188"
+  },
+  "artifacts": [
+    {
+      "path": "results/lineage_checkpoint_holdout_v1/20260726T024634020779Z/summary.json",
+      "sha256": "51d4c896c1664f079eb69c3a29a163ddd46a5c81933d12debc7314ed3f23fa4a"
+    },
+    {
+      "path": "results/lineage_checkpoint_holdout_v1/20260726T024634020779Z/measurements.csv",
+      "sha256": "167ff61e83eb3b54bf2e5b76c953d543b72b2ed0c2dec90317d50c85c041d615"
+    },
+    {
+      "path": "results/lineage_checkpoint_holdout_evaluation_v1/20260726T030912568464Z/evaluation.json",
+      "sha256": "1f007bc062f5a2b84f201d6bfe905eb8228ab4a324b6056de4b7b5343a1e181a"
+    }
+  ],
+  "observations": {
+    "unseen_row_count": 75000,
+    "unseen_query_counts": [2, 6, 10, 20, 28, 40],
+    "decision_count": 18,
+    "model": {
+      "oracle_set_hit_rate": 1.0,
+      "mean_regret_percent": 0.0,
+      "p95_regret_percent": 0.0,
+      "maximum_regret_percent": 0.0
+    },
+    "strong_threshold_baseline": {
+      "oracle_set_hit_rate": 0.8333333333333334,
+      "mean_regret_percent": 2.1260113308378994,
+      "p95_regret_percent": 13.510158586923481,
+      "maximum_regret_percent": 13.510158586923481
+    },
+    "best_fixed_candidate": "policy_lineage_checkpoint",
+    "best_fixed_mean_regret_percent": 15.072598852939082,
+    "best_fixed_p95_regret_percent": 26.779588720086455,
+    "all_frozen_gates_passed": true,
+    "illegal_selection_rate": 0.0
+  },
+  "authorized_claim": "On one untouched holdout with unseen row count, query batch sizes, policy combinations and seeds, the frozen analytic model selected a 3%-Oracle candidate in all 18 decisions with zero diagnostic regret, outperforming every fixed candidate and the frozen query-count threshold.",
+  "scientific_boundary": "This is one DuckDB backend, one synthetic but controlled record-lineage workload family and one one-shot holdout. It does not establish zero regret on arbitrary databases, lineage schemas or query families.",
+  "decision": "Freeze this result as the final Lineage checkpoint optimizer evidence. Do not refit the model or rerun a replacement holdout."
+}

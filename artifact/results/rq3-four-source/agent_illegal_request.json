@@ -1,0 +1,193 @@
+{
+  "operators": [
+    {
+      "dataset": "usgs_earthquake",
+      "inputs": [],
+      "operator_id": "earthquake-scan",
+      "operator_type": "ScanSource",
+      "snapshot": null
+    },
+    {
+      "end": "2025-01-01T00:00:00Z",
+      "field": "event_time",
+      "inputs": [
+        "earthquake-scan"
+      ],
+      "operator_id": "earthquake-time",
+      "operator_type": "TemporalFilter",
+      "start": "2024-01-01T00:00:00Z"
+    },
+    {
+      "expression": {
+        "expression_type": "comparison",
+        "left": {
+          "expression_type": "field",
+          "field": "magnitude"
+        },
+        "operator": "ge",
+        "right": {
+          "data_type": "float",
+          "expression_type": "literal",
+          "value": 2.5
+        }
+      },
+      "inputs": [
+        "earthquake-time"
+      ],
+      "operator_id": "earthquake-magnitude",
+      "operator_type": "Filter"
+    },
+    {
+      "dataset": "oil_gas_well",
+      "inputs": [],
+      "operator_id": "well-scan",
+      "operator_type": "ScanSource",
+      "snapshot": null
+    },
+    {
+      "distance_km": 25.0,
+      "inputs": [
+        "earthquake-magnitude",
+        "well-scan"
+      ],
+      "left_fields": [
+        "earthquake_latitude",
+        "earthquake_longitude"
+      ],
+      "operator_id": "earthquake-well-join",
+      "operator_type": "SpatialJoin",
+      "relation": "distance_within",
+      "right_fields": [
+        "well_latitude",
+        "well_longitude"
+      ]
+    },
+    {
+      "dataset": "airport",
+      "inputs": [],
+      "operator_id": "airport-scan",
+      "operator_type": "ScanSource",
+      "snapshot": null
+    },
+    {
+      "distance_km": 50.0,
+      "inputs": [
+        "earthquake-well-join",
+        "airport-scan"
+      ],
+      "left_fields": [
+        "earthquake_latitude",
+        "earthquake_longitude"
+      ],
+      "operator_id": "earthquake-airport-join",
+      "operator_type": "SpatialJoin",
+      "relation": "distance_within",
+      "right_fields": [
+        "airport_latitude",
+        "airport_longitude"
+      ]
+    },
+    {
+      "dataset": "city",
+      "inputs": [],
+      "operator_id": "city-scan",
+      "operator_type": "ScanSource",
+      "snapshot": null
+    },
+    {
+      "distance_km": 25.0,
+      "inputs": [
+        "earthquake-airport-join",
+        "city-scan"
+      ],
+      "left_fields": [
+        "earthquake_latitude",
+        "earthquake_longitude"
+      ],
+      "operator_id": "earthquake-city-join",
+      "operator_type": "SpatialJoin",
+      "relation": "distance_within",
+      "right_fields": [
+        "city_latitude",
+        "city_longitude"
+      ]
+    },
+    {
+      "fields": [
+        "event_id",
+        "magnitude",
+        "api_well_number",
+        "well_type",
+        "airport_id",
+        "airport_name",
+        "geoid",
+        "place_name"
+      ],
+      "inputs": [
+        "earthquake-city-join"
+      ],
+      "operator_id": "case-output",
+      "operator_type": "Project"
+    },
+    {
+      "inputs": [
+        "case-output"
+      ],
+      "keys": [
+        {
+          "direction": "asc",
+          "field": "event_id"
+        },
+        {
+          "direction": "asc",
+          "field": "api_well_number"
+        },
+        {
+          "direction": "asc",
+          "field": "airport_id"
+        },
+        {
+          "direction": "asc",
+          "field": "geoid"
+        }
+      ],
+      "operator_id": "case-sort",
+      "operator_type": "Sort"
+    }
+  ],
+  "output_operator": "case-sort",
+  "plan_id": "multisource-case-query-v1",
+  "request_context": {
+    "action": "join",
+    "purpose": "risk_assessment",
+    "query_time_window": {
+      "dimension": "event_time",
+      "end": "2025-01-01T00:00:00Z",
+      "start": "2024-01-01T00:00:00Z"
+    },
+    "subject": {
+      "attributes": {},
+      "role": "unauthorized_agent",
+      "subject_id": "case-study-researcher"
+    }
+  },
+  "requested_output": {
+    "export": {
+      "destination": null,
+      "format": null,
+      "requested": false
+    },
+    "fields": [
+      "event_id",
+      "magnitude",
+      "api_well_number",
+      "well_type",
+      "airport_id",
+      "airport_name",
+      "geoid",
+      "place_name"
+    ],
+    "lineage_level": "source"
+  },
+  "schema_version": "1.0"
+}

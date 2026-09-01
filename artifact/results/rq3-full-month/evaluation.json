@@ -1,0 +1,270 @@
+{
+  "evaluation_config_path": "experiments/configs/system_scalability_full_month_formal_evaluation_v1.json",
+  "evaluation_config_sha256": "20c432e259abe77340b5a124ae1a8445ea27dfb5cbdb528c58c5b2959946ee42",
+  "failed_gates": [],
+  "gates": {
+    "all_unit_findings_present": true,
+    "all_unit_gates_passed": true,
+    "clean_measurement_commit": true,
+    "expected_units": true,
+    "maximum_spilled_unit_count": true,
+    "measurement_did_not_self_authorize": true,
+    "measurement_integrity_passed": true
+  },
+  "measurement_commit": "b75b19d293b1ff001c463c68eb7475c9e4e8355f",
+  "measurement_config_path": "experiments/configs/system_scalability_full_month_formal_v1.json",
+  "measurement_config_sha256": "9a4950ba620bd5bc48f22e5f46255c852f0930ad10e783233b0b0c8c80322d56",
+  "measurement_csv_sha256": "0f2362bd87880b1fa932507ab5e02722ada6cd22757fbc7f85d66b27c480f60d",
+  "measurement_run": "results/system_scalability_full_month_formal_v1/20260724T141132808592Z",
+  "measurement_summary_sha256": "28301b0ff2f7605fe30c0cad0c9d5602c7c2d8a9b49da2b66a16a07ecf45e640",
+  "optimizer_claim_reopened": false,
+  "record_lineage_performance_evidence_authorized": false,
+  "scientific_boundary": [
+    "The direct layer executes identical policy-compliant SQL while bypassing the TrustAero control path.",
+    "The evidence covers source-snapshot lineage, not record-level lineage.",
+    "Certificate verification remains PARTIAL by design.",
+    "The result covers only the explicitly configured units: bts-full_month, nyc_tlc-full_month.",
+    "No result from this evaluator refits or retunes the frozen optimizer."
+  ],
+  "source_lineage_performance_evidence_authorized": true,
+  "spilled_unit_count": 0,
+  "status": "PASS_SYSTEM_SCALABILITY_FORMAL_SOURCE_LINEAGE_EVIDENCE",
+  "unit_findings": [
+    {
+      "complete_layer_component_medians_ms": {
+        "certificate_verification_latency_ms": 0.12435,
+        "database_execution_latency_ms": 495.25509999999997,
+        "lineage_capture_latency_ms": 0.12859999878855888,
+        "planner_latency_ms": 0.29264999999999997,
+        "policy_validation_latency_ms": 0.929
+      },
+      "first_half_median_ratio": 0.9879267765260781,
+      "first_second_half_drift_fraction": 0.060323914723758865,
+      "gates": {
+        "balanced_positions": true,
+        "certificate_count": true,
+        "certificate_status": true,
+        "every_block_has_all_layers": true,
+        "expected_block_count": true,
+        "first_second_half_stability": true,
+        "one_result_digest": true,
+        "one_source_lineage_edge_digest": true,
+        "position_stability": true
+      },
+      "input_rows": 547271,
+      "maximum_position_count_imbalance": 0,
+      "maximum_position_median_spread_fraction": 0.1444123307398073,
+      "median_complete_over_direct_overhead_percent": -3.101150444431622,
+      "median_complete_over_direct_ratio": 0.9689884955556838,
+      "output_rows": 106251,
+      "paired_block_count": 48,
+      "paired_bootstrap_confidence_interval": {
+        "level": 0.95,
+        "lower": 0.9018896260887668,
+        "method": "paired_bootstrap_median_ratio_v1",
+        "repetitions": 5000,
+        "seed": 20260730,
+        "upper": 1.0490387056406247
+      },
+      "passed": true,
+      "position_diagnostics": {
+        "complete_trustaero_with_certificate": {
+          "count_imbalance": 0,
+          "maximum_over_minimum_fraction": 0.1444123307398073,
+          "position_counts": {
+            "0": 12,
+            "1": 12,
+            "2": 12,
+            "3": 12
+          },
+          "position_medians_ms": {
+            "0": 537.4146000000001,
+            "1": 469.59875,
+            "2": 492.0333,
+            "3": 469.89985
+          }
+        },
+        "direct_database_equivalent_sql": {
+          "count_imbalance": 0,
+          "maximum_over_minimum_fraction": 0.1011949575047546,
+          "position_counts": {
+            "0": 12,
+            "1": 12,
+            "2": 12,
+            "3": 12
+          },
+          "position_medians_ms": {
+            "0": 533.43965,
+            "1": 532.27995,
+            "2": 486.7804,
+            "3": 484.4189
+          }
+        },
+        "trustaero_with_source_lineage": {
+          "count_imbalance": 0,
+          "maximum_over_minimum_fraction": 0.14174367227071016,
+          "position_counts": {
+            "0": 12,
+            "1": 12,
+            "2": 12,
+            "3": 12
+          },
+          "position_medians_ms": {
+            "0": 496.7133,
+            "1": 526.7145,
+            "2": 461.32465,
+            "3": 516.5569499999999
+          }
+        },
+        "trustaero_without_lineage_or_certificate": {
+          "count_imbalance": 0,
+          "maximum_over_minimum_fraction": 0.12796073950723552,
+          "position_counts": {
+            "0": 12,
+            "1": 12,
+            "2": 12,
+            "3": 12
+          },
+          "position_medians_ms": {
+            "0": 439.66845,
+            "1": 495.92875,
+            "2": 494.57359999999994,
+            "3": 480.15015
+          }
+        }
+      },
+      "profile": {
+        "duckdb_plan_fingerprint": "sha256:65e4ab04721d1b24ea6bcb5e4b64147f8c39bdf7c7f5b5e99d41cef408ffd621",
+        "input_rows": 547271,
+        "max_intermediate_rows": 113697,
+        "output_rows": 106251,
+        "peak_memory_bytes": 12480596,
+        "peak_memory_scope": "duckdb_profile_peak_buffer_memory",
+        "profile_latency_is_primary_measurement": false,
+        "result_digest": "sha256:16a46f300cbbf11937f6922e35eb1c32021e8b173bfcea0d370d2525f28bdeef",
+        "temporary_spill_bytes": 0,
+        "unit_id": "bts-full_month"
+      },
+      "second_half_median_ratio": 0.9317216775059326,
+      "unit_id": "bts-full_month"
+    },
+    {
+      "complete_layer_component_medians_ms": {
+        "certificate_verification_latency_ms": 0.13140000000000002,
+        "database_execution_latency_ms": 241.90730000000002,
+        "lineage_capture_latency_ms": 0.07349999941652641,
+        "planner_latency_ms": 0.34215,
+        "policy_validation_latency_ms": 0.92805
+      },
+      "first_half_median_ratio": 1.0466481637679463,
+      "first_second_half_drift_fraction": 0.03608823058993882,
+      "gates": {
+        "balanced_positions": true,
+        "certificate_count": true,
+        "certificate_status": true,
+        "every_block_has_all_layers": true,
+        "expected_block_count": true,
+        "first_second_half_stability": true,
+        "one_result_digest": true,
+        "one_source_lineage_edge_digest": true,
+        "position_stability": true
+      },
+      "input_rows": 2964624,
+      "maximum_position_count_imbalance": 0,
+      "maximum_position_median_spread_fraction": 0.16513782269440802,
+      "median_complete_over_direct_overhead_percent": 4.017064510490442,
+      "median_complete_over_direct_ratio": 1.0401706451049044,
+      "output_rows": 10,
+      "paired_block_count": 48,
+      "paired_bootstrap_confidence_interval": {
+        "level": 0.95,
+        "lower": 0.9859658805434223,
+        "method": "paired_bootstrap_median_ratio_v1",
+        "repetitions": 5000,
+        "seed": 20260730,
+        "upper": 1.0577123049869261
+      },
+      "passed": true,
+      "position_diagnostics": {
+        "complete_trustaero_with_certificate": {
+          "count_imbalance": 0,
+          "maximum_over_minimum_fraction": 0.10350347223595113,
+          "position_counts": {
+            "0": 12,
+            "1": 12,
+            "2": 12,
+            "3": 12
+          },
+          "position_medians_ms": {
+            "0": 227.6199,
+            "1": 242.28175,
+            "2": 251.17935,
+            "3": 245.39665000000002
+          }
+        },
+        "direct_database_equivalent_sql": {
+          "count_imbalance": 0,
+          "maximum_over_minimum_fraction": 0.09534045313301331,
+          "position_counts": {
+            "0": 12,
+            "1": 12,
+            "2": 12,
+            "3": 12
+          },
+          "position_medians_ms": {
+            "0": 246.8893,
+            "1": 228.66685,
+            "2": 225.39960000000002,
+            "3": 244.05845
+          }
+        },
+        "trustaero_with_source_lineage": {
+          "count_imbalance": 0,
+          "maximum_over_minimum_fraction": 0.16067217204856865,
+          "position_counts": {
+            "0": 12,
+            "1": 12,
+            "2": 12,
+            "3": 12
+          },
+          "position_medians_ms": {
+            "0": 230.60465,
+            "1": 261.72595,
+            "2": 267.65639999999996,
+            "3": 242.19395
+          }
+        },
+        "trustaero_without_lineage_or_certificate": {
+          "count_imbalance": 0,
+          "maximum_over_minimum_fraction": 0.16513782269440802,
+          "position_counts": {
+            "0": 12,
+            "1": 12,
+            "2": 12,
+            "3": 12
+          },
+          "position_medians_ms": {
+            "0": 262.0748,
+            "1": 256.01895,
+            "2": 226.00145,
+            "3": 224.9303
+          }
+        }
+      },
+      "profile": {
+        "duckdb_plan_fingerprint": "sha256:9b1e365802998583f3e41786edb5095936bdfe7c1f3e07718f5809867ec70dfe",
+        "input_rows": 2964624,
+        "max_intermediate_rows": 550766,
+        "output_rows": 10,
+        "peak_memory_bytes": 55997936,
+        "peak_memory_scope": "duckdb_profile_peak_buffer_memory",
+        "profile_latency_is_primary_measurement": false,
+        "result_digest": "sha256:99a41fd26a8b21a0cfa0c2ba10ed58f17e3a8e6e720a35ca12c84011a2d56c81",
+        "temporary_spill_bytes": 0,
+        "unit_id": "nyc_tlc-full_month"
+      },
+      "second_half_median_ratio": 1.0101921176847988,
+      "unit_id": "nyc_tlc-full_month"
+    }
+  ]
+}

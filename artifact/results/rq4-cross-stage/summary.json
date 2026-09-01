@@ -1,0 +1,84 @@
+{
+  "analysis_type": "frozen_cross_stage_contract_ablation",
+  "claim_boundary": [
+    "This is an offline composition of previously frozen observations, not a new independent holdout.",
+    "No DuckDB query is rerun, no optimizer is refit, and no three-percent threshold is changed.",
+    "The experiment establishes non-substitutability of stage guarantees over registered frozen cases, not universal necessity for every possible system.",
+    "The 11-case validation, 96-decision-per-policy planning, and 19-fault Certificate denominators remain unchanged."
+  ],
+  "created_at_utc": "2026-08-12T13:34:27.116952+00:00",
+  "denominators": {
+    "logical_validation_cases": 11,
+    "planner_decisions_per_policy": 96,
+    "planner_policy_regimes": 3,
+    "registered_certificate_faults": 19
+  },
+  "gates": {
+    "each_ablated_profile_has_a_distinct_gap": true,
+    "full_certificate_closes_registered_faults": true,
+    "legality_first_closes_illegal_selection": true,
+    "logical_approval_closes_ua_fr": true,
+    "only_full_contract_complete": true
+  },
+  "git_commit": "0f54be88f49d6431b55fd093feb367be5eddff6c",
+  "git_dirty": true,
+  "new_duckdb_runs": 0,
+  "optimizer_refit": false,
+  "paper_denominator_changes": false,
+  "profiles": [
+    {
+      "cross_stage_contract_complete": false,
+      "evidence_bound_checking": false,
+      "false_logical_rejection_count": 1,
+      "illegal_physical_selection_count": 192,
+      "legality_first_planning": false,
+      "logical_approval": false,
+      "profile_id": "policy_output_plus_blind_planner_plus_event_log",
+      "registered_fault_count": 19,
+      "registered_faults_detected": 6,
+      "unsafe_logical_acceptance_count": 0
+    },
+    {
+      "cross_stage_contract_complete": false,
+      "evidence_bound_checking": false,
+      "false_logical_rejection_count": 0,
+      "illegal_physical_selection_count": 192,
+      "legality_first_planning": false,
+      "logical_approval": true,
+      "profile_id": "approval_plus_blind_planner_plus_event_log",
+      "registered_fault_count": 19,
+      "registered_faults_detected": 6,
+      "unsafe_logical_acceptance_count": 0
+    },
+    {
+      "cross_stage_contract_complete": false,
+      "evidence_bound_checking": false,
+      "false_logical_rejection_count": 0,
+      "illegal_physical_selection_count": 0,
+      "legality_first_planning": true,
+      "logical_approval": true,
+      "profile_id": "approval_plus_legality_first_plus_event_log",
+      "registered_fault_count": 19,
+      "registered_faults_detected": 6,
+      "unsafe_logical_acceptance_count": 0
+    },
+    {
+      "cross_stage_contract_complete": true,
+      "evidence_bound_checking": true,
+      "false_logical_rejection_count": 0,
+      "illegal_physical_selection_count": 0,
+      "legality_first_planning": true,
+      "logical_approval": true,
+      "profile_id": "full_trustaero",
+      "registered_fault_count": 19,
+      "registered_faults_detected": 19,
+      "unsafe_logical_acceptance_count": 0
+    }
+  ],
+  "protocol_path": "experiments/frozen/cross_stage_contract_ablation_protocol_v1_20260812.json",
+  "protocol_sha256": "b9ff68359fd70ec9dbd79477f80bfa25e7573e0337ffe380971cbbe5126a2af7",
+  "schema_version": 1,
+  "source_summary_path": "results/paper_gap_closure_v1/20260801T062838038926Z/summary.json",
+  "source_summary_sha256": "7c89600e4b3f57da547f74da40dc58c210d8dc36d09aaeff62847d580d37a39d",
+  "status": "PASS_CROSS_STAGE_CONTRACT_ABLATION"
+}

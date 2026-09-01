@@ -1,0 +1,37 @@
+{
+  "bts_total_rows": 7001619,
+  "month_count": 12,
+  "month_manifest_paths": [
+    "manifests/processed/bts-2025-01.json",
+    "manifests/processed/bts-2025-02.json",
+    "manifests/processed/bts-2025-03.json",
+    "manifests/processed/bts-2025-04.json",
+    "manifests/processed/bts-2025-05.json",
+    "manifests/processed/bts-2025-06.json",
+    "manifests/processed/bts-2025-07.json",
+    "manifests/processed/bts-2025-08.json",
+    "manifests/processed/bts-2025-09.json",
+    "manifests/processed/bts-2025-10.json",
+    "manifests/processed/bts-2025-11.json",
+    "manifests/processed/bts-2025-12.json"
+  ],
+  "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "prepared_at_utc": "2026-08-13T04:48:34.406085+00:00",
+  "schema_version": 1,
+  "scientific_boundary": "Preparation verifies official downloads and deterministic transformations; it does not inspect or authorize a performance conclusion.",
+  "status": "PASS",
+  "year": 2025
+}

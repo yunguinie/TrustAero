@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "protocol_id": "multisource-data-snapshot-refresh-v1",
+  "result_status": "PASS_MULTISOURCE_DATA_SNAPSHOT_REFRESH_V1",
+  "frozen_on": "2026-08-10",
+  "experiment_role": "version_binding_regression_not_cross_dataset_generalization",
+  "base_protocol": "experiments/frozen/multisource_case_study_v2_protocol_20260726.json",
+  "agent_requests_path": "examples/multisource/agent_requests_v2.json",
+  "catalog_path": "examples/multisource/catalog.json",
+  "policy_path": "examples/multisource/policy.json",
+  "prepared_manifest_path": "data/manifests/processed/multisource-case-v1.json",
+  "prepared_artifact_overrides": [
+    {
+      "artifact_id": "multisource_earthquakes_v1",
+      "relative_path": "processed/multisource/v1_refresh/earthquakes.parquet",
+      "row_count": 992,
+      "byte_size": 34417,
+      "sha256": "a4247fa92c0531da552578f85ef081ba314668cb811b6dbf8e9e117979ac2084",
+      "derivation": "Deterministic snapshot refresh: result-contributing event us6000n92y magnitude 3.30 to 3.31."
+    }
+  ],
+  "catalog_snapshot_overrides": {
+    "usgs_earthquake": "sha256:a4247fa92c0531da552578f85ef081ba314668cb811b6dbf8e9e117979ac2084"
+  },
+  "physical_candidates": {
+    "materialization_targets": [
+      "earthquake-magnitude",
+      "earthquake-well-join",
+      "gov-001-mask"
+    ],
+    "expected_strategy_ids": [
+      "fused",
+      "materialize-after-earthquake-magnitude",
+      "materialize-after-earthquake-well-join",
+      "materialize-after-gov-001-mask"
+    ]
+  },
+  "physical_governance_policy": {
+    "policy_id": "multisource-no-raw-checkpoint-v2",
+    "max_raw_join_rows": null,
+    "max_raw_materialized_rows": 0,
+    "require_governance_checkpoint": true,
+    "rationale": "A durable checkpoint is required, but raw well identifiers may not be materialized."
+  },
+  "required_selected_strategy": "materialize-after-gov-001-mask",
+  "required_result_digest": "sha256:9d34418b84f7a4374793ca05fdb88efbf8d1167896f37ae9d2f006d1bb6b8c08",
+  "required_faults": [
+    "observed_result_digest_mismatch",
+    "policy_snapshot_tamper",
+    "data_snapshot_tamper",
+    "lineage_coverage_removed",
+    "physical_dependency_order_tamper",
+    "planner_decision_tamper"
+  ],
+  "lineage_scope": {
+    "level": "source",
+    "required_source_count": 4,
+    "boundary": "The four-source many-to-many spatial query uses source-level Lineage."
+  },
+  "certificate_boundary": "PARTIAL binds the refreshed data snapshot, approved plans, planner decision, result, events, and source lineage; it is not a cryptographic DBMS execution proof.",
+  "calibration_rule": "The deterministic calibration digest is frozen above; all subsequent runs are formal regressions and must reproduce it.",
+  "reproduce": [
+    "python -u scripts/prepare_multisource_snapshot_refresh.py --force",
+    "python -u scripts/run_multisource_data_snapshot_refresh.py --progress --memory-limit 512MB"
+  ],
+  "stop_conditions": [
+    "The refreshed Parquet file must match the frozen byte size and SHA-256.",
+    "The validated logical plan must bind the refreshed earthquake snapshot.",
+    "Governance feasibility must precede cost ranking.",
+    "The formal rerun must reproduce the frozen refreshed result digest.",
+    "All six registered certificate faults must be rejected.",
+    "Do not claim cross-dataset generalization from this controlled snapshot refresh."
+  ]
+}

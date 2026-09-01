@@ -1,0 +1,77 @@
+{
+  "dominance_evidence": [],
+  "dominated_candidate_ids": [],
+  "feasibility": {
+    "decisions": [
+      {
+        "candidate_id": "fused",
+        "diagnostics": [
+          {
+            "allowed_rows": 1,
+            "candidate_id": "fused",
+            "code": "CANDIDATE_REQUIRED_CHECKPOINT_MISSING",
+            "exposure_kind": "missing_governance_checkpoint",
+            "observed_rows": 0
+          }
+        ],
+        "is_feasible": false
+      },
+      {
+        "candidate_id": "materialize-after-earthquake-magnitude",
+        "diagnostics": [
+          {
+            "allowed_rows": 0,
+            "candidate_id": "materialize-after-earthquake-magnitude",
+            "code": "CANDIDATE_RAW_MATERIALIZATION_LIMIT_EXCEEDED",
+            "exposure_kind": "raw_materialization",
+            "observed_rows": 992
+          }
+        ],
+        "is_feasible": false
+      },
+      {
+        "candidate_id": "materialize-after-earthquake-well-join",
+        "diagnostics": [
+          {
+            "allowed_rows": 0,
+            "candidate_id": "materialize-after-earthquake-well-join",
+            "code": "CANDIDATE_RAW_MATERIALIZATION_LIMIT_EXCEEDED",
+            "exposure_kind": "raw_materialization",
+            "observed_rows": 45979200
+          }
+        ],
+        "is_feasible": false
+      },
+      {
+        "candidate_id": "materialize-after-gov-001-mask",
+        "diagnostics": [],
+        "is_feasible": true
+      }
+    ],
+    "feasible_candidate_ids": [
+      "materialize-after-gov-001-mask"
+    ],
+    "policy_id": "multisource-no-raw-checkpoint-v2",
+    "rejected_candidate_ids": [
+      "fused",
+      "materialize-after-earthquake-magnitude",
+      "materialize-after-earthquake-well-join"
+    ],
+    "status": "ACCEPT"
+  },
+  "feasible_candidate_ids": [
+    "materialize-after-gov-001-mask"
+  ],
+  "nondominated_candidate_ids": [
+    "materialize-after-gov-001-mask"
+  ],
+  "performance_model_used": false,
+  "reason_code": "HIERARCHICAL_ONLY_NONDOMINATED_CANDIDATE",
+  "rejected_candidate_ids": [
+    "fused",
+    "materialize-after-earthquake-magnitude",
+    "materialize-after-earthquake-well-join"
+  ],
+  "selected_candidate_id": "materialize-after-gov-001-mask",
+  "status": "SELECT"
+}

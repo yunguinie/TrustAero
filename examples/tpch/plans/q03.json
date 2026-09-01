@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "tpch-sf1-q03-governed-v2",
+  "request_context": {
+    "subject": {"subject_id": "researcher-001", "role": "researcher", "attributes": {}},
+    "purpose": "benchmark-research",
+    "action": "aggregate",
+    "query_time_window": null
+  },
+  "requested_output": {
+    "fields": ["l_orderkey", "revenue", "o_orderdate", "o_shippriority"],
+    "export": {"requested": false, "destination": null, "format": null},
+    "lineage_level": "source"
+  },
+  "operators": [
+    {
+      "operator_type": "ScanSource",
+      "operator_id": "q03-customer-scan",
+      "inputs": [],
+      "dataset": "tpch_sf1_customer",
+      "snapshot": "sf1-64a709fa8f99"
+    },
+    {
+      "operator_type": "Filter",
+      "operator_id": "q03-segment-filter",
+      "inputs": ["q03-customer-scan"],
+      "expression": {
+        "expression_type": "comparison",
+        "operator": "eq",
+        "left": {"expression_type": "field", "field": "c_mktsegment"},
+        "right": {"expression_type": "literal", "data_type": "string", "value": "BUILDING"},
+        "negated": false
+      }
+    },
+    {
+      "operator_type": "ScanSource",
+      "operator_id": "q03-orders-scan",
+      "inputs": [],
+      "dataset": "tpch_sf1_orders",
+      "snapshot": "sf1-64a709fa8f99"
+    },
+    {
+      "operator_type": "Filter",
+      "operator_id": "q03-orderdate-filter",
+      "inputs": ["q03-orders-scan"],
+      "expression": {
+        "expression_type": "comparison",
+        "operator": "lt",
+        "left": {"expression_type": "field", "field": "o_orderdate"},
+        "right": {
+          "expression_type": "literal",
+          "data_type": "datetime",
+          "value": "1995-03-15T00:00:00+00:00"
+        },
+        "negated": false
+      }
+    },
+    {
+      "operator_type": "Join",
+      "operator_id": "q03-customer-orders-join",
+      "inputs": ["q03-segment-filter", "q03-orderdate-filter"],
+      "left_field": "c_custkey",
+      "right_field": "o_custkey",
+      "join_type": "inner"
+    },
+    {
+      "operator_type": "ScanSource",
+      "operator_id": "q03-lineitem-scan",
+      "inputs": [],
+      "dataset": "tpch_sf1_lineitem_v2",
+      "snapshot": "sf1-64a709fa8f99"
+    },
+    {
+      "operator_type": "Filter",
+      "operator_id": "q03-shipdate-filter",
+      "inputs": ["q03-lineitem-scan"],
+      "expression": {
+        "expression_type": "comparison",
+        "operator": "gt",
+        "left": {"expression_type": "field", "field": "l_shipdate"},
+        "right": {
+          "expression_type": "literal",
+          "data_type": "datetime",
+          "value": "1995-03-15T00:00:00+00:00"
+        },
+        "negated": false
+      }
+    },
+    {
+      "operator_type": "Join",
+      "operator_id": "q03-order-lineitem-join",
+      "inputs": ["q03-customer-orders-join", "q03-shipdate-filter"],
+      "left_field": "o_orderkey",
+      "right_field": "l_orderkey",
+      "join_type": "inner"
+    },
+    {
+      "operator_type": "Aggregate",
+      "operator_id": "q03-aggregate",
+      "inputs": ["q03-order-lineitem-join"],
+      "group_by": ["l_orderkey", "o_orderdate", "o_shippriority"],
+      "aggregates": [
+        {
+          "function": "sum",
+          "input_expression": {
+            "expression_type": "numeric_product_formula",
+            "factors": [
+              {"expression_type": "field", "field": "l_extendedprice"},
+              {
+                "expression_type": "numeric_affine",
+                "constant": {
+                  "expression_type": "literal",
+                  "data_type": "decimal",
+                  "value": "1"
+                },
+                "operator": "subtract",
+                "field": {"expression_type": "field", "field": "l_discount"}
+              }
+            ]
+          },
+          "output_field": "revenue"
+        }
+      ]
+    },
+    {
+      "operator_type": "Project",
+      "operator_id": "q03-project",
+      "inputs": ["q03-aggregate"],
+      "fields": ["l_orderkey", "revenue", "o_orderdate", "o_shippriority"]
+    },
+    {
+      "operator_type": "Sort",
+      "operator_id": "q03-sort",
+      "inputs": ["q03-project"],
+      "keys": [
+        {"field": "revenue", "direction": "desc"},
+        {"field": "o_orderdate", "direction": "asc"}
+      ]
+    },
+    {
+      "operator_type": "Limit",
+      "operator_id": "q03-output",
+      "inputs": ["q03-sort"],
+      "row_count": 10
+    }
+  ],
+  "output_operator": "q03-output"
+}

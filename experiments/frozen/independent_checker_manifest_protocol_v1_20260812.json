@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "protocol_id": "independent-checker-manifest-v1-20260812",
+  "status": "FROZEN_BEFORE_EXECUTION",
+  "source_run": "results/multisource_case_study_v2/20260807T092240058471Z",
+  "source_files": {
+    "validated_plan.json": "09e9998bb3dda153cca3256a377d0d9690d0b2a64f57751e45d8a9f8e67efc6f",
+    "approved_physical_plan.json": "c605c304941008ba97af1bd4c8288dbd99040213d01b30ebec6b0e5970596672",
+    "certificate.json": "227eee396bb76f433c9d972baf533adee2713cb9673091c68703df1427558d5b",
+    "summary.json": "8f38b952e6d498df139da415258c68dc7ee90bc748352397103cf8db6a5d99d5"
+  },
+  "results_dir": "results/independent_checker_manifest_v1",
+  "cases": [
+    {
+      "case_id": "untampered",
+      "expected_status": "PARTIAL"
+    },
+    {
+      "case_id": "observed_result_tamper",
+      "expected_status": "REJECT"
+    },
+    {
+      "case_id": "certificate_result_tamper",
+      "expected_status": "REJECT"
+    },
+    {
+      "case_id": "approval_manifest_tamper",
+      "expected_status": "REJECT"
+    }
+  ],
+  "success_gates": [
+    "Every case is evaluated in a newly launched Python process.",
+    "The untampered persisted bundle returns PARTIAL with only physical_plan_execution unverified.",
+    "Tampering with the independent observation, certificate, or persisted approval manifest is rejected."
+  ],
+  "claim_boundary": [
+    "Process separation prevents reliance on shared in-memory Planner or Certificate Builder objects.",
+    "Persisted files are independently loaded and schema validated by the Checker entry point.",
+    "This experiment does not create a cryptographic trust anchor or attest DuckDB-internal execution."
+  ]
+}

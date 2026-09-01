@@ -1,0 +1,125 @@
+{
+  "candidate_count": 4,
+  "candidates": [
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "HASH_GROUP_BY",
+        "PROJECTION",
+        "HASH_JOIN",
+        "HASH_JOIN",
+        "READ_PARQUET",
+        "READ_PARQUET",
+        "READ_PARQUET"
+      ],
+      "duckdb_plan_fingerprint": "sha256:ba857190c59890f0bb923a2cbfc1084f31a7df431cb280e10e85c7be4b6490aa",
+      "materialize_after": [],
+      "output_row_count": 870,
+      "physical_plan_id": "pp-43ed05db14618bc6",
+      "semantic_result_digest": "sha256:605a0b7178d9a386436f9ecdb17d8ac6540fa740822b9ef354a860a787c226f4",
+      "strategy_id": "fused"
+    },
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "HASH_GROUP_BY",
+        "PROJECTION",
+        "HASH_JOIN",
+        "HASH_JOIN",
+        "CTE",
+        "PROJECTION",
+        "FILTER",
+        "READ_PARQUET",
+        "CTE_SCAN",
+        "READ_PARQUET",
+        "READ_PARQUET"
+      ],
+      "duckdb_plan_fingerprint": "sha256:7d8e018d7e647159b1e1dd3f57df9c0ecec9c01628d8809bec2451196d98fa2c",
+      "materialize_after": [
+        "bts-mj-filter"
+      ],
+      "output_row_count": 870,
+      "physical_plan_id": "pp-7940628c37b3d925",
+      "semantic_result_digest": "sha256:605a0b7178d9a386436f9ecdb17d8ac6540fa740822b9ef354a860a787c226f4",
+      "strategy_id": "materialize-after-bts-mj-filter"
+    },
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "HASH_GROUP_BY",
+        "PROJECTION",
+        "HASH_JOIN",
+        "CTE",
+        "PROJECTION",
+        "HASH_JOIN",
+        "PROJECTION",
+        "READ_PARQUET",
+        "READ_PARQUET",
+        "CTE_SCAN",
+        "READ_PARQUET"
+      ],
+      "duckdb_plan_fingerprint": "sha256:545b67ef4397ba1e920f4fe3260ee0ba6fe711c5b84354b02594b5507f917f8a",
+      "materialize_after": [
+        "bts-mj-origin-join"
+      ],
+      "output_row_count": 870,
+      "physical_plan_id": "pp-aac7db9ffdfcd20a",
+      "semantic_result_digest": "sha256:605a0b7178d9a386436f9ecdb17d8ac6540fa740822b9ef354a860a787c226f4",
+      "strategy_id": "materialize-after-bts-mj-origin-join"
+    },
+    {
+      "certificate_status": "PARTIAL",
+      "duckdb_operator_names": [
+        "HASH_GROUP_BY",
+        "PROJECTION",
+        "CTE",
+        "PROJECTION",
+        "HASH_JOIN",
+        "PROJECTION",
+        "HASH_JOIN",
+        "PROJECTION",
+        "READ_PARQUET",
+        "READ_PARQUET",
+        "READ_PARQUET",
+        "CTE_SCAN"
+      ],
+      "duckdb_plan_fingerprint": "sha256:456e9f4668c0deab04231080104852e4cc6902ce33a0434dfc92b7e01a5379cf",
+      "materialize_after": [
+        "bts-mj-carrier-join"
+      ],
+      "output_row_count": 870,
+      "physical_plan_id": "pp-e75a2594358d4286",
+      "semantic_result_digest": "sha256:605a0b7178d9a386436f9ecdb17d8ac6540fa740822b9ef354a860a787c226f4",
+      "strategy_id": "materialize-after-bts-mj-carrier-join"
+    }
+  ],
+  "distinct_duckdb_plan_count": 4,
+  "paper_performance_evidence": false,
+  "purpose": "BTS natural multi-Join semantic smoke; no performance timing",
+  "sample_rows": 100000,
+  "schema_version": 1,
+  "status": "PASS",
+  "verified_execution_artifacts": [
+    {
+      "artifact_id": "bts_on_time_2024_01_100000",
+      "byte_size": 2374449,
+      "relative_path": "processed/bts/on_time/2024-01/bts_flights_100000.parquet",
+      "row_count": 100000,
+      "sha256": "29c47a4a8f0f344bc810e469c4ae32987f781b2a213bb0984090d3e45b0bde8d"
+    },
+    {
+      "artifact_id": "bts_on_time_2024_01_airports",
+      "byte_size": 5380,
+      "relative_path": "processed/bts/on_time/2024-01/bts_airports.parquet",
+      "row_count": 334,
+      "sha256": "bccde61193c804f2a11fd4148e58f30187bd0a0461bf4b1b15b771c1b40c4a3c"
+    },
+    {
+      "artifact_id": "bts_on_time_2024_01_carriers",
+      "byte_size": 479,
+      "relative_path": "processed/bts/on_time/2024-01/bts_carriers.parquet",
+      "row_count": 15,
+      "sha256": "d9179009629b0e36171a9dbee26963dc382b93fdc712e41dec44f51f13fb6642"
+    }
+  ]
+}

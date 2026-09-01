@@ -1,0 +1,11 @@
+{
+  "all_correct": true,
+  "case_count": 26,
+  "failed_cases": [],
+  "max_case_p95_ms": 10.700499988161027,
+  "median_certificate_verification_latency_ms": 0.11420001101214439,
+  "median_of_case_medians_ms": 0.9804750079638325,
+  "median_planner_latency_ms": 0.17970000044442713,
+  "reason_code_correct": 26,
+  "status_correct": 26
+}

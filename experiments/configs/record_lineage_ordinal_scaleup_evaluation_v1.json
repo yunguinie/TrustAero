@@ -1,0 +1,14 @@
+{
+  "results_dir": "results/record_lineage_ordinal_scaleup_evaluation_v1",
+  "measurement_results_dir": "results/record_lineage_ordinal_scaleup_v1",
+  "measurement_config_path": "experiments/configs/record_lineage_ordinal_scaleup_v1.json",
+  "expected_row_counts": [1000000],
+  "expected_blocks_per_unit": 20,
+  "confidence_level": 0.95,
+  "bootstrap_repetitions": 5000,
+  "bootstrap_seed": 20260810,
+  "maximum_position_median_spread_fraction": 0.3,
+  "maximum_half_ratio_drift_fraction": 0.2,
+  "maximum_bytes_per_edge": 33.0,
+  "expected_artifact_encoding": "ordinal_bound_v4"
+}

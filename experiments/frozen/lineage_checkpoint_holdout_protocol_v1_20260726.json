@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "protocol_id": "lineage-checkpoint-holdout-v1-20260726",
+  "status": "FROZEN_UNOPENED",
+  "model": {
+    "path": "experiments/frozen/models/lineage_checkpoint_cost_model_v1_20260726.json",
+    "sha256": "ff30976cbc5ef0e6131badcf994bca55ab9f0038be34d55e118835139a65166d"
+  },
+  "measurement_config": {
+    "path": "experiments/configs/lineage_checkpoint_holdout_v1.json",
+    "sha256": "d70364ded6a6defddf6e7a65902a2b1f127b39679c2e9c7e1c75fae1ba83e188"
+  },
+  "unseen_dimensions": {
+    "row_count": 75000,
+    "query_counts": [2, 6, 10, 20, 28, 40],
+    "seeds": [31101, 31202, 31303],
+    "policy_selectivities": "All combinations differ from complete development scenarios."
+  },
+  "frozen_gates": {
+    "minimum_oracle_set_hit_rate": 0.8,
+    "maximum_mean_regret_percent": 3.0,
+    "maximum_p95_regret_percent": 10.0,
+    "maximum_regret_percent": 20.0,
+    "must_beat_best_fixed_mean_and_p95": true,
+    "must_not_be_worse_than_frozen_threshold_hit_and_mean": true,
+    "illegal_selection_rate": 0.0
+  },
+  "one_shot_rule": "Run this holdout once after committing model, evaluator, protocol and measurement config. Do not refit or alter thresholds after observing it.",
+  "failure_rule": "A failed holdout is retained as the final optimizer boundary; no V2 or replacement holdout is permitted."
+}

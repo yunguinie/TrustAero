@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "policy_set_id": "multisource-case-policy-v1",
+  "policy_snapshot": "multisource-policy-2026-07-25",
+  "rules": [
+    {
+      "policy_id": "P-MULTISOURCE-RESEARCH",
+      "policy_version": "1",
+      "subject_roles": ["infrastructure_researcher"],
+      "purposes": ["risk_assessment"],
+      "actions": ["join"],
+      "resources": ["usgs_earthquake", "oil_gas_well", "airport", "city"],
+      "decision": "PERMIT",
+      "obligations": [
+        {
+          "obligation_type": "MASK",
+          "parameters": {
+            "fields": ["api_well_number"],
+            "method": "hash"
+          }
+        },
+        {
+          "obligation_type": "LINEAGE_CAPTURE",
+          "parameters": {
+            "level": "source"
+          }
+        }
+      ],
+      "reason": "Controlled case-study policy permits multi-source risk assessment, hashes the infrastructure identifier at output, and requires source lineage."
+    }
+  ]
+}

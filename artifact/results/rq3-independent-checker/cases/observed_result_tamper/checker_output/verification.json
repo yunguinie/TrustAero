@@ -1,0 +1,22 @@
+{
+  "diagnostics": [
+    {
+      "code": "CERTIFICATE_RESULT_DIGEST_MISMATCH",
+      "details": {
+        "actual": "sha256:independent-observation-tampered",
+        "expected": "sha256:97d5a5e03f22b26f5ed5540cfd3b5aeea4f21ce5f5eca6bccc56693031294a08"
+      },
+      "message": "Observed trusted-executor result digest does not match the certificate.",
+      "operator_id": null,
+      "policy_id": null
+    }
+  ],
+  "status": "REJECT",
+  "unverified_components": [
+    "physical_plan_execution"
+  ],
+  "verified_obligations": [
+    "MASK",
+    "LINEAGE_CAPTURE"
+  ]
+}

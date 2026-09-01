@@ -1,0 +1,182 @@
+{
+  "bindings": {
+    "data_snapshots": {
+      "airport": "sha256:bc0ccfde3bbd2432d7b1d7d81409aa40d356fe02f86c3576ec8cc80f4f16d3d2",
+      "city": "sha256:de6d98951932e9e27e7dcf539f430eda5d79d0503bcd048a31b8ca936b34a076",
+      "oil_gas_well": "sha256:7d8a993dc7db4ea5f06d8cb037c93be07efb7e0bf6c9bcddc696830183f99162",
+      "usgs_earthquake": "sha256:654830be9afbe1f23660c5f9f39456b37797b26c140d45ca1b647fb0805068d3"
+    },
+    "policy_snapshot": "multisource-policy-2026-07-25"
+  },
+  "lineage_instrumentation": [
+    {
+      "capture_mode": "logical_suffix",
+      "capture_operator": "gov-002-lineagecapture",
+      "level": "source",
+      "target_operator": "case-sort"
+    }
+  ],
+  "logical_plan_digest": "sha256:7b7986dcdc0d8b0bb7cc57fb3e9f299b22ce64e909aee59ddce0adc6319ba320",
+  "logical_plan_id": "pl-tampered-manifest",
+  "output_operator": "phys-gov-002-lineagecapture",
+  "pending_obligations": [
+    "LINEAGE_CAPTURE"
+  ],
+  "physical_operators": [
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [],
+      "logical_operator_id": "earthquake-scan",
+      "operator_type": "ScanSource",
+      "physical_operator_id": "phys-earthquake-scan",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [
+        "phys-earthquake-scan"
+      ],
+      "logical_operator_id": "earthquake-time",
+      "operator_type": "TemporalFilter",
+      "physical_operator_id": "phys-earthquake-time",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [
+        "phys-earthquake-time"
+      ],
+      "logical_operator_id": "earthquake-magnitude",
+      "operator_type": "Filter",
+      "physical_operator_id": "phys-earthquake-magnitude",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [],
+      "logical_operator_id": "well-scan",
+      "operator_type": "ScanSource",
+      "physical_operator_id": "phys-well-scan",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [
+        "phys-earthquake-magnitude",
+        "phys-well-scan"
+      ],
+      "logical_operator_id": "earthquake-well-join",
+      "operator_type": "SpatialJoin",
+      "physical_operator_id": "phys-earthquake-well-join",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [],
+      "logical_operator_id": "airport-scan",
+      "operator_type": "ScanSource",
+      "physical_operator_id": "phys-airport-scan",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [
+        "phys-earthquake-well-join",
+        "phys-airport-scan"
+      ],
+      "logical_operator_id": "earthquake-airport-join",
+      "operator_type": "SpatialJoin",
+      "physical_operator_id": "phys-earthquake-airport-join",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [],
+      "logical_operator_id": "city-scan",
+      "operator_type": "ScanSource",
+      "physical_operator_id": "phys-city-scan",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [
+        "phys-earthquake-airport-join",
+        "phys-city-scan"
+      ],
+      "logical_operator_id": "earthquake-city-join",
+      "operator_type": "SpatialJoin",
+      "physical_operator_id": "phys-earthquake-city-join",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [
+        "phys-earthquake-city-join"
+      ],
+      "logical_operator_id": "case-output",
+      "operator_type": "Project",
+      "physical_operator_id": "phys-case-output",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [
+        "phys-case-output"
+      ],
+      "logical_operator_id": "case-sort",
+      "operator_type": "Sort",
+      "physical_operator_id": "phys-case-sort",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [
+        "phys-case-sort"
+      ],
+      "logical_operator_id": "gov-001-mask",
+      "operator_type": "Mask",
+      "physical_operator_id": "phys-gov-001-mask",
+      "unimplemented_features": []
+    },
+    {
+      "backend": "duckdb",
+      "implementation_status": "executable",
+      "inputs": [
+        "phys-gov-001-mask"
+      ],
+      "logical_operator_id": "gov-002-lineagecapture",
+      "operator_type": "LineageCapture",
+      "physical_operator_id": "phys-gov-002-lineagecapture",
+      "unimplemented_features": []
+    }
+  ],
+  "physical_plan_id": "pp-a78057888206307e",
+  "planner_decision_digest": "sha256:9512a5059ab998a3760a710830c9d30ff188baa12f6495e12edc586e72812b03",
+  "planner_notes": [
+    "DuckDB is bound only for the allow-listed executable IR v1 fragment; physical strategy=materialize-after-gov-001-mask."
+  ],
+  "planner_selected_candidate_id": "materialize-after-gov-001-mask",
+  "schema_version": "1.0",
+  "strategy": {
+    "execution_mode": "materialized",
+    "filter_order": [],
+    "materialize_after": [
+      "gov-001-mask"
+    ],
+    "placements": [],
+    "strategy_id": "materialize-after-gov-001-mask"
+  },
+  "unimplemented_backend_features": []
+}

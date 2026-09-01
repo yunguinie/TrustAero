@@ -1,0 +1,6 @@
+{
+  "cases_path": "experiments/cases/phase0_cases.csv",
+  "measured_runs": 30,
+  "results_dir": "results/phase0",
+  "warmup_runs": 5
+}

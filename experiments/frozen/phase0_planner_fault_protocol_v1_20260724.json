@@ -1,0 +1,30 @@
+{
+  "protocol_id": "phase0-planner-fault-v1",
+  "frozen_at": "2026-07-24",
+  "role": "semantic fault detection and governance micro-overhead",
+  "config_path": "experiments/configs/phase0.json",
+  "case_matrix_path": "experiments/cases/phase0_cases.csv",
+  "expected_case_count": 26,
+  "expected_planner_binding_case_count": 6,
+  "warmup_runs": 5,
+  "measured_runs": 30,
+  "gates": {
+    "minimum_status_accuracy": 1.0,
+    "minimum_reason_code_accuracy": 1.0,
+    "minimum_detection_rate": 1.0,
+    "maximum_false_reject_rate": 0.0,
+    "require_planner_latency_observations": true,
+    "require_certificate_latency_observations": true
+  },
+  "reported_without_post_hoc_pass_threshold": [
+    "median_planner_latency_ms",
+    "median_certificate_verification_latency_ms",
+    "p95_latency_ms",
+    "max_latency_ms"
+  ],
+  "scientific_boundary": [
+    "This micro-experiment measures TrustAero semantic detection and Python-side governance overhead.",
+    "It does not measure DuckDB query latency or authorize an optimizer speedup claim.",
+    "Planner and certificate latency are reported rather than judged against a threshold chosen after observing the run."
+  ]
+}

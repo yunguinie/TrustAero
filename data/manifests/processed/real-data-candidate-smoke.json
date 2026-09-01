@@ -1,0 +1,353 @@
+{
+  "paper_performance_evidence": false,
+  "purpose": "approved real-data candidate semantic smoke; no performance timing",
+  "schema_version": 1,
+  "status": "PASS",
+  "verified_execution_artifacts": [
+    {
+      "artifact_id": "bts_on_time_2024_01_100000",
+      "byte_size": 2374449,
+      "relative_path": "processed/bts/on_time/2024-01/bts_flights_100000.parquet",
+      "row_count": 100000,
+      "sha256": "29c47a4a8f0f344bc810e469c4ae32987f781b2a213bb0984090d3e45b0bde8d"
+    },
+    {
+      "artifact_id": "nyc_tlc_yellow_2024_01_100000",
+      "byte_size": 1693589,
+      "relative_path": "processed/nyc_tlc/yellow/2024-01/yellow_taxi_100000.parquet",
+      "row_count": 100000,
+      "sha256": "cdd15308900400fabf8e0250072248690c6c960ea0575aadee74485301377de9"
+    },
+    {
+      "artifact_id": "nyc_tlc_taxi_zones",
+      "byte_size": 3887,
+      "relative_path": "processed/nyc_tlc/yellow/2024-01/taxi_zones.parquet",
+      "row_count": 265,
+      "sha256": "f29ce7251c147d9e0af7d4d2deca855d2ff618b8aef46cee9d1455df665d4988"
+    }
+  ],
+  "workloads": [
+    {
+      "candidate_count": 3,
+      "candidates": [
+        {
+          "certificate_status": "PARTIAL",
+          "compiled_physical_plan_id": "pp-1b1fb59958a2b715",
+          "duckdb_operator_names": [
+            "PROJECTION",
+            "PROJECTION",
+            "FILTER",
+            "READ_PARQUET"
+          ],
+          "duckdb_plan_fingerprint": "sha256:feae45f62cad03f6279147dfe6d2537385652ec30848e2df964df902f6551d8d",
+          "execution_mode": "fused",
+          "exposure": {
+            "candidate_id": "fused",
+            "masked_rows_materialized": 0,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 0
+          },
+          "materialize_after": [],
+          "output_row_count": 19447,
+          "physical_plan_id": "pp-1b1fb59958a2b715",
+          "semantic_result_digest": "sha256:10e12167da7e43a4691d220638e51be526f74f99fa182e4fcc35c8eb1ad2b303",
+          "sql_digest": "sha256:4ed5b151dab16c59783199a477f8c1bc9b29163f630b2cde34d77023377a1633",
+          "strategy_id": "fused"
+        },
+        {
+          "certificate_status": "PARTIAL",
+          "compiled_physical_plan_id": "pp-44ace5abce148c12",
+          "duckdb_operator_names": [
+            "PROJECTION",
+            "PROJECTION",
+            "CTE",
+            "PROJECTION",
+            "FILTER",
+            "READ_PARQUET",
+            "CTE_SCAN"
+          ],
+          "duckdb_plan_fingerprint": "sha256:e6bf0efca6baf7ed6d5fd74cfec4f2e39221be5e1cea30658a02a5cfea84145b",
+          "execution_mode": "materialized",
+          "exposure": {
+            "candidate_id": "materialize-after-bts-filter",
+            "masked_rows_materialized": 0,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 19447
+          },
+          "materialize_after": [
+            "bts-filter"
+          ],
+          "output_row_count": 19447,
+          "physical_plan_id": "pp-44ace5abce148c12",
+          "semantic_result_digest": "sha256:10e12167da7e43a4691d220638e51be526f74f99fa182e4fcc35c8eb1ad2b303",
+          "sql_digest": "sha256:d61719f7876a4c54f280096fe413cd6f9ac4f4b04083706de19167b8ce9ba1a0",
+          "strategy_id": "materialize-after-bts-filter"
+        },
+        {
+          "certificate_status": "PARTIAL",
+          "compiled_physical_plan_id": "pp-b86fdf11cb2d0364",
+          "duckdb_operator_names": [
+            "CTE",
+            "PROJECTION",
+            "PROJECTION",
+            "FILTER",
+            "READ_PARQUET",
+            "CTE_SCAN"
+          ],
+          "duckdb_plan_fingerprint": "sha256:cb55f86ead0dbaee848dc2242637b77868d2973223fc252df73a0662236def87",
+          "execution_mode": "materialized",
+          "exposure": {
+            "candidate_id": "materialize-after-gov-002-mask",
+            "masked_rows_materialized": 19447,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 0
+          },
+          "materialize_after": [
+            "gov-002-mask"
+          ],
+          "output_row_count": 19447,
+          "physical_plan_id": "pp-b86fdf11cb2d0364",
+          "semantic_result_digest": "sha256:10e12167da7e43a4691d220638e51be526f74f99fa182e4fcc35c8eb1ad2b303",
+          "sql_digest": "sha256:566588e8a468c0e9cecea266f41461a06e2a1fefd3d96fbecef21a5af7032fda",
+          "strategy_id": "materialize-after-gov-002-mask"
+        }
+      ],
+      "distinct_duckdb_plan_count": 3,
+      "feasibility_profiles": {
+        "no-raw-sensitive-materialization": {
+          "decisions": [
+            {
+              "candidate_id": "fused",
+              "diagnostics": [],
+              "is_feasible": true
+            },
+            {
+              "candidate_id": "materialize-after-bts-filter",
+              "diagnostics": [
+                {
+                  "allowed_rows": 0,
+                  "candidate_id": "materialize-after-bts-filter",
+                  "code": "CANDIDATE_RAW_MATERIALIZATION_LIMIT_EXCEEDED",
+                  "exposure_kind": "raw_materialization",
+                  "observed_rows": 19447
+                }
+              ],
+              "is_feasible": false
+            },
+            {
+              "candidate_id": "materialize-after-gov-002-mask",
+              "diagnostics": [],
+              "is_feasible": true
+            }
+          ],
+          "feasible_candidate_ids": [
+            "fused",
+            "materialize-after-gov-002-mask"
+          ],
+          "rejected_candidate_ids": [
+            "materialize-after-bts-filter"
+          ],
+          "status": "ACCEPT"
+        },
+        "output-mask-only": {
+          "decisions": [
+            {
+              "candidate_id": "fused",
+              "diagnostics": [],
+              "is_feasible": true
+            },
+            {
+              "candidate_id": "materialize-after-bts-filter",
+              "diagnostics": [],
+              "is_feasible": true
+            },
+            {
+              "candidate_id": "materialize-after-gov-002-mask",
+              "diagnostics": [],
+              "is_feasible": true
+            }
+          ],
+          "feasible_candidate_ids": [
+            "fused",
+            "materialize-after-bts-filter",
+            "materialize-after-gov-002-mask"
+          ],
+          "rejected_candidate_ids": [],
+          "status": "ACCEPT"
+        }
+      },
+      "sample_rows": 100000,
+      "stage_statistics": {
+        "governed_rows": 19447,
+        "governed_selectivity": 0.19447,
+        "input_rows": 100000,
+        "temporal_rows": 44904,
+        "temporal_selectivity": 0.44904
+      },
+      "status": "PASS",
+      "strict_profile_rejected_raw_boundary": true,
+      "workload": "bts"
+    },
+    {
+      "candidate_count": 3,
+      "candidates": [
+        {
+          "certificate_status": "PARTIAL",
+          "compiled_physical_plan_id": "pp-c9af97dcfc0fd409",
+          "duckdb_operator_names": [
+            "HASH_GROUP_BY",
+            "PROJECTION",
+            "HASH_JOIN",
+            "PROJECTION",
+            "READ_PARQUET",
+            "READ_PARQUET"
+          ],
+          "duckdb_plan_fingerprint": "sha256:0f714ae29098f430c1443a1051411e95d762e1e2b4d9add7f95e96f0b17cc927",
+          "execution_mode": "fused",
+          "exposure": {
+            "candidate_id": "fused",
+            "masked_rows_materialized": 0,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 0
+          },
+          "materialize_after": [],
+          "output_row_count": 9,
+          "physical_plan_id": "pp-c9af97dcfc0fd409",
+          "semantic_result_digest": "sha256:87bace98ed55cbd5c3b92e8a49d76e99f3d95aad7261e7264cbc27efd9d6548f",
+          "sql_digest": "sha256:babfe5ae762b2368c7affbcb83d16f65ecbfd2e9ee41173a405ab72f7a6defda",
+          "strategy_id": "fused"
+        },
+        {
+          "certificate_status": "PARTIAL",
+          "compiled_physical_plan_id": "pp-f6f5539ca7fa761d",
+          "duckdb_operator_names": [
+            "HASH_GROUP_BY",
+            "PROJECTION",
+            "HASH_JOIN",
+            "CTE",
+            "PROJECTION",
+            "FILTER",
+            "READ_PARQUET",
+            "CTE_SCAN",
+            "READ_PARQUET"
+          ],
+          "duckdb_plan_fingerprint": "sha256:99c73e45c383ffbb7e01c06ef92454606ffab77ca1d01845aecb8c252297dc14",
+          "execution_mode": "materialized",
+          "exposure": {
+            "candidate_id": "materialize-after-nyc-filter",
+            "masked_rows_materialized": 0,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 0
+          },
+          "materialize_after": [
+            "nyc-filter"
+          ],
+          "output_row_count": 9,
+          "physical_plan_id": "pp-f6f5539ca7fa761d",
+          "semantic_result_digest": "sha256:87bace98ed55cbd5c3b92e8a49d76e99f3d95aad7261e7264cbc27efd9d6548f",
+          "sql_digest": "sha256:dbf08c28778fa4d0ea17e203b853f2991dcd55dafa5659035ed1615de98b0e5d",
+          "strategy_id": "materialize-after-nyc-filter"
+        },
+        {
+          "certificate_status": "PARTIAL",
+          "compiled_physical_plan_id": "pp-3ca195162a53f9f9",
+          "duckdb_operator_names": [
+            "HASH_GROUP_BY",
+            "PROJECTION",
+            "CTE",
+            "PROJECTION",
+            "HASH_JOIN",
+            "PROJECTION",
+            "READ_PARQUET",
+            "READ_PARQUET",
+            "CTE_SCAN"
+          ],
+          "duckdb_plan_fingerprint": "sha256:3aa428f1c1f7fbd5f95bfff15bf1668fc4b28709fe344592c8a5b70aba0be041",
+          "execution_mode": "materialized",
+          "exposure": {
+            "candidate_id": "materialize-after-nyc-zone-join",
+            "masked_rows_materialized": 0,
+            "raw_rows_exposed_to_join": 0,
+            "raw_rows_materialized": 0
+          },
+          "materialize_after": [
+            "nyc-zone-join"
+          ],
+          "output_row_count": 9,
+          "physical_plan_id": "pp-3ca195162a53f9f9",
+          "semantic_result_digest": "sha256:87bace98ed55cbd5c3b92e8a49d76e99f3d95aad7261e7264cbc27efd9d6548f",
+          "sql_digest": "sha256:e5e51d2799b45c51860b32f0651a0f597c8e874d6e1a772c5f472cfcb72547fe",
+          "strategy_id": "materialize-after-nyc-zone-join"
+        }
+      ],
+      "distinct_duckdb_plan_count": 3,
+      "feasibility_profiles": {
+        "no-raw-sensitive-materialization": {
+          "decisions": [
+            {
+              "candidate_id": "fused",
+              "diagnostics": [],
+              "is_feasible": true
+            },
+            {
+              "candidate_id": "materialize-after-nyc-filter",
+              "diagnostics": [],
+              "is_feasible": true
+            },
+            {
+              "candidate_id": "materialize-after-nyc-zone-join",
+              "diagnostics": [],
+              "is_feasible": true
+            }
+          ],
+          "feasible_candidate_ids": [
+            "fused",
+            "materialize-after-nyc-filter",
+            "materialize-after-nyc-zone-join"
+          ],
+          "rejected_candidate_ids": [],
+          "status": "ACCEPT"
+        },
+        "output-mask-only": {
+          "decisions": [
+            {
+              "candidate_id": "fused",
+              "diagnostics": [],
+              "is_feasible": true
+            },
+            {
+              "candidate_id": "materialize-after-nyc-filter",
+              "diagnostics": [],
+              "is_feasible": true
+            },
+            {
+              "candidate_id": "materialize-after-nyc-zone-join",
+              "diagnostics": [],
+              "is_feasible": true
+            }
+          ],
+          "feasible_candidate_ids": [
+            "fused",
+            "materialize-after-nyc-filter",
+            "materialize-after-nyc-zone-join"
+          ],
+          "rejected_candidate_ids": [],
+          "status": "ACCEPT"
+        }
+      },
+      "sample_rows": 100000,
+      "stage_statistics": {
+        "governed_rows": 18579,
+        "governed_selectivity": 0.18579,
+        "input_rows": 100000,
+        "join_match_rate": 1.0,
+        "joined_rows": 18579,
+        "temporal_rows": 45769,
+        "temporal_selectivity": 0.45769
+      },
+      "status": "PASS",
+      "strict_profile_rejected_raw_boundary": true,
+      "workload": "nyc_tlc"
+    }
+  ]
+}

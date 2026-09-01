@@ -1,0 +1,1890 @@
+{
+  "component_by_reason_code": {
+    "CERTIFICATE_BINDING_MISMATCH": "plan_binding",
+    "CERTIFICATE_DIGEST_MISSING": "result_binding",
+    "CERTIFICATE_EVENT_MISSING": "event_dag",
+    "CERTIFICATE_EVENT_ORDER_INVALID": "event_dag",
+    "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION": "event_dag",
+    "CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN": "event_dag",
+    "CERTIFICATE_PHYSICAL_PLAN_CYCLIC": "event_dag",
+    "CERTIFICATE_PLANNER_DECISION_MISMATCH": "planner_binding",
+    "CERTIFICATE_RESULT_DIGEST_MISMATCH": "result_binding",
+    "CERTIFICATE_SNAPSHOT_MISMATCH": "snapshot_binding",
+    "LINEAGE_EVIDENCE_INCONSISTENT": "lineage_binding",
+    "LINEAGE_EVIDENCE_MISSING": "lineage_binding",
+    "LINEAGE_LEVEL_INSUFFICIENT": "lineage_binding",
+    "LINEAGE_TARGET_NOT_COVERED": "lineage_binding",
+    "PHYSICAL_PLAN_BINDING_MISMATCH": "plan_binding",
+    "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH": "planner_binding"
+  },
+  "method": "Exact diagnostic-component replay over registered rejected faults; each reason code is emitted by one independent checker component.",
+  "profiles": {
+    "certificate_without_event_dag": {
+      "detected_fault_count": 14,
+      "detection_rate": 0.7368421052631579,
+      "enabled_components": [
+        "lineage_binding",
+        "plan_binding",
+        "planner_binding",
+        "result_binding",
+        "snapshot_binding"
+      ],
+      "escaped_fault_ids": [
+        "P0-014",
+        "P0-018",
+        "P0-019",
+        "P0-020",
+        "physical_dependency_order_tamper"
+      ],
+      "fault_count": 19,
+      "faults": [
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "P0-013",
+          "reason_codes": [
+            "LINEAGE_LEVEL_INSUFFICIENT"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-014",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_MISSING"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "P0-015",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "P0-016",
+          "reason_codes": [
+            "CERTIFICATE_DIGEST_MISSING",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag",
+            "result_binding"
+          ],
+          "fault_id": "P0-017",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_ORDER_INVALID",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-018",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-019",
+          "reason_codes": [
+            "CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-020",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION",
+            "CERTIFICATE_PHYSICAL_PLAN_CYCLIC"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-022",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-023",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-024",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-025",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-026",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "observed_result_digest_mismatch",
+          "reason_codes": [
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "policy_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "planner_decision_tamper",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "data_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "lineage_coverage_removed",
+          "reason_codes": [
+            "LINEAGE_TARGET_NOT_COVERED"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "physical_dependency_order_tamper",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "multisource_v2"
+        }
+      ]
+    },
+    "certificate_without_lineage_binding": {
+      "detected_fault_count": 17,
+      "detection_rate": 0.8947368421052632,
+      "enabled_components": [
+        "event_dag",
+        "plan_binding",
+        "planner_binding",
+        "result_binding",
+        "snapshot_binding"
+      ],
+      "escaped_fault_ids": [
+        "P0-013",
+        "lineage_coverage_removed"
+      ],
+      "fault_count": 19,
+      "faults": [
+        {
+          "detected": false,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "P0-013",
+          "reason_codes": [
+            "LINEAGE_LEVEL_INSUFFICIENT"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-014",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_MISSING"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "P0-015",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "P0-016",
+          "reason_codes": [
+            "CERTIFICATE_DIGEST_MISSING",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag",
+            "result_binding"
+          ],
+          "fault_id": "P0-017",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_ORDER_INVALID",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-018",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-019",
+          "reason_codes": [
+            "CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-020",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION",
+            "CERTIFICATE_PHYSICAL_PLAN_CYCLIC"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-022",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-023",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-024",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-025",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-026",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "observed_result_digest_mismatch",
+          "reason_codes": [
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "policy_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "planner_decision_tamper",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "data_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "lineage_coverage_removed",
+          "reason_codes": [
+            "LINEAGE_TARGET_NOT_COVERED"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "physical_dependency_order_tamper",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "multisource_v2"
+        }
+      ]
+    },
+    "certificate_without_planner_binding": {
+      "detected_fault_count": 13,
+      "detection_rate": 0.6842105263157895,
+      "enabled_components": [
+        "event_dag",
+        "lineage_binding",
+        "plan_binding",
+        "result_binding",
+        "snapshot_binding"
+      ],
+      "escaped_fault_ids": [
+        "P0-022",
+        "P0-023",
+        "P0-024",
+        "P0-025",
+        "P0-026",
+        "planner_decision_tamper"
+      ],
+      "fault_count": 19,
+      "faults": [
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "P0-013",
+          "reason_codes": [
+            "LINEAGE_LEVEL_INSUFFICIENT"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-014",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_MISSING"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "P0-015",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "P0-016",
+          "reason_codes": [
+            "CERTIFICATE_DIGEST_MISSING",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag",
+            "result_binding"
+          ],
+          "fault_id": "P0-017",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_ORDER_INVALID",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-018",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-019",
+          "reason_codes": [
+            "CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-020",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION",
+            "CERTIFICATE_PHYSICAL_PLAN_CYCLIC"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-022",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-023",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-024",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-025",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-026",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "observed_result_digest_mismatch",
+          "reason_codes": [
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "policy_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "planner_decision_tamper",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "data_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "lineage_coverage_removed",
+          "reason_codes": [
+            "LINEAGE_TARGET_NOT_COVERED"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "physical_dependency_order_tamper",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "multisource_v2"
+        }
+      ]
+    },
+    "certificate_without_result_binding": {
+      "detected_fault_count": 17,
+      "detection_rate": 0.8947368421052632,
+      "enabled_components": [
+        "event_dag",
+        "lineage_binding",
+        "plan_binding",
+        "planner_binding",
+        "snapshot_binding"
+      ],
+      "escaped_fault_ids": [
+        "P0-016",
+        "observed_result_digest_mismatch"
+      ],
+      "fault_count": 19,
+      "faults": [
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "P0-013",
+          "reason_codes": [
+            "LINEAGE_LEVEL_INSUFFICIENT"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-014",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_MISSING"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "P0-015",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "P0-016",
+          "reason_codes": [
+            "CERTIFICATE_DIGEST_MISSING",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag",
+            "result_binding"
+          ],
+          "fault_id": "P0-017",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_ORDER_INVALID",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-018",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-019",
+          "reason_codes": [
+            "CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-020",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION",
+            "CERTIFICATE_PHYSICAL_PLAN_CYCLIC"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-022",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-023",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-024",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-025",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-026",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "observed_result_digest_mismatch",
+          "reason_codes": [
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "policy_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "planner_decision_tamper",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "data_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "lineage_coverage_removed",
+          "reason_codes": [
+            "LINEAGE_TARGET_NOT_COVERED"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "physical_dependency_order_tamper",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "multisource_v2"
+        }
+      ]
+    },
+    "certificate_without_snapshots": {
+      "detected_fault_count": 16,
+      "detection_rate": 0.8421052631578947,
+      "enabled_components": [
+        "event_dag",
+        "lineage_binding",
+        "plan_binding",
+        "planner_binding",
+        "result_binding"
+      ],
+      "escaped_fault_ids": [
+        "P0-015",
+        "policy_snapshot_tamper",
+        "data_snapshot_tamper"
+      ],
+      "fault_count": 19,
+      "faults": [
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "P0-013",
+          "reason_codes": [
+            "LINEAGE_LEVEL_INSUFFICIENT"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-014",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_MISSING"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "P0-015",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "P0-016",
+          "reason_codes": [
+            "CERTIFICATE_DIGEST_MISSING",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag",
+            "result_binding"
+          ],
+          "fault_id": "P0-017",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_ORDER_INVALID",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-018",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-019",
+          "reason_codes": [
+            "CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-020",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION",
+            "CERTIFICATE_PHYSICAL_PLAN_CYCLIC"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-022",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-023",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-024",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-025",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-026",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "observed_result_digest_mismatch",
+          "reason_codes": [
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "policy_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "planner_decision_tamper",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "data_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "lineage_coverage_removed",
+          "reason_codes": [
+            "LINEAGE_TARGET_NOT_COVERED"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "physical_dependency_order_tamper",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "multisource_v2"
+        }
+      ]
+    },
+    "lineage_plus_event_log": {
+      "detected_fault_count": 8,
+      "detection_rate": 0.42105263157894735,
+      "enabled_components": [
+        "event_dag",
+        "lineage_binding"
+      ],
+      "escaped_fault_ids": [
+        "P0-015",
+        "P0-016",
+        "P0-022",
+        "P0-023",
+        "P0-024",
+        "P0-025",
+        "P0-026",
+        "observed_result_digest_mismatch",
+        "policy_snapshot_tamper",
+        "planner_decision_tamper",
+        "data_snapshot_tamper"
+      ],
+      "fault_count": 19,
+      "faults": [
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "P0-013",
+          "reason_codes": [
+            "LINEAGE_LEVEL_INSUFFICIENT"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-014",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_MISSING"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "P0-015",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "P0-016",
+          "reason_codes": [
+            "CERTIFICATE_DIGEST_MISSING",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag",
+            "result_binding"
+          ],
+          "fault_id": "P0-017",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_ORDER_INVALID",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-018",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-019",
+          "reason_codes": [
+            "CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-020",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION",
+            "CERTIFICATE_PHYSICAL_PLAN_CYCLIC"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-022",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-023",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-024",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-025",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-026",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "observed_result_digest_mismatch",
+          "reason_codes": [
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "policy_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "planner_decision_tamper",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "data_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "lineage_coverage_removed",
+          "reason_codes": [
+            "LINEAGE_TARGET_NOT_COVERED"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "physical_dependency_order_tamper",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "multisource_v2"
+        }
+      ]
+    },
+    "ordinary_event_log": {
+      "detected_fault_count": 6,
+      "detection_rate": 0.3157894736842105,
+      "enabled_components": [
+        "event_dag"
+      ],
+      "escaped_fault_ids": [
+        "P0-013",
+        "P0-015",
+        "P0-016",
+        "P0-022",
+        "P0-023",
+        "P0-024",
+        "P0-025",
+        "P0-026",
+        "observed_result_digest_mismatch",
+        "policy_snapshot_tamper",
+        "planner_decision_tamper",
+        "data_snapshot_tamper",
+        "lineage_coverage_removed"
+      ],
+      "fault_count": 19,
+      "faults": [
+        {
+          "detected": false,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "P0-013",
+          "reason_codes": [
+            "LINEAGE_LEVEL_INSUFFICIENT"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-014",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_MISSING"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "P0-015",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "P0-016",
+          "reason_codes": [
+            "CERTIFICATE_DIGEST_MISSING",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag",
+            "result_binding"
+          ],
+          "fault_id": "P0-017",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_ORDER_INVALID",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-018",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-019",
+          "reason_codes": [
+            "CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-020",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION",
+            "CERTIFICATE_PHYSICAL_PLAN_CYCLIC"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-022",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-023",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-024",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-025",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-026",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "observed_result_digest_mismatch",
+          "reason_codes": [
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "policy_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "planner_decision_tamper",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "data_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": false,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "lineage_coverage_removed",
+          "reason_codes": [
+            "LINEAGE_TARGET_NOT_COVERED"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "physical_dependency_order_tamper",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "multisource_v2"
+        }
+      ]
+    },
+    "trustaero_certificate_full": {
+      "detected_fault_count": 19,
+      "detection_rate": 1.0,
+      "enabled_components": [
+        "event_dag",
+        "lineage_binding",
+        "plan_binding",
+        "planner_binding",
+        "result_binding",
+        "snapshot_binding"
+      ],
+      "escaped_fault_ids": [],
+      "fault_count": 19,
+      "faults": [
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "P0-013",
+          "reason_codes": [
+            "LINEAGE_LEVEL_INSUFFICIENT"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-014",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_MISSING"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "P0-015",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "P0-016",
+          "reason_codes": [
+            "CERTIFICATE_DIGEST_MISSING",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag",
+            "result_binding"
+          ],
+          "fault_id": "P0-017",
+          "reason_codes": [
+            "CERTIFICATE_EVENT_ORDER_INVALID",
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-018",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-019",
+          "reason_codes": [
+            "CERTIFICATE_PHYSICAL_OPERATOR_UNKNOWN"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "P0-020",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION",
+            "CERTIFICATE_PHYSICAL_PLAN_CYCLIC"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-022",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-023",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-024",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-025",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "P0-026",
+          "reason_codes": [
+            "PHYSICAL_PLAN_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "phase0"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "result_binding"
+          ],
+          "fault_id": "observed_result_digest_mismatch",
+          "reason_codes": [
+            "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "policy_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "planner_binding"
+          ],
+          "fault_id": "planner_decision_tamper",
+          "reason_codes": [
+            "CERTIFICATE_PLANNER_DECISION_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "snapshot_binding"
+          ],
+          "fault_id": "data_snapshot_tamper",
+          "reason_codes": [
+            "CERTIFICATE_SNAPSHOT_MISMATCH"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "lineage_binding"
+          ],
+          "fault_id": "lineage_coverage_removed",
+          "reason_codes": [
+            "LINEAGE_TARGET_NOT_COVERED"
+          ],
+          "source": "multisource_v2"
+        },
+        {
+          "detected": true,
+          "detecting_components": [
+            "event_dag"
+          ],
+          "fault_id": "physical_dependency_order_tamper",
+          "reason_codes": [
+            "CERTIFICATE_OPERATOR_DEPENDENCY_VIOLATION"
+          ],
+          "source": "multisource_v2"
+        }
+      ]
+    }
+  }
+}

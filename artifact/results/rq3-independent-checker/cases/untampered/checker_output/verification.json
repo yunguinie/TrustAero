@@ -1,0 +1,11 @@
+{
+  "diagnostics": [],
+  "status": "PARTIAL",
+  "unverified_components": [
+    "physical_plan_execution"
+  ],
+  "verified_obligations": [
+    "MASK",
+    "LINEAGE_CAPTURE"
+  ]
+}

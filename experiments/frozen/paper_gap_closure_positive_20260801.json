@@ -1,0 +1,54 @@
+{
+  "status": "PASS_PAPER_GAP_CLOSURE_EVIDENCE",
+  "run_path": "results/paper_gap_closure_v1/20260801T062838038926Z",
+  "git_commit": "b40d0c1ccdc18c1144fc0a1560b6284377ce0a5d",
+  "git_dirty": true,
+  "dirty_source_mitigation": "The exact implementation, config, protocol, and result SHA-256 values are bound below; unrelated untracked paper artifacts were not modified.",
+  "artifacts": [
+    {
+      "path": "results/paper_gap_closure_v1/20260801T062838038926Z/summary.json",
+      "sha256": "7c89600e4b3f57da547f74da40dc58c210d8dc36d09aaeff62847d580d37a39d"
+    },
+    {
+      "path": "results/paper_gap_closure_v1/20260801T062838038926Z/report.md",
+      "sha256": "f89e1ccc60be622f81c95e499fad5818d302d9b4aaad06117e1a432a5942ee33"
+    },
+    {
+      "path": "results/paper_gap_closure_v1/20260801T062838038926Z/validator_ablation.json",
+      "sha256": "9788a10b9835ca2c9f40e128a985e50669bca5a360679a3f89a3f07962b6074c"
+    },
+    {
+      "path": "results/paper_gap_closure_v1/20260801T062838038926Z/planner_architecture_ablation.json",
+      "sha256": "a8dd5b930fd490d3621908c55ae78ee132afefadb07058c415d079b01044a3e1"
+    },
+    {
+      "path": "results/paper_gap_closure_v1/20260801T062838038926Z/certificate_component_ablation.json",
+      "sha256": "f83f812a99dfd0c33562738d295b8fc5e05104df6383cae25c5074bb6721fda9"
+    },
+    {
+      "path": "results/paper_gap_closure_v1/20260801T062838038926Z/validator_fuzz.json",
+      "sha256": "918a1145bfdac371d53bc4f7fb5747b4dd4b32db1e0d932dd54032411cfd576d"
+    },
+    {
+      "path": "results/paper_gap_closure_v1/20260801T062838038926Z/lineage_representation_comparison.json",
+      "sha256": "1850ef053fdeb853c44251d1aac686f195291946b9c4e954a08b6425e55911ee"
+    }
+  ],
+  "implementation_sha256": {
+    "src/trustaero/experiments/paper_gap_closure.py": "78e6f261d829e7c71c6b1d40f9e4d01fefe20abee712dcfc739f9ec9e16c48f2",
+    "scripts/run_paper_gap_closure.py": "91ef0b2ed11eb50957e573c046ee368a039138b3efc66403aa7867b4dc1f24a9"
+  },
+  "authorized_claims": [
+    "In the frozen 11-case Phase0 validation matrix and 120 stored Agent responses, Full TrustAero matched every execution-boundary label with zero unsafe acceptance and zero false rejection.",
+    "Across 5,000 fixed-seed plan mutations (4,000 unsafe mutations and 1,000 valid controls), Full TrustAero observed zero unsafe acceptance, zero false rejection, and zero uncaught exception.",
+    "Hard legality-first pruning selected zero policy-infeasible candidates in each frozen policy regime, while governance-blind ranking selected an infeasible candidate in all 96 no-raw-join and all 96 strict decisions.",
+    "The complete certificate checker covered all 19 registered rejected faults; ordinary event logs covered 6/19 and lineage plus event logs covered 8/19.",
+    "Using separately frozen V3 and V4 runs, row-ordinal Lineage V4 reduced storage from about 64 to 32 bytes per edge and reduced median record-lineage latency at both 100K and 500K rows."
+  ],
+  "claim_boundaries": [
+    "The planner comparison is an offline diagnostic replay over a consumed holdout, not a new independent holdout.",
+    "The mutation result applies only to the frozen mutation grammar, seed, plans, policy, and catalog; it is not a proof of absence of all validator bugs.",
+    "Certificate coverage is registered-fault coverage and PARTIAL audit evidence, not cryptographic proof of a malicious DBMS's internal execution.",
+    "The V3/V4 values come from separately frozen formal runs and are not a paired same-run comparison."
+  ]
+}

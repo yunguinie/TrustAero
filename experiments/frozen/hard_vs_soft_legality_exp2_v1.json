@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "protocol_id": "hard-vs-soft-legality-exp2-v1-20260830",
+  "status": "FROZEN_BEFORE_EXPERIMENT2_RUN",
+  "experiment_role": "offline architecture comparison over the consumed real policy-stratified holdout",
+  "results_dir": "results/hard_vs_soft_legality_exp2_v1",
+  "source_evaluation": "results/policy_stratified_pipeline_holdout_evaluation_v2/20260724T104015738465Z/evaluation.json",
+  "source_measurement_run": "results/policy_stratified_pipeline_holdout_measurement_v2/20260724T104015738465Z",
+  "policy_regimes": ["permissive", "no_raw_join", "strict"],
+  "penalty_grid_ms": [0.0, 0.1, 1.0, 10.0, 100.0, 1000.0],
+  "practical_tie_fraction": 0.03,
+  "violation_score": {
+    "definition": "binary",
+    "legal_candidate": 0,
+    "candidate_violating_any_hard_governance_constraint": 1
+  },
+  "soft_score": "predicted_latency_ms + penalty_ms * violation_score",
+  "method_order": [
+    "governance_blind_cost_only",
+    "soft_penalty_grid",
+    "hard_legality_first"
+  ],
+  "metrics": [
+    "illegal selection count and rate",
+    "within-3%-of-Legal-Oracle count and rate, with illegal selections counted as misses",
+    "conditional mean, nearest-rank P95, and maximum regret over legal selections",
+    "minimum per-unit penalty needed to prevent an illegal predicted-cost winner",
+    "smallest scanned penalty yielding zero illegal selections"
+  ],
+  "immutable_inputs": [
+    {
+      "path": "results/policy_stratified_pipeline_holdout_evaluation_v2/20260724T104015738465Z/evaluation.json",
+      "sha256": "00f9666892bca1fb45b5c8de430e933ddc0560c0ecf662b6662103e7c8a889ab"
+    },
+    {
+      "path": "results/policy_stratified_pipeline_holdout_measurement_v2/20260724T104015738465Z/summary.json",
+      "sha256": "12ad47fcaf7d023775a7e95c4e3663531dd6b5a682cef41ab738583f116d07ac"
+    },
+    {
+      "path": "experiments/configs/policy_stratified_pipeline_holdout_evaluation_v2.json",
+      "sha256": "77d3c4b092e98f4babff1d74a328daa891e731f5bf5f592dde112013b86680fd"
+    },
+    {
+      "path": "experiments/frozen/models/governed_pipeline_cost_model_v2_20260724.json",
+      "sha256": "56399a09a3dccd2b02793eca97145fc17c68b9da8574edfef013925457f0fd6f"
+    },
+    {
+      "path": "src/trustaero/experiments/hard_vs_soft_legality_exp2.py",
+      "sha256": "58f4be11b0c4265ff4e25accb91c2a6f27d0848c6e0514eb96f826d376945b16"
+    }
+  ],
+  "reporting_rules": [
+    "No penalty is selected after seeing the experiment as the TrustAero method.",
+    "Every scanned penalty is reported in every policy regime.",
+    "An illegal selection is never counted as a Legal-Oracle hit, even when it is faster.",
+    "A sufficiently large finite penalty matching hard pruning on this bounded dataset is reported honestly.",
+    "This is an offline replay over a consumed holdout and is not added to the 114 held-out-decision denominator."
+  ]
+}

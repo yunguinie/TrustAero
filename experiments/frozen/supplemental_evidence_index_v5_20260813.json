@@ -1,0 +1,30 @@
+{
+  "schema_version": 5,
+  "index_id": "supplemental-evidence-index-v5-20260813",
+  "release_layout": "curated-public-artifact",
+  "entries": [
+    {
+      "path": "artifact/README.md",
+      "role": "reproduction guide"
+    },
+    {
+      "path": "artifact/RESULTS.md",
+      "role": "human-readable result overview"
+    },
+    {
+      "path": "artifact/manifest.json",
+      "role": "machine-readable artifact manifest"
+    },
+    {
+      "path": "artifact/results/supplementary/bts-2025/summary.json",
+      "role": "BTS 2025 temporal-holdout result summary"
+    }
+  ],
+  "bts_2025": {
+    "monthly_snapshots": 12,
+    "input_rows": 7001619,
+    "candidate_count": 4,
+    "measurement_count": 2304,
+    "interpretation": "temporal candidate-family transfer and admission result"
+  }
+}

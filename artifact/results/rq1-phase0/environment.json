@@ -1,0 +1,9 @@
+{
+  "commit_hash": "cd97091eccbbc89403444bd9e3195b8cf5a74fe0",
+  "machine": "AMD64",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+  "python": "3.11.15 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:12:53) [MSC v.1942 64 bit (AMD64)]",
+  "repo_root": ".",
+  "trustaero_version": "0.1.0"
+}

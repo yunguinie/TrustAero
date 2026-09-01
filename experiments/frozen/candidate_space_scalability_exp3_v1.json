@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "protocol_id": "candidate-space-scalability-exp3-v1-20260830",
+  "status": "FROZEN_BEFORE_EXPERIMENT3_RUN",
+  "experiment_role": "control-plane scalability of structurally distinct governed physical candidates",
+  "results_dir": "results/candidate_space_scalability_exp3_v1",
+  "source_measurement_run": "results/policy_stratified_pipeline_holdout_measurement_v2/20260724T104015738465Z",
+  "expected_configuration_count": 96,
+  "candidate_counts": [3, 6, 12, 24, 48],
+  "policy_regimes": ["permissive", "no_raw_join", "strict"],
+  "candidate_axes": [
+    "execution order",
+    "materialization boundary",
+    "lineage checkpoint",
+    "evidence capture",
+    "mask placement"
+  ],
+  "warmup_repetitions": 5,
+  "measured_repetitions": 50,
+  "expected_planning_trial_count": 72000,
+  "bootstrap_draws": 2000,
+  "bootstrap_seed": 20260853,
+  "timing_metrics": [
+    "candidate generation",
+    "governance legality filtering",
+    "legal-candidate cost ranking",
+    "total planning"
+  ],
+  "correctness_metrics": [
+    "physical fingerprint uniqueness",
+    "legal candidate fraction",
+    "illegal selected",
+    "registered cost-oracle match",
+    "within 3% of registered cost oracle"
+  ],
+  "immutable_inputs": [
+    {
+      "path": "results/policy_stratified_pipeline_holdout_measurement_v2/20260724T104015738465Z/summary.json",
+      "sha256": "12ad47fcaf7d023775a7e95c4e3663531dd6b5a682cef41ab738583f116d07ac"
+    },
+    {
+      "path": "src/trustaero/experiments/candidate_space_scalability_exp3.py",
+      "sha256": "a8946773c7b561c863b46861dfdeb3f86b1b388ce633624e98745afb9dd86f2c"
+    }
+  ],
+  "reporting_rules": [
+    "Candidates must be distinct Cartesian products of physical decision axes; ID-only clones are forbidden.",
+    "All five candidate counts and all three policy regimes are reported.",
+    "Timing is reported as median, nearest-rank P95, and bootstrap 95% CI over all 96 configurations and 50 repetitions.",
+    "Cost-oracle agreement is a planner-correctness check and is not described as physical-runtime generalization.",
+    "This experiment does not alter or join the original 114 held-out planning decisions."
+  ]
+}

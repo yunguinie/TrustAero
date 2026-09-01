@@ -1,0 +1,103 @@
+{
+  "cases": [
+    {
+      "actual_status": "PARTIAL",
+      "case_id": "untampered",
+      "diagnostic_codes": [],
+      "expected_status": "PARTIAL",
+      "fresh_process": true,
+      "input_sha256": {
+        "certificate": "227eee396bb76f433c9d972baf533adee2713cb9673091c68703df1427558d5b",
+        "logical_plan": "09e9998bb3dda153cca3256a377d0d9690d0b2a64f57751e45d8a9f8e67efc6f",
+        "observation": "050d26c8fefac1e954c38b87aeefcf2a7c093d2fc9e5ab7a789c58ce9d5b1ce0",
+        "physical_plan": "c605c304941008ba97af1bd4c8288dbd99040213d01b30ebec6b0e5970596672"
+      },
+      "passed": true,
+      "unverified_components": [
+        "physical_plan_execution"
+      ]
+    },
+    {
+      "actual_status": "REJECT",
+      "case_id": "observed_result_tamper",
+      "diagnostic_codes": [
+        "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+      ],
+      "expected_status": "REJECT",
+      "fresh_process": true,
+      "input_sha256": {
+        "certificate": "227eee396bb76f433c9d972baf533adee2713cb9673091c68703df1427558d5b",
+        "logical_plan": "09e9998bb3dda153cca3256a377d0d9690d0b2a64f57751e45d8a9f8e67efc6f",
+        "observation": "a4a5919c3e7511fddd7c174b662eff4f3acada44f3b05aa7dffcc24948843b83",
+        "physical_plan": "c605c304941008ba97af1bd4c8288dbd99040213d01b30ebec6b0e5970596672"
+      },
+      "passed": true,
+      "unverified_components": [
+        "physical_plan_execution"
+      ]
+    },
+    {
+      "actual_status": "REJECT",
+      "case_id": "certificate_result_tamper",
+      "diagnostic_codes": [
+        "CERTIFICATE_RESULT_DIGEST_MISMATCH",
+        "CERTIFICATE_RESULT_DIGEST_MISMATCH"
+      ],
+      "expected_status": "REJECT",
+      "fresh_process": true,
+      "input_sha256": {
+        "certificate": "6e4243e329412d29571c7164739df92dd2b7d3b3246980ab6068314f77897a89",
+        "logical_plan": "09e9998bb3dda153cca3256a377d0d9690d0b2a64f57751e45d8a9f8e67efc6f",
+        "observation": "050d26c8fefac1e954c38b87aeefcf2a7c093d2fc9e5ab7a789c58ce9d5b1ce0",
+        "physical_plan": "c605c304941008ba97af1bd4c8288dbd99040213d01b30ebec6b0e5970596672"
+      },
+      "passed": true,
+      "unverified_components": [
+        "physical_plan_execution"
+      ]
+    },
+    {
+      "actual_status": "REJECT",
+      "case_id": "approval_manifest_tamper",
+      "diagnostic_codes": [
+        "PHYSICAL_PLAN_BINDING_MISMATCH"
+      ],
+      "expected_status": "REJECT",
+      "fresh_process": true,
+      "input_sha256": {
+        "certificate": "227eee396bb76f433c9d972baf533adee2713cb9673091c68703df1427558d5b",
+        "logical_plan": "09e9998bb3dda153cca3256a377d0d9690d0b2a64f57751e45d8a9f8e67efc6f",
+        "observation": "050d26c8fefac1e954c38b87aeefcf2a7c093d2fc9e5ab7a789c58ce9d5b1ce0",
+        "physical_plan": "85d1fd787644c16ae9c7ff766d224bdd3ccaf2459ea0fc6d19e436f583f64996"
+      },
+      "passed": true,
+      "unverified_components": [
+        "physical_plan_execution"
+      ]
+    }
+  ],
+  "claim_boundary": [
+    "Process separation prevents reliance on shared in-memory Planner or Certificate Builder objects.",
+    "Persisted files are independently loaded and schema validated by the Checker entry point.",
+    "This experiment does not create a cryptographic trust anchor or attest DuckDB-internal execution."
+  ],
+  "created_at_utc": "2026-08-12T13:42:36.045403+00:00",
+  "execution_model": "fresh_python_process_per_case",
+  "gates": {
+    "all_cases_in_fresh_process": true,
+    "all_expected_statuses": true,
+    "all_tampered_rejected": true,
+    "only_physical_execution_unverified": true,
+    "untampered_is_partial": true
+  },
+  "protocol_path": "experiments/frozen/independent_checker_manifest_protocol_v1_20260812.json",
+  "protocol_sha256": "53c2db11d9dfa748b6591eceec41dd45fe8551d79be58f7a0eb87ae7ee4cf15b",
+  "schema_version": 1,
+  "separation": {
+    "approval_store": "persisted logical and physical plans",
+    "checker": "separately launched process with schema validation and recomputation inputs",
+    "execution_evidence_store": "persisted certificate and independent observation"
+  },
+  "source_run": "results/multisource_case_study_v2/20260807T092240058471Z",
+  "status": "PASS_INDEPENDENT_CHECKER_MANIFEST"
+}
